@@ -41,6 +41,16 @@ model Occupation {
   created_at      DateTime          @default(now())
   updated_at      DateTime          @updatedAt
   lignes          LigneOccupation[]
+  notes           Note[]
+}
+
+model Note {
+  id           Int        @id @default(autoincrement())
+  occupationId Int
+  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  content      String
+  author       String?
+  created_at   DateTime   @default(now())
 }
 
 model Categorie {

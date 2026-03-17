@@ -21,7 +21,9 @@ import {
   Plus,
   Hash,
   ChevronLeft,
-  Loader2
+  Loader2,
+  MessageSquare,
+  Send
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -315,6 +317,18 @@ export default function OccupationDetailPage({ params }: Props) {
               )}
             </div>
           </section>
+
+          {/* Notes Section (WhatsApp style) */}
+          <section className="space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+               <div>
+                 <h2 className="text-2xl font-black text-slate-900 tracking-tight">Discussion / Notes</h2>
+                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Historique des échanges sur ce dossier</p>
+               </div>
+            </div>
+            
+            <NotesThread occupationId={occ.id} />
+          </section>
         </div>
 
         <aside className="space-y-10">
@@ -383,6 +397,103 @@ export default function OccupationDetailPage({ params }: Props) {
           initialData={editingLigne}
         />
       )}
+    </div>
+  );
+}
+
+function NotesThread({ occupationId }: { occupationId: number }) {
+  const [notes, setNotes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newNote, setNewNote] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const fetchNotes = async () => {
+    try {
+      const res = await axios.get(`/api/occupations/${occupationId}/notes`);
+      setNotes(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotes();
+  }, [occupationId]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newNote.trim()) return;
+    setSubmitting(true);
+    try {
+      await axios.post(`/api/occupations/${occupationId}/notes`, { content: newNote });
+      setNewNote('');
+      fetchNotes();
+    } catch (err) {
+      alert('Erreur lors de l\'envoi de la note');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="bg-slate-50/50 rounded-[2.5rem] border border-slate-100 p-8 flex flex-col gap-8 min-h-[400px]">
+      <div className="flex-1 space-y-4 max-h-[500px] overflow-y-auto px-2 scrollbar-hide">
+        {loading ? (
+          <div className="flex items-center justify-center h-full py-10 opacity-30">
+            <Loader2 className="animate-spin" size={24} />
+          </div>
+        ) : notes.length === 0 ? (
+          <div className="text-center py-20 opacity-20">
+             <MessageSquare size={40} className="mx-auto mb-2" />
+             <p className="text-[10px] font-black uppercase tracking-widest italic">Aucun message pour le moment</p>
+          </div>
+        ) : (
+          notes.map((note) => (
+            <div key={note.id} className={`flex flex-col ${note.author === 'Conseiller' ? 'items-end' : 'items-start'}`}>
+               <div className={`max-w-[80%] rounded-3xl p-5 shadow-sm border ${
+                 note.author === 'Conseiller' 
+                   ? 'bg-blue-600 text-white rounded-tr-none border-blue-500 shadow-blue-500/20' 
+                   : 'bg-white text-slate-800 rounded-tl-none border-slate-100 shadow-slate-200/20'
+               }`}>
+                  <div className="flex items-center justify-between gap-10 mb-2">
+                    <span className={`text-[8px] font-black uppercase tracking-widest ${note.author === 'Conseiller' ? 'text-blue-100' : 'text-slate-400'}`}>
+                      {note.author}
+                    </span>
+                    <span className={`text-[8px] font-bold ${note.author === 'Conseiller' ? 'text-blue-200' : 'text-slate-300'}`}>
+                      {format(new Date(note.created_at), 'dd MMM HH:mm', { locale: fr })}
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap">{note.content}</p>
+               </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <form onSubmit={handleSubmit} className="relative mt-auto">
+        <textarea
+          rows={1}
+          placeholder="Écrivez un message ici..."
+          className="w-full bg-white border border-slate-200 rounded-[2rem] py-5 pl-8 pr-20 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-medium text-sm shadow-sm resize-none"
+          value={newNote}
+          onChange={(e) => setNewNote(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
+        ></textarea>
+        <button 
+          type="submit"
+          disabled={submitting || !newNote.trim()}
+          className="absolute right-3 top-3 bottom-3 aspect-square bg-slate-900 hover:bg-blue-600 disabled:opacity-20 text-white rounded-2xl flex items-center justify-center transition-all active:scale-90"
+        >
+          {submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+        </button>
+      </form>
     </div>
   );
 }

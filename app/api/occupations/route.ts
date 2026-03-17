@@ -8,6 +8,9 @@ export async function GET() {
         tiers: true,
         lignes: {
           include: { article: true }
+        },
+        _count: {
+          select: { notes: true }
         }
       },
       orderBy: { created_at: 'desc' },

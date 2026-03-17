@@ -27,7 +27,8 @@ import {
   Package,
   ArrowRight,
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  MessageSquare
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -48,6 +49,7 @@ interface Occupation {
   photos: string | null;
   created_at: string;
   lignes?: any[];
+  _count?: { notes: number };
 }
 
 interface Tiers {
@@ -440,8 +442,14 @@ export default function OccupationsPage() {
                          </div>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black text-slate-600">
-                         <div className="flex items-center gap-2">
-                           <Package size={14} className="text-slate-300" /> {occ.lignes?.length || 0}
+                         <div className="flex flex-col gap-1">
+                           <div className="flex items-center gap-2">
+                             <Package size={14} className="text-slate-300" /> {occ.lignes?.length || 0}
+                           </div>
+                           <div className="flex items-center gap-2">
+                             <MessageSquare size={14} className={occ._count?.notes ? "text-blue-400" : "text-slate-200"} />
+                             <span className={occ._count?.notes ? "text-blue-600" : "text-slate-300"}>{occ._count?.notes || 0}</span>
+                           </div>
                          </div>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 font-bold text-blue-600 uppercase text-[11px]">
