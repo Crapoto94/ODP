@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import CategorieManagerModal from '@/components/CategorieManagerModal';
 import ImportTarifModal from '@/components/ImportTarifModal';
+import ModeTaxationModal from '@/components/ModeTaxationModal';
 
 interface Categorie {
   id: number;
@@ -35,6 +36,7 @@ interface Categorie {
   niveau: number;
   parentId: number | null;
   parent?: Categorie;
+  subs?: Categorie[];
 }
 
 interface Article {
@@ -64,6 +66,7 @@ export default function TarifsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isModeModalOpen, setIsModeModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -108,6 +111,20 @@ export default function TarifsPage() {
   useEffect(() => {
     fetchData();
   }, [selectedYear]);
+
+  const flattenedCategories = useMemo(() => {
+    const flat: Categorie[] = [];
+    const traverse = (cats: Categorie[]) => {
+      cats.forEach(cat => {
+        flat.push(cat);
+        if (cat.subs && cat.subs.length > 0) {
+          traverse(cat.subs);
+        }
+      });
+    };
+    traverse(categories);
+    return flat;
+  }, [categories]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -178,6 +195,33 @@ export default function TarifsPage() {
     a.categorie?.nom.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const groupedArticles = useMemo(() => {
+    const groups: Record<string, Record<string, Article[]>> = {};
+    
+    filtered.forEach(art => {
+      let typeName = 'Non classé';
+      let subTypeName = 'Divers';
+      
+      if (art.categorie) {
+        if (art.categorie.niveau === 1) {
+          typeName = art.categorie.nom;
+        } else if (art.categorie.niveau === 2) {
+          subTypeName = art.categorie.nom;
+          typeName = art.categorie.parent?.nom || 'Autre';
+        } else if (art.categorie.niveau === 3) {
+          subTypeName = art.categorie.parent?.nom || 'Autre';
+          typeName = art.categorie.parent?.parent?.nom || 'Autre';
+        }
+      }
+      
+      if (!groups[typeName]) groups[typeName] = {};
+      if (!groups[typeName][subTypeName]) groups[typeName][subTypeName] = [];
+      groups[typeName][subTypeName].push(art);
+    });
+    
+    return groups;
+  }, [filtered]);
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
@@ -212,6 +256,13 @@ export default function TarifsPage() {
           >
             <Palette size={18} className="text-blue-500" />
             Catégories
+          </button>
+          <button 
+            onClick={() => setIsModeModalOpen(true)}
+            className="flex items-center gap-3 bg-white border border-slate-200 text-slate-900 hover:bg-slate-50 px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm transition-all active:scale-95"
+          >
+            <Settings2 size={18} className="text-indigo-500" />
+            Mode de calculs
           </button>
           <button 
             onClick={() => { resetForm(); setIsModalOpen(true); }}
@@ -276,59 +327,85 @@ export default function TarifsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((art) => (
-                  <tr key={art.id} className="group transition-all hover:-translate-y-1">
-                    <td className="px-6 py-5 rounded-l-3xl border-y border-l border-slate-100 bg-white group-hover:border-blue-200 relative overflow-hidden">
-                       <div 
-                         className="absolute left-0 top-0 bottom-0 w-1 opacity-40 group-hover:opacity-100 transition-opacity" 
-                         style={{ backgroundColor: getCatColor(art.categorie) }}
-                       />
-                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 font-black text-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
-                           {art.numero || '#'}
+                {Object.entries(groupedArticles).map(([typeName, subGroups]) => (
+                  <React.Fragment key={typeName}>
+                    <tr className="bg-slate-50/50">
+                      <td colSpan={5} className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
+                          <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">{typeName}</h4>
                         </div>
-                        <div>
-                          <p className="font-bold text-slate-900 leading-tight mb-1">{art.designation}</p>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Année {art.annee}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 italic font-bold">
-                       <span 
-                         className="text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest bg-slate-50 border border-slate-100"
-                         style={{ color: getCatColor(art.categorie), borderColor: `${getCatColor(art.categorie)}22` }}
-                       >
-                         {art.categorie?.nom || 'Non classé'}
-                       </span>
-                    </td>
-                    <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
-                       <div className="flex items-center gap-2 text-blue-600 font-black">
-                          <Euro size={14} />
-                          <span>{art.montant.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}</span>
-                       </div>
-                    </td>
-                    <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
-                       <span className="text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">
-                         {art.modeTaxation?.nom || '-'}
-                       </span>
-                    </td>
-                    <td className="px-6 py-5 rounded-r-3xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
-                      <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => handleEdit(art)}
-                          className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                        >
-                          <Edit3 size={18} />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(art.id, art.designation)}
-                          className="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                      </td>
+                    </tr>
+                    {Object.entries(subGroups).map(([subTypeName, groupArticles]) => (
+                      <React.Fragment key={subTypeName}>
+                        {subTypeName !== 'Divers' && (
+                          <tr>
+                            <td colSpan={5} className="px-10 py-2">
+                              <div className="flex items-center gap-2 text-slate-400">
+                                <ChevronRight size={14} />
+                                <span className="text-[10px] font-black uppercase tracking-widest">{subTypeName}</span>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                        {groupArticles.map((art) => (
+                          <tr key={art.id} className="group transition-all hover:-translate-y-1">
+                            <td className="px-6 py-5 rounded-l-3xl border-y border-l border-slate-100 bg-white group-hover:border-blue-200 relative overflow-hidden">
+                               <div 
+                                 className="absolute left-0 top-0 bottom-0 w-1 opacity-40 group-hover:opacity-100 transition-opacity" 
+                                 style={{ backgroundColor: getCatColor(art.categorie) }}
+                               />
+                               <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 font-black text-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                   {art.numero || '#'}
+                                </div>
+                                <div>
+                                  <p className="font-bold text-slate-900 leading-tight mb-1">{art.designation}</p>
+                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Année {art.annee}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 italic font-bold">
+                               <span 
+                                 className="text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest bg-slate-50 border border-slate-100"
+                                 style={{ color: getCatColor(art.categorie), borderColor: `${getCatColor(art.categorie)}22` }}
+                               >
+                                 {art.categorie?.nom || 'Non classé'}
+                               </span>
+                            </td>
+                            <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
+                               <div className="flex items-center gap-2 text-blue-600 font-black">
+                                  <Euro size={14} />
+                                  <span>{art.montant.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}</span>
+                               </div>
+                            </td>
+                            <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
+                               <span className="text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">
+                                 {art.modeTaxation?.nom || '-'}
+                               </span>
+                            </td>
+                            <td className="px-6 py-5 rounded-r-3xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
+                              <div className="flex items-center justify-end gap-2">
+                                <button 
+                                  onClick={() => handleEdit(art)}
+                                  className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                >
+                                  <Edit3 size={18} />
+                                </button>
+                                <button 
+                                  onClick={() => handleDelete(art.id, art.designation)}
+                                  className="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    ))}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
@@ -402,9 +479,9 @@ export default function TarifsPage() {
                       onChange={e => setFormData({...formData, categorieId: e.target.value})}
                     >
                       <option value="">Choisir une catégorie...</option>
-                      {categories.map(cat => (
+                      {flattenedCategories.map(cat => (
                         <option key={cat.id} value={cat.id}>
-                          {'  '.repeat(cat.niveau - 1)} {cat.nom}
+                          {'\u00A0'.repeat((cat.niveau - 1) * 3)} {cat.nom}
                         </option>
                       ))}
                     </select>
@@ -487,6 +564,13 @@ export default function TarifsPage() {
           isOpen={isImportModalOpen}
           onClose={() => setIsImportModalOpen(false)}
           onSuccess={fetchData}
+        />
+      )}
+      {isModeModalOpen && (
+        <ModeTaxationModal 
+          isOpen={isModeModalOpen}
+          onClose={() => setIsModeModalOpen(false)}
+          onUpdate={fetchData}
         />
       )}
     </div>

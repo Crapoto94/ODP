@@ -18,17 +18,24 @@ import {
   Trash2,
   Check,
   List,
-  ArrowRight
+  ArrowRight,
+  Camera
 } from 'lucide-react';
 
 interface Tiers {
   id: number;
   nom: string;
+  natureJuridique: string | null;
   siret: string | null;
   email: string;
   adresse: string | null;
   code_sedit: string | null;
   created_at: string;
+  latitude: number | null;
+  longitude: number | null;
+  _count?: {
+    occupations: number;
+  };
 }
 
 export default function TiersPage() {
@@ -42,6 +49,7 @@ export default function TiersPage() {
   const [formData, setFormData] = useState({
     id: null as number | null,
     nom: '',
+    natureJuridique: '',
     siret: '',
     email: '',
     adresse: '',
@@ -77,6 +85,7 @@ export default function TiersPage() {
         ...formData,
         nom: data.nom,
         adresse: data.adresse,
+        natureJuridique: data.natureJuridique || formData.natureJuridique,
         siret: data.siret // Updated to clean version
       });
     } catch (err) {
@@ -139,6 +148,7 @@ export default function TiersPage() {
     setFormData({
       id: t.id,
       nom: t.nom,
+      natureJuridique: t.natureJuridique || '',
       siret: t.siret || '',
       email: t.email || '',
       adresse: t.adresse || '',
@@ -147,9 +157,54 @@ export default function TiersPage() {
     });
     setIsModalOpen(true);
   };
+  
+  const handleStreetView = async (t: Tiers) => {
+    let lat = t.latitude;
+    let lng = t.longitude;
+    
+    if (!lat || !lng) {
+      if (!t.adresse) {
+        alert("Adresse manquante pour Street View");
+        return;
+      }
+      
+      setSubmitting(true);
+      try {
+        const res = await axios.get(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(t.adresse)}&limit=1`);
+        if (res.data.features && res.data.features.length > 0) {
+          [lng, lat] = res.data.features[0].geometry.coordinates;
+          // Update DB with coordinates if found
+          await axios.put('/api/tiers', { ...t, latitude: lat, longitude: lng });
+        } else {
+          alert("Impossible de géocoder l'adresse pour Street View");
+          return;
+        }
+      } catch (err) {
+        console.error("Geocoding error:", err);
+        alert("Erreur lors de la récupération des coordonnées");
+        return;
+      } finally {
+        setSubmitting(false);
+      }
+    }
+    
+    if (lat && lng) {
+      const url = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
+      window.open(url, '_blank');
+    }
+  };
 
   const resetForm = () => {
-    setFormData({ id: null, nom: '', siret: '', email: '', adresse: '', code_sedit: '', isRhRequest: false });
+    setFormData({
+      id: null,
+      nom: '',
+      natureJuridique: '',
+      siret: '',
+      email: '',
+      adresse: '',
+      code_sedit: '',
+      isRhRequest: false
+    });
   };
 
   const filteredTiers = tiers.filter(t => 
@@ -212,10 +267,11 @@ export default function TiersPage() {
               <thead>
                 <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
                   <th className="px-6 pb-4">Entité / Raison Sociale</th>
-                   <th className="px-6 pb-4">SIRET / INSEE</th>
-                   <th className="px-6 pb-4">Statut</th>
-                   <th className="px-6 pb-4">Code SEDIT</th>
-                  <th className="px-6 pb-4">Contact</th>
+                  <th className="px-6 pb-4">Nature</th>
+                  <th className="px-6 pb-4">SIRET / INSEE</th>
+                  <th className="px-6 pb-4">Statut</th>
+                  <th className="px-6 pb-4">Dossiers</th>
+                  <th className="px-6 pb-4">Code SEDIT</th>
                   <th className="px-6 pb-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -230,8 +286,12 @@ export default function TiersPage() {
                         <div>
                           <p className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{t.nom}</p>
                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter truncate max-w-xs">{t.adresse || 'ADRESSE NON RENSEIGNÉE'}</p>
+                          <p className="text-[9px] font-medium text-slate-400 mt-0.5">{t.email || ''}</p>
                         </div>
                       </div>
+                    </td>
+                    <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
+                       <span className="text-[10px] font-black text-slate-500 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">{t.natureJuridique || 'NON DÉFINI'}</span>
                     </td>
                     <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
                       <div className="flex items-center gap-2 bg-slate-100 w-fit px-3 py-1 rounded-lg text-[11px] font-mono font-bold text-slate-500">
@@ -248,17 +308,17 @@ export default function TiersPage() {
                         </div>
                      </td>
                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
+                        <div className="flex items-center gap-2">
+                           <List size={14} className="text-slate-300" />
+                           <span className="text-sm font-black text-slate-900">{t._count?.occupations || 0}</span>
+                        </div>
+                     </td>
+                     <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
                         <span className="text-xs font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">{t.code_sedit || 'À DÉFINIR'}</span>
                      </td>
-                    <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
-                       <div className="flex items-center gap-2 text-slate-600">
-                          <Mail size={14} className="text-slate-300" />
-                          <span className="text-xs font-bold">{t.email || '-'}</span>
-                       </div>
-                    </td>
                      <td className="px-6 py-5 rounded-r-3xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
-                       <div className="flex items-center justify-end gap-2 text-right">
-                         {(t as any).statut !== 'DEFINITIF' && (
+                        <div className="flex items-center justify-end gap-2 text-right">
+                         {(t as any).statut !== 'DEFINITIF' && !t.code_sedit && (
                            <button 
                              onClick={() => handleSeditCreationRequest(t)}
                              className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all active:scale-95"
@@ -268,6 +328,13 @@ export default function TiersPage() {
                              Création SEDIT
                            </button>
                          )}
+                         <button 
+                           onClick={() => handleStreetView(t)}
+                           className="p-2.5 text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                           title="Street View"
+                         >
+                           <Camera size={20} />
+                         </button>
                         <button 
                           onClick={() => handleEdit(t)}
                           className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
@@ -372,6 +439,22 @@ export default function TiersPage() {
                 </div>
 
                 <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nature Juridique</label>
+                  <select 
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer"
+                    value={formData.natureJuridique}
+                    onChange={e => setFormData({...formData, natureJuridique: e.target.value})}
+                  >
+                    <option value="">Sélectionner...</option>
+                    <option value="PARTICULIER">Particulier</option>
+                    <option value="AUTO_ENTREPRENEUR">Auto-entrepreneur</option>
+                    <option value="SOCIETE">Société (SARL, SAS, EURL...)</option>
+                    <option value="ASSOCIATION">Association</option>
+                    <option value="PUBLIC">Administration / Public</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Code SEDIT (Optionnel)</label>
                   <div className="relative">
                     <SearchCode className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
@@ -409,7 +492,7 @@ export default function TiersPage() {
                   Annuler
                 </button>
                 <div className="flex-1 flex gap-3">
-                  {isEditing && (formData as any)?.statut !== 'DEFINITIF' && (
+                  {isEditing && (formData as any)?.statut !== 'DEFINITIF' && !formData.code_sedit && (
                     <button 
                       type="button"
                       onClick={(e) => handleSubmit(e as any, true)}

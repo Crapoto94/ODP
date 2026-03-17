@@ -64,9 +64,7 @@ export default function CartePage() {
                  { type: 'CHANTIER', label: 'Chantiers', icon: MapPin, color: 'text-emerald-600', bg: 'bg-emerald-50' },
                  { type: 'TOURNAGE', label: 'Tournages', icon: Info, color: 'text-amber-600', bg: 'bg-amber-50' },
                ].map((cat) => {
-                 const catTotal = occupations
-                   .filter(o => o.type === cat.type)
-                   .reduce((sum, o) => sum + (o.lignes?.reduce((s: number, l: any) => s + (l.montant || 0), 0) || o.montantCalcule || 0), 0);
+                 const catCount = occupations.filter(o => o.type === cat.type).length;
                  
                  return (
                    <button
@@ -81,7 +79,7 @@ export default function CartePage() {
                      <cat.icon size={14} />
                      <span>{cat.label}</span>
                      <span className={`px-2 py-0.5 rounded-lg text-[10px] ${typeFilter === cat.type ? 'bg-white/20' : 'bg-slate-100'}`}>
-                       {catTotal.toLocaleString('fr-FR')} €
+                       {catCount}
                      </span>
                    </button>
                  );

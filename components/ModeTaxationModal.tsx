@@ -69,6 +69,9 @@ export default function ModeTaxationModal({ isOpen, onClose, onUpdate }: Props) 
                 onChange={(e) => setNewMode(e.target.value)}
                 className="w-full bg-slate-50 border-2 border-slate-100 pl-6 pr-4 py-4 rounded-2xl font-bold focus:border-indigo-500 transition-all outline-none"
               />
+              <p className="text-[10px] font-bold text-slate-400 mt-2 ml-1 italic">
+                Astuce : Utilisez le format <span className="text-indigo-600">/UNITE1/UNITE2</span> (ex: /M/MOIS) pour décomposer les variables de saisie.
+              </p>
             </div>
             <button
               onClick={handleAdd}
@@ -80,14 +83,28 @@ export default function ModeTaxationModal({ isOpen, onClose, onUpdate }: Props) 
           </div>
 
           <div className="grid gap-3 max-h-[300px] overflow-y-auto pr-2">
-            {modes.map(mode => (
-              <div key={mode.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
-                <span className="font-black text-slate-700 text-sm uppercase tracking-wider">{mode.nom}</span>
-                <button className="p-2 text-slate-300 hover:text-rose-600 rounded-xl hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all">
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            ))}
+            {modes.map(mode => {
+              const parts = mode.nom.includes('/') ? mode.nom.split('/').filter(p => p.trim() !== '') : [];
+              return (
+                <div key={mode.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-black text-slate-700 text-sm uppercase tracking-wider">{mode.nom}</span>
+                    {parts.length > 0 && (
+                      <div className="flex gap-2">
+                        {parts.map((p, i) => (
+                          <span key={i} className="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+                            Var {i+1}: {p}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <button className="p-2 text-slate-300 hover:text-rose-600 rounded-xl hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all">
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
 

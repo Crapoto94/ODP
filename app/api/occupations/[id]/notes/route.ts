@@ -9,7 +9,7 @@ export async function GET(
   try {
     const notes = await (prisma as any).note.findMany({
       where: { occupationId: parseInt(id) },
-      orderBy: { created_at: 'asc' }
+      orderBy: { created_at: 'desc' }
     });
     return NextResponse.json(notes);
   } catch (error: any) {
@@ -28,7 +28,9 @@ export async function POST(
       data: {
         occupationId: parseInt(id),
         content: body.content,
-        author: body.author || 'Conseiller'
+        author: body.author || 'Conseiller',
+        pjPath: body.pjPath || null,
+        pjName: body.pjName || null
       }
     });
     return NextResponse.json(note);

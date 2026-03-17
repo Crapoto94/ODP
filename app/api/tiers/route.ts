@@ -3,10 +3,35 @@ import { prisma } from '@/lib/prisma';
 import { fetchSiretInfo } from '@/lib/insee';
 import { sendApmMail } from '@/lib/apm';
 
+function mapNatureJuridique(apiNature: string): string {
+  if (!apiNature) return '';
+  const nature = apiNature.toLowerCase();
+  
+  if (nature.includes('entrepreneur individuel') || nature.includes('libérale')) {
+    return 'AUTO_ENTREPRENEUR';
+  }
+  if (nature.includes('société') || nature.includes('arl') || nature.includes('sas') || nature.includes('sasu') || nature.includes('eurl') || nature.includes('sa')) {
+    return 'SOCIETE';
+  }
+  if (nature.includes('association')) {
+    return 'ASSOCIATION';
+  }
+  if (nature.includes('public') || nature.includes('mairie') || nature.includes('collectivité') || nature.includes('administration') || nature.includes('commune') || nature.includes('etat')) {
+    return 'PUBLIC';
+  }
+  
+  return ''; // Fallback to empty if no clear match
+}
+
 export async function GET() {
   try {
     const tiers = await (prisma as any).tiers.findMany({
       orderBy: { created_at: 'desc' },
+      include: {
+        _count: {
+          select: { occupations: true }
+        }
+      }
     });
     return NextResponse.json(tiers);
   } catch (error: any) {
@@ -18,7 +43,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { id, nom, siret, email, adresse, code_sedit, isRhRequest, isSeditRequest } = body;
+    const { id, nom, natureJuridique, siret, email, adresse, code_sedit, isRhRequest, isSeditRequest } = body;
 
     if (!nom) {
       return NextResponse.json({ error: 'Le nom est requis' }, { status: 400 });
@@ -34,6 +59,45 @@ export async function POST(req: Request) {
       if (info) {
         finalNom = info.nom;
         finalAdresse = info.adresse;
+        if (!natureJuridique && info.categorie_juridique) {
+          body.natureJuridique = mapNatureJuridique(info.categorie_juridique);
+        }
+      }
+    }
+
+    const { natureJuridique: updatedNature } = body;
+
+    // Duplicate checks
+    if (!id) {
+      if (cleanSiret) {
+        const existingSiret = await (prisma as any).tiers.findUnique({
+          where: { siret: cleanSiret }
+        });
+        if (existingSiret) {
+          return NextResponse.json({ error: 'Un tiers avec ce SIRET existe déjà' }, { status: 400 });
+        }
+      }
+      const existingNom = await (prisma as any).tiers.findFirst({
+        where: { nom: finalNom }
+      });
+      if (existingNom) {
+        return NextResponse.json({ error: 'Un tiers avec ce nom existe déjà' }, { status: 400 });
+      }
+    } else {
+      // For updates via POST (if used that way)
+      if (cleanSiret) {
+         const existingSiret = await (prisma as any).tiers.findFirst({
+           where: { siret: cleanSiret, NOT: { id: Number(id) } }
+         });
+         if (existingSiret) {
+           return NextResponse.json({ error: 'Un tiers avec ce SIRET existe déjà' }, { status: 400 });
+         }
+      }
+      const existingNom = await (prisma as any).tiers.findFirst({
+        where: { nom: finalNom, NOT: { id: Number(id) } }
+      });
+      if (existingNom) {
+        return NextResponse.json({ error: 'Un tiers avec ce nom existe déjà' }, { status: 400 });
       }
     }
 
@@ -44,6 +108,7 @@ export async function POST(req: Request) {
          where: { id: Number(id) },
          data: {
            nom: finalNom,
+           natureJuridique: updatedNature || natureJuridique,
            siret,
            email,
            adresse: finalAdresse,
@@ -54,6 +119,7 @@ export async function POST(req: Request) {
        tiers = await (prisma as any).tiers.create({
          data: {
            nom: finalNom,
+           natureJuridique: updatedNature || natureJuridique,
            siret,
            email,
            adresse: finalAdresse,
@@ -124,7 +190,7 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { id, nom, siret, email, adresse, code_sedit } = body;
+    const { id, nom, natureJuridique, siret, email, adresse, code_sedit } = body;
 
     if (!id) {
       return NextResponse.json({ error: "L'ID est requis pour la modification" }, { status: 400 });
@@ -134,6 +200,7 @@ export async function PUT(req: Request) {
       where: { id: Number(id) },
       data: {
         nom,
+        natureJuridique,
         siret,
         email,
         adresse,
@@ -163,7 +230,7 @@ export async function DELETE(req: Request) {
 
     if (occupationsCount > 0) {
       return NextResponse.json({ 
-        error: "Impossible de supprimer ce tiers car il possède des dossiers RODP associés." 
+        error: "Impossible de supprimer ce tiers car il possède des dossiers associés." 
       }, { status: 400 });
     }
 

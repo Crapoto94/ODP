@@ -9,8 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@types/bcrypt": "^6.0.0",
     "axios": "^1.13.6",
+    "bcrypt": "^6.0.0",
     "date-fns": "^4.1.0",
+    "jose": "^6.2.1",
     "jspdf": "^4.2.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.577.0",

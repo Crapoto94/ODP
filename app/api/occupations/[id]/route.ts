@@ -9,7 +9,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       where: { id },
       include: { 
         tiers: true,
-        lignes: { include: { article: true } }
+        lignes: { include: { article: { include: { modeTaxation: true } } } }
       }
     });
     return NextResponse.json(occupation);
@@ -29,7 +29,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       type, 
       statut,
       dateDebut, 
-      dateFin, 
+      dateFin,
+      anneeTaxation, 
       adresse, 
       latitude, 
       longitude, 
@@ -42,11 +43,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       tiersId: tiersId ? parseInt(tiersId) : undefined,
       type,
       statut,
-      dateDebut: dateDebut ? new Date(dateDebut) : undefined,
-      dateFin: dateFin ? new Date(dateFin) : undefined,
+      dateDebut: dateDebut !== undefined ? (dateDebut ? new Date(dateDebut) : null) : undefined,
+      dateFin: dateFin !== undefined ? (dateFin ? new Date(dateFin) : null) : undefined,
+      anneeTaxation: anneeTaxation !== undefined ? (anneeTaxation ? parseInt(anneeTaxation) : null) : undefined,
       adresse,
-      latitude: latitude ? parseFloat(latitude) : undefined,
-      longitude: longitude ? parseFloat(longitude) : undefined,
+      latitude: latitude !== undefined ? (latitude ? parseFloat(latitude) : null) : undefined,
+      longitude: longitude !== undefined ? (longitude ? parseFloat(longitude) : null) : undefined,
       description,
       photos
     };

@@ -23,6 +23,22 @@ export async function GET(
   }
 }
 
+function calculateQ2(u2: string, start: Date | null, end: Date | null, startC: Date | null, endC: Date | null) {
+  const s = startC || start;
+  const e = endC || end;
+  if (!s || !e || isNaN(s.getTime()) || isNaN(e.getTime()) || e < s) return 1;
+
+  const diffMs = e.getTime() - s.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + 1; // Inclusive
+
+  const unit = (u2 || '').toLowerCase();
+  if (unit.includes('an')) return 1;
+  if (unit.includes('10 jour')) return Math.ceil(diffDays / 10);
+  if (unit.includes('mois')) return Math.ceil(diffDays / 31);
+  if (unit.includes('jour')) return diffDays;
+  return 1;
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -31,30 +47,54 @@ export async function POST(
     const { id: paramId } = await params;
     const occupationId = parseInt(paramId);
     const body = await request.json();
-    const { articleId, quantite1, quantite2, dateDebut, dateFin } = body;
+    const { articleId, quantite1, quantite2, dateDebut, dateFin, dateDebutConstatee, dateFinConstatee, photos } = body;
 
-    if (!articleId || !dateDebut || !dateFin) {
-      return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
+    if (!articleId) {
+      return NextResponse.json({ error: 'Article ID is required' }, { status: 400 });
     }
 
-    // Basic amount calculation: we'll use the price of the article for that year
+    const occupation = await (prisma as any).occupation.findUnique({
+      where: { id: occupationId }
+    });
+
     const article = await (prisma as any).article.findUnique({
-      where: { id: parseInt(articleId) }
+      where: { id: parseInt(articleId) },
+      include: { modeTaxation: true }
     });
 
     const baseMontant = article?.montant || 0;
-    // Simple calc for now: Q1 * Q2 * Base. More complex date-logic will follow.
-    const calculatedMontant = baseMontant * parseFloat(quantite1 || '1') * parseFloat(quantite2 || '1');
+    const mode = article?.modeTaxation?.nom || '';
+    const parts = mode.split('/').map((p: string) => p.trim());
+    const u2Label = parts[1] || '';
+
+    let q2 = parseFloat(quantite2 || '1');
+    if (occupation?.type === 'COMMERCE') {
+      q2 = 1;
+    } else if (occupation?.type === 'CHANTIER') {
+      q2 = calculateQ2(
+        u2Label, 
+        dateDebut ? new Date(dateDebut) : null, 
+        dateFin ? new Date(dateFin) : null,
+        dateDebutConstatee ? new Date(dateDebutConstatee) : null,
+        dateFinConstatee ? new Date(dateFinConstatee) : null
+      );
+    }
+
+    const q1 = parseFloat(quantite1 || '0');
+    const calculatedMontant = baseMontant * q1 * q2;
 
     const ligne = await (prisma as any).ligneOccupation.create({
       data: {
         occupationId,
         articleId: parseInt(articleId),
-        quantite1: parseFloat(quantite1 || '0'),
-        quantite2: parseFloat(quantite2 || '0'),
-        dateDebut: new Date(dateDebut),
-        dateFin: new Date(dateFin),
-        montant: calculatedMontant
+        quantite1: q1,
+        quantite2: q2,
+        dateDebut: dateDebut ? new Date(dateDebut) : null,
+        dateFin: dateFin ? new Date(dateFin) : null,
+        dateDebutConstatee: dateDebutConstatee ? new Date(dateDebutConstatee) : null,
+        dateFinConstatee: dateFinConstatee ? new Date(dateFinConstatee) : null,
+        montant: calculatedMontant,
+        photos: photos || null
       }
     });
 

@@ -28,7 +28,8 @@ import {
   ArrowRight,
   RefreshCw,
   ExternalLink,
-  MessageSquare
+  MessageSquare,
+  Download
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -41,8 +42,9 @@ interface Occupation {
   tiers: { nom: string; code_sedit: string | null };
   type: string;
   statut: string;
-  dateDebut: string;
-  dateFin: string;
+  dateDebut: string | null;
+  dateFin: string | null;
+  anneeTaxation: number | null;
   adresse: string;
   description: string | null;
   montantCalcule: number;
@@ -55,6 +57,9 @@ interface Occupation {
 interface Tiers {
   id: number;
   nom: string;
+  adresse?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   statut?: string;
 }
 
@@ -82,6 +87,7 @@ export default function OccupationsPage() {
 
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
+  const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
   const [uploading, setUploading] = useState(false);
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   
@@ -97,6 +103,7 @@ export default function OccupationsPage() {
     nom: '',
     tiersId: '',
     type: 'COMMERCE',
+    anneeTaxation: new Date().getFullYear().toString(),
     dateDebut: '',
     dateFin: '',
     adresse: '',
@@ -219,6 +226,7 @@ export default function OccupationsPage() {
       nom: occ.nom || '',
       tiersId: occ.tiersId.toString(),
       type: occ.type,
+      anneeTaxation: occ.anneeTaxation ? occ.anneeTaxation.toString() : new Date().getFullYear().toString(),
       dateDebut: occ.dateDebut ? format(new Date(occ.dateDebut), 'yyyy-MM-dd') : '',
       dateFin: occ.dateFin ? format(new Date(occ.dateFin), 'yyyy-MM-dd') : '',
       adresse: occ.adresse,
@@ -234,11 +242,36 @@ export default function OccupationsPage() {
 
   const resetForm = () => {
     setFormData({
-      id: null, nom: '', tiersId: '', type: 'COMMERCE', dateDebut: '', dateFin: '',
+      id: null, nom: '', tiersId: '', type: 'COMMERCE', anneeTaxation: new Date().getFullYear().toString(), dateDebut: '', dateFin: '',
       adresse: '', latitude: '', longitude: '', description: '', statut: 'DECLARED'
     });
     setAddressQuery('');
     setUploadedPhotos([]);
+  };
+
+  const handleFetchTiersAddress = () => {
+    if (!formData.tiersId) {
+      alert("Veuillez d'abord sélectionner un tiers");
+      return;
+    }
+    const selectedTier = tiers.find(t => t.id === Number(formData.tiersId));
+    if (selectedTier && selectedTier.adresse) {
+      setFormData({
+        ...formData,
+        adresse: selectedTier.adresse,
+        latitude: selectedTier.latitude?.toString() || '',
+        longitude: selectedTier.longitude?.toString() || ''
+      });
+      setAddressQuery(selectedTier.adresse);
+    } else {
+      alert("Ce tiers n'a pas d'adresse renseignée");
+    }
+  };
+
+  const handleTierChange = (tierIdStr: string) => {
+    const selectedTier = tiers.find(t => t.id === Number(tierIdStr));
+    const newNom = (formData.type === 'COMMERCE' && selectedTier) ? selectedTier.nom : formData.nom;
+    setFormData({ ...formData, tiersId: tierIdStr, nom: newNom });
   };
 
   const handleApprove = async (id: number) => {
@@ -280,7 +313,9 @@ export default function OccupationsPage() {
                           o.adresse.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'ALL' || o.type === typeFilter;
     const matchesStatus = statusFilter === 'ALL' || o.statut === statusFilter;
-    return matchesSearch && matchesType && matchesStatus;
+    const dossierAnnee = o.type === 'COMMERCE' ? o.anneeTaxation : (o.dateDebut ? new Date(o.dateDebut).getFullYear() : null);
+    const matchesYear = yearFilter === 'ALL' || (dossierAnnee && dossierAnnee.toString() === yearFilter.toString());
+    return matchesSearch && matchesType && matchesStatus && matchesYear;
   });
 
   const totalsByType = occupations.reduce((acc, o) => {
@@ -293,7 +328,7 @@ export default function OccupationsPage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Dossiers RODP</h2>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Dossiers</h2>
           <p className="text-slate-500 font-medium tracking-wide">Gestion des autorisations d'occupation du domaine public</p>
         </div>
         <div className="flex gap-4">
@@ -357,6 +392,16 @@ export default function OccupationsPage() {
           </div>
           
           <div className="flex items-center gap-4">
+            <select 
+              className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-500 outline-none focus:border-blue-500 transition-all"
+              value={yearFilter}
+              onChange={e => setYearFilter(e.target.value)}
+            >
+              <option value="ALL">Toutes les années</option>
+              {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
             <select 
               className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-500 outline-none focus:border-blue-500 transition-all"
               value={typeFilter}
@@ -429,7 +474,11 @@ export default function OccupationsPage() {
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
                         <p className="text-xs font-black text-slate-400 uppercase flex items-center gap-1">
                           <Clock size={12} /> 
-                          {occ.dateDebut ? format(new Date(occ.dateDebut), 'dd MMM', { locale: fr }) : '-'} - {occ.dateFin ? format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr }) : '-'}
+                          {occ.type === 'COMMERCE' ? (occ.anneeTaxation || '-') : (
+                            <>
+                              {occ.dateDebut ? format(new Date(occ.dateDebut), 'dd MMM', { locale: fr }) : '-'} - {occ.dateFin ? format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr }) : '-'}
+                            </>
+                          )}
                         </p>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black">
@@ -497,9 +546,38 @@ export default function OccupationsPage() {
                                       <div>
                                         <p className="text-xs font-black text-slate-900">{ligne.article?.designation}</p>
                                         <p className="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2 mt-1">
-                                          <span>{ligne.quantite1} x {ligne.quantite2}</span>
-                                          <ArrowRight size={10} />
-                                          <span className="text-blue-600">{format(new Date(ligne.dateDebut), 'dd/MM/yy')} - {format(new Date(ligne.dateFin), 'dd/MM/yy')}</span>
+                                          {occ.type === 'COMMERCE' || occ.type === 'CHANTIER' ? (
+                                            <>
+                                              {(() => {
+                                                const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
+                                                const parts = rawMode.split('/').map((p: string) => p.trim());
+                                                const u1 = parts[0] || 'unité';
+                                                const u2 = parts[1] || 'unité';
+                                                const displayU1 = u1.toLowerCase() === 'unité' ? 'unité' : u1;
+                                                const displayU2 = u2.toLowerCase() === 'unité' ? 'unité' : u2;
+                                                
+                                                if (occ.type === 'CHANTIER') {
+                                                  const startStr = format(new Date(ligne.dateDebutConstatee || ligne.dateDebut), 'dd/MM/yy');
+                                                  const endStr = format(new Date(ligne.dateFinConstatee || ligne.dateFin), 'dd/MM/yy');
+                                                  return (
+                                                    <span className="flex flex-col gap-0.5">
+                                                      <span>{ligne.quantite1} {displayU1} x {ligne.quantite2} {displayU2} à {ligne.article?.montant}€ soit </span>
+                                                      <span className="text-[9px] text-slate-300 normal-case italic">Période : {startStr} au {endStr}</span>
+                                                    </span>
+                                                  );
+                                                }
+                                                
+                                                return `${ligne.quantite1} ${displayU1} à ${ligne.article?.montant}€/${displayU1} soit `;
+                                              })()}
+                                              <span className="text-blue-600 font-extrabold">{ligne.montant}€</span>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <span>{ligne.quantite1} x {ligne.quantite2}</span>
+                                              <ArrowRight size={10} />
+                                              <span className="text-blue-600">{format(new Date(ligne.dateDebut), 'dd/MM/yy')} - {format(new Date(ligne.dateFin), 'dd/MM/yy')}</span>
+                                            </>
+                                          )}
                                         </p>
                                       </div>
                                     </div>
@@ -539,6 +617,19 @@ export default function OccupationsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
                   <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Type d'occupation</label>
+                    <select className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.type} onChange={e => {
+                      const newType = e.target.value;
+                      const selectedTier = tiers.find(t => t.id === Number(formData.tiersId));
+                      const newNom = (newType === 'COMMERCE' && selectedTier) ? selectedTier.nom : formData.nom;
+                      setFormData({...formData, type: newType, nom: newNom});
+                    }}>
+                      <option value="COMMERCE">Terrasse / Commerce</option>
+                      <option value="CHANTIER">Echafaudage / Chantier</option>
+                      <option value="TOURNAGE">Tournage / Événement</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Libellé du Dossier</label>
                     <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" placeholder="Ex: Terrasse été 2024..." value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
                   </div>
@@ -547,17 +638,9 @@ export default function OccupationsPage() {
                        Demandeur (Tiers)
                        {fetchingTiers && <Loader2 size={12} className="animate-spin text-blue-500" />}
                     </label>
-                    <select required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.tiersId} onChange={e => setFormData({...formData, tiersId: e.target.value})}>
+                    <select required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.tiersId} onChange={e => handleTierChange(e.target.value)}>
                       <option value="">{fetchingTiers ? 'Chargement...' : 'Sélectionner un tiers...'}</option>
                       {tiers.map(t => <option key={t.id} value={t.id}>{t.nom} {t.statut === 'PROVISOIRE' ? '(PROVISOIRE)' : ''}</option>)}
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Type d'occupation</label>
-                    <select className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
-                      <option value="COMMERCE">Terrasse / Commerce</option>
-                      <option value="CHANTIER">Echafaudage / Chantier</option>
-                      <option value="TOURNAGE">Tournage / Événement</option>
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -571,18 +654,40 @@ export default function OccupationsPage() {
                 </div>
 
                 <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
+                  {formData.type === 'COMMERCE' ? (
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date Début</label>
-                      <input type="date" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" value={formData.dateDebut} onChange={e => setFormData({...formData, dateDebut: e.target.value})} />
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Année de taxation</label>
+                      <select required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.anneeTaxation} onChange={e => setFormData({...formData, anneeTaxation: e.target.value})}>
+                        {[2022, 2023, 2024, 2025, 2026, 2027].map(year => (
+                          <option key={year} value={year}>{year}</option>
+                        ))}
+                      </select>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date Fin</label>
-                      <input type="date" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" value={formData.dateFin} onChange={e => setFormData({...formData, dateFin: e.target.value})} />
+                  ) : (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date Début</label>
+                        <input type="date" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" value={formData.dateDebut} onChange={e => setFormData({...formData, dateDebut: e.target.value})} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date Fin</label>
+                        <input type="date" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" value={formData.dateFin} onChange={e => setFormData({...formData, dateFin: e.target.value})} />
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <div className="space-y-2 relative">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Adresse</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between items-center">
+                      Adresse
+                      <button 
+                        type="button"
+                        onClick={handleFetchTiersAddress}
+                        className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 transition-colors"
+                        title="Récupérer l'adresse du tiers"
+                      >
+                        <Download size={12} />
+                        <span>Récupérer du tiers</span>
+                      </button>
+                    </label>
                     <div className="relative">
                       <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                       <input type="text" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all font-bold" placeholder="Rechercher une adresse..." value={addressQuery} onChange={e => { setAddressQuery(e.target.value); setFormData({...formData, adresse: e.target.value}); }} />
@@ -643,11 +748,12 @@ export default function OccupationsPage() {
           onClose={() => setIsLigneModalOpen(false)}
           onSave={fetchOccupations}
           occupationId={selectedOccForLigne.id}
-          annee={new Date(selectedOccForLigne.dateDebut).getFullYear() || new Date().getFullYear()}
+          annee={selectedOccForLigne.anneeTaxation || (selectedOccForLigne.dateDebut ? new Date(selectedOccForLigne.dateDebut).getFullYear() : new Date().getFullYear())}
           defaultDates={{
             start: selectedOccForLigne.dateDebut?.split('T')[0] || format(new Date(), 'yyyy-MM-dd'),
             end: selectedOccForLigne.dateFin?.split('T')[0] || format(new Date(), 'yyyy-MM-dd')
           }}
+          occupationType={selectedOccForLigne.type}
           initialData={editingLigne}
         />
       )}

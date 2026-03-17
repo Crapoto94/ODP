@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import axios from 'axios';
 import { 
   X, 
   MapPin, 
@@ -59,13 +60,35 @@ export default function OccupationDetailModal({
         <div className="p-8 md:p-12 border-b border-slate-100 flex items-start justify-between bg-white relative z-10">
           <div className="space-y-4 max-w-2xl">
             <div className="flex items-center gap-3">
-              <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
-                occ.statut === 'VALIDE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                occ.statut === 'EXPIRE' ? 'bg-rose-50 text-rose-600 border-rose-100' :
-                'bg-amber-50 text-amber-600 border-amber-100'
-              }`}>
-                {occ.statut}
-              </span>
+              <div className="relative group/status">
+                <button 
+                  className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all hover:brightness-95 flex items-center gap-2 ${
+                    occ.statut === 'VALIDE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                    occ.statut === 'EXPIRE' ? 'bg-rose-50 text-rose-600 border-rose-100' :
+                    occ.statut === 'REFUSE' ? 'bg-slate-900 text-white border-slate-900' :
+                    occ.statut === 'ANNULE' ? 'bg-slate-100 text-slate-400 border-slate-200' :
+                    'bg-amber-50 text-amber-600 border-amber-100'
+                  }`}
+                >
+                  {occ.statut}
+                </button>
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden group-hover/status:block z-[120] animate-in slide-in-from-top-2 duration-200">
+                  {['EN_ATTENTE', 'VALIDE', 'REFUSE', 'ANNULE', 'EXPIRE'].map((s) => (
+                    <button
+                      key={s}
+                      onClick={async () => {
+                        try {
+                          await axios.patch(`/api/occupations/${occ.id}`, { statut: s });
+                          onApprove(occ.id); // Re-use onApprove or similar to trigger refresh
+                        } catch (e) { alert("Erreur lors du changement de statut"); }
+                      }}
+                      className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-colors"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <span className="bg-slate-50 px-4 py-1 rounded-full border border-slate-100 text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">
                 {occ.type}
               </span>
@@ -104,9 +127,13 @@ export default function OccupationDetailModal({
                   <Calendar size={16} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Période</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
+                    {occ.type === 'COMMERCE' ? 'Génération' : 'Période'}
+                  </p>
                   <p className="text-sm font-bold text-slate-900 leading-none">
-                    {format(new Date(occ.dateDebut), 'dd MMM yyyy', { locale: fr })} - {format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr })}
+                    {occ.type === 'COMMERCE' 
+                      ? occ.anneeTaxation || 'Non définie' 
+                      : (occ.dateDebut && occ.dateFin ? `${format(new Date(occ.dateDebut), 'dd MMM yyyy', { locale: fr })} - ${format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr })}` : 'Non définie')}
                   </p>
                 </div>
               </div>
@@ -222,7 +249,7 @@ export default function OccupationDetailModal({
                  onClick={() => onAddLigne(occ)}
                  className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95"
                >
-                 <Plus size={16} /> Ajouter un élément
+                 <Plus size={16} /> Ajouter un article
                </button>
             </div>
 
@@ -248,11 +275,64 @@ export default function OccupationDetailModal({
                              {ligne.article?.modeTaxation?.nom || 'Tarif Fixe'}
                            </span>
                          </div>
-                         <p className="text-xs font-bold text-slate-400 flex flex-wrap items-center gap-y-1 gap-x-4">
-                            <span className="flex items-center gap-1.5"><Clock size={12} className="text-slate-300" /> {format(new Date(ligne.dateDebut), 'dd/MM/yyyy')} - {format(new Date(ligne.dateFin), 'dd/MM/yyyy')}</span>
-                            <span className="flex items-center gap-1.5"><Hash size={12} className="text-slate-300" /> Q1: {ligne.quantite1} · Q2: {ligne.quantite2}</span>
-                         </p>
-                      </div>
+                          <p className="text-xs font-bold text-slate-400 flex flex-wrap items-center gap-y-1 gap-x-4">
+                             <>
+                               <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-[10px] font-bold text-slate-400 uppercase">
+                                 <span className="flex items-center gap-1.5">
+                                   <Clock size={12} className="text-slate-300" /> 
+                                   {occ.type === 'COMMERCE' 
+                                     ? occ.anneeTaxation 
+                                     : `${format(new Date(ligne.dateDebut), 'dd/MM/yyyy', { locale: fr })} - ${format(new Date(ligne.dateFin), 'dd/MM/yyyy', { locale: fr })}`
+                                   }
+                                 </span>
+                                 <span className="flex items-center gap-1.5 leading-relaxed">
+                                   <Hash size={12} className="text-slate-300 shrink-0" />
+                                   {(() => {
+                                     const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
+                                     const parts = rawMode.split('/').map((p: string) => p.trim());
+                                     const u1 = parts[0] || 'unité';
+                                     const u2 = parts[1] || 'unité';
+                                     const displayU1 = u1.toLowerCase() === 'unité' ? 'unité' : u1;
+                                     const displayU2 = u2.toLowerCase() === 'unité' ? 'unité' : u2;
+
+                                     if (occ.type === 'CHANTIER') {
+                                       const startStr = format(new Date(ligne.dateDebutConstatee || ligne.dateDebut), 'dd/MM/yyyy', { locale: fr });
+                                       const endStr = format(new Date(ligne.dateFinConstatee || ligne.dateFin), 'dd/MM/yyyy', { locale: fr });
+                                       return (
+                                         <div className="flex flex-col normal-case">
+                                           <span className="text-slate-500">{ligne.quantite1} {displayU1} x {ligne.quantite2} {displayU2} à {ligne.article?.montant}€ soit </span>
+                                           <span className="text-[9px] text-slate-400 font-medium italic">Période réelle : Du {startStr} au {endStr}</span>
+                                         </div>
+                                       );
+                                     }
+                                     
+                                     if (occ.type === 'COMMERCE') {
+                                       return <span className="normal-case text-slate-500">{ligne.quantite1} {displayU1} à {ligne.article?.montant}€/{displayU1} soit </span>;
+                                     }
+
+                                     return (
+                                       <span className="normal-case text-slate-500">
+                                         {ligne.quantite1} {displayU1} 
+                                         {ligne.quantite2 !== 1 ? ` x ${ligne.quantite2} ${displayU2}` : ''} 
+                                         {` à ${ligne.article?.montant}€ soit `}
+                                       </span>
+                                     );
+                                   })()}
+                                   <span className="text-slate-900 font-extrabold ml-auto">{ligne.montant.toLocaleString('fr-FR')} €</span>
+                                 </span>
+                               </div>
+                             </>
+                          </p>
+                          {ligne.photos && (
+                             <div className="flex flex-wrap gap-2 mt-3">
+                               {ligne.photos.split(',').filter(Boolean).map((url: string, i: number) => (
+                                 <a key={i} href={url} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-xl overflow-hidden border border-slate-100 hover:border-blue-300 transition-all shadow-sm">
+                                   <img src={url} alt={`Article attachment ${i+1}`} className="w-full h-full object-cover" />
+                                 </a>
+                               ))}
+                             </div>
+                          )}
+                       </div>
                     </div>
 
                     <div className="mt-6 md:mt-0 flex items-center gap-10">

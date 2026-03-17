@@ -94,72 +94,93 @@ export default function CategorieManagerModal({ isOpen, onClose, onRefresh }: Pr
   }
 
   if (!isOpen) return null;
+  const renderCategory = (cat: Category, indent = 0) => {
+    const isType = cat.niveau === 1;
+    const isSubType = cat.niveau === 2;
 
-  const renderCategory = (cat: Category, indent = 0) => (
-    <div key={cat.id} className="space-y-2">
-      <div className={`flex items-center justify-between p-4 rounded-2xl border transition-all hover:shadow-md ${indent === 0 ? 'bg-white border-slate-200' : 'bg-slate-50/50 border-slate-100'} group`} style={{ marginLeft: `${indent * 24}px` }}>
-        <div className="flex items-center gap-4">
-          <Folder size={18} className={indent === 0 ? 'text-indigo-600' : 'text-slate-400'} />
-          <span className="font-bold text-slate-800">{cat.nom}</span>
-          {cat.couleur && (
-            <span className={`px-3 py-0.5 rounded-lg border text-[10px] font-black uppercase tracking-wider ${cat.couleur}`}>
-              Couleur
-            </span>
-          )}
-        </div>
+    return (
+      <div key={cat.id} className="space-y-4">
+        {isType && (
+          <div className="flex items-center gap-4 pt-6 pb-2 border-b-2 border-slate-200 mt-8 first:mt-0">
+             <div className="w-2 h-8 bg-indigo-600 rounded-full" />
+             <h4 className="text-lg font-black text-slate-900 uppercase tracking-tight">{cat.nom}</h4>
+          </div>
+        )}
         
-        <div className="flex items-center gap-2">
-          {/* Color Selector */}
-          <div className="relative">
-            <button 
-              onClick={() => setShowColorPickerFor(showColorPickerFor === cat.id ? null : cat.id)}
-              className="p-2 hover:bg-white hover:shadow-sm rounded-xl transition-all text-slate-400 hover:text-indigo-600 border border-transparent hover:border-slate-200"
-              title="Changer la couleur"
-            >
-              <div className={`w-4 h-4 rounded-full border border-slate-200 ${cat.couleur || 'bg-slate-100'}`} />
-            </button>
-            
-            {showColorPickerFor === cat.id && (
-              <div className="absolute right-0 top-full mt-2 z-50 bg-white rounded-2xl shadow-2xl border border-slate-100 p-3 grid grid-cols-4 gap-2 min-w-[180px] animate-in zoom-in-95 duration-200">
-                {PRESET_COLORS.map(c => (
-                  <button
-                    key={c.class}
-                    onClick={() => handleUpdateColor(cat.id, c.class)}
-                    className={`w-8 h-8 rounded-lg border border-slate-100 transition-all hover:scale-110 flex items-center justify-center ${c.class}`}
-                  >
-                    {cat.couleur === c.class && <Check size={12} />}
-                  </button>
-                ))}
-                <button
-                  onClick={() => handleUpdateColor(cat.id, '')}
-                  className="w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-400 transition-all hover:scale-110 flex items-center justify-center"
-                  title="Réinitialiser"
-                >
-                  <X size={12} />
-                </button>
-              </div>
+        {isSubType && (
+          <div className="flex items-center gap-2 pl-6 pt-4 pb-1 border-b border-slate-100">
+             <ChevronRight size={16} className="text-indigo-400" />
+             <h5 className="text-[11px] font-black text-slate-500 uppercase tracking-widest">{cat.nom}</h5>
+          </div>
+        )}
+
+        <div className={`flex items-center justify-between p-4 rounded-2xl border transition-all hover:shadow-md ${indent === 0 ? 'bg-white border-slate-200' : 'bg-slate-50/50 border-slate-100'} group`} style={{ marginLeft: `${indent * 24}px` }}>
+          <div className="flex items-center gap-4">
+            <Folder size={18} className={indent === 0 ? 'text-indigo-600' : 'text-slate-400'} />
+            <span className={`font-bold ${isType || isSubType ? 'text-slate-900 border-b-2 border-slate-100' : 'text-slate-600'}`}>
+              {cat.nom}
+            </span>
+            {cat.couleur && (
+              <span className={`px-3 py-0.5 rounded-lg border text-[10px] font-black uppercase tracking-wider ${cat.couleur}`}>
+                Couleur
+              </span>
             )}
           </div>
+          
+          <div className="flex items-center gap-2">
+            {/* Color Selector */}
+            <div className="relative">
+              <button 
+                onClick={() => setShowColorPickerFor(showColorPickerFor === cat.id ? null : cat.id)}
+                className="p-2 hover:bg-white hover:shadow-sm rounded-xl transition-all text-slate-400 hover:text-indigo-600 border border-transparent hover:border-slate-200"
+                title="Changer la couleur"
+              >
+                <div className={`w-4 h-4 rounded-full border border-slate-200 ${cat.couleur || 'bg-slate-100'}`} />
+              </button>
+              
+              {showColorPickerFor === cat.id && (
+                <div className="absolute right-0 top-full mt-2 z-50 bg-white rounded-2xl shadow-2xl border border-slate-100 p-3 grid grid-cols-4 gap-2 min-w-[180px] animate-in zoom-in-95 duration-200">
+                  {PRESET_COLORS.map(c => (
+                    <button
+                      key={c.class}
+                      onClick={() => handleUpdateColor(cat.id, c.class)}
+                      className={`w-8 h-8 rounded-lg border border-slate-100 transition-all hover:scale-110 flex items-center justify-center ${c.class}`}
+                    >
+                      {cat.couleur === c.class && <Check size={12} />}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handleUpdateColor(cat.id, '')}
+                    className="w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-400 transition-all hover:scale-110 flex items-center justify-center"
+                    title="Réinitialiser"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              )}
+            </div>
 
-          {cat.niveau < 3 && (
+            {cat.niveau < 3 && (
+              <button 
+                onClick={() => setNewCat({ nom: '', parentId: cat.id, niveau: cat.niveau + 1, couleur: '' })}
+                className="p-2 hover:bg-indigo-50 rounded-xl transition-all text-indigo-400 hover:text-indigo-600 opacity-0 group-hover:opacity-100"
+              >
+                <Plus size={18} />
+              </button>
+            )}
             <button 
-              onClick={() => setNewCat({ nom: '', parentId: cat.id, niveau: cat.niveau + 1, couleur: '' })}
-              className="p-2 hover:bg-indigo-50 rounded-xl transition-all text-indigo-400 hover:text-indigo-600 opacity-0 group-hover:opacity-100"
+              onClick={() => handleDelete(cat.id)}
+              className="p-2 hover:bg-rose-50 rounded-xl transition-all text-slate-300 hover:text-rose-600 opacity-0 group-hover:opacity-100"
             >
-              <Plus size={18} />
+              <Trash2 size={18} />
             </button>
-          )}
-          <button 
-            onClick={() => handleDelete(cat.id)}
-            className="p-2 hover:bg-rose-50 rounded-xl transition-all text-slate-300 hover:text-rose-600 opacity-0 group-hover:opacity-100"
-          >
-            <Trash2 size={18} />
-          </button>
+          </div>
         </div>
+        {cat.subs?.map(sub => renderCategory(sub, indent + 1))}
       </div>
-      {cat.subs?.map(sub => renderCategory(sub, indent + 1))}
-    </div>
-  );
+    );
+  };
+
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-500">

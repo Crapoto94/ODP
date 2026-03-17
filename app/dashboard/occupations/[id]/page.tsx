@@ -23,7 +23,9 @@ import {
   ChevronLeft,
   Loader2,
   MessageSquare,
-  Send
+  Send,
+  Mic,
+  Paperclip
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -154,13 +156,35 @@ export default function OccupationDetailPage({ params }: Props) {
       <div className="bg-white rounded-[2.5rem] border border-slate-200 p-10 flex flex-col md:flex-row items-start justify-between gap-10">
         <div className="space-y-6 flex-1">
           <div className="flex items-center gap-3">
-            <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
-              occ.statut === 'VALIDE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-              occ.statut === 'EXPIRE' ? 'bg-rose-50 text-rose-600 border-rose-100' :
-              'bg-amber-50 text-amber-600 border-amber-100'
-            }`}>
-              {occ.statut}
-            </span>
+            <div className="relative group/status">
+              <button 
+                className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all hover:brightness-95 flex items-center gap-2 ${
+                  occ.statut === 'VALIDE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                  occ.statut === 'EXPIRE' ? 'bg-rose-50 text-rose-600 border-rose-100' :
+                  occ.statut === 'REFUSE' ? 'bg-slate-900 text-white border-slate-900' :
+                  occ.statut === 'ANNULE' ? 'bg-slate-100 text-slate-400 border-slate-200' :
+                  'bg-amber-50 text-amber-600 border-amber-100'
+                }`}
+              >
+                {occ.statut}
+              </button>
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden group-hover/status:block z-[120] animate-in slide-in-from-top-2 duration-200">
+                {['EN_ATTENTE', 'VALIDE', 'REFUSE', 'ANNULE', 'EXPIRE'].map((s) => (
+                  <button
+                    key={s}
+                    onClick={async () => {
+                      try {
+                        await axios.patch(`/api/occupations/${occ.id}`, { statut: s });
+                        fetchOccupation();
+                      } catch (e) { alert("Erreur lors du changement de statut"); }
+                    }}
+                    className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-colors"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
             <span className="bg-slate-50 px-4 py-1 rounded-full border border-slate-100 text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">
               {occ.type}
             </span>
@@ -201,7 +225,11 @@ export default function OccupationDetailPage({ params }: Props) {
               <div>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Période</p>
                 <p className="text-sm font-black text-slate-900 leading-none">
-                  {occ.dateDebut ? format(new Date(occ.dateDebut), 'dd MMM yyyy', { locale: fr }) : '?'} - {occ.dateFin ? format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr }) : '?'}
+                  {occ.type === 'COMMERCE' ? (occ.anneeTaxation || '-') : (
+                    <>
+                      {occ.dateDebut ? format(new Date(occ.dateDebut), 'dd MMM yyyy', { locale: fr }) : '?'} - {occ.dateFin ? format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr }) : '?'}
+                    </>
+                  )}
                 </p>
               </div>
             </div>
@@ -256,7 +284,7 @@ export default function OccupationDetailPage({ params }: Props) {
                  onClick={() => { setEditingLigne(null); setIsLigneModalOpen(true); }}
                  className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95"
                >
-                 <Plus size={16} /> Ajouter un élément
+                 <Plus size={16} /> Ajouter un article
                </button>
             </div>
 
@@ -283,9 +311,62 @@ export default function OccupationDetailPage({ params }: Props) {
                            </span>
                          </div>
                          <p className="text-xs font-bold text-slate-400 flex flex-wrap items-center gap-y-2 gap-x-5">
-                            <span className="flex items-center gap-2 bg-slate-50/50 px-2 py-1 rounded-md border border-slate-100"><Clock size={12} className="text-slate-300" /> {format(new Date(ligne.dateDebut), 'dd/MM/yyyy')} - {format(new Date(ligne.dateFin), 'dd/MM/yyyy')}</span>
-                            <span className="flex items-center gap-2"><Hash size={12} className="text-slate-300" /> Q1: {ligne.quantite1} · Q2: {ligne.quantite2}</span>
-                         </p>
+                             <>
+                               <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-[10px] font-bold text-slate-400 uppercase w-full">
+                                 <span className="flex items-center gap-1.5">
+                                   <Clock size={12} className="text-slate-300" /> 
+                                   {occ.type === 'COMMERCE' 
+                                     ? occ.anneeTaxation 
+                                     : `${format(new Date(ligne.dateDebut), 'dd/MM/yyyy', { locale: fr })} - ${format(new Date(ligne.dateFin), 'dd/MM/yyyy', { locale: fr })}`
+                                   }
+                                 </span>
+                                 <span className="flex items-center gap-1.5 leading-relaxed">
+                                   <Hash size={12} className="text-slate-300 shrink-0" />
+                                   {(() => {
+                                     const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
+                                     const parts = rawMode.split('/').map((p: string) => p.trim());
+                                     const u1 = parts[0] || 'unité';
+                                     const u2 = parts[1] || 'unité';
+                                     const displayU1 = u1.toLowerCase() === 'unité' ? 'unité' : u1;
+                                     const displayU2 = u2.toLowerCase() === 'unité' ? 'unité' : u2;
+
+                                     if (occ.type === 'CHANTIER') {
+                                       const startStr = format(new Date(ligne.dateDebutConstatee || ligne.dateDebut), 'dd/MM/yyyy', { locale: fr });
+                                       const endStr = format(new Date(ligne.dateFinConstatee || ligne.dateFin), 'dd/MM/yyyy', { locale: fr });
+                                       return (
+                                         <div className="flex flex-col normal-case">
+                                           <span className="text-slate-500">{ligne.quantite1} {displayU1} x {ligne.quantite2} {displayU2} à {ligne.article?.montant}€ soit </span>
+                                           <span className="text-[9px] text-slate-400 font-medium italic">Période réelle : Du {startStr} au {endStr}</span>
+                                         </div>
+                                       );
+                                     }
+                                     
+                                     if (occ.type === 'COMMERCE') {
+                                       return <span className="normal-case text-slate-500">{ligne.quantite1} {displayU1} à {ligne.article?.montant}€/{displayU1} soit </span>;
+                                     }
+
+                                     return (
+                                       <span className="normal-case text-slate-500">
+                                         {ligne.quantite1} {displayU1} 
+                                         {ligne.quantite2 !== 1 ? ` x ${ligne.quantite2} ${displayU2}` : ''} 
+                                         {` à ${ligne.article?.montant}€ soit `}
+                                       </span>
+                                     );
+                                   })()}
+                                   <span className="text-slate-900 font-extrabold ml-auto">{ligne.montant.toLocaleString('fr-FR')} €</span>
+                                 </span>
+                               </div>
+                             </>
+                          </p>
+                         {ligne.photos && (
+                            <div className="flex flex-wrap gap-2 mt-3 text-left">
+                               {ligne.photos.split(',').filter(Boolean).map((url: string, i: number) => (
+                                 <a key={i} href={url} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-xl overflow-hidden border border-slate-100 hover:border-blue-300 transition-all shadow-sm block">
+                                   <img src={url} alt={`Article attachment ${i+1}`} className="w-full h-full object-cover" />
+                                 </a>
+                               ))}
+                            </div>
+                         )}
                       </div>
                     </div>
 
@@ -389,11 +470,12 @@ export default function OccupationDetailPage({ params }: Props) {
           onClose={() => setIsLigneModalOpen(false)}
           onSave={fetchOccupation}
           occupationId={occ.id}
-          annee={new Date(occ.dateDebut).getFullYear() || new Date().getFullYear()}
+          annee={occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear())}
           defaultDates={{
             start: occ.dateDebut?.split('T')[0] || format(new Date(), 'yyyy-MM-dd'),
             end: occ.dateFin?.split('T')[0] || format(new Date(), 'yyyy-MM-dd')
           }}
+          occupationType={occ.type}
           initialData={editingLigne}
         />
       )}
@@ -406,6 +488,9 @@ function NotesThread({ occupationId }: { occupationId: number }) {
   const [loading, setLoading] = useState(true);
   const [newNote, setNewNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [pj, setPj] = useState<{ path: string, name: string } | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const fetchNotes = async () => {
     try {
@@ -422,13 +507,57 @@ function NotesThread({ occupationId }: { occupationId: number }) {
     fetchNotes();
   }, [occupationId]);
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await axios.post('/api/upload', formData);
+      setPj({ path: res.data.url, name: res.data.name });
+    } catch (err) {
+      alert('Erreur lors de l\'envoi du fichier');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const startDictation = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("La reconnaissance vocale n'est pas supportée par votre navigateur.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'fr-FR';
+    recognition.interimResults = false;
+
+    recognition.onstart = () => setIsRecording(true);
+    recognition.onend = () => setIsRecording(false);
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setNewNote(prev => prev + (prev ? ' ' : '') + transcript);
+    };
+
+    recognition.start();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newNote.trim()) return;
+    if (!newNote.trim() && !pj) return;
     setSubmitting(true);
     try {
-      await axios.post(`/api/occupations/${occupationId}/notes`, { content: newNote });
+      await axios.post(`/api/occupations/${occupationId}/notes`, { 
+        content: newNote || (pj ? `Pièce jointe : ${pj.name}` : ''),
+        pjPath: pj?.path,
+        pjName: pj?.name
+      });
       setNewNote('');
+      setPj(null);
       fetchNotes();
     } catch (err) {
       alert('Erreur lors de l\'envoi de la note');
@@ -466,34 +595,92 @@ function NotesThread({ occupationId }: { occupationId: number }) {
                     </span>
                   </div>
                   <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap">{note.content}</p>
+                  {note.pjPath && (
+                    <div className="mt-3 pt-3 border-t border-white/10">
+                      {note.pjName?.match(/\.(jpeg|jpg|gif|png|webp)$/i) && (
+                        <div className="mb-2 rounded-xl overflow-hidden shadow-sm max-w-sm">
+                          <a href={note.pjPath} target="_blank" rel="noreferrer">
+                            <img src={note.pjPath} alt={note.pjName} className="w-full h-auto object-cover max-h-48 hover:opacity-90 transition-opacity" />
+                          </a>
+                        </div>
+                      )}
+                      <a 
+                        href={note.pjPath} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className={`inline-flex items-center gap-2 p-2 rounded-xl text-[10px] font-bold transition-all ${
+                          note.author === 'Conseiller' ? 'bg-white/10 hover:bg-white/20' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200'
+                        }`}
+                      >
+                        <Paperclip size={12} />
+                        <span className="truncate max-w-[150px]">{note.pjName || 'Document'}</span>
+                        <Download size={12} className="ml-2" />
+                      </a>
+                    </div>
+                  )}
                </div>
             </div>
           ))
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="relative mt-auto">
-        <textarea
-          rows={1}
-          placeholder="Écrivez un message ici..."
-          className="w-full bg-white border border-slate-200 rounded-[2rem] py-5 pl-8 pr-20 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-medium text-sm shadow-sm resize-none"
-          value={newNote}
-          onChange={(e) => setNewNote(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleSubmit(e);
-            }
-          }}
-        ></textarea>
-        <button 
-          type="submit"
-          disabled={submitting || !newNote.trim()}
-          className="absolute right-3 top-3 bottom-3 aspect-square bg-slate-900 hover:bg-blue-600 disabled:opacity-20 text-white rounded-2xl flex items-center justify-center transition-all active:scale-90"
-        >
-          {submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-        </button>
-      </form>
+      <div className="space-y-4">
+        {pj && (
+          <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-100 p-3 rounded-2xl animate-in slide-in-from-bottom-2">
+            <div className="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center text-white">
+              <Paperclip size={14} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Fichier prêt</p>
+              <p className="text-xs font-bold text-indigo-900 truncate">{pj.name}</p>
+            </div>
+            <button onClick={() => setPj(null)} className="p-2 hover:bg-indigo-100 rounded-lg text-indigo-400 transition-all">
+              <X size={16} />
+            </button>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="relative flex items-end gap-2">
+          <div className="relative flex-1">
+            <textarea
+              rows={1}
+              placeholder={isRecording ? "Écoute en cours..." : "Écrivez un message ici..."}
+              className={`w-full bg-white border border-slate-200 rounded-[2rem] py-5 pl-8 pr-12 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-medium text-sm shadow-sm resize-none ${isRecording ? 'animate-pulse border-blue-400' : ''}`}
+              value={newNote}
+              onChange={(e) => setNewNote(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e);
+                }
+              }}
+            ></textarea>
+            
+            <div className="absolute right-4 bottom-4 flex items-center gap-1">
+              <button
+                type="button"
+                onClick={startDictation}
+                className={`p-2 rounded-full transition-all ${isRecording ? 'bg-rose-500 text-white animate-bounce' : 'text-slate-400 hover:text-blue-600 hover:bg-slate-50'}`}
+                title="Dicter la note"
+              >
+                <Mic size={18} />
+              </button>
+              <label className="p-2 rounded-full text-slate-400 hover:text-blue-600 hover:bg-slate-50 cursor-pointer transition-all" title="Ajouter une pièce jointe">
+                <input type="file" className="hidden" onChange={handleFileUpload} disabled={uploading} />
+                {uploading ? <Loader2 size={18} className="animate-spin" /> : <Paperclip size={18} />}
+              </label>
+            </div>
+          </div>
+          
+          <button 
+            type="submit"
+            disabled={submitting || (!newNote.trim() && !pj)}
+            className="w-14 h-14 bg-slate-900 hover:bg-blue-600 disabled:opacity-20 text-white rounded-[1.5rem] flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-black/10"
+          >
+            {submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

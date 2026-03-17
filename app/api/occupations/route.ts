@@ -1,13 +1,22 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get('status');
+    const type = searchParams.get('type');
+
+    const where: any = {};
+    if (status) where.statut = status;
+    if (type) where.type = type;
+
     const occupations = await (prisma as any).occupation.findMany({
+      where,
       include: { 
         tiers: true,
         lignes: {
-          include: { article: true }
+          include: { article: { include: { modeTaxation: true } } }
         },
         _count: {
           select: { notes: true }
@@ -48,7 +57,8 @@ export async function POST(req: Request) {
       tiersId, 
       type, 
       dateDebut, 
-      dateFin, 
+      dateFin,
+      anneeTaxation, 
       adresse, 
       latitude, 
       longitude, 
@@ -56,8 +66,14 @@ export async function POST(req: Request) {
       photos
     } = body;
 
-    if (!tiersId || !type || !dateDebut || !dateFin) {
+    if (!tiersId || !type) {
       return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
+    }
+    if (type !== 'COMMERCE' && (!dateDebut || !dateFin)) {
+      return NextResponse.json({ error: 'Dates required for non-commerce types' }, { status: 400 });
+    }
+    if (type === 'COMMERCE' && !anneeTaxation) {
+      return NextResponse.json({ error: 'Taxation year required for commerce types' }, { status: 400 });
     }
 
     const occupation = await (prisma as any).occupation.create({
@@ -66,8 +82,9 @@ export async function POST(req: Request) {
         tiersId: parseInt(tiersId),
         type,
         statut: 'EN_ATTENTE',
-        dateDebut: new Date(dateDebut),
-        dateFin: new Date(dateFin),
+        dateDebut: dateDebut ? new Date(dateDebut) : null,
+        dateFin: dateFin ? new Date(dateFin) : null,
+        anneeTaxation: anneeTaxation ? parseInt(anneeTaxation) : null,
         adresse,
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,

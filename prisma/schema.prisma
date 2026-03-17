@@ -8,18 +8,19 @@ datasource db {
 }
 
 model Tiers {
-  id          Int          @id @default(autoincrement())
-  nom         String
-  siret       String?      @unique
-  email       String?
-  adresse     String?
-  latitude    Float?
-  longitude   Float?
-  code_sedit  String?      // Code pour le système financier municipal
-  statut      String       @default("PROVISOIRE")
-  occupations Occupation[]
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
+  id              Int          @id @default(autoincrement())
+  nom             String
+  natureJuridique String?
+  siret           String?      @unique
+  email           String?
+  adresse         String?
+  latitude        Float?
+  longitude       Float?
+  code_sedit      String?      // Code pour le système financier municipal
+  statut          String       @default("PROVISOIRE")
+  occupations     Occupation[]
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
 }
 
 model Occupation {
@@ -29,8 +30,9 @@ model Occupation {
   tiers           Tiers             @relation(fields: [tiersId], references: [id])
   type            String            // COMMERCE, CHANTIER, TOURNAGE
   statut          String            // EN_ATTENTE, VALIDE, EXPIRE, REFUSE
-  dateDebut       DateTime
-  dateFin         DateTime
+  dateDebut       DateTime?
+  dateFin         DateTime?
+  anneeTaxation   Int?
   adresse         String
   latitude        Float?
   longitude       Float?
@@ -38,6 +40,7 @@ model Occupation {
   photos          String?           // Liste de chemins vers les photos (séparés par virgule ou JSON)
   montantCalcule  Float             @default(0)
   facturePath     String?
+  numeroFacture   String?           // Numéro séquentiel AAAA-ODP-X
   created_at      DateTime          @default(now())
   updated_at      DateTime          @updatedAt
   lignes          LigneOccupation[]
@@ -50,6 +53,8 @@ model Note {
   occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
   content      String
   author       String?
+  pjPath       String?    // Chemin vers la pièce jointe
+  pjName       String?    // Nom d'origine du fichier
   created_at   DateTime   @default(now())
 }
 
@@ -88,10 +93,14 @@ model Article {
 
 model User {
   id        Int      @id @default(autoincrement())
-  username  String   @unique
+  nom       String
+  prenom    String
+  email     String   @unique
+  login     String   @unique
   password  String
-  role      String   // AGENT, VALIDATEUR, ADMIN, COMPTABILITE
+  role      String   // AGENT_TERRAIN, AGENT_BUREAU, AGENT_COMPTABLE, ADMIN
   created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model AppSettings {
@@ -113,9 +122,12 @@ model LigneOccupation {
   article      Article    @relation(fields: [articleId], references: [id])
   quantite1    Float      @default(0) // ex: Surface / Nombre d'objets
   quantite2    Float      @default(0) // ex: Durée / Linéaire
-  dateDebut    DateTime
-  dateFin      DateTime
+  dateDebut    DateTime?
+  dateFin      DateTime?
+  dateDebutConstatee DateTime? // Date de début constatée sur le terrain
+  dateFinConstatee   DateTime?   // Date de fin constatée sur le terrain
   montant      Float      @default(0)
+  photos       String?    // Pièces jointes spécifiques à la ligne
   created_at   DateTime   @default(now())
   updated_at   DateTime   @updatedAt
 }
