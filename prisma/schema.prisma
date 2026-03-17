@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tiers {
+  id          Int          @id @default(autoincrement())
+  nom         String
+  siret       String?      @unique
+  email       String?
+  adresse     String?
+  latitude    Float?
+  longitude   Float?
+  code_sedit  String?      // Code pour le système financier municipal
+  statut      String       @default("PROVISOIRE")
+  occupations Occupation[]
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+}
+
+model Occupation {
+  id              Int               @id @default(autoincrement())
+  nom             String?
+  tiersId         Int
+  tiers           Tiers             @relation(fields: [tiersId], references: [id])
+  type            String            // COMMERCE, CHANTIER, TOURNAGE
+  statut          String            // EN_ATTENTE, VALIDE, EXPIRE, REFUSE
+  dateDebut       DateTime
+  dateFin         DateTime
+  adresse         String
+  latitude        Float?
+  longitude       Float?
+  description     String?
+  photos          String?           // Liste de chemins vers les photos (séparés par virgule ou JSON)
+  montantCalcule  Float             @default(0)
+  facturePath     String?
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  lignes          LigneOccupation[]
+}
+
+model Categorie {
+  id        Int         @id @default(autoincrement())
+  nom       String
+  couleur   String?     // Hex code or Tailwind class
+  niveau    Int         // 1 for Type, 2 for Sous type, 3 for sous sous type
+  parentId  Int?
+  parent    Categorie?  @relation("SubCategories", fields: [parentId], references: [id])
+  subs      Categorie[] @relation("SubCategories")
+  articles  Article[]
+}
+
+model ModeTaxation {
+  id      Int      @id @default(autoincrement())
+  nom     String   @unique
+  articles Article[]
+}
+
+model Article {
+  id             Int               @id @default(autoincrement())
+  numero         String?           // N° Article
+  designation    String
+  categorieId    Int?
+  categorie      Categorie?        @relation(fields: [categorieId], references: [id])
+  modeTaxationId Int?
+  modeTaxation   ModeTaxation?     @relation(fields: [modeTaxationId], references: [id])
+  annee          Int
+  montant        Float             @default(0)
+  notes          String?
+  created_at     DateTime          @default(now())
+  updated_at     DateTime          @updatedAt
+  lignes         LigneOccupation[]
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  role      String   // AGENT, VALIDATEUR, ADMIN, COMPTABILITE
+  created_at DateTime @default(now())
+}
+
+model AppSettings {
+  id           Int      @id @default(1)
+  financeEmail String?
+  appUrl       String?
+  apmUrl       String?
+  apmToken     String?
+  senderName   String?  @default("ODP Console")
+  senderEmail  String?  @default("dsihub@fbc.fr")
+  updated_at   DateTime @updatedAt
+}
+
+model LigneOccupation {
+  id           Int        @id @default(autoincrement())
+  occupationId Int
+  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  articleId    Int
+  article      Article    @relation(fields: [articleId], references: [id])
+  quantite1    Float      @default(0) // ex: Surface / Nombre d'objets
+  quantite2    Float      @default(0) // ex: Durée / Linéaire
+  dateDebut    DateTime
+  dateFin      DateTime
+  montant      Float      @default(0)
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+}
+
+model Gabarit {
+  id         Int      @id @default(autoincrement())
+  nom        String
+  contenu    String   // JSON string: { elements: Array<{ type, x, y, width, height, value, style }> }
+  isDefault  Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
