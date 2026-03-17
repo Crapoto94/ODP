@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 
 export async function GET(
   request: Request,
@@ -23,12 +24,15 @@ export async function POST(
 ) {
   const { id } = await params;
   try {
+    const session = await getSession();
+    const authorName = session ? `${session.prenom} ${session.nom}` : 'Conseiller';
+
     const body = await request.json();
     const note = await (prisma as any).note.create({
       data: {
         occupationId: parseInt(id),
         content: body.content,
-        author: body.author || 'Conseiller',
+        author: body.author || authorName,
         pjPath: body.pjPath || null,
         pjName: body.pjName || null
       }

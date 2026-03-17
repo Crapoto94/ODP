@@ -42,6 +42,7 @@ export default function OccupationDetailPage({ params }: Props) {
   const router = useRouter();
   const [occ, setOcc] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   
   const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
   const [editingLigne, setEditingLigne] = useState<any>(null);
@@ -60,6 +61,7 @@ export default function OccupationDetailPage({ params }: Props) {
 
   useEffect(() => {
     fetchOccupation();
+    axios.get('/api/auth/me').then(res => setCurrentUser(res.data)).catch(() => {});
   }, [paramId]);
 
   if (loading) {
@@ -310,7 +312,7 @@ export default function OccupationDetailPage({ params }: Props) {
                              {ligne.article?.modeTaxation?.nom || 'Tarif Fixe'}
                            </span>
                          </div>
-                         <p className="text-xs font-bold text-slate-400 flex flex-wrap items-center gap-y-2 gap-x-5">
+                         <div className="text-xs font-bold text-slate-400 flex flex-wrap items-center gap-y-2 gap-x-5">
                              <>
                                <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-[10px] font-bold text-slate-400 uppercase w-full">
                                  <span className="flex items-center gap-1.5">
@@ -357,7 +359,7 @@ export default function OccupationDetailPage({ params }: Props) {
                                  </span>
                                </div>
                              </>
-                          </p>
+                          </div>
                          {ligne.photos && (
                             <div className="flex flex-wrap gap-2 mt-3 text-left">
                                {ligne.photos.split(',').filter(Boolean).map((url: string, i: number) => (
@@ -579,18 +581,20 @@ function NotesThread({ occupationId }: { occupationId: number }) {
              <p className="text-[10px] font-black uppercase tracking-widest italic">Aucun message pour le moment</p>
           </div>
         ) : (
-          notes.map((note) => (
-            <div key={note.id} className={`flex flex-col ${note.author === 'Conseiller' ? 'items-end' : 'items-start'}`}>
+          notes.map((note) => {
+            const isMe = note.author === 'Conseiller' || (currentUser && note.author === `${currentUser.prenom} ${currentUser.nom}`);
+            return (
+            <div key={note.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                <div className={`max-w-[80%] rounded-3xl p-5 shadow-sm border ${
-                 note.author === 'Conseiller' 
+                 isMe  
                    ? 'bg-blue-600 text-white rounded-tr-none border-blue-500 shadow-blue-500/20' 
                    : 'bg-white text-slate-800 rounded-tl-none border-slate-100 shadow-slate-200/20'
                }`}>
                   <div className="flex items-center justify-between gap-10 mb-2">
-                    <span className={`text-[8px] font-black uppercase tracking-widest ${note.author === 'Conseiller' ? 'text-blue-100' : 'text-slate-400'}`}>
+                    <span className={`text-[8px] font-black uppercase tracking-widest ${isMe ? 'text-blue-100' : 'text-slate-400'}`}>
                       {note.author}
                     </span>
-                    <span className={`text-[8px] font-bold ${note.author === 'Conseiller' ? 'text-blue-200' : 'text-slate-300'}`}>
+                    <span className={`text-[8px] font-bold ${isMe ? 'text-blue-200' : 'text-slate-300'}`}>
                       {format(new Date(note.created_at), 'dd MMM HH:mm', { locale: fr })}
                     </span>
                   </div>
@@ -609,7 +613,7 @@ function NotesThread({ occupationId }: { occupationId: number }) {
                         target="_blank" 
                         rel="noreferrer"
                         className={`inline-flex items-center gap-2 p-2 rounded-xl text-[10px] font-bold transition-all ${
-                          note.author === 'Conseiller' ? 'bg-white/10 hover:bg-white/20' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200'
+                          isMe ? 'bg-white/10 hover:bg-white/20' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200'
                         }`}
                       >
                         <Paperclip size={12} />
@@ -620,7 +624,8 @@ function NotesThread({ occupationId }: { occupationId: number }) {
                   )}
                </div>
             </div>
-          ))
+          );
+        })
         )}
       </div>
 
