@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { id: paramId } = await params;
-    const tier = await prisma.tiers.findUnique({
+    const tier = await (prisma as any).tiers.findUnique({
       where: { id: Number(paramId) }
     });
     
@@ -34,7 +34,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Le code SEDIT est requis' }, { status: 400 });
     }
     
-    const tier = await prisma.tiers.update({
+    const tier = await (prisma as any).tiers.update({
       where: { id: Number(paramId) },
       data: {
         code_sedit,
