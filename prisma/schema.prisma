@@ -17,6 +17,7 @@ model Tiers {
   latitude        Float?
   longitude       Float?
   code_sedit      String?      // Code pour le système financier municipal
+  statut          String       @default("PROVISOIRE") // PROVISOIRE, DEFINITIF
   occupations     Occupation[]
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
