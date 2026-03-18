@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { 
@@ -76,7 +76,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
   'VALIDE': { label: 'Validé', color: 'text-emerald-600', bg: 'bg-emerald-50' }    // Legacy support
 };
 
-export default function OccupationsPage() {
+function OccupationsPageContent() {
   const [occupations, setOccupations] = useState<Occupation[]>([]);
   const [tiers, setTiers] = useState<Tiers[]>([]);
   const [loading, setLoading] = useState(true);
@@ -805,5 +805,17 @@ export default function OccupationsPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function OccupationsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="animate-spin text-blue-600" size={40} />
+      </div>
+    }>
+      <OccupationsPageContent />
+    </Suspense>
   );
 }
