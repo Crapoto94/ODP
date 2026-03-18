@@ -21,6 +21,7 @@ import {
   ArrowRight,
   Camera
 } from 'lucide-react';
+import Link from 'next/link';
 
 interface Tiers {
   id: number;
@@ -269,7 +270,6 @@ export default function TiersPage() {
                   <th className="px-6 pb-4">Entité / Raison Sociale</th>
                   <th className="px-6 pb-4">Nature</th>
                   <th className="px-6 pb-4">SIRET / INSEE</th>
-                  <th className="px-6 pb-4">Statut</th>
                   <th className="px-6 pb-4">Dossiers</th>
                   <th className="px-6 pb-4">Code SEDIT</th>
                   <th className="px-6 pb-4 text-right">Actions</th>
@@ -293,32 +293,27 @@ export default function TiersPage() {
                     <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
                        <span className="text-[10px] font-black text-slate-500 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">{t.natureJuridique || 'NON DÉFINI'}</span>
                     </td>
-                    <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
+                     <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
                       <div className="flex items-center gap-2 bg-slate-100 w-fit px-3 py-1 rounded-lg text-[11px] font-mono font-bold text-slate-500">
                         <Fingerprint size={12} />
                         {t.siret || 'SANS SIRET'}
                       </div>
                     </td>
-                     <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
-                        <div className="flex items-center gap-2">
-                           <div className={`w-2 h-2 rounded-full ${(t as any).statut === 'DEFINITIF' ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`}></div>
-                           <span className={`text-[10px] font-black uppercase ${(t as any).statut === 'DEFINITIF' ? 'text-emerald-600' : 'text-amber-600'}`}>
-                             {(t as any).statut || 'PROVISOIRE'}
-                           </span>
-                        </div>
-                     </td>
-                     <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
-                        <div className="flex items-center gap-2">
-                           <List size={14} className="text-slate-300" />
-                           <span className="text-sm font-black text-slate-900">{t._count?.occupations || 0}</span>
-                        </div>
+                     <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-center">
+                        <Link 
+                          href={`/dashboard/occupations?tiersId=${t.id}`}
+                          className="flex items-center justify-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+                        >
+                           <List size={14} />
+                           <span className="text-sm font-black">{t._count?.occupations || 0}</span>
+                        </Link>
                      </td>
                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
                         <span className="text-xs font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">{t.code_sedit || 'À DÉFINIR'}</span>
                      </td>
-                     <td className="px-6 py-5 rounded-r-3xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
+                    <td className="px-6 py-5 rounded-r-3xl border-y border-r border-slate-100 bg-white group-hover:border-blue-200">
                         <div className="flex items-center justify-end gap-2 text-right">
-                         {(t as any).statut !== 'DEFINITIF' && !t.code_sedit && (
+                         {!t.code_sedit && (
                            <button 
                              onClick={() => handleSeditCreationRequest(t)}
                              className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all active:scale-95"
@@ -492,14 +487,14 @@ export default function TiersPage() {
                   Annuler
                 </button>
                 <div className="flex-1 flex gap-3">
-                  {isEditing && (formData as any)?.statut !== 'DEFINITIF' && !formData.code_sedit && (
+                   {isEditing && !formData.code_sedit && (
                     <button 
                       type="button"
                       onClick={(e) => handleSubmit(e as any, true)}
                       disabled={submitting}
                       className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 py-5 rounded-3xl font-black transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 uppercase tracking-widest text-[10px] border border-blue-200"
                     >
-                       Création SEDIT
+                       Demander Création SEDIT
                     </button>
                   )}
                   <button 

@@ -123,8 +123,7 @@ export async function POST(req: Request) {
            siret,
            email,
            adresse: finalAdresse,
-           code_sedit,
-           statut: 'PROVISOIRE'
+           code_sedit
          }
        });
     }

@@ -25,7 +25,8 @@ import {
   MessageSquare,
   Send,
   Mic,
-  Paperclip
+  Paperclip,
+  Mail
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -47,11 +48,21 @@ export default function OccupationDetailPage({ params }: Props) {
   const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
   const [editingLigne, setEditingLigne] = useState<any>(null);
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  
+  // Contacts states
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [newContact, setNewContact] = useState({ prenom: '', email: '', role: 'Contact principal' });
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
 
   const fetchOccupation = async () => {
     try {
       const res = await axios.get(`/api/occupations/${paramId}`);
       setOcc(res.data);
+      
+      // Auto-add tier email as default contact if none exist
+      if (res.data.contacts?.length === 0 && res.data.tiers?.email) {
+        handleAutoAddTierContact(res.data.tiers);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -84,13 +95,30 @@ export default function OccupationDetailPage({ params }: Props) {
 
   const totalAmount = occ.lignes?.reduce((sum: number, l: any) => sum + l.montant, 0) || 0;
 
-  const handleApprove = async () => {
-    if (!confirm('Approuver ce dossier ?')) return;
-    try {
-      await axios.patch(`/api/occupations/${occ.id}`, { statut: 'VALIDE' });
-      fetchOccupation();
-    } catch (err) { alert('Erreur lors de la validation'); }
+  const STATUS_MAP: Record<string, { label: string; color: string; bg: string; border: string }> = {
+    'DECLARE': { label: 'Déclaré', color: 'text-slate-600', bg: 'bg-slate-50', border: 'border-slate-200' },
+    'EN_COURS': { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    'TERMINE': { label: 'Terminé', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+    'VERIFIE': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    'FACTURE': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    'PAYE': { label: 'Payé', color: 'text-emerald-700', bg: 'bg-emerald-100', border: 'border-emerald-200' },
+    // Legacy fallbacks
+    'EN_ATTENTE': { label: 'En attente', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    'VALIDE': { label: 'Validé', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    'VERIFIED': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    'INVOICED': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
   };
+  const statusInfo = STATUS_MAP[occ.statut] || { label: occ.statut, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' };
+  const isLocked = ['VERIFIE', 'FACTURE', 'PAYE', 'VERIFIED', 'INVOICED'].includes(occ.statut);
+
+  const handleToggleVerifie = async () => {
+    const newStatut = occ.statut === 'VERIFIE' ? 'EN_COURS' : 'VERIFIE';
+    try {
+      await axios.patch(`/api/occupations/${occ.id}`, { statut: newStatut });
+      fetchOccupation();
+    } catch (err) { alert('Erreur lors du changement de statut'); }
+  };
+
 
   const downloadFacture = async () => {
     setGeneratingPdf(true);
@@ -129,6 +157,44 @@ export default function OccupationDetailPage({ params }: Props) {
     }
   };
 
+  const handleAutoAddTierContact = async (tiers: any) => {
+    try {
+      await axios.post(`/api/occupations/${occ.id}/contacts`, {
+        prenom: tiers.nom,
+        email: tiers.email,
+        role: 'Contact Tiers'
+      });
+      fetchOccupation(); // Refresh to show the new contact
+    } catch (err) {
+      console.error('Failed to auto-add tier contact:', err);
+    }
+  };
+
+  const handleAddContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingContact(true);
+    try {
+      await axios.post(`/api/occupations/${occ.id}/contacts`, newContact);
+      setIsContactModalOpen(false);
+      setNewContact({ prenom: '', email: '', role: 'Contact principal' });
+      fetchOccupation();
+    } catch (err) {
+      alert('Erreur lors de l\'ajout du contact');
+    } finally {
+      setIsSubmittingContact(false);
+    }
+  };
+
+  const handleDeleteContact = async (contactId: number) => {
+    if (!confirm('Supprimer ce contact ?')) return;
+    try {
+      await axios.delete(`/api/occupations/${occ.id}/contacts/${contactId}`);
+      fetchOccupation();
+    } catch (err) {
+      alert('Erreur lors de la suppression');
+    }
+  };
+
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Breadcrumb & Navigation */}
@@ -145,11 +211,25 @@ export default function OccupationDetailPage({ params }: Props) {
 
         {/* Action Quick Bar */}
         <div className="flex items-center gap-3">
-           <button 
-             onClick={() => router.push(`/dashboard/occupations?edit=${occ.id}`)}
-             className="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 hover:text-blue-600 rounded-xl transition-all shadow-sm font-bold text-xs flex items-center gap-2"
+           {!isLocked && (
+             <button 
+               onClick={() => router.push(`/dashboard/occupations?edit=${occ.id}`)}
+               className="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 hover:text-blue-600 rounded-xl transition-all shadow-sm font-bold text-xs flex items-center gap-2"
+             >
+               <Pencil size={14} /> Modifier info
+             </button>
+           )}
+           <button
+             onClick={handleToggleVerifie}
+             disabled={['FACTURE','PAYE','INVOICED'].includes(occ.statut)}
+             className={`px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-sm disabled:opacity-40 ${
+               isLocked
+                 ? 'bg-emerald-600 text-white hover:bg-emerald-500'
+                 : 'bg-white border border-emerald-300 text-emerald-700 hover:bg-emerald-50'
+             }`}
            >
-             <Pencil size={14} /> Modifier info
+             <CheckCircle2 size={14} />
+             {isLocked ? 'Modifier (dévérouiller)' : 'Marquer Vérifié'}
            </button>
         </div>
       </div>
@@ -158,35 +238,9 @@ export default function OccupationDetailPage({ params }: Props) {
       <div className="bg-white rounded-[2.5rem] border border-slate-200 p-10 flex flex-col md:flex-row items-start justify-between gap-10">
         <div className="space-y-6 flex-1">
           <div className="flex items-center gap-3">
-            <div className="relative group/status">
-              <button 
-                className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all hover:brightness-95 flex items-center gap-2 ${
-                  occ.statut === 'VALIDE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                  occ.statut === 'EXPIRE' ? 'bg-rose-50 text-rose-600 border-rose-100' :
-                  occ.statut === 'REFUSE' ? 'bg-slate-900 text-white border-slate-900' :
-                  occ.statut === 'ANNULE' ? 'bg-slate-100 text-slate-400 border-slate-200' :
-                  'bg-amber-50 text-amber-600 border-amber-100'
-                }`}
-              >
-                {occ.statut}
-              </button>
-              <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden group-hover/status:block z-[120] animate-in slide-in-from-top-2 duration-200">
-                {['EN_ATTENTE', 'VALIDE', 'REFUSE', 'ANNULE', 'EXPIRE'].map((s) => (
-                  <button
-                    key={s}
-                    onClick={async () => {
-                      try {
-                        await axios.patch(`/api/occupations/${occ.id}`, { statut: s });
-                        fetchOccupation();
-                      } catch (e) { alert("Erreur lors du changement de statut"); }
-                    }}
-                    className="w-full text-left px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-colors"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border}`}>
+              {statusInfo.label}
+            </span>
             <span className="bg-slate-50 px-4 py-1 rounded-full border border-slate-100 text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">
               {occ.type}
             </span>
@@ -247,15 +301,7 @@ export default function OccupationDetailPage({ params }: Props) {
                 <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest mb-2">Total TTC</p>
                 <p className="text-4xl font-black tracking-tighter mb-6">{totalAmount.toLocaleString('fr-FR')} €</p>
                 
-                {occ.statut !== 'VALIDE' ? (
-                  <button 
-                    onClick={handleApprove}
-                    className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 active:scale-95"
-                  >
-                    Valider le Dossier
-                  </button>
-                ) : (
-                  <button 
+                <button 
                     onClick={downloadFacture}
                     disabled={generatingPdf}
                     className="w-full bg-white/10 hover:bg-white/20 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all backdrop-blur-sm border border-white/10 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
@@ -267,8 +313,7 @@ export default function OccupationDetailPage({ params }: Props) {
                     )}
                     {generatingPdf ? 'Génération...' : 'Facture PDF'}
                   </button>
-                )}
-              </div>
+                </div>
            </div>
         </div>
       </div>
@@ -410,7 +455,7 @@ export default function OccupationDetailPage({ params }: Props) {
                </div>
             </div>
             
-            <NotesThread occupationId={occ.id} />
+            <NotesThread occupationId={occ.id} currentUser={currentUser} />
           </section>
         </div>
 
@@ -454,6 +499,52 @@ export default function OccupationDetailPage({ params }: Props) {
             )}
           </section>
 
+          {/* Contacts Section */}
+          <section className="space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                 <User size={14} /> Contacts ({occ.contacts?.length || 0})
+               </h3>
+               <button 
+                 onClick={() => setIsContactModalOpen(true)}
+                 className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+               >
+                 <Plus size={14} />
+               </button>
+            </div>
+            
+            <div className="space-y-3">
+              {occ.contacts?.length > 0 ? (
+                occ.contacts.map((contact: any) => (
+                  <div key={contact.id} className="bg-white p-5 rounded-[2rem] border border-slate-200 shadow-sm group hover:border-blue-400 transition-all">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100/50">
+                        {contact.role}
+                      </span>
+                      <button 
+                        onClick={() => handleDeleteContact(contact.id)}
+                        className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-300 hover:text-rose-600 transition-all"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-black text-slate-900">{contact.prenom}</p>
+                      <a href={`mailto:${contact.email}`} className="text-xs font-bold text-slate-400 hover:text-blue-600 flex items-center gap-2 transition-colors">
+                        <Mail size={12} className="shrink-0" />
+                        {contact.email}
+                      </a>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-8 bg-slate-50/50 rounded-[2rem] border border-dashed border-slate-200 text-center">
+                  <p className="text-[10px] font-bold text-slate-400 italic">Aucun contact enregistré</p>
+                </div>
+              )}
+            </div>
+          </section>
+
           {/* Observations Section */}
           <section className="space-y-4">
             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Observations</h3>
@@ -481,11 +572,86 @@ export default function OccupationDetailPage({ params }: Props) {
           initialData={editingLigne}
         />
       )}
+
+      {/* Contact Modal */}
+      {isContactModalOpen && (
+        <div className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="w-full max-w-md bg-white rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="p-10 space-y-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                    <User size={24} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-slate-900 leading-tight">Ajouter un Contact</h2>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Personne référente pour ce dossier</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsContactModalOpen(false)} className="p-3 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-all">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleAddContact} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Prénom / Nom</label>
+                  <input
+                    type="text"
+                    required
+                    value={newContact.prenom}
+                    onChange={e => setNewContact({...newContact, prenom: e.target.value})}
+                    placeholder="Jean Dupont"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-bold transition-all text-sm"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={newContact.email}
+                    onChange={e => setNewContact({...newContact, email: e.target.value})}
+                    placeholder="jean@exemple.fr"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-bold transition-all text-sm"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Rôle / Fonction</label>
+                  <select
+                    value={newContact.role}
+                    onChange={e => setNewContact({...newContact, role: e.target.value})}
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-bold transition-all text-sm appearance-none"
+                  >
+                    <option value="Contact principal">Contact principal</option>
+                    <option value="Gérant">Gérant</option>
+                    <option value="Architecte / Maitre d'œuvre">Architecte / Maitre d'œuvre</option>
+                    <option value="Conducteur de travaux">Conducteur de travaux</option>
+                    <option value="Contact administratif">Contact administratif</option>
+                    <option value="Autre">Autre</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingContact}
+                  className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-3xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/30 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {isSubmittingContact ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+                  Enregistrer le Contact
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function NotesThread({ occupationId }: { occupationId: number }) {
+function NotesThread({ occupationId, currentUser }: { occupationId: number, currentUser: any }) {
   const [notes, setNotes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [newNote, setNewNote] = useState('');
@@ -493,6 +659,11 @@ function NotesThread({ occupationId }: { occupationId: number }) {
   const [isRecording, setIsRecording] = useState(false);
   const [pj, setPj] = useState<{ path: string, name: string } | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  const [isEmailMode, setIsEmailMode] = useState(false);
+  const [selectedContactId, setSelectedContactId] = useState<string>('');
+  const [isHarvesting, setIsHarvesting] = useState(false);
+  const [contacts, setContacts] = useState<any[]>([]);
 
   const fetchNotes = async () => {
     try {
@@ -505,8 +676,35 @@ function NotesThread({ occupationId }: { occupationId: number }) {
     }
   };
 
+  const fetchContacts = async () => {
+    try {
+      const res = await axios.get(`/api/occupations/${occupationId}/contacts`);
+      setContacts(res.data);
+      if (res.data.length > 0) {
+        setSelectedContactId(res.data[0].id.toString());
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleHarvest = async () => {
+    setIsHarvesting(true);
+    try {
+      const res = await axios.post('/api/messaging/harvest');
+      if (res.data.imported > 0) {
+        fetchNotes();
+      }
+    } catch (err) {
+      console.error('Harvest failed:', err);
+    } finally {
+      setIsHarvesting(false);
+    }
+  };
+
   useEffect(() => {
     fetchNotes();
+    fetchContacts();
   }, [occupationId]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -542,7 +740,7 @@ function NotesThread({ occupationId }: { occupationId: number }) {
     recognition.onend = () => setIsRecording(false);
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
-      setNewNote(prev => prev + (prev ? ' ' : '') + transcript);
+      setNewNote((prev: string) => prev + (prev ? ' ' : '') + transcript);
     };
 
     recognition.start();
@@ -556,10 +754,13 @@ function NotesThread({ occupationId }: { occupationId: number }) {
       await axios.post(`/api/occupations/${occupationId}/notes`, { 
         content: newNote || (pj ? `Pièce jointe : ${pj.name}` : ''),
         pjPath: pj?.path,
-        pjName: pj?.name
+        pjName: pj?.name,
+        sendEmail: isEmailMode,
+        contactId: isEmailMode ? selectedContactId : null
       });
       setNewNote('');
       setPj(null);
+      setIsEmailMode(false);
       fetchNotes();
     } catch (err) {
       alert('Erreur lors de l\'envoi de la note');
@@ -570,6 +771,20 @@ function NotesThread({ occupationId }: { occupationId: number }) {
 
   return (
     <div className="bg-slate-50/50 rounded-[2.5rem] border border-slate-100 p-8 flex flex-col gap-8 min-h-[400px]">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200/50">
+        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+          <MessageSquare size={14} /> Fil de discussion
+        </h3>
+        <button 
+          onClick={handleHarvest}
+          disabled={isHarvesting}
+          className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 text-slate-500 hover:text-blue-600 rounded-lg font-bold text-[9px] uppercase tracking-tighter transition-all shadow-sm active:scale-95 disabled:opacity-50"
+        >
+          {isHarvesting ? <Loader2 size={12} className="animate-spin" /> : <Clock size={12} />}
+          Synchroniser mails
+        </button>
+      </div>
+
       <div className="flex-1 space-y-4 max-h-[500px] overflow-y-auto px-2 scrollbar-hide">
         {loading ? (
           <div className="flex items-center justify-center h-full py-10 opacity-30">
@@ -581,20 +796,65 @@ function NotesThread({ occupationId }: { occupationId: number }) {
              <p className="text-[10px] font-black uppercase tracking-widest italic">Aucun message pour le moment</p>
           </div>
         ) : (
-          notes.map((note) => {
-            const isMe = note.author === 'Conseiller' || (currentUser && note.author === `${currentUser.prenom} ${currentUser.nom}`);
+          notes.map((note: any) => {
+            const isMe = note.author === 'Conseiller' || 
+                         note.author === "Mairie d'Ivry-sur-Seine" ||
+                         (currentUser && note.author === `${currentUser.prenom} ${currentUser.nom}`);
+            
+            // Color Logic
+            // - Sent Internal: Dark/Slate
+            // - Sent Email: Blue/Indigo
+            // - Received Email: Emerald/Green
+            const isReceived = note.isEmail && !isMe;
+            const isSentEmail = note.isEmail && isMe;
+
+            let bgColor = 'bg-white border-slate-100 shadow-slate-200/20';
+            let textColor = 'text-slate-800';
+            let metaColor = 'text-slate-400';
+            let dateColor = 'text-slate-300';
+            let badgeStyle = 'bg-slate-50 border-slate-200 text-slate-400';
+
+            if (isMe) {
+               if (isSentEmail) {
+                  bgColor = 'bg-indigo-600 border-indigo-500 shadow-indigo-500/20';
+                  textColor = 'text-white';
+                  metaColor = 'text-indigo-100';
+                  dateColor = 'text-indigo-200';
+                  badgeStyle = 'bg-indigo-500 border-indigo-400 text-indigo-100';
+               } else {
+                  bgColor = 'bg-slate-800 border-slate-700 shadow-slate-900/20';
+                  textColor = 'text-white';
+                  metaColor = 'text-slate-300';
+                  dateColor = 'text-slate-400';
+                  badgeStyle = 'bg-slate-700 border-slate-600 text-slate-300';
+               }
+            } else if (isReceived) {
+               bgColor = 'bg-emerald-50 border-emerald-100 shadow-emerald-200/20';
+               textColor = 'text-emerald-900';
+               metaColor = 'text-emerald-600';
+               dateColor = 'text-emerald-400';
+               badgeStyle = 'bg-emerald-100 border-emerald-200 text-emerald-600';
+            }
+
             return (
             <div key={note.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                <div className={`max-w-[80%] rounded-3xl p-5 shadow-sm border ${
-                 isMe  
-                   ? 'bg-blue-600 text-white rounded-tr-none border-blue-500 shadow-blue-500/20' 
-                   : 'bg-white text-slate-800 rounded-tl-none border-slate-100 shadow-slate-200/20'
-               }`}>
+                 isMe && !isSentEmail ? 'rounded-tr-none' : 
+                 isMe && isSentEmail ? 'rounded-tr-none' : 
+                 'rounded-tl-none'
+               } ${bgColor} ${textColor}`}>
                   <div className="flex items-center justify-between gap-10 mb-2">
-                    <span className={`text-[8px] font-black uppercase tracking-widest ${isMe ? 'text-blue-100' : 'text-slate-400'}`}>
-                      {note.author}
-                    </span>
-                    <span className={`text-[8px] font-bold ${isMe ? 'text-blue-200' : 'text-slate-300'}`}>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[8px] font-black uppercase tracking-widest ${metaColor}`}>
+                        {note.author}
+                      </span>
+                      {note.isEmail && (
+                        <span className={`px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase border flex items-center gap-1 ${badgeStyle}`}>
+                          <Mail size={8} /> Mail
+                        </span>
+                      )}
+                    </div>
+                    <span className={`text-[8px] font-bold ${dateColor}`}>
                       {format(new Date(note.created_at), 'dd MMM HH:mm', { locale: fr })}
                     </span>
                   </div>
@@ -645,12 +905,49 @@ function NotesThread({ occupationId }: { occupationId: number }) {
           </div>
         )}
 
+        <div className="flex items-center justify-between px-6">
+           <div className="flex items-center gap-4">
+              <button 
+                type="button"
+                onClick={() => setIsEmailMode(!isEmailMode)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-black text-[9px] uppercase tracking-widest transition-all ${
+                  isEmailMode 
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                    : 'bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:border-blue-200 shadow-sm'
+                }`}
+              >
+                <Mail size={14} /> Envoyer par mail
+              </button>
+
+              {isEmailMode && (
+                <div className="animate-in slide-in-from-left-4 fade-in duration-300">
+                  <select 
+                    value={selectedContactId}
+                    onChange={(e) => setSelectedContactId(e.target.value)}
+                    className="bg-white border border-blue-200 text-blue-700 text-[10px] font-black uppercase tracking-widest py-2 px-4 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/5 appearance-none shadow-sm cursor-pointer"
+                  >
+                    {contacts.length === 0 ? (
+                      <option value="">Aucun contact</option>
+                    ) : (
+                      contacts.map((c: any) => (
+                        <option key={c.id} value={c.id}>À : {c.prenom} ({c.email})</option>
+                      ))
+                    )}
+                  </select>
+                </div>
+              )}
+           </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="relative flex items-end gap-2">
           <div className="relative flex-1">
             <textarea
               rows={1}
-              placeholder={isRecording ? "Écoute en cours..." : "Écrivez un message ici..."}
-              className={`w-full bg-white border border-slate-200 rounded-[2rem] py-5 pl-8 pr-12 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-medium text-sm shadow-sm resize-none ${isRecording ? 'animate-pulse border-blue-400' : ''}`}
+              placeholder={isRecording ? "Écoute en cours..." : (isEmailMode ? "Rédigez votre email..." : "Écrivez une note interne...")}
+              className={`w-full bg-white border rounded-[2rem] py-5 pl-8 pr-12 outline-none focus:ring-4 focus:ring-blue-500/5 transition-all font-medium text-sm shadow-sm resize-none ${
+                isRecording ? 'animate-pulse border-blue-400 ring-4 ring-blue-500/5' : 
+                isEmailMode ? 'border-blue-300 border-2' : 'border-slate-200'
+              }`}
               value={newNote}
               onChange={(e) => setNewNote(e.target.value)}
               onKeyDown={(e) => {
@@ -679,10 +976,12 @@ function NotesThread({ occupationId }: { occupationId: number }) {
           
           <button 
             type="submit"
-            disabled={submitting || (!newNote.trim() && !pj)}
-            className="w-14 h-14 bg-slate-900 hover:bg-blue-600 disabled:opacity-20 text-white rounded-[1.5rem] flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-black/10"
+            disabled={submitting || (!newNote.trim() && !pj) || (isEmailMode && !selectedContactId)}
+            className={`w-14 h-14 disabled:opacity-20 text-white rounded-[1.5rem] flex items-center justify-center transition-all active:scale-95 shadow-lg ${
+              isEmailMode ? 'bg-blue-600 shadow-blue-500/30' : 'bg-slate-900 shadow-black/10'
+            }`}
           >
-            {submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+            {submitting ? <Loader2 size={18} className="animate-spin" /> : (isEmailMode ? <Send size={18} /> : <Send size={18} />)}
           </button>
         </form>
       </div>

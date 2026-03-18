@@ -25,33 +25,39 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { id, numero, designation, categorieId, modeTaxationId, annee, montant, notes } = body;
+    const { 
+      id, numero, designation, categorieId, modeTaxationId, annee, montant, notes,
+      chapitre, nature, fonction, codeInterne, typeMouvement, sens, structure, gestionnaire
+    } = body;
+    
+    // Convert IDs to numbers where appropriate
+    const parsedData = {
+      numero,
+      designation,
+      categorieId: categorieId ? parseInt(categorieId) : null,
+      modeTaxationId: modeTaxationId ? parseInt(modeTaxationId) : null,
+      annee: parseInt(annee),
+      montant: parseFloat(montant) || 0,
+      notes,
+      chapitre: chapitre || "",
+      nature: nature || "",
+      fonction: fonction || "",
+      codeInterne: codeInterne || "",
+      typeMouvement: typeMouvement || "",
+      sens: sens || "",
+      structure: structure || "",
+      gestionnaire: gestionnaire || ""
+    };
 
     let article;
     if (id) {
       article = await (prisma as any).article.update({
         where: { id: parseInt(id) },
-        data: {
-          numero,
-          designation,
-          categorieId: categorieId ? parseInt(categorieId) : undefined,
-          modeTaxationId: modeTaxationId ? parseInt(modeTaxationId) : undefined,
-          annee: parseInt(annee),
-          montant: parseFloat(montant) || 0,
-          notes
-        }
+        data: parsedData
       });
     } else {
       article = await (prisma as any).article.create({
-        data: {
-          numero,
-          designation,
-          categorieId: categorieId ? parseInt(categorieId) : null,
-          modeTaxationId: modeTaxationId ? parseInt(modeTaxationId) : null,
-          annee: parseInt(annee),
-          montant: parseFloat(montant) || 0,
-          notes
-        }
+        data: parsedData
       });
     }
 

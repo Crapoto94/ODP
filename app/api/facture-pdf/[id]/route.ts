@@ -14,7 +14,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const id = parseInt(rawId);
     
     // 1. Fetch data
-    const [occ, gabarit] = await Promise.all([
+    const [occ, gabarit, settings] = await Promise.all([
       prisma.occupation.findUnique({
         where: { id },
         include: { 
@@ -24,7 +24,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       }),
       (prisma as any).gabarit.findFirst({
         where: { isDefault: true }
-      })
+      }),
+      prisma.appSettings.findFirst()
     ]);
 
     if (!occ) {
@@ -42,8 +43,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         format: 'a4'
     });
 
-    // Helper to replace variables (global replacement)
-    const replaceVars = (val: string) => {
+    // Watermark "BROUILLON" since it's an individual dossier generation
+    if (!(occ as any).numeroFacture) {
+        doc.setTextColor(240, 240, 240);
+        doc.setFontSize(100);
+        doc.text("BROUILLON", 100, 650, { angle: 45 });
+    }
+
+    // Helper to replace variables (global and article-specific)
+    const replaceVars = (val: string, ligne?: any) => {
         if (!val) return val;
         let result = val;
         const totalSum = occ.lignes?.reduce((sum: number, l: any) => sum + (l.montant || 0), 0) || 0;
@@ -51,90 +59,129 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         const replacements: Record<string, string> = {
           '{id}': occ.id.toString(),
           '{nom}': occ.nom || '',
-          '{tiers.nom}': occ.tiers.nom,
-          '{adresse}': occ.adresse,
-          '{dateDebut}': format(new Date(occ.dateDebut), 'dd/MM/yyyy'),
-          '{dateFin}': format(new Date(occ.dateFin), 'dd/MM/yyyy'),
+          '{tiers.nom}': occ.tiers.nom || '',
+          '{adresse}': occ.adresse || '',
+          '{dateDebut}': occ.dateDebut ? format(new Date(occ.dateDebut), 'dd/MM/yyyy') : '',
+          '{dateFin}': occ.dateFin ? format(new Date(occ.dateFin), 'dd/MM/yyyy') : '',
+          '{numeroFacture}': (occ as any).numeroFacture || 'Brouillon',
+          '{periode}': (occ as any).anneeTaxation ? (occ as any).anneeTaxation.toString() : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear().toString() : new Date().getFullYear().toString()),
           '{totalTTC}': `${totalSum.toFixed(2)} €`,
-          '{totalHT}': `${totalSum.toFixed(2)} €`, // Backwards compatibility for templates
-          '{today}': format(new Date(), 'dd/MM/yyyy')
+          '{totalHT}': `${totalSum.toFixed(2)} €`,
+          '{today}': format(new Date(), 'dd/MM/yyyy'),
+          // Analytical / Filien globals (fallback to AppSettings)
+          '{v12}': (settings as any)?.filienPoste || '',
+          '{v13}': (settings as any)?.filienBordereau || '',
+          '{v20}': (settings as any)?.filienObjet || '',
+          '{v541.chapitre}': (settings as any)?.filienChapitre || '',
+          '{v541.nature}': (settings as any)?.filienNature || '',
+          '{v541.fonction}': (settings as any)?.filienFonction || '',
+          '{v541.codeInterne}': (settings as any)?.filienCodeInterne || '',
+          '{v541.typeMvmt}': (settings as any)?.filienTypeMouvement || '',
+          '{v541.sens}': (settings as any)?.filienSens || '',
+          '{v542.structure}': (settings as any)?.filienStructure || '',
+          '{v542.gestionnaire}': (settings as any)?.filienGestionnaire || ''
         };
 
-        Object.entries(replacements).forEach(([key, value]) => {
-          result = result.split(key).join(value); // Equivalent to replaceAll
-        });
+        if (ligne && ligne.article) {
+          replacements['{article.designation}'] = ligne.article.designation || '';
+          replacements['{article.quantite}'] = (ligne.quantite1 || 0).toString();
+          replacements['{article.pu}'] = `${(ligne.article.montant || 0).toFixed(2)} €`;
+          replacements['{article.totalHT}'] = `${(ligne.montant || 0).toFixed(2)} €`;
+          
+          // Allow article to override analytical fields if they were defined on the article level
+          if (ligne.article.chapitre) replacements['{v541.chapitre}'] = ligne.article.chapitre;
+          if (ligne.article.nature) replacements['{v541.nature}'] = ligne.article.nature;
+          if (ligne.article.fonction) replacements['{v541.fonction}'] = ligne.article.fonction;
+          if (ligne.article.codeInterne) replacements['{v541.codeInterne}'] = ligne.article.codeInterne;
+          if (ligne.article.typeMouvement) replacements['{v541.typeMvmt}'] = ligne.article.typeMouvement;
+          if (ligne.article.sens) replacements['{v541.sens}'] = ligne.article.sens;
+          if (ligne.article.structure) replacements['{v542.structure}'] = ligne.article.structure;
+          if (ligne.article.gestionnaire) replacements['{v542.gestionnaire}'] = ligne.article.gestionnaire;
+        }
+
+        Object.entries(replacements)
+          .sort((a, b) => b[0].length - a[0].length) // Longest keys first to avoid {totalHT} matching inside {article.totalHT}
+          .forEach(([key, value]) => {
+            result = result.split(key).join(value);
+          });
         return result;
     };
 
     // 2. Render Elements
     for (const el of (elements as any[])) {
         const x = el.x;
-        const y = el.y;
-        const w = el.width;
-        const h = el.height;
         const style = el.style || {};
+        
+        // Handle repeated articles automatically if the value contains '{article.'
+        const isRepeated = el.isArticleRepeated || (typeof el.value === 'string' && el.value.includes('{article.'));
+        const instances = (isRepeated && occ.lignes && occ.lignes.length > 0) ? occ.lignes : [null];
+        
+        for (let idx = 0; idx < instances.length; idx++) {
+            const ligne = instances[idx];
+            // If it repeats automatically but wasn't explicitly set, default pitch to 25
+            const pitch = el.verticalPitch || (isRepeated && !el.isArticleRepeated ? 25 : 30);
+            const y = el.y + (idx * pitch);
+            const w = el.width;
+            const h = el.height;
 
-        if (el.type === 'RECT') {
-            if (style.backgroundColor && style.backgroundColor !== 'transparent') {
-                doc.setFillColor(style.backgroundColor);
-                doc.rect(x, y, w, h, 'F');
-            }
-            if (style.borderWidth > 0) {
-                doc.setDrawColor(style.borderColor || '#000000');
-                doc.setLineWidth(style.borderWidth);
-                doc.rect(x, y, w, h, 'S');
-            }
-        } else if (el.type === 'TEXT' || el.type === 'VARIABLE') {
-            const text = el.type === 'VARIABLE' ? replaceVars(el.value) : el.value;
-            if (!text) continue;
-
-            const fontSize = style.fontSize || 12;
-            doc.setFontSize(fontSize);
-            doc.setTextColor(style.color || '#000000');
-            
-            // Font weight mapping
-            const weight = style.fontWeight === 'bold' || style.fontWeight === 'black' ? 'bold' : 'normal';
-            // Simple font family mapping (jspdf supports standard fonts by default)
-            let family = 'helvetica';
-            if (style.fontFamily?.includes('Times')) family = 'times';
-            else if (style.fontFamily?.includes('Courier')) family = 'courier';
-            
-            doc.setFont(family, weight);
-
-            // Handle multiline and alignment
-            const splitText = doc.splitTextToSize(text, w);
-            let textX = x;
-            if (style.textAlign === 'center') {
-                textX = x + w / 2;
-                doc.text(splitText, textX, y + fontSize, { align: 'center' });
-            } else if (style.textAlign === 'right') {
-                textX = x + w;
-                doc.text(splitText, textX, y + fontSize, { align: 'right' });
-            } else {
-                doc.text(splitText, textX, y + fontSize);
-            }
-        } else if (el.type === 'IMAGE' && el.value) {
-            try {
-                // For server-side rendering, resolve local paths to Base64
-                let imageData = el.value;
-                if (el.value.startsWith('/')) {
-                   const fullPath = join(process.cwd(), 'public', el.value);
-                   if (existsSync(fullPath)) {
-                      const buffer = await readFile(fullPath);
-                      imageData = `data:image/${el.value.endsWith('.png') ? 'png' : 'jpeg'};base64,${buffer.toString('base64')}`;
-                   }
+            if (el.type === 'RECT' && !style.noBackground) {
+                if (style.backgroundColor && style.backgroundColor !== 'transparent') {
+                    doc.setFillColor(style.backgroundColor);
+                    doc.rect(x, y, w, h, 'F');
                 }
+                if (style.borderWidth > 0) {
+                    doc.setDrawColor(style.borderColor || '#000000');
+                    doc.setLineWidth(style.borderWidth);
+                    doc.rect(x, y, w, h, 'S');
+                }
+            } else if (el.type === 'TEXT' || el.type === 'VARIABLE') {
+                const text = replaceVars(el.value, ligne);
+                if (!text) continue;
+
+                const fontSize = style.fontSize || 12;
+                doc.setFontSize(fontSize);
+                doc.setTextColor(style.color || '#000000');
                 
-                const format = el.value.toLowerCase().includes('.png') ? 'PNG' : 'JPEG';
-                doc.addImage(imageData, format, x, y, w, h);
-            } catch (e) {
-                console.warn('Failed to add image to PDF:', e);
+                const weight = style.fontWeight === 'bold' || style.fontWeight === 'black' ? 'bold' : 'normal';
+                let family = 'helvetica';
+                if (style.fontFamily?.includes('Times')) family = 'times';
+                else if (style.fontFamily?.includes('Courier')) family = 'courier';
+                
+                doc.setFont(family, weight);
+
+                const splitText = doc.splitTextToSize(text, w);
+                if (style.textAlign === 'center') {
+                    doc.text(splitText, x + w / 2, y + fontSize, { align: 'center' });
+                } else if (style.textAlign === 'right') {
+                    doc.text(splitText, x + w, y + fontSize, { align: 'right' });
+                } else {
+                    doc.text(splitText, x, y + fontSize);
+                }
+            } else if (el.type === 'IMAGE' && el.value) {
+                // Image handling: resolve local paths or URLs
+                try {
+                    let imageData = el.value;
+                    if (el.value.startsWith('/')) {
+                       const fullPath = join(process.cwd(), 'public', el.value);
+                       if (existsSync(fullPath)) {
+                          const buffer = await readFile(fullPath);
+                          imageData = `data:image/${el.value.endsWith('.png') ? 'png' : 'jpeg'};base64,${buffer.toString('base64')}`;
+                       }
+                    } else if (el.value.startsWith('http')) {
+                        // For external URLs, we might need a fetch but usually el.value is /uploads/...
+                    }
+                    
+                    const format = el.value.toLowerCase().includes('.png') ? 'PNG' : 'JPEG';
+                    doc.addImage(imageData, format, x, y, w, h);
+                } catch (e) {
+                    console.warn('Failed to add image to PDF:', e);
+                }
             }
         }
     }
 
     const pdfBuffer = doc.output('arraybuffer');
-    const buffer = Buffer.from(pdfBuffer);
+    const buffer = FromBuffer(pdfBuffer);
 
     // 3. Save as attachment (PJ)
     try {
@@ -169,4 +216,14 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     console.error('[PDF GEN ERROR]', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+}
+
+// Utility to convert arraybuffer to Buffer
+function FromBuffer(ab: ArrayBuffer) {
+    const buf = Buffer.alloc(ab.byteLength);
+    const view = new Uint8Array(ab);
+    for (let i = 0; i < buf.length; ++i) {
+        buf[i] = view[i];
+    }
+    return buf;
 }

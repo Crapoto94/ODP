@@ -7,7 +7,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 
-// Helper to generate a single invoice PDF (simplified from the main one but consistent)
+// Helper to generate a single invoice PDF (mirrors the main facture-pdf engine)
 async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string) {
   const { elements } = JSON.parse(gabarit.contenu);
   const doc = new jsPDF({
@@ -15,8 +15,9 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string)
     unit: 'pt',
     format: 'a4'
   });
+  // NO watermark for mass billing - these are official invoices
 
-  const replaceVars = (val: string) => {
+  const replaceVars = (val: string, ligne?: any) => {
     if (!val) return val;
     let result = val;
     const totalSum = occ.lignes?.reduce((sum: number, l: any) => sum + (l.montant || 0), 0) || 0;
@@ -24,43 +25,79 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string)
     const replacements: Record<string, string> = {
       '{id}': occ.id.toString(),
       '{nom}': occ.nom || '',
-      '{tiers.nom}': occ.tiers.nom,
-      '{adresse}': occ.adresse,
+      '{tiers.nom}': occ.tiers?.nom || '',
+      '{adresse}': occ.adresse || '',
       '{dateDebut}': occ.dateDebut ? format(new Date(occ.dateDebut), 'dd/MM/yyyy') : '',
       '{dateFin}': occ.dateFin ? format(new Date(occ.dateFin), 'dd/MM/yyyy') : '',
+      '{numeroFacture}': invoiceNumber,
+      '{periode}': occ.anneeTaxation ? occ.anneeTaxation.toString() : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear().toString() : new Date().getFullYear().toString()),
       '{totalTTC}': `${totalSum.toFixed(2)} €`,
       '{totalHT}': `${totalSum.toFixed(2)} €`,
       '{today}': format(new Date(), 'dd/MM/yyyy'),
-      '{numeroFacture}': invoiceNumber
     };
 
-    Object.entries(replacements).forEach(([key, value]) => {
-      result = result.split(key).join(value);
-    });
+    if (ligne && ligne.article) {
+      replacements['{article.designation}'] = ligne.article.designation || '';
+      replacements['{article.quantite}'] = (ligne.quantite1 || 0).toString();
+      replacements['{article.pu}'] = `${(ligne.article.montant || 0).toFixed(2)} €`;
+      replacements['{article.totalHT}'] = `${(ligne.montant || 0).toFixed(2)} €`;
+    }
+
+    Object.entries(replacements)
+      .sort((a, b) => b[0].length - a[0].length) // Longest keys first
+      .forEach(([key, value]) => {
+        result = result.split(key).join(value);
+      });
     return result;
   };
 
-  // Basic rendering logic (simplified for batch)
   for (const el of (elements as any[])) {
     const x = el.x;
-    const y = el.y;
-    const w = el.width;
-    const h = el.height;
     const style = el.style || {};
 
-    if (el.type === 'RECT') {
-      if (style.backgroundColor && style.backgroundColor !== 'transparent') {
-        doc.setFillColor(style.backgroundColor);
-        doc.rect(x, y, w, h, 'F');
+    const isRepeated = el.isArticleRepeated || (typeof el.value === 'string' && el.value.includes('{article.'));
+    const instances = (isRepeated && occ.lignes && occ.lignes.length > 0) ? occ.lignes : [null];
+
+    for (let idx = 0; idx < instances.length; idx++) {
+      const ligne = instances[idx];
+      const pitch = el.verticalPitch || (isRepeated && !el.isArticleRepeated ? 25 : 30);
+      const y = el.y + (idx * pitch);
+      const w = el.width;
+      const h = el.height;
+
+      if (el.type === 'RECT' && !style.noBackground) {
+        if (style.backgroundColor && style.backgroundColor !== 'transparent') {
+          doc.setFillColor(style.backgroundColor);
+          doc.rect(x, y, w, h, 'F');
+        }
+        if (style.borderWidth > 0) {
+          doc.setDrawColor(style.borderColor || '#000000');
+          doc.setLineWidth(style.borderWidth);
+          doc.rect(x, y, w, h, 'S');
+        }
+      } else if (el.type === 'TEXT' || el.type === 'VARIABLE') {
+        const text = replaceVars(el.value, ligne);
+        if (!text) continue;
+        const fontSize = style.fontSize || 12;
+        doc.setFontSize(fontSize);
+        doc.setTextColor(style.color || '#000000');
+        const weight = style.fontWeight === 'bold' || style.fontWeight === 'black' ? 'bold' : 'normal';
+        let family = 'helvetica';
+        if (style.fontFamily?.includes('Times')) family = 'times';
+        else if (style.fontFamily?.includes('Courier')) family = 'courier';
+        doc.setFont(family, weight);
+        const lines = text.split('\n');
+        lines.forEach((line: string, lineIdx: number) => {
+          const splitLine = doc.splitTextToSize(line, w);
+          if (style.textAlign === 'center') {
+            doc.text(splitLine, x + w / 2, y + fontSize + (lineIdx * fontSize * 1.2), { align: 'center' });
+          } else if (style.textAlign === 'right') {
+            doc.text(splitLine, x + w, y + fontSize + (lineIdx * fontSize * 1.2), { align: 'right' });
+          } else {
+            doc.text(splitLine, x, y + fontSize + (lineIdx * fontSize * 1.2));
+          }
+        });
       }
-    } else if (el.type === 'TEXT' || el.type === 'VARIABLE') {
-      const text = el.type === 'VARIABLE' ? replaceVars(el.value) : el.value;
-      if (!text) continue;
-      doc.setFontSize(style.fontSize || 12);
-      doc.setTextColor(style.color || '#000000');
-      const weight = style.fontWeight === 'bold' || style.fontWeight === 'black' ? 'bold' : 'normal';
-      doc.setFont('helvetica', weight);
-      doc.text(text, x, y + (style.fontSize || 12));
     }
   }
 
@@ -179,19 +216,67 @@ export async function POST(req: NextRequest) {
     const recapPath = join(facturesDir, recapFilename);
     await writeFile(recapPath, Buffer.from(recapDoc.output('arraybuffer')));
 
-    // 5. Generate .filien Flat File
-    let filienContent = `RECAPITULATIF FACTURATION ${type} - ${format(now, 'dd/MM/yyyy HH:mm')} - Par: ${agentName}\n`;
-    filienContent += `TOTAL: ${grandTotal.toFixed(2)} EUR\n`;
-    filienContent += `COUNT: ${results.length}\n`;
-    filienContent += `--------------------------------------------------\n`;
+    // 5. Generate .filien Flat File (Official Format)
+    const settings = await (prisma as any).appSettings.findFirst();
+    const filienParams = {
+      orga: settings?.filienOrga || '01',
+      budget: settings?.filienBudget || 'BA',
+      exercice: settings?.filienExercice || year,
+      avancement: settings?.filienAvancement || '5',
+      rejetDispo: settings?.filienRejetDispo ?? true,
+      rejetCA: settings?.filienRejetCA ?? false,
+      rejetMarche: settings?.filienRejetMarche ?? false,
+      filienChapitre: settings?.filienChapitre || '',
+      filienNature: settings?.filienNature || '',
+      filienFonction: settings?.filienFonction || '',
+      filienCodeInterne: settings?.filienCodeInterne || '',
+      filienTypeMouvement: settings?.filienTypeMouvement || '',
+      filienSens: settings?.filienSens || '',
+      filienStructure: settings?.filienStructure || '',
+      filienGestionnaire: settings?.filienGestionnaire || '',
+    };
+
+    const { generateFilienFile } = require('@/lib/filien');
     
-    results.forEach(r => {
-      filienContent += `${r.numero}|${r.tiers}|${r.total.toFixed(2)}|${r.id}\n`;
-      r.lignes.forEach((l: any) => {
-        filienContent += `  DET|${l.article.numero}|${l.article.designation}|${l.montant.toFixed(2)}\n`;
-      });
+    const movements = results.map((r, idx) => {
+      // Find the original occupation to get tiers details etc.
+      const occ = dossiers.find((d: any) => d.id === r.id);
+      
+      return {
+        id: r.numero.replace(/-/g, '').slice(-10), // Use invoice number digits as movement ID
+        type: settings?.filienType || 'R',
+        tiersCode: occ?.tiers?.code_sedit || 'TIERS_INCONNU',
+        libelle: settings?.filienLibelle || occ?.nom || `Dossier #${occ?.id}`,
+        calendrier: settings?.filienCalendrier || '01',
+        monnaie: settings?.filienMonnaie || 'E',
+        existant: settings?.filienMouvementEx || 'N',
+        preBordereau: settings?.filienPreBordereau || '1235',
+        poste: settings?.filienPoste || '0001',
+        bordereau: settings?.filienBordereau || '0001',
+        objet: settings?.filienObjet || '',
+        lines: (occ?.lignes || []).map((l: any, lIdx: number) => ({
+          numero: lIdx + 1,
+          imputation: l.article?.numero || 'IMPUT_VIDE',
+          montant: l.montant,
+          dateDebut: l.dateDebut || undefined,
+          dateFin: l.dateFin || undefined,
+          description: l.article?.designation || '',
+          quantite: l.quantite1 || 1,
+          prixUnitaire: l.article?.montant || l.montant,
+          // Analytical Ventilation (fallback to article or settings)
+          chapitre: l.article?.chapitre || '',
+          nature: l.article?.nature || '',
+          fonction: l.article?.fonction || '',
+          codeInterne: l.article?.codeInterne || '',
+          typeMouvement: l.article?.typeMouvement || '',
+          sens: l.article?.sens || '',
+          structure: l.article?.structure || '',
+          gestionnaire: l.article?.gestionnaire || ''
+        }))
+      };
     });
 
+    const filienContent = generateFilienFile(filienParams, movements);
     const filienFilename = `FACT-${timestampStr}.filien`;
     const filienPath = join(facturesDir, filienFilename);
     await writeFile(filienPath, filienContent);
@@ -202,7 +287,7 @@ export async function POST(req: NextRequest) {
       total: grandTotal,
       recapPdf: `/Factures/${recapFilename}`,
       filienPath: `/Factures/${filienFilename}`,
-      invoices: results.map(r => ({ id: r.id, numero: r.numero, path: r.path, tiers: r.tiers }))
+      invoices: results.map((r: any) => ({ id: r.id, numero: r.numero, path: r.path, tiers: r.tiers }))
     });
 
   } catch (err: any) {

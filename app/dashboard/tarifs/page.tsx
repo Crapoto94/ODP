@@ -50,6 +50,14 @@ interface Article {
   annee: number;
   montant: number;
   notes: string | null;
+  chapitre?: string;
+  nature?: string;
+  fonction?: string;
+  codeInterne?: string;
+  typeMouvement?: string;
+  sens?: string;
+  structure?: string;
+  gestionnaire?: string;
 }
 
 interface ModeTaxation {
@@ -79,7 +87,15 @@ export default function TarifsPage() {
     modeTaxationId: '',
     annee: new Date().getFullYear().toString(),
     montant: '',
-    notes: ''
+    notes: '',
+    chapitre: '',
+    nature: '',
+    fonction: '',
+    codeInterne: '',
+    typeMouvement: '',
+    sens: '',
+    structure: '',
+    gestionnaire: ''
   });
 
   const isEditing = !!formData.id;
@@ -164,7 +180,15 @@ export default function TarifsPage() {
       modeTaxationId: '',
       annee: selectedYear.toString(),
       montant: '',
-      notes: ''
+      notes: '',
+      chapitre: '',
+      nature: '',
+      fonction: '',
+      codeInterne: '',
+      typeMouvement: '',
+      sens: '',
+      structure: '',
+      gestionnaire: ''
     });
   };
 
@@ -177,7 +201,15 @@ export default function TarifsPage() {
       modeTaxationId: art.modeTaxationId?.toString() || '',
       annee: art.annee.toString(),
       montant: art.montant.toString(),
-      notes: art.notes || ''
+      notes: art.notes || '',
+      chapitre: art.chapitre || '',
+      nature: art.nature || '',
+      fonction: art.fonction || '',
+      codeInterne: art.codeInterne || '',
+      typeMouvement: art.typeMouvement || '',
+      sens: art.sens || '',
+      structure: art.structure || '',
+      gestionnaire: art.gestionnaire || ''
     });
     setIsModalOpen(true);
   };
@@ -526,6 +558,86 @@ export default function TarifsPage() {
                         Appliqué pour l'année {formData.annee}<br/>
                         selon le mode sélectionné.
                      </p>
+                  </div>
+                </div>
+
+                <div className="md:col-span-2 space-y-6 pt-6 border-t border-slate-100">
+                  <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <Hash size={12} /> Ventilation Analytique (/541/ & /542/)
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-[8px]">Chapitre</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all font-bold text-sm"
+                        value={formData.chapitre}
+                        onChange={e => setFormData({...formData, chapitre: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-[8px]">Nature</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all font-bold text-sm"
+                        value={formData.nature}
+                        onChange={e => setFormData({...formData, nature: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-[8px]">Fonction</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all font-bold text-sm"
+                        value={formData.fonction}
+                        onChange={e => setFormData({...formData, fonction: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-[8px]">Code Interne</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all font-bold text-sm"
+                        value={formData.codeInterne}
+                        onChange={e => setFormData({...formData, codeInterne: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-[8px]">Type Mouvement</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all font-bold text-sm"
+                        value={formData.typeMouvement}
+                        onChange={e => setFormData({...formData, typeMouvement: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-[8px]">Sens</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all font-bold text-sm"
+                        value={formData.sens}
+                        onChange={e => setFormData({...formData, sens: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-[8px]">Structure</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all font-bold text-sm"
+                        value={formData.structure}
+                        onChange={e => setFormData({...formData, structure: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-[8px]">Gestionnaire (/542/)</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500 transition-all font-bold text-sm font-black text-indigo-600"
+                        value={formData.gestionnaire}
+                        onChange={e => setFormData({...formData, gestionnaire: e.target.value})}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

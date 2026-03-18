@@ -29,11 +29,13 @@ import {
   RefreshCw,
   ExternalLink,
   MessageSquare,
-  Download
+  Download,
+  Users
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import LigneArticleModal from '@/components/LigneArticleModal';
+import FilienGenerationModal from '@/components/FilienGenerationModal';
 
 interface Occupation {
   id: number;
@@ -88,6 +90,7 @@ export default function OccupationsPage() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
+  const [tiersFilter, setTiersFilter] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   
@@ -95,6 +98,7 @@ export default function OccupationsPage() {
   const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
   const [selectedOccForLigne, setSelectedOccForLigne] = useState<Occupation | null>(null);
   const [editingLigne, setEditingLigne] = useState<any>(null);
+  const [isFilienModalOpen, setIsFilienModalOpen] = useState(false);
 
   const router = useRouter();
 
@@ -140,6 +144,14 @@ export default function OccupationsPage() {
   };
 
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const tid = searchParams.get('tiersId');
+    if (tid) {
+      setTiersFilter(tid);
+      setYearFilter('ALL');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     fetchTiers();
@@ -315,7 +327,8 @@ export default function OccupationsPage() {
     const matchesStatus = statusFilter === 'ALL' || o.statut === statusFilter;
     const dossierAnnee = o.type === 'COMMERCE' ? o.anneeTaxation : (o.dateDebut ? new Date(o.dateDebut).getFullYear() : null);
     const matchesYear = yearFilter === 'ALL' || (dossierAnnee && dossierAnnee.toString() === yearFilter.toString());
-    return matchesSearch && matchesType && matchesStatus && matchesYear;
+    const matchesTiers = !tiersFilter || o.tiersId.toString() === tiersFilter;
+    return matchesSearch && matchesType && matchesStatus && matchesYear && matchesTiers;
   });
 
   const totalsByType = occupations.reduce((acc, o) => {
@@ -345,6 +358,13 @@ export default function OccupationsPage() {
            >
              <Plus size={18} />
              Nouveau Dossier
+           </button>
+           <button 
+             onClick={() => setIsFilienModalOpen(true)}
+             className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95"
+           >
+             <FileText size={18} />
+             GENERER FILIEN
            </button>
         </div>
       </div>
@@ -380,15 +400,34 @@ export default function OccupationsPage() {
 
       <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden min-h-[500px]">
         <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/10 gap-6">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Rechercher un tiers ou une adresse..." 
-              className="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-semibold text-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="flex flex-col gap-2 flex-1 max-w-md">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input 
+                type="text" 
+                placeholder="Rechercher un tiers ou une adresse..." 
+                className="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-semibold text-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            {tiersFilter && (
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-xl w-fit">
+                <Users size={14} className="text-blue-500" />
+                <span className="text-[10px] font-black text-blue-700 uppercase tracking-widest">
+                  Filtre : {tiers.find(t => t.id.toString() === tiersFilter)?.nom || 'Tiers'}
+                </span>
+                <button 
+                  onClick={() => {
+                    setTiersFilter(null);
+                    router.push('/dashboard/occupations');
+                  }}
+                  className="p-1 hover:bg-blue-100 rounded-lg text-blue-400 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            )}
           </div>
           
           <div className="flex items-center gap-4">
@@ -755,6 +794,14 @@ export default function OccupationsPage() {
           }}
           occupationType={selectedOccForLigne.type}
           initialData={editingLigne}
+        />
+      )}
+
+      {isFilienModalOpen && (
+        <FilienGenerationModal 
+          isOpen={isFilienModalOpen}
+          onClose={() => setIsFilienModalOpen(false)}
+          occupations={occupations}
         />
       )}
     </div>

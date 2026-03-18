@@ -17,7 +17,6 @@ model Tiers {
   latitude        Float?
   longitude       Float?
   code_sedit      String?      // Code pour le système financier municipal
-  statut          String       @default("PROVISOIRE")
   occupations     Occupation[]
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
@@ -45,6 +44,18 @@ model Occupation {
   updated_at      DateTime          @updatedAt
   lignes          LigneOccupation[]
   notes           Note[]
+  contacts        Contact[]
+}
+
+model Contact {
+  id           Int        @id @default(autoincrement())
+  prenom       String
+  email        String
+  role         String
+  occupationId Int
+  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
 }
 
 model Note {
@@ -55,7 +66,22 @@ model Note {
   author       String?
   pjPath       String?    // Chemin vers la pièce jointe
   pjName       String?    // Nom d'origine du fichier
+  isEmail      Boolean    @default(false)
+  externalId   String?    // Message-ID pour les emails
+  fromEmail    String?
+  toEmail      String?
   created_at   DateTime   @default(now())
+}
+
+model O365Message {
+  id           String   @id // L'ID Graph API
+  subject      String?
+  fromName     String?
+  fromEmail    String?
+  bodyPreview  String?
+  receivedAt   DateTime
+  processed    Boolean  @default(false)
+  created_at   DateTime @default(now())
 }
 
 model Categorie {
@@ -86,6 +112,15 @@ model Article {
   annee          Int
   montant        Float             @default(0)
   notes          String?
+  // Analytical Ventilation (Filien /541/ and /542/)
+  chapitre       String?           @default("")
+  nature         String?           @default("")
+  fonction       String?           @default("")
+  codeInterne    String?           @default("")
+  typeMouvement  String?           @default("")
+  sens           String?           @default("")
+  structure      String?           @default("")
+  gestionnaire   String?           @default("")
   created_at     DateTime          @default(now())
   updated_at     DateTime          @updatedAt
   lignes         LigneOccupation[]
@@ -111,6 +146,34 @@ model AppSettings {
   apmToken     String?
   senderName   String?  @default("ODP Console")
   senderEmail  String?  @default("dsihub@fbc.fr")
+  // Filien settings
+  filienOrga        String?  @default("01")
+  filienBudget      String?  @default("BA")
+  filienExercice    Int?
+  filienAvancement  String?  @default("5")
+  filienRejetDispo  Boolean? @default(true)
+  filienRejetCA     Boolean? @default(false)
+  filienRejetMarche Boolean? @default(false)
+  // New Filien defaults
+  filienMouvement   String?  @default("1")
+  filienType        String?  @default("R")
+  filienLibelle     String?
+  filienCalendrier  String?  @default("01")
+  filienMonnaie     String?  @default("E")
+  filienMouvementEx String?  @default("N")
+  filienPreBordereau String? @default("1235")
+  filienPoste       String?  @default("0001")
+  filienBordereau   String?  @default("0001")
+  filienObjet       String?
+  // Analytical Ventilation defaults
+  filienChapitre    String?  @default("")
+  filienNature      String?  @default("")
+  filienFonction    String?  @default("")
+  filienCodeInterne String?  @default("")
+  filienTypeMouvement String? @default("")
+  filienSens        String?  @default("")
+  filienStructure   String?  @default("")
+  filienGestionnaire String? @default("")
   updated_at   DateTime @updatedAt
 }
 

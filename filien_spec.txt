@@ -1,0 +1,1717 @@
+berger-levrault.com
+Description du protocole
+FILIEN
+Interface avec les applications en
+amont de Finances
+
+-- 1 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	2/43
+Table des matières
+1 	Introduction _______________________________________________________________ 3
+1.1 	Présentation du fichier Ascii 	4
+1.2 	Évolutions 2022.1 	4
+1.3 	Évolutions 2021.1 	4
+1.4 	Évolutions 2019.1 	5
+1.5 	Évolutions 2018.1.04 	5
+1.6 	Évolutions 2018.1 	5
+1.7 	Évolutions 2017.2 	5
+1.8 	Évolutions 2017.1 	5
+1.9 	Évolutions 2016.1 	6
+1.10 	Évolutions 2015.5 	6
+1.11 	Maintenance 2014.1.01 / 2013.1.09 	6
+1.12 	Évolutions 2013.1.05 	7
+1.13 	Mandats et titres de recette collectifs 	8
+2 	Format du fichier texte Filien ______________________________________________ 9
+2.1 	Contenu du premier enregistrement "en-tête" 	9
+2.2 	Mouvements déjà existants en Finances 	9
+2.3 	Contenu des enregistrements "Suite" 	10
+3 	Notion de "Traitement par lot" ___________________________________________ 29
+4 	Exemples de codification _________________________________________________ 30
+4.1 	Saisie d'un engagement n'ayant qu'une ligne 	30
+4.2 	Saisie d'un mandat direct de 2 lignes 	30
+4.3 	Saisie d'un titre de recette collectif 	31
+4.4 	Saisie d'un lot comprenant 2 mouvements 	32
+4.5 	Saisie d'un pré-mandat direct (1 ligne sur un engagement pluriannuel)
+nouveau cadre 	33
+4.6 	Saisie d'un pré-titre avec ASAP Dématérialisé 	34
+4.7 	Saisie d'un titre avec 2 tiers solidaires 	36
+4.8 	Exemple des balises pour pièces justificatives 	37
+5 	Anomalies et statistiques de traitement __________________________________ 38
+6 	Table de stockage des anomalies : FILIEN_RAP ___________________________ 39
+7 	Protocole Firetlien - Retour d'informations sur Filien _____________________ 40
+7.1 	Critère de sélection et de tri 	40
+7.2 	Structure du fichier texte généré 	40
+7.3 	Compte-rendu d'exécution 	42
+
+-- 2 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	3/43
+1 	Introduction
+Filien est un programme batch de création automatique de prévisions, de pré-engagements,
+d'engagements, de pré-mandats ou de pré-recettes dans l'application GF SEDIT Marianne à partir
+du contenu d'un fichier Ascii respectant un format prédéfini.
+Il permet également de faire passer à une phase supérieure un mouvement déjà existant (exemple :
+mandater un mouvement engagé précédemment) à condition de positionner l'information /10/ à "O".
+Ce programme autorise la création de réductions et d'annulations, mais pas celle de rejets de
+mandats et de titres.
+Il permet la saisie de P503, de débits d'office, de mandats collectifs... à condition de positionner
+correctement le code nature Indigo (/19/).
+Ce programme ne permet pas la création de pré-bordereau de reprise (type de pré-bordereau = "R")
+ni la saisie d'avoirs (mouvements de type "A").
+
+-- 3 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	4/43
+1.1 	Présentation du fichier Ascii
+ Séparateur entre 2 mouvements : /##/. Il doit être placé à la suite de l'en-tête et du dernier
+enregistrement du fichier.
+ Séparateur entre 2 lignes d'un même mouvement : /--/. Il est à insérer également devant la 1ère
+ligne de mouvement, mais pas après la dernière).
+ Séparateur entre 2 détails de prestations pour les ASAP Dématérialisés : /**/.
+ Les informations /500/ à /509/ sont réservées aux recettes. Elles peuvent apparaitre plusieurs
+fois pour un même titre, à condition d'être séparées par /**/.
+ Séparateur entre 2 tiers solidaires sur un même titre : /$$/.
+ Les informations /400/, /401/ et /402/ sont réservées aux recettes qui ont des tiers solidaires
+(balise /183/O). Elles peuvent apparaître plusieurs fois dans un titre et sont séparées par /$$/.
+ Séparateurs indiquant la gestion d'un lot (ensemble de mouvements à traiter dans une seule
+transaction) : {DEBUT_LOT} et {FIN_LOT}. Ils sont à insérer avant le séparateur /##/.
+ Les informations /11/ à /49/ et /71/ à /99/ sauf les informations /39/ et /391/ sont réservées aux
+mandats et recettes. Les engagements ne doivent être décrits qu'à partir d'informations /01/ à
+/10/, /39/ et /391/ et /51/ à /69/.
+ Les informations /51/ à /99/ peuvent apparaître plusieurs fois pour un même mouvement à
+condition d'être séparées par /--/.
+ Les informations /71/ à /99/ sont plus particulièrement destinées à la prise en compte des
+mandats et titres de recette collectifs.
+ Il n'est pas obligatoire de saisir les données dans l'ordre numérique croissant.
+ Si une même zone comporte plusieurs informations (exemples : domiciliation /39/, code
+e-Marché /52/, imputation /54/, /541/, /542/...) il est impératif de respecter l'emplacement de
+chaque information en complétant éventuellement la chaîne de caractères avec des espaces.
+Exemple : Soit le service gestionnaire RH et destinataire FINANCE sur la segmentation
+sectorielle codée STRUCT_1. Cette information doit être transmise de la façon suivante dans le
+fichier texte : /542/STRUCT_1..RH........FINANCE (les points symbolisent les espaces laissés entre
+les 2 informations).
+ Il n'est pas nécessaire de compléter avec des zéros à gauche les zones Montant. La virgule (,) est
+le seul séparateur accepté dans une zone Montant.
+1.2 	Évolutions 2022.1
+Le FILIEN permet de prendre en compte la proratisation de la TVA.
+Aucune nouvelle balise n'a été ajoutée.
+1.3 	Évolutions 2021.1
+La version 2021.1 permet de référencer une opération sur un engagement (mouvement) ou un mandat
+(balise /544/). Elle accepte la référence à un RIB/IBAN sur la création d’un engagement (mêmes balises
+que pour les pré-mandats). La balise (/505/) quantité pour les prestations sur les ASAP dématérialisés
+est revue au niveau de la longueur et du format.
+
+-- 4 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	5/43
+1.4 	Évolutions 2019.1
+La version 2019.1 permet de définir un titre avec des tiers solidaires et de donner une liste de tiers
+solidaires. La balise /183/ permet de préciser que le titre comporte des tiers solidaires en précisant la
+valeur O pour Oui ou N par Non. Si la balise n’existe pas, cela génère un titre sans tiers solidaires.
+Pour donner les informations nécessaires sur le(s) tiers solidaire(s), les balises /400/, /401/, /402/
+permettent de préciser la liste de ces tiers solidaires.
+1.5 	Évolutions 2018.1.04
+Au lancement de l'interface FILIEN, un nouveau paramètre Génération d'ASAP dématérialisés
+(prestation globale) permet de créer les détails des prestations d'un ASAP dématérialisé à partir des
+lignes de titres, comme en saisie des liquidations. Il n'est pas nécessaire de cocher cette case lorsque le
+filien contient les balises nécessaires aux ASAP (balises /500/ ...). Cette case est utile lorsque le filien
+génère des titres qui doivent être des ASAP dématérialisés et que l'utilitaire de génération du FILIEN ne
+crée pas les balises correspondantes.
+1.6 	Évolutions 2018.1
+La version 2018.1 permet d'alimenter le type de document de chaque pièce jointe liée aux écritures
+injectées. Les balises /266/, /276/, /286/, /296/, /306/ permettent de donner ces informations pour les PJ
+de la n°1 à la n°5.
+Dans l'interface FILIEN exécuté depuis le Web, il est possible d'indiquer un type de document qui est
+appliqué par défaut à toutes les PJ qui n'ont pas une des balises ci-dessus.
+Les balises /262/, /272/, /282/, /292/, /302/ permettent de spécifier une ou des pièces en GED,
+conjointement avec les balises /263/, /273/, /283/, /293/, /303/ qui permettent dans ce cas de spécifier
+l'adresse (url) du document GED correspondant.
+La version 2018.1 propose une nouvelle balise /182/ qui permet d’indiquer une date de demande de
+paiement. Cette date sera ensuite transmise dans le flux PES au niveau de la balise DteEch, elle est
+obligatoire pour les mandats de prélèvement à la source (PAS).
+1.7 	Évolutions 2017.2
+La version 2017.2 permet d'alimenter la balise 585 avec le numéro de rôle pour le titre récapitulatif.
+1.8 	Évolutions 2017.1
+La version 2017.1 permet d'alimenter le détail des prestations prévues dans la saisie des recettes afin
+de dématérialiser les avis des sommes à payer (ASAP) avec 10 nouvelles zones (de /500/ à /509/). Les
+informations Chorus Pro nécessaires pour les ASAP des tiers de la sphère publique peuvent aussi être
+alimentées afin d'être transmises par la suite sur le portail Chorus Pro (de /441/ à /445/).
+
+-- 5 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	6/43
+1.9 	Évolutions 2016.1
+La version 2016.1 ajoute 2 nouvelles zones pour le fichier Filien Retour.
+1.10 	Évolutions 2015.5
+La version 2015.5 permet, dans le cadre de la licence APE (ePluriannualité) d'alimenter la balise /62/
+avec le code de l'engagement d'AP en nouveau cadre.
+1.11 	Maintenance 2014.1.01 / 2013.1.09
+Les versions 2014.1.01 et 2013.1.09 n'introduisent pas de nouvelles balises mais modifient les règles de
+gestion concernant le paiement standard en /40/ et les références bancaires en /39/ (RIB) ou /391/
+(IBAN) afin de les conformer aux règles d'Hélios en matière de modes de règlement.
+La domiciliation bancaire est obligatoire, facultative ou interdite en fonction des valeurs de la balise
+/40/.
+Paiement standard /40/ 	Domiciliation bancaire /39/ ou
+/391/
+01 - Numérique 	Interdite
+02 - Chèque 	Interdite
+03 - Virement 	Obligatoire
+04 - Virement appli externe 	Interdite
+05 - Virement gros montant 	Obligatoire
+06 - Virement à l'étranger 	Facultative
+07 - Opération budget rattaché 	Interdite
+08 - Opération d'ordre 	Interdite
+09 - Avis de règlement 	Interdite
+10 - Prélèvement 	Facultative
+11 - Virement interne 	Interdite
+À l'inverse, si la domiciliation bancaire est présente, le paiement standard peut être vide ou être une
+des valeurs décrites comme obligatoire ou facultative.
+Si une domiciliation bancaire est présente et que le paiement standard n'est pas précisé, le mode de
+règlement transmis dans le PES est 03 - Virement.
+
+-- 6 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	7/43
+1.12 	Évolutions 2013.1.05
+La version 2013.1.05 apporte une série d'évolutions au protocole filien visant l'atteinte de trois objectifs
+:
+ La comptabilité avec le PES : de nouvelles balises permettent de référencer des pièces justificatives
+et de désigner les informations auxiliaires de la ligne (pièce de rattachement, numéro d'emprunt...).
+Par ailleurs, de nouvelles règles de gestion s'appliquent aux civilités et prénoms afin d'assurer la
+cohérence du tiers particulier.
+ L'intégration de titres individuels pour prélèvement automatique SEPA. Cette nouvelle forme de titre
+de recette implique que la collectivité exploite le PES. Elle nécessite notamment de valoriser les
+balises dédiées au RUM et à l'ICS.
+ La comptabilité avec le module eCadre budgétaire (dès la version 2013.1.04).
+Pièces justificatives
+Pour les collectivités exploitant le PES, les balises /261/ et suivantes sont dédiées à l'import des pièces
+justificatives. Il peut y avoir jusqu'à 5 PJ par mandat ou titre.
+Trois balises permettent d'identifier chaque PJ :
+ un libellé obligatoire,
+ un type de support obligatoire : il peut prendre les valeurs 01 électronique, 02 papier ou 03
+DVDrom,
+ un raccourci : il est obligatoire si le type de support est 01 et interdit sinon.
+Dans le cas général, avec l'intégration du fichier Filien, l'application créera les pièces justificatives en
+leur attribuant le numéro d'identifiant unique par incrémentation de leur compteur.
+Dans le cas où il existe déjà une PJ avec les mêmes caractéristiques (c'est-à-dire même budget, même
+exercice, même libellé, même type de support et même chemin_fichier ou absence de chemin_fichier)
+alors la PJ n'est pas créée et le mandat reçoit la référence à celle déjà existante.
+La version 2015.3 introduit deux nouvelles balises pour chacune de PJ. Elles permettent de
+désigner le type de pièce (264) et le format (265).
+eCadre budgétaire
+Avec le module eCadre budgétaire, les balises /541/ à /545/ succèdent à désignation de l'imputation
+étendue par l'information /54/. Ces balises /541/ à /545/ doivent être renseignées dès lors qu'il existe
+une "modalité de saisie - Exécutions" pour le budget et l'exercice identifiés par le filien. Les zones
+obligatoires définies sur la modalité de saisie doivent être respectées.
+
+-- 7 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	8/43
+1.13 	Mandats et titres de recette collectifs
+L'enregistrement des mandats et titres collectifs doit suivre la procédure suivante :
+ Créer un entête de mandat en indiquant dans l'information /31/ le nom du débiteur ou du
+créditeur divers.
+ Renseigner le code Titre collectif (/44/) à 'O'.
+ Créer autant de lignes de mouvements que nécessaire. L'information N° de ligne de mouvement
+(/51/) doit conserver la même valeur d'une ligne sur l'autre. Seul le N° dans le rôle (/71/) doit varier
+ainsi que les références des tiers. De ce fait, un titre récapitulatif comportant une seule ligne sera
+émis, mais le détail des tiers concernés sera transmis sur bande magnétique, grâce aux données
+/71/ à /99/.
+
+-- 8 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	9/43
+2 	Format du fichier texte Filien
+2.1 	Contenu du premier enregistrement "en-tête"
+/##/PARAM/a/b/c/d/e/f/g
+a) Code organisme Finances (de 01 à 99 - doit correspondre à un enregistrement Orgafi)
+b) Code budget Finances (sur 2 lettres - doit correspondre à un enregistrement Budget lié à
+l'organisme sélectionné)
+c) Exercice à traiter (sur 4 chiffres - doit correspondre à un enregistrement dans Budannu lié au
+budget sélectionné)
+d) Code avancement des mouvements
+1 = mouvements en prévision
+2 = mouvements pré-engagés
+3 = mouvements engagés
+4 = mouvements facturés
+5 = mouvement pré-mandatés
+e) Rejet si dépassement du disponible (O/N)
+f) Rejet si dépassement du C.A. maxi hors marché avec un tiers (O/N)
+g) Rejet si dépassement du Montant global du marché (O/N)
+Exemple : /##/PARAM/01/XY/1996/5/O/N/N
+L'enregistrement "en-tête" peut apparaître plusieurs fois dans le même fichier ASCII, en cas
+d'engagement ou de mandatement sur plusieurs budgets.
+2.2 	Mouvements déjà existants en Finances
+Il est possible de mandater grâce à Filien, un mouvement préalablement engagé ou d'engager un
+mouvement saisi en prévision.
+Dans ce cas :
+ dans l'entête du mouvement, renseignez uniquement la donnée /01/ et saisissez la lettre "O"
+dans l'information /10/.
+ les lignes référencées (identifiées par /51/) doivent obligatoirement exister pour le mouvement
+en question. Filien ne génère pas de nouvelles lignes de mouvement pour un mouvement déjà
+créé.
+ les informations /52/ à /69/ sont facultatives, sauf l'information /54/ (imputation) qui est
+interdite.
+Le programme Filien prend par défaut les informations contenues dans le mouvement existant. Par
+contre, si les informations /52/ à /69/ sont saisies, elles viendront se substituer à celles de ligne de
+mouvement (avec mises à jour correspondantes en cas de changement de marché, de réservation ou
+de montant).
+
+-- 9 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	10/43
+2.3 	Contenu des enregistrements "Suite"
+Code 	Désignation 	Format 	Oblig. 	Commentaires
+EN-TÊTE DU MOUVEMENT - PHASE ENGAGEMENT
+/01/ 	Mouvement 	10A 	Oui 	Ne 	doit 	pas 	exister 	déjà 	dans 	la 	table
+mouvement pour le même budget/exercice,
+sauf si l'information /10/ est positionnée à "O".
+/02/ 	Type de mouvement 	1A 	Non 	"D" = Dépense ou mandat (par défaut)
+"R" = Recette
+/03/ 	Code Tiers 	10A 	Oui 	Doit correspondre à un enregistrement dans la
+table Tiers
+/04/ 	Libellé du mouvement 	40A 	Oui 	Libellé du mouvement
+/05/ 	Code calendrier 	2N 	Oui 	Doit exister dans la table Calendrier. Vérifier
+que 	le 	calendrier 	utilisé 	n'est 	pas 	en
+contradiction avec le code avancement indiqué
+dans l'enregistrement En-tête.
+Exemple : refuser le mouvement si le code
+avancement = 3 et si le calendrier est type
+Mandatement direct.
+/06/ 	Code monnaie 	1A 	Non 	"F" = Francs/"E" = Euros (par défaut = "F")
+/10/ 	Mouvement 	déjà
+existant
+1A 	Non 	"O" = ce mouvement existe déjà
+"N" = il s'agit d'un nouveau mouvement (par
+défaut)
+EN-TÊTE DU MOUVEMENT - PHASE MANDATEMENT
+/11/ 	N° de pré-bordereau 	4N 	Oui 	Peut correspondre ou non à un enregistrement
+dans la table prebordero
+/12/ 	Titre créé ou réduit 	1A 	Non 	"C" = Mandat ou recette en création (par défaut
+"R" = Mandat ou recette en réduction
+/13/ 	N° titre interne 	6N 	Oui 	Ne doit pas déjà exister dans la table mandat.
+/14/ 	N° de mandat réduit 	6N 	- 	Interdit si "Titre créé ou réduit" = "C"
+Obligatoire si "Titre créé ou réduit " = "R"
+Doit correspondre à un n° de mandat ou de
+recette déjà existant dans la table mandat.
+/15/ 	Modèle d'imputation 	2N 	Non 	Compris entre 01 et 99. Doit correspondre à un
+enregistrement dans la table budimpt.
+Par défaut, le modèle d'imputation portant le
+plus petit numéro dans la table budimpt est
+sélectionné.
+/16/ 	Bordereau à éditer 	1A 	Non 	"O" = bordereau à éditer (par défaut)
+"N" = ne pas éditer le bordereau correspondant
+
+-- 10 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	11/43
+/17/ 	Mandat ou titre à éditer 	1A 	Non 	"O" = mandat ou titre à éditer (par défaut)
+"N" 	= 	ne 	pas 	éditer 	le 	mandat/titre
+correspondant
+/18/ 	Ordre 	de 	virement 	à
+éditer
+1A 	Non 	Donnée interdite pour les titres de recettes
+"O" = ordre de virement à éditer (par défaut)
+"N" 	= 	ne 	pas 	éditer 	l'ordre 	de 	virement
+correspondant
+/19/ 	Nature Indigo 	2N 	Non 	"01" = mandat ou recette ordinaire (par défaut)
+"02" à "16" = mandat ou recette spécial (P503,
+débit d'office,...)
+/181/ 	Annulation sur exercice
+antérieur
+1A 	Non 	S'agit-il d'un mandat (ou titre) d'annulation sur
+exercice antérieur :
+"O" = Oui
+"N" = Non (par défaut)
+Si oui la référence à la pièce annulée doit être
+obligatoirement fournie dans la balise 581.
+/182/ 	Date 	de 	demande 	de
+paiement
+8A 	Non 	Date de demande de paiement à transmettre
+dans le flux PES (Balise DteEch). Obligatoire
+pour le mandat du PAS (Prélèvement à la
+source). Format JJMMAAAA
+/183/ 	Titre avec tiers solidaire 	1A 	Non 	S'agit-il d'un titre avec des tiers solidaires :
+"O" = Oui
+"N" = Non (par défaut)
+Si oui, la liste des tiers solidaires doit être
+obligatoirement fournie dans les balises /400/.
+/191/ 	Prélèvement auto SEPA 	1A 	Non 	Le titre est un prélèvement SEPA : O/N
+Par défaut, non. Cette information ne peut être
+présente que pour un titre de recette. Si oui
+alors les balises sont obligatoires :
+- /391/ Référence bancaire au format SEPA
+- /192/ à /196/
+/192/ 	ICS 	13A 	Non 	Numéro de ICS :
+information obligatoire si /191/ est O
+L'ICS correspondant doit être référencé sur le
+budget.
+/193/ 	RUM 	Numéro de RUM obligatoire si l'information
+/191/ est O. Doit exister sur le tiers désigné par
+la balise 03 et être actif.
+/194/ 	Date de prélèvement 	8A 	Non 	Date de prélèvement au format JJMMAAAA
+Obligatoire si l'information /191/ est O
+/195/ 	Nature de prélèvement 	1A 	Non 	P pour Ponctuel/R pour Récurrent
+Obligatoire si l'information /191/ est O.
+
+-- 11 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	12/43
+/196/ 	Séquence 	du
+prélèvement
+1A 	Non 	Obligatoire si l'information /195/ est R
+Les valeurs acceptées sont :
+- P pour premier
+- I pour intermédiaire
+- D pour dernier
+/20/ 	Objet du mandat / 1 	40A 	Oui 	Objet 1 du mandat (mémorisé dans la table
+mandobjet)
+Correspond à la zone Objet dans e-Liquidation
+/21/ 	Objet du mandat / 2 	40A 	Non 	Objet 2 du mandat (mémorisé dans la table
+mandobjet)
+Correspond 	à 	la 	zone 	Complément 	dans
+e-Liquidation
+/22/ 	Objet du mandat / 3 	40A 	Non 	Objet 3 du mandat (mémorisé dans la table
+mandobjet)
+/23/ 	Objet du mandat / 4 	40A 	Non 	Objet 4 du mandat (mémorisé dans la table
+mandobjet)
+/24/ 	Objet du mandat / 5 	40A 	Non 	Objet 5 du mandat (mémorisé dans la table
+mandobjet)
+/25/ 	Libellé du virement 	32A 	Non 	Par défaut initialisé aux 32 premiers caractères
+de la ligne 1 de l'objet du mandat
+/26/ 	Pièce jointe au mandat /
+1
+40A 	Non 	Pièce jointe n°1 du mandat (mémorisée dans la
+table mandpj)
+Correspond 	à 	la 	zone 	Désignation 	PJ 	dans
+e-Liquidation.
+/261/ 	Nom de la PJ 1 	100A 	Non 	Nom de la pièce justificative (mémorisé dans la
+table PJ_PES)
+/262/ 	Type de support 	2A 	Non 	Type de support :
+- 01 électronique
+- 02 papier
+- 03 DVD
+- 04 électronique avec une pièce en GED. Dans
+ce 	cas, 	le 	/263/ 	est 	l'adresse 	complète 	du
+document en GED (la valeur 01 électronique
+sera renseignée sur la pièce)
+/263/ 	Chemin du fichier 	255A 	Non 	Chemin UNC du fichier incluant le nom de
+fichier ou adresse (URL de la pièce si elle est en
+GED).
+Ce raccourci est obligatoire si type de support =
+01 électronique ou 04 électronique avec une
+pièce en GED, interdit si support = 02 papier ou
+03 DVD
+/264/ 	Type de pièce 	3A 	Non 	Type de pièce. Si absent, la valeur est 003 en
+dépense et 002 en recette.
+/265/ 	Format 	2A 	Non 	Format. Si absent il est déterminé par défaut par
+l'extension du fichier en /263/.
+
+-- 12 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	13/43
+/266/ 	Type de document 	10A 	Non 	Type de document. Information obligatoire pour
+la PJ. Si absent, la valeur pourra être indiquée
+dans l'écran d'exécution de l'interface FILIEN. Il
+devra exister dans l'option Type de document
+du menu e-Dossier Dématérialisé.
+/27/ 	Pièce jointe au mandat
+/2
+40A 	Non 	Pièce 	jointe 	n°2 	(mémorisée 	dans 	la 	table
+mandpj)
+Correspond à la zone Complément PJ dans
+e-Liquidation.
+/271/ 	Nom de la PJ 2 	100A 	Non 	Nom de la pièce justificative (mémorisé dans la
+table PJ_PES)
+/272/ 	Type de support de la PJ
+2
+2A 	Non 	Type de support :
+- 01 électronique
+- 02 papier
+- 03 DVD
+- 04 électronique avec une pièce en GED. Dans
+ce 	cas, 	le 	/273/ 	est 	l'adresse 	complète 	du
+document en GED (la valeur 01 électronique
+sera renseignée sur la pièce)
+/273/ 	Chemin du fichier de la
+PJ 2
+255A 	Non 	Chemin UNC du fichier ou adresse (URL de la
+pièce si elle est en GED)
+Ce raccourci est obligatoire si type de support =
+01 électronique ou 04 électronique avec une
+pièce en GED, interdit si support = 02 papier ou
+03 DVD.
+/274/ 	Type de pièce de la PJ 2 	3A 	Non 	Type de pièce. Si absent la valeur par défaut est
+003 en dépense et 002 en recette.
+/275/ 	Format de la PJ 2 	2A 	Non 	Format. Si absent, il est déterminé par défaut
+par l'extension du fichier en /273/.
+/276/ 	Type de document 	10A 	Type de document. Information obligatoire pour
+la PJ. Si absent, la valeur pourra être indiquée
+dans l'écran d'exécution de l'interface FILIEN. Il
+devra exister dans l'option Type de document
+du menu e-Dossier Dématérialisé.
+/28/ 	Pièce jointe au mandat
+/3
+40A 	Non 	Pièce jointe n°3 du mandat (mémorisée dans la
+table mandpj)
+/281/ 	Nom de la PJ 3 	100A 	Non 	Nom de la pièce justificative (mémorisé dans la
+table PJ_PES)
+/282/ 	Type de support de la PJ
+3
+2A 	Non 	Type de support :
+- 01 électronique
+- 02 papier
+- 03 DVD
+- 04 électronique avec une pièce en GED. Dans
+ce 	cas, 	le 	/283/ 	est 	l'adresse 	complète 	du
+document en GED (la valeur 01 électronique
+sera renseignée sur la pièce)
+
+-- 13 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	14/43
+/283/ 	Chemin du fichier de la
+PJ 3
+255A 	Non 	Chemin UNC du fichier ou adresse (URL de la
+pièce si elle est en GED).
+Ce raccourci est obligatoire si type de support =
+01 électronique ou 04 électronique avec une
+pièce en GED, interdit si support = 02 papier ou
+03 DVD
+/284/ 	Type de pièce de la PJ 3 	3A 	Non 	Type de pièce. Si absent, la valeur par défaut est
+003 en dépense et 002 en recette.
+/285/ 	Format de la PJ 3 	2A 	Non 	Format. Si absent, il est déterminé par défaut
+par l'extension du fichier en /283/).
+/286/ 	Type de document 	10A 	Non 	Type de document. Information obligatoire pour
+la PJ. Si absent, la valeur pourra être indiquée
+dans l'écran d'exécution de l'interface FILIEN. Il
+devra exister dans l'option Type de document
+du menu e-Dossier Dématérialisé.
+/29/ 	Pièce jointe au mandat
+/4
+40A 	Non 	Pièce jointe n°4 du mandat (mémorisée dans la
+table mandpj)
+/291/ 	Nom de la PJ 4 	100A 	Non 	Nom de la pièce justificative (mémorisé dans la
+table PJ_PES)
+/292/ 	Type de support de la PJ
+4
+2A 	Non 	Type de support :
+- 01 électronique
+- 02 papier
+- 03 DVD
+- 04 électronique avec une pièce en GED. Dans
+ce 	cas, 	le 	/293/ 	est 	l'adresse 	complète 	du
+document en GED (la valeur 01 électronique
+sera renseignée sur la pièce)
+/293/ 	Chemin du fichier de la
+PJ 4
+255A 	Non 	Chemin UNC du fichier ou adresse (URL de la
+pièce si elle est en GED)
+Ce raccourci est obligatoire si type de support =
+01 électronique ou 04 électronique avec une
+pièce en GED, interdit si support = 02 papier ou
+03 DVD.
+/294/ 	Type de pièce de la PJ 4 	3A 	Non 	Type de pièce. Si absent, la valeur par défaut est
+003 en dépense et 002 en recette.
+/295/ 	Format de la PJ 4 	2A 	Non 	Format. Si absent, il est déterminé par défaut
+par l'extension du fichier en /293/).
+/296/ 	Type de document 	10A 	Non 	Type de document. Information obligatoire pour
+la PJ. Si absent, la valeur pourra être indiquée
+dans l'écran d'exécution de l'interface FILIEN. Il
+devra exister dans l'option Type de document
+du menu e-Dossier Dématérialisé.
+/30/ 	Pièce jointe au mandat
+/5
+40A 	Non 	Pièce jointe n°5 du mandat (mémorisée dans la
+table mandpj)
+
+-- 14 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	15/43
+/301/ 	Nom de la PJ 5 	100A 	Non 	Nom de la pièce justificative (mémorisé dans la
+table PJ_PES)
+/302/ 	Type de support de la PJ
+5
+2A 	Non 	Type de support :
+- 01 électronique
+- 02 papier
+- 03 DVD
+- 04 électronique avec une pièce en GED. Dans
+ce 	cas, 	le 	/303/ 	est 	l'adresse 	complète 	du
+document en GED (la valeur 01 électronique
+sera renseignée sur la pièce)
+/303/ 	Chemin du fichier de la
+PJ 5
+255A 	Non 	Chemin UNC du fichier ou adresse (URL de la
+pièce si elle est en GED)
+Ce raccourci est obligatoire si type de support =
+01 électronique ou 04 électronique avec une
+pièce en GED, interdit si support = 02 papier ou
+03 DVD
+/304/ 	Type de pièce de la PJ 5 	3A 	Non 	Type de pièce. Si absent, la valeur par défaut est
+003 en dépense et 002 en recette.
+/305/ 	Format de la PJ 5 	2A 	Non 	Format. Si absent, il est déterminé par défaut
+par l'extension du fichier en /303/).
+/306/ 	Type de document 	10A 	Non 	Type de document. Information obligatoire pour
+la PJ. Si absent, la valeur pourra être indiquée
+dans l'écran d'exécution de l'interface FILIEN. Il
+devra exister dans l'option Type de document
+du menu e-Dossier Dématérialisé.
+/31/ 	Nom du tiers /1 	32A 	Non 	Par défaut = nom du tiers / 1 de la fiche Tiers.
+/311/ 	Numéro de régie 	10A 	Non 	Code régie. Cette information est destinée à
+alimenter MANDTIERS.CODE_REGIE
+/32/ 	Nom du tiers /2 	32A 	Non 	Par défaut = nom du tiers / 2 de la fiche Tiers.
+/321/ 	Prénom du Tiers 	38A 	Non 	Par défaut = prénom du tiers de la fiche Tiers.
+Champ prénom pris en compte seulement avec
+la licence e-tiers.
+Nouvelle règle de gestion : Si le PES est actif
+sur le domaine correspondant à la donnée
+importée et Si le tiers désigné par la balise /03/
+est 	typé 	"personnes 	physiques" 	(nature
+juridique = 01), Si le nom1 est renseigné dans la
+balise /31/
+Alors le prénom est obligatoire.
+
+-- 15 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	16/43
+/33/ 	Civilité du tiers 	8A 	Non 	Doit exister dans la table civilite.
+Par défaut = civilité de la fiche Tiers
+Si le PES est actif sur le domaine correspondant
+à la donnée importée et Si le tiers désigné par la
+balise /03/ est typé "personnes physiques" (cad
+nature juridique = 01), Si le nom1 est renseigné
+dans la balise /31/
+Alors la civilité est obligatoire et elle doit
+être "PES compatible".
+/331/ 	Nature juridique 	2A 	Non 	Nature 	juridique 	PES 	du 	tiers 	destinataire
+(mandat individuel). Si elle n'est pas précisée, le
+typage 	est 	hérité 	de 	celui 	affecté 	au 	tiers
+désigné en /03/.
+/332/ 	Catégorie 	2A 	Non 	Catégorie du tiers destinataire. Si une nature
+juridique est indiquée alors la catégorie doit
+l'être.
+/34/ 	Adresse du tiers /1 	32A 	Non 	Par défaut = adresse de facture ou, à défaut
+adresse usuelle de la fiche Tiers.
+/35/ 	Adresse du tiers /2 	32A 	Non 	Par défaut = adresse de facture ou, à défaut
+adresse usuelle de la fiche Tiers.
+/36/ 	Code postal du tiers 	5A 	Non 	Par défaut = adresse de facture ou, à défaut
+adresse usuelle de la fiche Tiers
+Attention le couple code postal - commune doit
+correspondre exactement à une commune faisant
+partie du référentiel des communes dans eSedit GF.
+/37/ 	Commune du tiers 	32A 	Non 	Par défaut = adresse de facture ou, à défaut
+adresse usuelle de la fiche Tiers
+Attention le couple code postal - commune doit
+correspondre exactement à une commune faisant
+partie du référentiel des communes dans eSedit GF.
+/38/ 	Bureau distributeur 	25A 	Non 	Par défaut = adresse de facture ou, à défaut
+adresse usuelle de la fiche Tiers
+/381/ 	Code pays 	5A 	Non 	Valeurs admises : nomenclature insee des codes
+pays
+http://www.insee.fr/fr/methodes/nomenclatures
+/cog/pays.asp
+Cette 	information 	est 	destinée 	à 	alimenter
+ADRESSE.PAYSID
+
+-- 16 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	17/43
+/39/ 	Domiciliation bancaire 	24A 	Non 	Donnée interdite s'il s'agit d'un mouvement de
+recette. 	Domiciliation 	bancaire 	du 	tiers 	au
+format RIB :
+BBBBB GGGGG CCCCCCCCCCC RR * concaténés
+:
+B et G = code banque et guichet
+C et R = compte et clé RIB
+* 	= 	permet 	d'imposer 	une 	domiciliation
+inconnue
+L'existence de la domiciliation est vérifiée dans
+la table dompers.
+Si elle n'existe pas et si la zone /39/ ne se
+termine pas par une étoile (*), le mouvement est
+rejeté.
+Si elle n'existe pas et si l'étoile (*) est présente,
+le mouvement est accepté et la domiciliation est
+insérée sur le mandat après vérification de la
+validité des codes banque, guichet et clé Rib.
+Cas particulier : Si cette zone est initialisée à
+DEFAUT, prendre la domiciliation par défaut du
+tiers. Si ce tiers n'a pas de domiciliation par
+défaut, le mouvement est rejeté.
+Remarque : Pour un mouvement de dépense la
+présence des informations /39/,/391/ et/ou /40/
+est obligatoire.
+/391/ 	BIC et IBAN 	46A 	Oui 	Donnée 	interdite 	si 	l'information 	/39/ 	est
+renseignée.
+Code BIC sur 11 caractères
+Code IBAN sur 34 caractères
+Elle doit exister sur le tiers si la ligne ne se
+termine pas par une étoile. Le caractère * situé
+en fin de ligne permet d'insérer une référence
+bancaire inexistante.
+Si elle n'existe pas et si la zone /391/ ne se
+termine pas par une étoile (*), le mouvement est
+rejeté.
+Si elle n'existe pas et si l'étoile (*) est présente,
+le mouvement est accepté et la domiciliation est
+insérée sur le mandat après vérification de la
+validité de l'IBAN et de l'existence du BIC.
+/40/ 	Mode 	paiement
+standard
+2N 	Non 	Doit correspondre à un enregistrement dans la
+table paiestand.
+Remarque : La balise 40 et celles des références
+bancaires peuvent cohabiter en fonction de la
+valeur du 40 :
+- 01, 02, 04, 07, 08, 09, 11 : références bancaires
+interdites
+- 06, 10 : références bancaires facultatives
+- 03, 05 : références bancaires obligatoires
+
+-- 17 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	18/43
+/41/ 	Bénéficiaire du compte 	24A 	Non 	Donnée interdite s'il s'agit d'un mouvement de
+recette ou si l'information /40/ a été renseignée.
+Par défaut = "Nom du tiers /1" (/31)
+/42/ 	Moyen 	de 	paiement
+TPM
+2N 	Non 	Valeur par défaut :
+"44" si mouvement de type recette
+paiementpm.dompers 	si 	domiciliation
+bancaire précisée (/39/)
+paiementpm.paiestand si mode de paiement
+standard précisé (/40/)
+/43/ 	Références stables 	15A 	Non 	Références stables du tiers
+Par défaut = références stables de la fiche Tiers
+Attention : pour les mandats, cette zone doit
+être numérique alors que pour les titres de
+recette, elle peut être alphanumérique.
+/44/ 	Titre collectif (Rôle) 	1C 	Non 	"O" = il s'agit d'un titre collectif
+"N" = il s'agit d'un titre individuel (par défaut)
+/441/ 	Identifiant de la facture
+pour CPP
+20A 	Non 	Identifiant de la demande de paiement envoyée
+à la collectivité destinatrice
+A renseigner pour les ASAP liés à un tiers de la
+sphère publique
+Autorisée 	seulement 	si 	la 	balise 	/02/ 	type
+mouvement = "R"
+/442/ 	Numéro 	de 	marché
+pour CPP
+50A 	Non 	Numéro de marché ou de convention défini
+dans la collectivité destinatrice des ASAP.
+A renseigner pour les ASAP liés à un tiers de la
+sphère publique
+Autorisée 	seulement 	si 	la 	balise 	/02/ 	type
+mouvement = "R"
+/443/ 	Numéro 	d'engagement
+pour CPP
+50A 	Non 	Numéro 	d'engagement 	ou 	de 	commande
+enregistré dans la collectivité destinatrice des
+ASAP.
+A renseigner pour les ASAP liés à un tiers de la
+sphère publique
+Autorisée 	seulement 	si 	la 	balise 	/02/ 	type
+mouvement = "R"
+/444/ 	Code 	du 	service 	pour
+CPP
+100A 	Non 	Code du service chargé de prendre en charge
+les 	factures 	pour 	les 	traiter 	au 	sein 	de
+l'organisation de la collectivité destinatrice des
+ASAP.
+A renseigner pour les ASAP liés à un tiers de la
+sphère publique
+Autorisée 	seulement 	si 	la 	balise 	/02/ 	type
+mouvement = "R"
+
+-- 18 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	19/43
+/445/ 	Nom 	du 	service 	pour
+CPP
+100A 	Non 	Nom du service de prise en charge des factures
+A renseigner pour les ASAP liés à un 	tiers de la
+sphère publique
+Autorisée 	seulement 	si 	la 	balise 	/02/ 	type
+mouvement = "R"
+/45/ 	Code activité 	10A 	Non 	Par défaut = "PRINCIPALE"
+/46/ 	Objet du mandat / 6 	40A 	Non 	Objet 6 du mandat (mémorisé dans la table
+mandobjet)
+/47/ 	Objet du mandat / 7 	40A 	Non 	Objet 7 du mandat (mémorisé dans la table
+mandobjet)
+/48/ 	Objet du mandat / 8 	40A 	Non 	Objet 8 du mandat (mémorisé dans la table
+mandobjet)
+/49/ 	Objet du mandat / 9 	40A 	Non 	Objet 9 du mandat (mémorisé dans la table
+mandobjet)
+/50/ 	Objet du mandat / 10 	40A 	Non 	Objet 10 du mandat (mémorisé dans la table
+mandobjet)
+DÉTAIL DES TIERS SOLIDAIRES - À séparer par : /$$/
+/400/ 	Code Tiers solidaire 	10A 	Non 	Doit correspondre à un enregistrement dans la
+table Tiers
+Doit être différent du tiers défini en /03/
+Obligatoire si la valeur /183/ est O
+/401/ 	Type d'adresse du tiers
+solidaire à récupérer
+31A 	Non 	Doit correspondre à un enregistrement dans la
+table 	TYPADRESSE 	et 	correspondre 	à 	une
+adresse valide sur le tiers.
+Si non renseigné, et si une adresse de type FAC
+est valide, alors l'adresse de facturation est
+reprise par défaut.
+Si non renseigné et si aucune adresse valide de
+type FAC, alors l'adresse usuelle est reprise.
+/402/ 	BIC 	et 	IBAN
+Domiciliation 	bancaire
+au format SEPA
+45A 	Non 	Format de l'information :
+Code BIC sur 11 caractères
+Code IBAN sur 34 caractères
+La domiciliation bancaire doit exister sur le tiers
+et être valide.
+DÉTAIL DES PRESTATIONS - Liées aux recettes - À séparer par : /**/
+/500/ 	Type de prestation 	1A 	Non 	Valeur P ou G ou R
+La 	présence 	de 	cette 	information 	permet
+d'indiquer qu'il s'agit d'un ASAP dématérialisé.
+Elle permet aussi d'indiquer le type de détail : P
+pour Prestation sur Période, G pour Prestation
+Globale ou R pour Remise.
+Les informations /500/ à /509/ sont autorisées
+seulement si la balise /02/ type mouvement =
+"R"
+/501/ 	N° ordre du détail 	3N 	Non 	Obligatoire si l'information /500/ existe
+
+-- 19 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	20/43
+/502/ 	Description du détail 	200A 	Non 	Obligatoire si l'information /500/ existe
+/503/ 	Date 	début 	de
+prestation 	ou date de
+prestation
+8A 	Non 	Date de début si P ou date de prestation si G ou
+R au format JJMMAAAA
+Obligatoire si l'information /500/ existe
+/504/ 	Date fin de période 	8A 	Non 	Date de fin
+Obligatoire si l'information /500/ = P
+Interdite 	(en 	tout 	cas 	non 	utilisée) 	si
+l'information /500/ = G ou R
+/505/ 	Quantité 	6N 	ou
+5.1N 	ou
+4.2N 	ou
+3.3 	N 	ou
+2.4N
+Non 	Quantité
+Obligatoire si l'information /500/ = P
+Interdite 	(en 	tout 	cas 	non 	utilisée) 	si
+l'information /500/ = G ou R
+Format 6 chiffres (hors virgule) et jusqu'à 4
+décimales : soit 999999 ou 99999,9 ou 9999,99
+ou 999,999 ou 99,9999
+/506/ 	Prix unitaire 	11.2N 	Non 	Prix unitaire (si P)
+Format 99999999999,99 (11+2 séparé par une
+virgule)
+Obligatoire si l'information /500/ = P
+Interdite 	(en 	tout 	cas 	non 	utilisée) 	si
+l'information /500/ = G ou R
+/507/ 	Taux de TVA 	2.2N 	Non 	Taux de TVA
+Format 99,99 (2+2 séparé par une virgule)
+Par défaut 0% = pas de TVA
+/508/ 	Montant TVA 	11.2N 	Non 	Montant TVA (si G ou R)
+Par défaut = 0. Format 99999999999,99 (11+2
+séparé par une virgule)
+Interdite 	(en 	tout 	cas 	non 	utilisée) 	si
+l'information /500/ = P
+/509/ 	Montant TTC 	11.2N 	Non 	Montant TTC (si G ou R)
+Format 99999999999,99 (11+2 séparé par une
+virgule)
+Obligatoire si l'information /500/ = G ou R.
+Interdite 	(en 	tout 	cas 	non 	utilisée) 	si
+l'information /500/ = P
+LIGNE DE MOUVEMENT - PHASE ENGAGEMENT/MANDATEMENT
+/51/ 	N° ligne de mouvement 	3N 	Oui 	Le n° de ligne doit être compris entre 1 et 999.
+/52/ 	Code tranche
+Licence 	eMarché 	non
+présente
+10A3N
+1A1A
+Non 	Doit correspondre à un enregistrement dans la
+table tranche en tenant compte du tiers du
+mouvement.
+Format : 10A = code marché, 3N = N° de lot, 1A =
+tranche (F/C), 1A = sur retenue de garantie (O/N)
+
+-- 20 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	21/43
+/52/ 	Si licence eMarché
+Code eMarché
+18A9N9N6
+A3N6A
+Non 	Doit correspondre à un enregistrement dans la
+table 	MAR_MARCHE_LOT 	et 	éventuellement
+MAR_TRANCHE
+Format : 18A = code marché
+9N = N° de la période
+9N : N° de la tranche
+6A : code rubrique CDP. Les valeurs acceptées
+sont 	: 	PRIBAS 	- 	prix 	de 	base, 	ACTREV 	-
+actualisation/révision, BORPRI - sur bordereau,
+PRIMES, RETGAR - retenue de garantie, AVANCE,
+INTMOR - Intérêts moratoires
+3N : N° de lot sur 3 (facultatif)
+6A : Code service sur 6 (facultatif)
+/53/ 	N° ligne de réservation 	10A2N 	Non 	Si saisi, doit correspondre à un enregistrement
+dans les tables reservat et resligne. De plus,
+l'information /54/ doit rester vide.
+Format : 10A = N°réservation, 2N = N° de ligne
+/54/ 	Imputation étendue 	70A 	- 	Interdite si N° de ligne de réservation /53/ ou N°
+de ligne de mouvement globalisé /68/ est saisie,
+obligatoire sinon.
+Format : 10I 8C 6F 8N 6S 8P 6s 8D 8d 2S
+concaténés
+avec : I = code imputation réduite
+C = chapitre
+F 	= 	fonction 	(ou 	sous-chapitre
+M12/M51)
+N = nature M14 (ou article M12/M51)
+S = service gestionnaire
+P = opération M14 (ou programme
+M12/M51)
+s = service destinataire
+D = divers 1
+d = divers 2
+S = sens(D1,D2,D3,R1,R2,R3)
+Si I est renseigné, ignorer les autres codes, une
+imputation étendue ayant cette clé doit exister
+dans la table imputation.
+Si 	I 	est 	absent, 	contrôler 	l'existence 	d'une
+imputation étendue identique dans la table
+imputation (même chapitre, s/chapitre...). En
+cas 	d'absence, 	la 	ligne 	de 	mouvement 	est
+rejetée.
+
+-- 21 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	22/43
+/541/ 	Imputation comptable 	42A 	Oui 	Les balises /541/ à /545/ sont utilisées au lieu de
+la balise /54/ si le module eCadre budgétaire est
+exploité sur l'exercice.
+Chapitre : 10A
+Nature : 10A
+Fonction : 10A
+Code interne de l'opération d'équipement : 10A
+Type 	mouvement 	(R 	= 	réel, 	E 	= 	ordre 	de
+transfert, I = ordre dans la section) : 1A
+Sens (D = Dépense, R = Recette) : 1A
+Si l'on ne veut pas passer par des composantes,
+il 	est 	toujours 	possible 	d'utiliser 	le 	code
+imputation en utilisant la partie I de la balise
+/54/.
+/542/ 	Elément 	structurel
+gestionnaire et élément
+structurel destinataire
+30A 	Non 	Informations compatibles avec l'utilisation de la
+licence CBU - e-Cadre budgétaire
+Code segmentation structurelle : 10A
+Code de l'élément structurel gestionnaire : 10A
+Code de l'élément structurel destinataire : 10A
+/543/ 	Code 	des
+nomenclatures
+sectorielles 1 à 5
+100A 	Non 	Informations compatibles avec l'utilisation de la
+licence CBU - e-Cadre budgétaire
+Eléments sectoriels 1 à 5 :
+- code de la segmentation 1 : 10A
+- code élément sectoriel 1 : 10A
+- code de la segmentation 2 : 10A
+- code élément sectoriel 2 : 10A
+- code de la segmentation 3 : 10A
+- code élément sectoriel 3 : 10A
+- code de la segmentation 4 : 10A
+- code élément sectoriel 4 : 10A
+- code de la segmentation 5 : 10A
+- code élément sectoriel 5 : 10A
+/544/ 	Elément opérationnel
+eCadre budgétaire
+20A 	Non 	Code de la segmentation opérationnelle : 10A
+Code élément opérationnelle : 10A
+(si présent dans la modalité d'exécution ou si
+non présent, pour référencer l'opérationnelle
+sur l'écriture)
+/545/ 	Elément stratégique 	46A 	Non 	Code de la segmentation stratégique : 10A
+Code élément stratégique : 10A
+Info AP ou AE pour distinguer investissement ou
+fonctionnement : 2A
+Millésime de début de l'AP/AE : 4N
+Code AP/AE : 20A
+(l'information 	AP/AE 	est 	nécessaire 	quand
+l'AP/AE fait partie de la modalité d'exécution)
+/55/ 	N° de facture du tiers
+Date 	d'arrivée 	de 	la
+facture
+30A 	Non 	N° de facture du tiers sur 20 caractères + date
+d'arrivée de la facture (format AAAAMMJJ, par
+défaut date du jour)
+
+-- 22 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	23/43
+/56/ 	N° de facture interne 	10A 	Non 	Doit correspondre à un enregistrement dans la
+table facture pour ce tiers.
+/57/ 	Libellé de la ligne 	40A 	Non 	Libellé de la ligne de mouvement (par défaut =
+libellé de l'entête du mouvement)
+/58/ 	Codes spéciaux 	10A 	Non 	Série de 10 lettres positionnées à "O", "N" ou
+blanc. 	Le 	code 	"blanc" 	signifie 	qu'il 	faut
+reprendre la valeur correspondante dans la liste
+des specXX de la table imputation. Si /58/ est
+absent, reprendre automatiquement tous les
+specXX.imputation.
+/581/ 	Pièce de rattachement 	23A 	Non 	Pièce de rattachement :
+- Exercice sur 4
+- Numéro de pièce sur 13
+- Numéro de ligne sur 6
+/582/ 	N° emprunt 	24A 	Non 	Numéro d'emprunt sur 24 caractères
+/583/ 	N° convention 	25A 	Non 	Numéro de convention sur 25 caractères
+/584/ 	Code produit local 	4A 	Non 	Code produit local
+Il doit exister dans la table CPL.
+Cette information ne peut être valorisée que
+pour les recettes.
+/585/ 	Numéro 	de 	rôle 	pour
+titre récapitulatif
+7N 	F 	Cette information est destinée à alimenter pour
+les titres de recette l'information N° de rôle
+lisible dans les informations PES. Elle permet de
+caractériser le titre comme récapitulatif avec
+rôle.
+/59/ 	Montant TTC en FRF 	11.2N 	Oui 	Attention : indiquer un montant TTC même si le
+budget est tenu en HT.
+Format 99999999999,99 (11+2 séparés par une
+virgule)
+Remarque : si cette information est absente et
+si le montant Euro/66/ est différent de zéro
+alors le montant FRF est calculé à partir du
+montant 	Euro 	en 	appliquant 	le 	taux 	de
+conversion 6.55957.
+/60/ 	Montant TVA en FRF 	11.2N 	Non 	Par défaut = 0
+Format 99999999999,99 (11+2 séparés par une
+virgule)
+Remarque : si cette information est absente et
+si le montant Euro /67/ est différent de zéro
+alors le montant FRF est calculé à partir du
+montant 	Euro 	en 	appliquant 	le 	taux 	de
+conversion 6.55957.
+
+-- 23 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	24/43
+/61/ 	Exercice d'origine 	4N 	Non 	Cet 	exercice 	doit 	être 	inférieur 	ou 	égal 	à
+l'exercice 	précisé 	dans 	l'enregistrement
+"en-tête".
+Il permet de savoir s'il s'agit d'un mouvement
+reporté ou non. Par défaut = exercice précisé
+dans l'en-tête.
+/62/ 	N° 	engagement
+pluriannuel
+18A 	Non 	Si vous avez la licence APE (ePluriannualité),
+le code de l'engagement pluriannuel doit exister
+dans la table APAE_ENGAGEMENT.
+Millésime : 4N
+Code de l'engagement : 14A
+/62/ 	N° engagement sur AP 	10A 	Non 	Si vous n'avez pas la licence GO (Gestion
+Opérations), l'Engagement sur AP doit exister
+dans la table apengag.
+/62/ 	Engagement sur AP et
+Opération
+45A 	Non 	Si 	vous 	avez 	la 	licence 	GO 	(Gestion
+Opérations),
+Format : 4A 10B 3C 3D 10E 5F 5G 5H concaténés
+avec
+A = Exercice de l'AP
+B = Code de l'engagement en AP
+C = N° de ligne de l'engagement en AP
+D = N° d'échéancier de la ligne d'eng. en AP
+E = Code de l'opération
+F = N° d'échéancier de l'opération
+G = N° de la ligne de dépense
+H = N° d'échéancier de la ligne de dépense
+A, B, C doivent être tous les 3 soit renseignés
+soit vides.
+D est facultatif.
+E est obligatoire si A, B et C sont renseignés
+sinon il est facultatif.
+F est interdit si E est vide, sinon il est facultatif.
+G est facultatif.
+H est interdit si G est vide, sinon il est facultatif.
+Ces informations ne seront pas lues en création
+d'un 	mouvement 	individualisé 	sur 	un
+mouvement globalisé si ce dernier est lié à un
+engagement d'AP et/ou à une opération. Dans
+ce cas, ce sont les informations du mouvement
+globalisé qui seront héritées.
+/63/ 	N° d'inventaire 	10A 	Non 	Si 	vous 	n'avez 	pas 	la 	licence 	IO
+(Immobilisation OPALE), N° d'inventaire (lien
+avec le module Immobilisations)
+/63/ 	N° d'immobilisation 	25A 	Non 	Si vous avez la licence IO (Immobilisation
+OPALE), 	N° 	d'immobilisation 	(lien 	avec 	le
+module Immobilisations OPALE)
+Remarque : aucun contrôle n'est fait sur cette
+immobilisation (existence, validité...)
+
+-- 24 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	25/43
+/64/ 	Ligne soldée 	1A 	Non 	Faut-il 	solder 	la 	ligne 	de 	mouvement
+rapprochée ?
+"O" = il faut solder la ligne rapprochée
+"N" = il faut reporter le reliquat sur une nouvelle
+ligne (défaut)
+/65/ 	Exercice 	de
+rattachement 	du
+marché
+4N 	Non 	Exercice en cours ou exercice de rattachement
+pour les marchés reconductibles
+/66/ 	Montant TTC en euros 	11.2N 	Oui 	Attention : indiquer un montant TTC même si le
+budget est tenu en HT.
+Format 99999999999,99(11+2 séparé par une
+virgule)
+Remarque : si cette information est absente et
+si le montant FRF /59/ est différent de zéro alors
+le montant Euro est calculé à partir du montant
+FRF 	en 	appliquant 	le 	taux 	de 	conversion
+6.55957.
+/67/ 	Montant TVA en euros 	11.2N 	Non 	Par défaut = 0
+Format 99999999999,99(11+2 séparé par une
+virgule)
+Attention : Indiquer un montant TTC même si le
+budget est tenu en HT.
+Format 99999999999,99(11+2 séparé par une
+virgule)
+Remarque : si cette information est absente et si
+le montant FRF /60/ est différent de zéro alors le
+montant Euro est calculé à partir du montant
+FRF 	en 	appliquant 	le 	taux 	de 	conversion
+6.55957.
+/68/ 	Ligne 	de 	mouvement
+globalisé
+13A 	Non 	Par défaut = vide
+Code du mouvement sur 10 caractères + N° de
+ligne sur 3 caractères
+(Exemple : /68/MVT010004 003 = mouvement
+MVT010004 003)
+Correspond à un engagement provisionnel ou
+anticipé dans e-Engagement.
+Les informations /541/ à /545/ ne doivent pas
+être référencées en présence de la balise /68/.
+/69/ 	Nature de prestation 	10A 	Non 	Par défaut = vide
+Correspond à la zone Nomenclature d'achat
+dans e-Engagement et e-Liquidation
+DETAIL DES ROLES - MANDATS ET RECETTES COLLECTIFS
+/71/ 	N° dans le rôle 	6N 	Oui 	Compris entre 1 et 9999
+/72/ 	N° du tiers bénéficiaire 	10A 	Oui 	Doit correspondre à un enregistrement dans la
+table tiers.
+/73/ 	Nom du bénéficiaire /1 	32A 	Non 	Par défaut = nom du 	tiers /1 de la fiche
+bénéficiaire.
+
+-- 25 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	26/43
+/74/ 	Nom du bénéficiaire /2 	32A 	Non 	Par défaut = nom du 	tiers /2 de la fiche
+bénéficiaire.
+/741/ 	Prénom du tiers 	38A 	Non 	Par défaut = prénom du tiers.
+- 	Si 	le 	PES 	est 	actif 	sur 	le 	domaine
+correspondant à la donnée importée
+- Si le tiers désigné par la balise /72/ est typé
+"personnes physiques" (cad nature juridique =
+01)
+Si le nom1 est renseigné dans la balise /73/
+Alors le prénom est obligatoire.
+/75/ 	Civilité du bénéficiaire 	8A 	Non 	Doit exister dans la table civilite. Par défaut =
+civilité de la fiche Bénéficiaire.
+- 	Si 	le 	PES 	est 	actif 	sur 	le 	domaine
+correspondant à la donnée importée
+- Si le tiers désigné par la balise /72/ est typé
+"personnes physiques" (cad nature juridique =
+01)
+Si le nom1 est renseigné dans la balise /73/
+Alors la civilité est obligatoire et elle doit
+être PES compatible.
+/751/ 	Nature juridique 	2A 	Non 	Nature 	juridique 	PES 	du 	tiers 	bénéficiaire
+(mandat collectif). Si elle n'est pas précisée, le
+typage 	est 	hérité 	de 	celui 	affecté 	au 	tiers
+désigné en /72/.
+/752/ 	Catégorie 	2A 	Non 	Catégorie du tiers bénéficiaire.
+Si une nature juridique est indiquée alors la
+catégorie doit l'être.
+/76/ 	Adresse bénéficiaire /1 	32A 	Non 	Par défaut = adresse de facture ou, à défaut,
+adresse usuelle de la fiche Bénéficiaire.
+/77/ 	Adresse bénéficiaire /2 	32A 	Non 	Par défaut = adresse de facture ou, à défaut,
+adresse usuelle de la fiche Bénéficiaire.
+/78/ 	Code postal bénéficiaire 	5A 	Non 	Par défaut = adresse de facture ou, à défaut,
+adresse usuelle de la fiche Bénéficiaire.
+/79/ 	Commune 	du
+bénéficiaire
+32A 	Non 	Par défaut = adresse de facture ou à défaut,
+adresse usuelle de la fiche Bénéficiaire.
+/80/ 	Bureau distributeur 	25A 	Non 	Par défaut = adresse de facture ou, à défaut,
+adresse usuelle de la fiche Bénéficiaire.
+/801/ 	Code pays 	5A 	Non 	Valeurs admises : nomenclature insee des codes
+pays
+http://www.insee.fr/fr/methodes/nomenclatures
+/cog/pays.asp
+Cette 	information 	est 	destinée 	à 	alimenter
+ADRESSE.PAYSID.
+
+-- 26 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	27/43
+/81/ 	Domiciliation bancaire 	24A 	- 	Donnée interdite s'il s'agit d'un mouvement de
+recette.
+Domiciliation bancaire du tiers au format :
+BBBBB GGGGG CCCCCCCCCCC RR * concaténés
+:
+B et G = code banque et guichet
+C et R = compte et clé RIB
+* 	= permet d'imposer une
+domiciliation inconnue
+L'existence de la domiciliation est vérifiée dans
+la table dompers. Si elle n'existe pas et si la
+zone /80/ ne se termine pas par une étoile (*), le
+mouvement est rejeté.
+Si elle n'existe pas et si l'étoile (*) est présente,
+le mouvement est accepté et la domiciliation est
+créée sur le mandat après vérification de la
+validité des codes banque, guichet et clé Rib.
+Cas particulier : Si cette zone est initialisée à
+DEFAUT, prendre la domiciliation par défaut du
+tiers. Si ce tiers n'a pas de domiciliation par
+défaut, le mouvement est rejeté.
+/811/ 	Domiciliation 	bancaire
+au format SEPA
+46A 	- 	Donnée interdite s'il s'agit d'un mouvement de
+recette ou si l'information /81/ est renseignée.
+Le format est :
+- Code BIC sur 11 caractères
+- Code IBAN sur 34
+- Un caractère *
+Elle doit exister sur le tiers si la ligne ne termine
+pas par une étoile. Le caractère * situé en fin de
+ligne permet d'insérer une référence bancaire
+inexistante.
+Si elle n'existe pas et si la zone /801/ ne se
+termine pas une *, le mouvement est rejeté. Si
+elle n'existe pas et si l'étoile (*) est présente, le
+mouvement est accepté et la domiciliation est
+insérée sur le mandat, après vérification de la
+validité de l'IBAN et de l'existence du BIC.
+/82/ 	Bénéficiaire du compte 	24A 	Non 	Donnée interdite s'il s'agit d'un mouvement de
+recette ou si l'information /40/ a été renseignée.
+Par défaut = "Nom du bénéficiaire /1" (/72/)
+/83/ 	Références stables 	15A 	Non 	Références stables du bénéficiaire. Par défaut =
+références stables de la fiche Bénéficiaire.
+Attention : pour les mandats cette zone doit
+être numérique alors que pour les titres de
+recette elle peut être alphanumérique.
+
+-- 27 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	28/43
+/90/ 	Intérêts moratoires 	1A 	Non 	"N" = il ne s'agit pas d'une ligne d'intérêts
+moratoires (par défaut).
+"I" = il s'agit d'une ligne d'intérêts moratoires.
+"C" = il s'agit d'une ligne d'intérêts moratoires
+complémentaires.
+Les valeurs "I" et "C" sont :
+- interdites si /02/ type de mouvement = "R"
+- interdites si /10/ mouvement déjà existant =
+"O"
+- interdites si /12/ titre créé ou réduit = "R"
+- interdites si /44/ titre collectif (rôle) = "O"
+- interdites si /52/ code tranche est renseigné
+- interdites si /62/ n° engagement d'AP (et
+opération) est renseigné
+- 	interdites 	si 	/63/ 	n° 	immobilisation 	est
+renseigné
+/91/ 	Exercice/Mouvement/Lig
+ne
+4N10A3N 	Non 	Correspond à la ligne de mouvement de la ligne
+de mandat donnant lieu à intérêts moratoires
+ou intérêts moratoires complémentaires.
+- Si saisi, doit correspondre à un enregistrement
+dans la table MVTLIGNE.
+- Obligatoire si /90/ est renseigné.
+/92/ 	Taux d'IM ou IMC 	3.2N 	Non 	Obligatoire si /90/ est renseigné.
+
+-- 28 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	29/43
+3 	Notion de "Traitement par lot"
+La notion "Traitement par lot" permet de solidariser plusieurs enregistrements afin de pouvoir les
+valider ou au contraire les rejeter tous ensemble.
+On peut ainsi imaginer qu'il n'y a pas d'intérêt à créer un mouvement si l'ensemble des lignes qui le
+compose ne sont pas validées. En englobant dans un même lot le mouvement et toutes ses lignes, le
+rejet d'une seule ligne entraînera également le rejet du mouvement complet y compris les lignes
+valides.
+Un lot est délimité par un ordre de début de lot : {DEBUT_LOT} et un ordre de fin de lot : {FIN_LOT}.
+Cet ordre doit être seul sur une ligne du fichier Ascii. Il commence par une accolade ouvrante et se
+termine par une accolade fermante. Il doit impérativement être inséré avant un séparateur de
+mouvement /##/.
+Tant que le programme ne rencontre pas d'ordre de début de lot, il valide ou rejette les
+enregistrements traités les uns après les autres. Le rejet d'un enregistrement ne peut pas avoir d'effet
+sur les enregistrements précédemment validés.
+Lorsque le programme rencontre un ordre de début de lot, il ne valide les enregistrements qui suivent
+que globalement, dès qu'un ordre de fin de lot est donné. Si l'un des enregistrements est rejeté, c'est
+l'ensemble des enregistrements du lot qui sont rejetés, qu'ils soient situés avant ou après
+l'enregistrement incriminé.
+Un enregistrement de fin de lot déclenche l'opération de validation du lot (ordre commit sur la base de
+données Oracle). Après cet ordre de fin de lot, si aucun ordre d'ouverture de lot n'est donné, le
+programme recommence à valider ou à rejeter les lignes une à une.
+Cas particuliers
+ Si un ordre de début de lot a été donné mais qu'à la fin du fichier Ascii aucun ordre de fin de lot n'a
+été rencontré, l'ensemble des enregistrements traités est validé (sauf rejet pour anomalie).
+ Si un ordre de début de lot est donné à la suite d'un autre ordre de début de lot sans ordre de fin
+de lot intermédiaire, alors le deuxième début de lot est ignoré.
+ Si un ordre de fin de lot est donné alors qu'aucun ordre de début de lot n'a été préalablement
+donné, alors la fin de lot est ignorée.
+
+-- 29 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	30/43
+4 	Exemples de codification
+4.1 	Saisie d'un engagement n'ayant qu'une ligne
+/##/PARAM/01/BP/3/O/N/N
+/##/
+/01/96000101
+/02/D
+/03/MARTIN
+/04/Produits d’entretien pour le Stade
+/05/07
+/--/
+/51/1
+/52/MAR001 	02
+/54/ 	011 	251 	60631 	S1 	D1
+/57/Decapnet (100 litres)
+/66/7116,00
+/##/
+4.2 	Saisie d'un mandat direct de 2 lignes
+/##/PARAM/01/BP/5/O/N/N
+/##/
+/01/96000101
+/02/D
+/03/MARTIN
+/04/Produits d’entretien pour le Stade
+/05/07
+/11/9001
+/12/C
+/13/1
+/20/Votre facture 6127 du 10.12.96
+/39/20160124001234567890166*
+/44/N
+/--/
+/51/1
+/52/MAR001 	02
+/54/DEF0110010
+/55/6127
+/57/Decapnet (100 litres)
+
+-- 30 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	31/43
+/66/7116,00
+/--/
+/51/2
+/52/MAR001 	02
+/54/DEF0110541
+/55/6127
+/57/Spontex (300 unités)
+/58/ 	NN
+/66/3024,00
+/##/
+4.3 	Saisie d'un titre de recette collectif
+/##/PARAM/01/BP/5/O/N/N
+/##/
+/01/96000101
+/02/R
+/03/DEBDIV
+/04/Droits de place décembre 96
+/05/01
+/11/9701
+/12/C
+/13/00101
+/15/3
+/20/Droits de place décembre 96
+/31/Débiteurs divers
+/44/O
+/--/
+/51/1
+/54/ 	73 	98 	7336 	S5 	R1
+/66/2000,00
+/71/101001
+/72/MART001
+/73/MARTIN
+/741/Denise
+/75/MME
+/76/25, rue des ortolans
+/78/57070
+/79/METZ
+/--/
+/51/1
+/54/ 	73 	98 	7336 	S5 	R1
+
+-- 31 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	32/43
+/66/3500,00
+/71/101002
+/72/BERN003
+/73/BERNARD
+/741/Hector
+/75/M
+/76/3, rue des chouettes
+/78/57000
+/79/METZ
+/--/
+/51/01
+/54/ 	73 	98 	7336 	S5 	R1
+/66/2750,00
+/71/101003
+/72/EIFFAGE
+/73/EIFFAGE SA
+/76/232, bld Carnot
+/78/57050
+/79/METZ
+/##/
+4.4 	Saisie d'un lot comprenant 2 mouvements
+/##/PARAM/01/BP/5/O/N/N
+{DEBUT_LOT}
+/##/
+/01/96000101
+/02/D
+/03/MARTIN
+/04/Produits d’entretien pour le Stade
+/05/07
+/11/9001
+/12/C
+/13/1
+/20/Votre facture 6127 du 10.12.96
+/39/20160124001234567890166*
+/44/N
+/--/
+/51/1
+/52/MAR001 	02
+/54/ 	011 	251 	60631 	S1 	D1
+/55/6127
+
+-- 32 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	33/43
+/57/Decapnet (100 litres)
+/66/7116,00
+/--/
+/51/2
+/53/RESV1 	1
+/55/6127
+/57/Spontex (300 unités)
+/58/ 	NN
+/66/3024,00
+/##/
+/01/96000102
+/02/D
+/03/MARTIN
+/04/Produits d’entretien pour la piscine
+/05/07
+/11/9002
+/12/C
+/13/2
+/20/Votre facture 6128 du 10.12.96
+/39/20160124001234567890166*
+/44/N
+/--/
+/51/1
+/52/MAR001 	02
+/54/ 	011 	251 	60631 	S1 	D1
+/55/6127
+/57/Decapnet (100 litres)
+/66/7116,00
+{FIN_LOT}
+/##/
+4.5 	Saisie d'un pré-mandat direct (1 ligne sur un
+engagement pluriannuel) nouveau cadre
+/##/PARAM/01/01/5/O/N/N
+/##/
+/01/15D0101
+/02/D
+/03/BERS001
+/04/ Rbst capital CFFL 20077406 mai2015
+/05/01
+/11/9001
+
+-- 33 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	34/43
+/13/0001
+/20/ Rbst capital CFFL 20077406 mai2015
+/39/DEFAUT
+/40/03
+/--/
+/51/1
+/52/15-00101 	1 	PRIBAS
+/541/16 	1641 	020 	RD
+/542/ARB_SERV 	FINANCES 	FINANCES
+/543/ARB_ANAL 	T001 	ARB_EVEN 	FETESNOEL
+/544/OPERATION 3412-001
+/545/POLITIQUE DEPURBAIN
+/57/Emprunt CCFL N°20077406
+/62/EA150001
+/66/1234,00
+/##/
+4.6 	Saisie d'un pré-titre avec ASAP Dématérialisé
+/##/PARAM/01/VI/2016/5/O/N/N
+/##/
+/01/16R0101
+/02/R
+/03/BERS001
+/04/Facture cantine et TAPS
+/05/11
+/11/1235
+/13/0001
+/20/Facture cantine-TAPS Mai 2016
+/**/
+/500/P
+/501/001
+/502/Cantine de mai 2016 pour Léa
+/503/01052016
+/504/31052016
+/505/12,00
+/506/1,25
+/**/
+/500/G
+/501/002
+/502/Participation sortie scolaire
+/503/18052016
+
+-- 34 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	35/43
+/509/5,00
+/--/
+/51/1
+/541/70 	7067 	251 	RR
+/542/ORGA_FIN1 CANTSCOL
+/545/POLITIQUE EDUCATION
+/543/DESTINAT 	ECOL01
+/66/15,00
+/--/
+/51/2
+/541/70 	7062 	251 	RR
+/542/ORGA_FIN1 TRANSPORT
+/545/POLITIQUE EDUCATION
+/543/DESTINAT 	ECOL01
+/66/5,00
+/##/
+/01/PC0202-A2
+/02/R
+/03/CCAS001
+/04/Repas livré dans résidences
+/05/11
+/11/1235
+/13/0002
+/15/01
+/19/01
+/20/Repas livré dans résidences
+/441/02-16-2201
+/442/2016-0232/1
+/444/FINANCE
+/**/
+/500/P
+/501/001
+/502/Repas livrés Rés. EPHAD
+/503/01012016
+/504/31032016
+/505/123,00
+/506/6,50
+/**/
+/500/R
+/501/003
+/502/Remise
+/503/31032016
+
+-- 35 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	36/43
+/509/9,50
+/--/
+/51/1
+/541/70 	7067 	61 	RR
+/542/ORGA_FIN4 CANTSCOL
+/545/POLITIQUE 16AIDEPA
+/543/DESTINAT APA
+/57/Cantine
+/66/790,00
+/##/
+4.7 	Saisie d'un titre avec 2 tiers solidaires
+/##/PARAM/04/01/2018/5/N/N/N
+/##/
+/01/REC-0010
+/02/R
+/03/1114
+/04/Cantine scolaire Janvier
+/05/11
+/11/1234
+/13/0010
+/15/01
+/183/O
+/19/01
+/20/Facturation cantine scol.
+/21/ Mois de janvier
+/$$/
+/400/107
+/401/USU
+/$$/
+/400/4643
+/401/USU
+/402/CRLYFRPP 	FR1230002073250000061999B63
+/--/
+/51/1
+/541/70 	70388 	251 	RR
+/542/ORGA_FIN 	ECOLES
+/66/12,00
+/##/
+
+-- 36 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	37/43
+4.8 	Exemple des balises pour pièces justificatives
+Balises 261 à 266 pour une gestion en GED Alfresco
+/261/Facture-prestations
+/262/04
+/263/http://dempap1mogbl:9090/share/page/context/mine/document-details?nodeRef=workspace://Sp
+acesStore/f4debd00-fbdf-49b9-9d07-22132ff4fa11
+/266/LIQ_GED
+Balises 261 à 266 sur un serveur de fichier
+/261/Facture-prestations
+/262/01
+/263/\\ServeurFI\editions$\SMPROD\eGF\pjust\FCT_18002_BL.pdf
+/266/MDT
+Note : deux types de document existent en base : un type codé LIQ_GED dans lequel le
+stockage est GED et un type codé MDT dans lequel le stockage est serveur de fichier.
+
+-- 37 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	38/43
+5 	Anomalies et statistiques de traitement
+
+-- 38 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	39/43
+6 	Table de stockage des anomalies :
+FILIEN_RAP
+Si la table FILIEN_RAP est présente dans le compte FI de la base Oracle, le programme FILIEN y reporte
+les anomalies rencontrées en cours de traitement. Chaque anomalie est identifiée par le numéro de
+l'information qui a produit l'anomalie.
+N° 01 	Anomalie sur le code du mouvement,
+N° 03 	Anomalie sur le code Tiers,
+...
+Le libellé de l'anomalie, quant à lui, est le même que celui édité sur le rapport.
+Le script ci-dessous correspond à la création de la table de rapport FILIEN_RAP et de l'index associé (en
+précisant les tablespaces adéquats pour la table et l'index).
+create table FILIEN_RAP
+( id_batch varchar2(100),
+section varchar2(20),
+ligne number(6),
+cleacces varchar2(40),
+erreur number(6),
+libelle varchar2(80) )
+tablespace <nom tablespace des table>;
+create index I0_FILIEN_RAP on FILIEN_RAP (id_batch)
+tablespace <nom tablespace des index>
+
+-- 39 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	40/43
+7 	Protocole Firetlien - Retour d'informations sur
+Filien
+Le programme batch Firetlien de l'application Finances c/s est accessible dans le menu Autres
+travaux..., sous-menu RFL Retour Filien.
+Il permet de générer un fichier texte au format décrit ci-après, contenant une liste de mouvements
+générés par Filien et ayant atteint au minimum le stade Mandat validé. Les mouvements contenus
+dans ce fichier texte dépendent de critères de sélection positionnés par l'utilisateur.
+7.1 	Critère de sélection et de tri
+Les critères de sélection des lignes de mouvement sont les suivants :
+ Exercices (de ... à ...)
+ Mouvements (de ... à ...)
+ Nature (Dépenses et/ou Recettes)
+ Avancement minimum (mandaté ou pris en compte en trésorerie)
+ Dates de validation du mandat (de ... à ...)
+ Dates de dernier retour Ocre (de ... à ...)
+ Nom de l'utilisateur ayant créé les mouvements
+ Nom du fichier généré
+Les lignes de mouvements sélectionnées sont triées dans l'ordre suivant :
+ Organisme
+ Budget
+ Exercice
+ Mouvement
+ Ligne de mouvement
+7.2 	Structure du fichier texte généré
+ Le fichier texte généré comporte une ligne par ligne de mouvement sélectionnée.
+ Les données sont séparées par un point-virgule.
+ Le nom du fichier texte dépend du paramètre passé en entrée du batch.
+Champ 	Longueur 	Origine dans la base
+Code organisme 	2N 	Orgafi.orgafi
+Code budget 	2A 	Budget.budget
+Exercice 	4N 	Budannu.exercice
+Mouvement 	10C 	Mouvement.mouvement
+Sens du mouvement (D/R) 	1C 	Mouvement.sensmvt
+
+-- 40 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	41/43
+N° de ligne de mouvement 	3N 	Mvtligne.ligne
+Utilisateur de création 	10C 	Mvtligne.user_creat
+Date de création 	10N 	Mvtligne.date_creat 	(format
+JJ-MM-AAAA)
+N° bordereau 	5N 	Mvtligne.bordereau
+N° mandat 	6N 	Mvtligne.mandat
+Date de mandat 	10N 	Mvtligne.datmandat 	(format
+JJ-MM-AAAA)
+Montant 	TTC 	en 	Franc 	(en
+centimes)
+12N 	Mvtligne.montanttc
+Montant 	TVA 	en 	Franc 	(en
+centimes)
+12N 	Mvtligne.mtva
+Dernière date Ocre connue 	10N 	Mvtligne.datocre (format JJ-MM-AAAA)
+Montant encaissé ou payé (en
+centimes)
+12N 	Mvtligne.mtocre
+Montant 	TTC 	en 	Euros 	(en
+centimes)
+12N 	Mvtligne.montanttc_e
+Montant 	TVA 	en 	Euros 	(en
+centimes)
+12N 	Mvtligne.mtva_e
+Montant en Euros encaissé ou
+payé (en centimes)
+12N 	Mvtligne.mtocre_e
+Date d'envoi INDIGO ou PES 	10N 	Mandat.datindigo 	(format
+JJ-MM-AAAA)
+Date de prise en charge 	10N 	Mandat.date_prise_en_charge (format
+JJ-MM-AAAA)
+
+-- 41 of 43 --
+
+Copyright © Berger-Levrault - BLSP n° 5412 - 2023.1 	42/43
+7.3 	Compte-rendu d'exécution
+
+-- 42 of 43 --
+
+berger-levrault.com
+© Berger-Levrault 2023 - SA au capital de 12 614 510,44 €
+Locataire gérant Novaprove, Expertiz Santé et BL Holding
+RCS Nanterre 755 800 646 - Siège social : 892 rue Yves Kermen - 92100 Boulogne-Billancourt - France
+Développez 	vos
+compétences 	en ligne
+
+-- 43 of 43 --
+
