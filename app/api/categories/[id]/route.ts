@@ -3,10 +3,11 @@ import { prisma } from '@/lib/prisma';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id: paramId } = await params;
   try {
-    const id = parseInt(params.id);
+    const id = parseInt(paramId);
     const body = await request.json();
     const { nom, couleur } = body;
 
@@ -27,10 +28,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id: paramId } = await params;
   try {
-    const id = parseInt(params.id);
+    const id = parseInt(paramId);
     
     // Check if category has children
     const hasChildren = await (prisma as any).categorie.findFirst({

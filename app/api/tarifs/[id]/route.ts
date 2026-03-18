@@ -3,11 +3,12 @@ import { prisma } from '@/lib/prisma';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id: paramId } = await params;
   try {
     const body = await request.json();
-    const id = parseInt(params.id);
+    const id = parseInt(paramId);
     const { montant, notes, modeTaxationId, designation, numero, categorieId } = body;
 
     const tarif = await (prisma as any).tarif.update({
@@ -41,10 +42,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id: paramId } = await params;
   try {
-    const id = parseInt(params.id);
+    const id = parseInt(paramId);
     await (prisma as any).tarif.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
