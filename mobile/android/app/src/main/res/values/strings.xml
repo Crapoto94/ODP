@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ODP Mobile</string>
+    <string name="title_activity_main">ODP Mobile</string>
+    <string name="package_name">fr.ivry.odp.mobile</string>
+    <string name="custom_url_scheme">fr.ivry.odp.mobile</string>
+</resources>

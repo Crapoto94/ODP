@@ -67,10 +67,12 @@ model Note {
   author       String?
   pjPath       String?    // Chemin vers la pièce jointe
   pjName       String?    // Nom d'origine du fichier
+  pjThumb      String?    // Thumbnail base64
   isEmail      Boolean    @default(false)
   externalId   String?    // Message-ID pour les emails
   fromEmail    String?
   toEmail      String?
+  origin       String?    @default("desktop")
   created_at   DateTime   @default(now())
 }
 
@@ -137,6 +139,18 @@ model User {
   role      String   // AGENT_TERRAIN, AGENT_BUREAU, AGENT_COMPTABLE, ADMIN
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  logs       MobileLog[]
+}
+
+model MobileLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String?  // ACCESS, LOGIN, NOTE_ADD, etc.
+  userAgent  String?
+  deviceInfo String?  // Stringified JSON
+  ip         String?
+  created_at DateTime @default(now())
 }
 
 model AppSettings {

@@ -19,7 +19,7 @@ export async function GET(req: Request) {
           include: { article: { include: { modeTaxation: true } } }
         },
         _count: {
-          select: { notes: true }
+          select: { notes: true, lignes: true }
         }
       },
       orderBy: { created_at: 'desc' },

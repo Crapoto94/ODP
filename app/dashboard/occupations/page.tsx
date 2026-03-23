@@ -392,7 +392,7 @@ function OccupationsPageContent() {
             </div>
             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{cat.label}</h3>
             <p className="text-2xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">
-              {(totalsByType[cat.type] || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-base text-slate-400">€</span>
+              {(totalsByType[cat.type] || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-base text-slate-400">€ TTC</span>
             </p>
           </button>
         ))}
@@ -481,10 +481,10 @@ function OccupationsPageContent() {
                   <th className="px-6 pb-4">Nom Dossier</th>
                   <th className="px-6 pb-4">Demandeur</th>
                   <th className="px-6 pb-4">Période</th>
+                  <th className="px-6 pb-4">Compteurs</th>
+                  <th className="px-6 pb-4">Montant</th>
                   <th className="px-6 pb-4">Type</th>
                   <th className="px-6 pb-4">PJ</th>
-                  <th className="px-6 pb-4">Articles</th>
-                  <th className="px-6 pb-4">Montant</th>
                   <th className="px-6 pb-4">Statut</th>
                   <th className="px-6 pb-4 text-right">Actions</th>
                 </tr>
@@ -520,15 +520,6 @@ function OccupationsPageContent() {
                           )}
                         </p>
                       </td>
-                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black">
-                        <span className="bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 text-slate-600 uppercase tracking-widest">{occ.type}</span>
-                      </td>
-                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black text-slate-400">
-                         <div className="flex items-center gap-2">
-                           <ImageIcon size={14} className={occ.photos ? "text-blue-500" : "text-slate-200"} />
-                           <span>{occ.photos ? occ.photos.split(',').filter(Boolean).length : 0}</span>
-                         </div>
-                      </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black text-slate-600">
                          <div className="flex flex-col gap-1">
                            <div className="flex items-center gap-2">
@@ -541,7 +532,16 @@ function OccupationsPageContent() {
                          </div>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 font-bold text-blue-600 uppercase text-[11px]">
-                         {((occ.lignes?.reduce((sum: number, l: any) => sum + (l.montant || 0), 0) || occ.montantCalcule || 0)).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                         {((occ.lignes?.reduce((sum: number, l: any) => sum + (l.montant || 0), 0) || occ.montantCalcule || 0)).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} € <span className="text-[9px] text-slate-400">TTC</span>
+                      </td>
+                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black">
+                        <span className="bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 text-slate-600 uppercase tracking-widest">{occ.type}</span>
+                      </td>
+                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black text-slate-400">
+                         <div className="flex items-center gap-2">
+                           <ImageIcon size={14} className={occ.photos ? "text-blue-500" : "text-slate-200"} />
+                           <span>{occ.photos ? occ.photos.split(',').filter(Boolean).length : 0}</span>
+                         </div>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-[10px] font-black uppercase">
                          <div className="flex items-center gap-2">

@@ -26,7 +26,11 @@ export async function POST(req: Request) {
         path: '/'
       });
 
-      return NextResponse.json({ success: true, redirect: '/dashboard' });
+      return NextResponse.json({ 
+        success: true, 
+        redirect: '/dashboard',
+        user: { id: 0, nom: 'ADMIN', prenom: 'Système', role: 'ADMIN' }
+      });
     }
 
     const user = await (prisma as any).user.findUnique({

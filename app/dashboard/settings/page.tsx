@@ -17,12 +17,16 @@ import {
   Plus,
   Trash2,
   Edit2,
-  FileText
+  MonitorSmartphone,
+  Smartphone,
+  FileText,
+  Clock,
+  History
 } from 'lucide-react';
 import SQLEditor from '@/components/SQLEditor';
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<'general' | 'sql' | 'users' | 'filien'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'sql' | 'users' | 'filien' | 'mobile_logs'>('general');
   
   // -- General Settings State --
   const [settings, setSettings] = useState({
@@ -69,6 +73,10 @@ export default function SettingsPage() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [userForm, setUserForm] = useState({ nom: '', prenom: '', email: '', login: '', password: '', role: 'AGENT_TERRAIN' });
+  
+  // -- Mobile Logs --
+  const [mobileLogs, setMobileLogs] = useState<any[]>([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -93,6 +101,18 @@ export default function SettingsPage() {
       console.error(err);
     } finally {
       setLoadingUsers(false);
+    }
+  }
+
+  const fetchMobileLogs = async () => {
+    try {
+      setLoadingLogs(true);
+      const res = await axios.get('/api/logs');
+      setMobileLogs(res.data);
+    } catch(err) {
+      console.error(err);
+    } finally {
+      setLoadingLogs(false);
     }
   }
 
@@ -142,6 +162,12 @@ export default function SettingsPage() {
       checkApm();
     }
   }, [settings.apmUrl]);
+
+  useEffect(() => {
+    if (activeTab === 'mobile_logs') {
+      fetchMobileLogs();
+    }
+  }, [activeTab]);
 
   const checkApm = async () => {
     setApmStatus('pending');
@@ -227,6 +253,13 @@ export default function SettingsPage() {
           >
             <FileText size={16} />
             Filien
+          </button>
+          <button 
+            onClick={() => setActiveTab('mobile_logs')}
+            className={`flex items-center gap-3 px-8 py-3 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'mobile_logs' ? 'bg-white text-emerald-600 shadow-md border border-slate-200 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            <Smartphone size={16} />
+            Logs Mobiles
           </button>
           <button 
             onClick={() => setActiveTab('sql')}
@@ -725,6 +758,105 @@ export default function SettingsPage() {
                   Enregistrer les paramètres Filien
                 </button>
               </form>
+            </div>
+          </div>
+        ) : activeTab === 'mobile_logs' ? (
+          <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
+            <div className="flex justify-between items-center bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
+              <div>
+                <h3 className="text-xl font-black text-slate-900 tracking-tight">Activité Mobile</h3>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Derniers accès et synchronisations terrain</p>
+              </div>
+              <button 
+                onClick={fetchMobileLogs}
+                disabled={loadingLogs}
+                className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all disabled:opacity-50"
+              >
+                {loadingLogs ? <Loader2 size={16} className="animate-spin" /> : <History size={16} />} Actualiser
+              </button>
+            </div>
+
+            <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden min-h-[400px]">
+              {loadingLogs && mobileLogs.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-[400px] gap-4">
+                  <Loader2 className="animate-spin text-indigo-600" size={32} />
+                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Chargement des logs...</p>
+                </div>
+              ) : mobileLogs.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-[400px] gap-4 opacity-40">
+                  <History size={48} className="text-slate-300" />
+                  <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Aucun log trouvé</p>
+                </div>
+              ) : (
+                <table className="w-full text-left">
+                  <thead className="bg-slate-50 border-b border-slate-100">
+                    <tr>
+                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center w-24">Date</th>
+                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Utilisateur</th>
+                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
+                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Device / Info</th>
+                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">IP</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {mobileLogs.map((log: any) => {
+                       let deviceInfo: any = {};
+                       try { deviceInfo = typeof log.deviceInfo === 'string' ? JSON.parse(log.deviceInfo) : log.deviceInfo; } catch(e) {}
+                       
+                       return (
+                        <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="px-8 py-4">
+                            <div className="text-center">
+                              <p className="font-black text-slate-900 text-sm">{new Date(log.created_at).toLocaleDateString()}</p>
+                              <p className="text-[10px] font-bold text-slate-400 tabular-nums uppercase tracking-widest">{new Date(log.created_at).toLocaleTimeString()}</p>
+                            </div>
+                          </td>
+                          <td className="px-8 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-[10px]">
+                                {log.userPrenom?.[0] || '?'}{log.userNom?.[0] || '?'}
+                              </div>
+                              <div>
+                                <p className="font-bold text-slate-900 text-sm whitespace-nowrap">{log.userPrenom} {log.userNom}</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">ID: {log.userId || 'System'}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-8 py-4">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                              log.action === 'LOGIN' ? 'bg-emerald-100 text-emerald-700' : 
+                              log.action === 'ACCESS' ? 'bg-blue-100 text-blue-700' :
+                              'bg-slate-100 text-slate-600'
+                            }`}>
+                              {log.action}
+                            </span>
+                          </td>
+                          <td className="px-8 py-4 max-w-[300px]">
+                            <div className="space-y-1">
+                              <p className="text-xs font-bold text-slate-700 truncate" title={log.userAgent}>
+                                {deviceInfo.platform || 'Inconnu'} · {deviceInfo.vendor || 'OS'} 
+                              </p>
+                              <div className="flex gap-2 flex-wrap">
+                                <span className="text-[9px] font-black bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded uppercase tracking-tighter text-slate-400">
+                                  {deviceInfo.screenWidth}x{deviceInfo.screenHeight}
+                                </span>
+                                {deviceInfo.connection && (
+                                  <span className="text-[9px] font-black bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded uppercase tracking-tighter text-slate-400 italic">
+                                    {deviceInfo.connection}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-8 py-4">
+                            <p className="text-xs font-black text-slate-400 tabular-nums">{log.ip || '0.0.0.0'}</p>
+                          </td>
+                        </tr>
+                       );
+                    })}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         ) : activeTab === 'users' ? (

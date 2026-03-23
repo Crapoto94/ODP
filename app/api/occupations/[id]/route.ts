@@ -5,7 +5,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const { id: paramId } = await params;
     const id = parseInt(paramId);
-    const occupation = await (prisma as any).occupation.findUnique({
+    const occupation: any = await (prisma as any).occupation.findUnique({
       where: { id },
       include: { 
         tiers: true,
@@ -13,7 +13,25 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         contacts: true
       }
     });
-    return NextResponse.json(occupation);
+
+    if (!occupation) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+    // History for COMMERCE
+    let history = [];
+    if (occupation.type === 'COMMERCE') {
+      history = await (prisma as any).occupation.findMany({
+        where: {
+          tiersId: occupation.tiersId,
+          adresse: occupation.adresse,
+          type: 'COMMERCE',
+          id: { not: id }
+        },
+        select: { id: true, anneeTaxation: true },
+        orderBy: { anneeTaxation: 'desc' }
+      });
+    }
+
+    return NextResponse.json({ ...occupation, history });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

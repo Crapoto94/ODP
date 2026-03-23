@@ -26,7 +26,9 @@ import {
   Send,
   Mic,
   Paperclip,
-  Mail
+  Mail,
+  Smartphone,
+  FileArchive
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -848,6 +850,11 @@ function NotesThread({ occupationId, currentUser }: { occupationId: number, curr
                       <span className={`text-[8px] font-black uppercase tracking-widest ${metaColor}`}>
                         {note.author}
                       </span>
+                      {note.origin === 'mobile' && (
+                        <span className="p-1 rounded-md bg-emerald-500/10 text-emerald-500" title="Saisie sur le terrain">
+                          <Smartphone size={10} strokeWidth={3} />
+                        </span>
+                      )}
                       {note.isEmail && (
                         <span className={`px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase border flex items-center gap-1 ${badgeStyle}`}>
                           <Mail size={8} /> Mail
@@ -858,27 +865,70 @@ function NotesThread({ occupationId, currentUser }: { occupationId: number, curr
                       {format(new Date(note.created_at), 'dd MMM HH:mm', { locale: fr })}
                     </span>
                   </div>
-                  <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap">{note.content}</p>
+                  {note.content === 'Photo terrain' || note.content === '' ? (
+                    <div className="flex items-center gap-2 text-[var(--text-dim)] opacity-40 italic py-2">
+                       <Smartphone size={14} />
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Saisie terrain</span>
+                    </div>
+                  ) : (
+                    <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap">{note.content}</p>
+                  )}
+                  
                   {note.pjPath && (
-                    <div className="mt-3 pt-3 border-t border-white/10">
-                      {note.pjName?.match(/\.(jpeg|jpg|gif|png|webp)$/i) && (
-                        <div className="mb-2 rounded-xl overflow-hidden shadow-sm max-w-sm">
+                    <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
+                      {/* Image Preview with lightbox feel */}
+                      {note.pjPath.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) ? (
+                        <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/5 max-w-md group relative">
                           <a href={note.pjPath} target="_blank" rel="noreferrer">
-                            <img src={note.pjPath} alt={note.pjName} className="w-full h-auto object-cover max-h-48 hover:opacity-90 transition-opacity" />
+                            <img 
+                              src={note.pjThumb || note.pjPath} 
+                              alt={note.pjName} 
+                              className="w-full h-auto object-cover max-h-64 transition-transform duration-500 group-hover:scale-110" 
+                            />
+                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                               <ImageIcon size={32} className="text-white drop-shadow-lg" />
+                            </div>
                           </a>
                         </div>
+                      ) : (
+                        /* Document Preview Card */
+                        <div className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${
+                          isMe ? 'bg-white/10 border-white/10 hover:bg-white/20' : 'bg-white border-slate-200 hover:border-blue-300 shadow-sm'
+                        }`}>
+                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                             isMe ? 'bg-white/20 text-white' : 'bg-blue-50 text-blue-600'
+                           }`}>
+                              {note.pjName?.endsWith('.pdf') ? <FileText size={24} /> : <FileArchive size={24} />}
+                           </div>
+                           <div className="flex-1 min-w-0">
+                              <p className={`text-xs font-black truncate ${isMe ? 'text-white' : 'text-slate-900'}`}>{note.pjName || 'Document'}</p>
+                              <p className={`text-[10px] uppercase font-bold tracking-widest ${isMe ? 'text-white/40' : 'text-slate-400'}`}>
+                                {note.pjName?.split('.').pop() || 'Fichier'}
+                              </p>
+                           </div>
+                           <a 
+                             href={note.pjPath} 
+                             target="_blank" 
+                             rel="noreferrer"
+                             className={`p-3 rounded-xl transition-all ${
+                               isMe ? 'hover:bg-white/10 text-white' : 'hover:bg-blue-50 text-blue-600'
+                             }`}
+                           >
+                             <ExternalLink size={18} />
+                           </a>
+                        </div>
                       )}
+
+                      {/* Download Link fallback */}
                       <a 
                         href={note.pjPath} 
                         target="_blank" 
                         rel="noreferrer"
-                        className={`inline-flex items-center gap-2 p-2 rounded-xl text-[10px] font-bold transition-all ${
-                          isMe ? 'bg-white/10 hover:bg-white/20' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200'
+                        className={`inline-flex items-center gap-2 p-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
+                          isMe ? 'text-white/60 hover:text-white hover:bg-white/10' : 'text-slate-400 hover:text-blue-600 hover:bg-blue-50'
                         }`}
                       >
-                        <Paperclip size={12} />
-                        <span className="truncate max-w-[150px]">{note.pjName || 'Document'}</span>
-                        <Download size={12} className="ml-2" />
+                        <Download size={12} /> Télécharger
                       </a>
                     </div>
                   )}

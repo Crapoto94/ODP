@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  app:
+  web:
     build: .
-    container_name: odp-app
+    container_name: odp-web
     ports:
       - "3000:3000"
     environment:
@@ -12,6 +12,13 @@ services:
       - NODE_ENV=production
     volumes:
       - ./prisma:/app/prisma
+    restart: always
+
+  mobile:
+    build: ./mobile
+    container_name: odp-mobile
+    ports:
+      - "5000:80"
     restart: always
 
 networks:
