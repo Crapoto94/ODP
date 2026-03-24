@@ -6,18 +6,77 @@ import L from 'leaflet';
 import { useRouter } from 'next/navigation';
 
 // Safe icon helper that always returns something valid if on window
-const getIcon = (isTier: boolean) => {
-  if (typeof window === 'undefined') return undefined;
-  
-  return L.icon({
-    iconUrl: isTier 
-      ? 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png'
-      : 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+const MARKER_COLORS: Record<string, string> = {
+  CHANTIER:  '#f59e0b', // Amber
+  COMMERCE:  '#10b981', // Emerald
+  TOURNAGE:  '#f43f5e', // Rose
+  EVENEMENT: '#3b82f6', // Blue
+  TIER:      '#64748b', // Slate
+};
+
+const STATUS_MAP: Record<string, { label: string }> = {
+  'EN_ATTENTE': { label: 'En attente' },
+  'EN_COURS': { label: 'En cours' },
+  'TERMINE': { label: 'Terminé' },
+  'VERIFIE': { label: 'Vérifié' },
+  'FACTURE': { label: 'Facturé' },
+  'INVOICED': { label: 'Facturé' },
+  'PAYE': { label: 'Payé' },
+};
+
+const createCustomIcon = (type: string, count: number, isTier: boolean) => {
+  const color = isTier ? MARKER_COLORS.TIER : (MARKER_COLORS[type] || '#8b5cf6');
+  return L.divIcon({
+    className: 'custom-pin',
+    html: `
+      <div style="position: relative;">
+        <div style="
+          background-color: ${color};
+          width: 28px;
+          height: 28px;
+          border-radius: 50% 50% 50% 0;
+          transform: rotate(-45deg);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid white;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        ">
+          <div style="
+            width: 7px;
+            height: 7px;
+            background: white;
+            border-radius: 50%;
+            transform: rotate(45deg);
+          "></div>
+        </div>
+        ${count > 1 ? `
+          <div style="
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            font-size: 9px;
+            font-weight: 900;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+          ">
+            ${count}
+          </div>
+        ` : ''}
+      </div>
+    `,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -28],
   });
 };
 
@@ -30,6 +89,7 @@ interface MarkerData {
   type: string;
   statut: string;
   isTier?: boolean;
+  rawId: number;
 }
 
 export default function SigMap({ occupations = [], tiers = [] }: { occupations: any[], tiers?: any[] }) {
@@ -39,15 +99,8 @@ export default function SigMap({ occupations = [], tiers = [] }: { occupations: 
 
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
-      const defaultIcon = getIcon(false);
-      if (defaultIcon) {
-        L.Marker.prototype.options.icon = defaultIcon;
-      }
-    }
   }, []);
 
-  // Sync and geocode on the fly
   useEffect(() => {
     if (!mounted) return;
 
@@ -77,46 +130,11 @@ export default function SigMap({ occupations = [], tiers = [] }: { occupations: 
     ];
 
     setMarkers(allItems);
-
-    // Identify items needing geocoding (skip [NON-DIFFUSIBLE])
-    const itemsToGeocode = allItems.filter(item => 
-      (!item.latitude || !item.longitude) && 
-      item.adresse && 
-      !item.adresse.includes('[NON-DIFFUSIBLE]')
-    );
-
-    if (itemsToGeocode.length > 0) {
-      itemsToGeocode.forEach(async (item) => {
-        try {
-          const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(item.adresse)}&limit=1`);
-          const data = await res.json();
-          if (data.features && data.features.length > 0) {
-            const [lng, lat] = data.features[0].geometry.coordinates;
-            setMarkers(prev => prev.map(m => 
-              m.id === item.id ? { ...m, latitude: lat, longitude: lng } : m
-            ));
-            
-            // Background update to DB (fire and forget)
-            const endpoint = item.isTier ? `/api/tiers/${item.id.toString().replace('tier-', '')}` : `/api/occupations/${item.id.toString().replace('occ-', '')}`;
-            // Note: We'd need specific update endpoints for tiers, or stick to occupations for now
-            if (!item.isTier) {
-              fetch(endpoint, {
-                method: 'PATCH',
-                body: JSON.stringify({ latitude: lat, longitude: lng }),
-                headers: { 'Content-Type': 'application/json' }
-              }).catch(() => {});
-            }
-          }
-        } catch (err) {
-          console.error('Geocoding error for', item.adresse, err);
-        }
-      });
-    }
   }, [mounted, occupations, tiers]);
 
   if (!mounted || typeof window === 'undefined') return (
     <div className="w-full h-full bg-slate-50 flex items-center justify-center">
-      <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Chargement de la carte...</p>
+      <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest animate-pulse">Chargement cartographie...</p>
     </div>
   );
 
@@ -135,13 +153,21 @@ export default function SigMap({ occupations = [], tiers = [] }: { occupations: 
 
   const validMarkers = markers.filter(m => typeof m.latitude === 'number' && typeof m.longitude === 'number');
   
+  // Group by coordinate
+  const grouped = validMarkers.reduce((acc, m) => {
+    const key = `${m.latitude!.toFixed(6)},${m.longitude!.toFixed(6)}`;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(m);
+    return acc;
+  }, {} as Record<string, MarkerData[]>);
+
   const mapCenter: [number, number] = validMarkers.length > 0 
     ? [validMarkers[0].latitude!, validMarkers[0].longitude!]
     : [48.812, 2.385]; 
 
   return (
-    <div className="w-full h-full rounded-[2.5rem] overflow-hidden border-4 border-white shadow-2xl">
-      <MapContainer center={mapCenter} zoom={14} style={{ height: '100%', width: '100%' }}>
+    <div className="w-full h-full">
+      <MapContainer center={mapCenter} zoom={14} style={{ height: '100%', width: '100%' }} zoomControl={false}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -152,49 +178,73 @@ export default function SigMap({ occupations = [], tiers = [] }: { occupations: 
           pathOptions={{ 
             color: '#3b82f6', 
             fillColor: '#3b82f6', 
-            fillOpacity: 0.1,
-            weight: 3,
+            fillOpacity: 0.05,
+            weight: 2,
             dashArray: '5, 10'
           }} 
         />
 
-        {validMarkers.map((marker) => (
-          <Marker 
-            key={marker.id} 
-            position={[marker.latitude!, marker.longitude!]}
-            icon={getIcon(!!marker.isTier)}
-            eventHandlers={{
-              dblclick: () => !marker.isTier && router.push(`/dashboard/occupations/${(marker as any).rawId}`)
-            }}
-          >
-            <Popup>
-              <div className="p-2 min-w-[150px]">
-                <p className="font-black text-slate-900 border-b border-slate-100 pb-1 mb-1">{marker.nom}</p>
-                <p className={`text-[10px] font-bold uppercase tracking-widest ${marker.isTier ? 'text-slate-500' : 'text-blue-600'}`}>
-                  {marker.type}
-                </p>
-                <p className="text-[10px] font-black text-slate-400 mt-1">{marker.adresse}</p>
-                <div className="mt-2 flex items-center justify-between border-t border-slate-100 pt-2">
-                   <div className="flex items-center gap-1">
-                      <div className={`w-2.5 h-2.5 rounded-full ${
-                        marker.statut === 'VALIDE' || marker.statut === 'DEFINITIF' ? 'bg-emerald-500' : 'bg-amber-500 shadow-sm shadow-amber-500/50'
-                      }`}></div>
-                      <span className="text-[9px] font-black uppercase text-slate-500">{marker.statut}</span>
-                   </div>
-                   {!marker.isTier && (
-                     <button 
-                       onClick={() => router.push(`/dashboard/occupations/${(marker as any).rawId}`)}
-                       className="text-[9px] font-black text-blue-600 uppercase hover:underline"
-                     >
-                       Voir la fiche
-                     </button>
-                   )}
+        {Object.entries(grouped).map(([key, group]) => {
+          const first = group[0];
+          return (
+            <Marker 
+              key={key} 
+              position={[first.latitude!, first.longitude!]}
+              icon={createCustomIcon(first.type, group.length, !!first.isTier)}
+            >
+              <Popup className="custom-popup">
+                <div className="p-4 space-y-4 min-w-[220px] max-w-[300px] max-h-[350px] overflow-y-auto">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
+                    {group.length > 1 ? `${group.length} ÉLÉMENTS À CETTE ADRESSE` : 'DÉTAILS'}
+                  </p>
+                  
+                  {group.map((m, i) => (
+                    <div key={m.id} className={`${i > 0 ? 'pt-4 border-t border-slate-50' : ''} space-y-2`}>
+                      <h4 className="font-black text-slate-900 text-sm leading-tight uppercase">{m.nom}</h4>
+                      <div className="flex items-center gap-2">
+                         <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200`}>
+                           {m.type}
+                         </span>
+                         {!m.isTier && (
+                           <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider ${
+                             m.statut === 'VALIDE' || m.statut === 'FACTURE' || m.statut === 'INVOICED' || m.statut === 'PAYE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
+                           } border`}>
+                             {STATUS_MAP[m.statut]?.label || m.statut}
+                           </span>
+                         )}
+                      </div>
+                      <p className="text-[10px] font-bold text-slate-400">{m.adresse}</p>
+                      {!m.isTier && (
+                        <button 
+                          onClick={() => router.push(`/dashboard/occupations/${m.rawId}`)}
+                          className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
+                        >
+                          Accéder au dossier
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
+
+      <style jsx global>{`
+        .custom-popup .leaflet-popup-content-wrapper {
+          border-radius: 1.5rem;
+          padding: 0;
+          overflow: hidden;
+          box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .custom-popup .leaflet-popup-content {
+          margin: 0;
+        }
+        .leaflet-container {
+          background-color: #f8fafc !important;
+        }
+      `}</style>
     </div>
   );
 }

@@ -63,9 +63,14 @@ export async function POST(
     });
 
     const baseMontant = article?.montant || 0;
-    const mode = article?.modeTaxation?.nom || '';
-    const parts = mode.split('/').map((p: string) => p.trim());
-    const u2Label = parts[1] || '';
+    const mode = (article?.modeTaxation?.nom || '').toLowerCase();
+    // Look for a temporal unit in the full mode string
+    let u2Label = '';
+    if (mode.includes('an')) u2Label = 'an';
+    else if (mode.includes('mois')) u2Label = 'mois';
+    else if (mode.includes('10 jour')) u2Label = '10 jour';
+    else if (mode.includes('jour')) u2Label = 'jour';
+
 
     let q2 = parseFloat(quantite2 || '1');
     if (occupation?.type === 'COMMERCE') {

@@ -75,10 +75,10 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
     output += `/05/${mov.calendrier}\n`;
     output += `/06/${mov.monnaie}\n`;
     output += `/10/${mov.existant}\n`;
-    output += `/11/${mov.preBordereau || '1235'}\n`;
+    output += `/11/${(mov.preBordereau || '01235').toString().padStart(5, '0')}\n`;
     output += `/12/${mov.poste || '0001'}\n`;
-    output += `/13/${mov.bordereau || '0001'}\n`;
-    if (mov.objet) output += `/20/${mov.objet.slice(0, 40)}\n`;
+    output += `/13/${(mov.bordereau || '1').toString().padStart(5, '0').slice(0, 5)}\n`;
+    output += `/20/${(mov.objet || mov.libelle || 'Occupation du domaine public').slice(0, 40)}\n`;
     
     // Lines
     for (const line of mov.lines) {

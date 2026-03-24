@@ -68,7 +68,7 @@ export default function FacturationPage() {
   const fetchEligibleDossiers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/occupations?status=VERIFIED&type=${type}`);
+      const res = await axios.get(`/api/occupations?status=VERIFIE&type=${type}`);
       const data = res.data;
       setDossiers(data);
       setSelectedIds(data.map((d: any) => d.id));

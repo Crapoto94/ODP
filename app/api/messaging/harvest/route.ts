@@ -1,25 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import axios from 'axios';
+import { getApmSettings, httpsAgent } from '@/lib/apm';
 
 export async function POST(req: Request) {
   try {
-    const settings = await (prisma.appSettings as any).findFirst();
-    if (!settings?.apmUrl) {
-      return NextResponse.json({ error: 'Settings APM non configurés' }, { status: 400 });
-    }
-
-    const apmUrl = settings.apmUrl;
-    const apmToken = settings.apmToken || 'DSIHUB-ODP-KEY-2026';
-    const mailbox = 'odp@ivry94.fr';
+    const { url: apmUrl, token: apmToken } = await getApmSettings();
 
     // 1. Fetch messages from APM Proxy
-    // Note: The proxy endpoint is /o365/messages (GET) and doesn't take mailbox in URL
     const harvestUrl = `${apmUrl}/o365/messages`;
     console.log(`[Harvest] Fetching from: ${harvestUrl}`);
     
     const response = await axios.get(harvestUrl, {
-      headers: { 'X-API-KEY': apmToken }
+      headers: { 'X-API-KEY': apmToken },
+      httpsAgent
     });
 
     const messages = response.data.messages || response.data;

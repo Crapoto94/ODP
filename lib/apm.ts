@@ -1,10 +1,27 @@
 import axios from 'axios';
 import { prisma } from './prisma';
+import https from 'https';
 
-async function getSettings() {
+export const httpsAgent = new https.Agent({
+  rejectUnauthorized: false
+});
+
+export async function getApmSettings() {
   const settings = await prisma.appSettings.findFirst();
+  let url = (settings?.apmUrl || 'http://localhost:8001/api/v1').trim().replace(/\/$/, '');
+  
+  // Robust check for /api and /v1 in the path (not the domain)
+  const path = url.split('://')[1]?.split('/').slice(1).join('/') || '';
+  const normalizedPath = '/' + path;
+
+  if (!normalizedPath.includes('/api')) {
+    url += '/api/v1';
+  } else if (!normalizedPath.includes('/v1')) {
+    url += '/v1';
+  }
+
   return {
-    url: settings?.apmUrl || 'http://localhost:8001/api/v1',
+    url,
     token: settings?.apmToken || 'DSIHUB-ODP-KEY-2026',
     senderName: settings?.senderName || 'ODP Console',
     senderEmail: settings?.senderEmail || 'dsihub@fbc.fr'
@@ -13,7 +30,7 @@ async function getSettings() {
 
 export async function sendApmMail(to: string, subject: string, content: string, fromName?: string) {
   try {
-    const { url, token, senderName, senderEmail } = await getSettings();
+    const { url, token, senderName, senderEmail } = await getApmSettings();
     const res = await axios.post(`${url}/mail/send`, {
       to,
       subject,
@@ -24,7 +41,8 @@ export async function sendApmMail(to: string, subject: string, content: string, 
     }, {
       headers: {
         'X-API-KEY': token
-      }
+      },
+      httpsAgent
     });
     return res.data;
   } catch (error: any) {
@@ -35,10 +53,10 @@ export async function sendApmMail(to: string, subject: string, content: string, 
 
 export async function checkApmHealth() {
   try {
-    const { url } = await getSettings();
-    // Base URL is http://localhost:8001/api/v1, status is at /api/status
-    const baseUrl = url.replace('/v1', '');
-    const res = await axios.get(`${baseUrl}/status`);
+    const { url } = await getApmSettings();
+    // url is something like .../api/v1. Status is at .../api/status
+    const statusUrl = url.replace(/\/v1$/, '') + '/status';
+    const res = await axios.get(statusUrl, { httpsAgent });
     return res.data.status.includes('running');
   } catch {
     return false;

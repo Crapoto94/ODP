@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { X, Check, Save, Loader2, Calendar, Hash, Info, Euro, Upload, Image as ImageIcon, Trash2, Plus, Clock } from 'lucide-react';
+import { X, Check, Save, Loader2, Calendar, Hash, Info, Euro, Upload, Image as ImageIcon, Trash2, Plus, Clock, Search } from 'lucide-react';
 import axios from 'axios';
 
 interface Article {
@@ -28,6 +28,7 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
+  const [currentYear, setCurrentYear] = useState<number>(annee);
   
   const [formData, setFormData] = useState({
     articleId: '',
@@ -38,10 +39,14 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
     dateDebutConstatee: '',
     dateFinConstatee: ''
   });
+  const [filterText, setFilterText] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      fetchArticles();
+      const initialYear = initialData?.dateDebut ? new Date(initialData.dateDebut).getFullYear() : annee;
+      setCurrentYear(initialYear);
+      fetchArticles(initialYear);
       if (initialData) {
         setFormData({
           articleId: initialData.articleId.toString(),
@@ -66,7 +71,7 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
         setPhotos([]);
       }
     }
-  }, [isOpen, initialData, defaultDates]);
+  }, [isOpen, initialData, defaultDates, annee]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -120,14 +125,24 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
 
   const labels = parseMode(articles.find(a => a.id.toString() === formData.articleId)?.modeTaxation?.nom);
 
-  const fetchArticles = async () => {
+  const fetchArticles = async (yearToFetch: number = currentYear) => {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/articles?annee=${annee}`);
+      const res = await axios.get(`/api/articles?annee=${yearToFetch}`);
       setArticles(res.data);
+      setCurrentYear(yearToFetch);
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
   };
+
+  useEffect(() => {
+    if (!formData.dateDebut) return;
+    const year = new Date(formData.dateDebut).getFullYear();
+    if (year && year !== currentYear) {
+      fetchArticles(year);
+      setFormData(prev => ({ ...prev, articleId: '' })); // Reset selection if year changes
+    }
+  }, [formData.dateDebut, currentYear]);
 
   const selectedArticle = articles.find(a => a.id.toString() === formData.articleId);
 
@@ -184,7 +199,7 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
             <h3 className="text-xl font-black text-slate-900 tracking-tight">
               {initialData ? 'Modifier l\'article' : 'Ajouter un article'}
             </h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Tarifs {annee}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Tarifs {currentYear}</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-white rounded-xl text-slate-300 hover:text-slate-900 transition-all shadow-sm">
             <X size={20} />
@@ -192,27 +207,93 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Sélectionner l'article</label>
-            <select
-              required
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm appearance-none cursor-pointer"
-              value={formData.articleId}
-              onChange={e => setFormData({ ...formData, articleId: e.target.value })}
-            >
-              <option value="">Choisir un article...</option>
-              {articles
-                .filter(a => {
-                  if (occupationType === 'COMMERCE') return a.numero?.startsWith('1');
-                  if (occupationType === 'CHANTIER') return a.numero?.startsWith('2') || a.numero?.startsWith('3');
-                  return true;
-                })
-                .map(art => (
-                <option key={art.id} value={art.id}>
-                  {art.numero ? `[${art.numero}] ` : ''}{art.designation} ({art.montant}€)
-                </option>
-              ))}
-            </select>
+          <div className="space-y-4">
+            <div className="space-y-2 relative" id="article-search-container">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Article (N° ou Nom)</label>
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors" size={16} />
+                <input 
+                  type="text"
+                  placeholder="Saisir pour filtrer..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
+                  value={filterText}
+                  onChange={e => {
+                    setFilterText(e.target.value);
+                    if (formData.articleId) setFormData(prev => ({ ...prev, articleId: '' }));
+                  }}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => {
+                    // Slight delay to allow onClick to fire on the list
+                    setTimeout(() => setIsFocused(false), 200);
+                  }}
+                />
+              </div>
+
+              {/* Custom Dropdown List */}
+              {(isFocused || (filterText && !formData.articleId)) && !formData.articleId && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl z-[120] max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
+                  {articles
+                    .filter(a => {
+                      if (occupationType === 'COMMERCE') return a.numero?.startsWith('1');
+                      if (occupationType === 'CHANTIER') return a.numero?.startsWith('2') || a.numero?.startsWith('3');
+                      return true;
+                    })
+                    .filter(a => {
+                      const q = filterText.toLowerCase();
+                      return a.numero?.toLowerCase().includes(q) || a.designation?.toLowerCase().includes(q);
+                    })
+                    .sort((a, b) => (a.numero || '').localeCompare(b.numero || '', undefined, { numeric: true }))
+                    .map(art => (
+                      <button
+                        key={art.id}
+                        type="button"
+                        onClick={() => {
+                          setFormData(prev => ({ ...prev, articleId: art.id.toString() }));
+                          setFilterText(`${art.numero ? `[${art.numero}] ` : ''}${art.designation}`);
+                        }}
+                        className="w-full text-left px-6 py-4 hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0 transition-colors"
+                      >
+                        <div className="flex flex-col">
+                          <span className="text-xs font-black text-slate-900">{art.numero ? `[${art.numero}] ` : ''}{art.designation}</span>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{art.modeTaxation?.nom || 'Unité'}</span>
+                        </div>
+                        <span className="text-xs font-black text-blue-600">{art.montant}€</span>
+                      </button>
+                    ))}
+                  {articles.filter(a => {
+                    if (occupationType === 'COMMERCE') return a.numero?.startsWith('1');
+                    if (occupationType === 'CHANTIER') return a.numero?.startsWith('2') || a.numero?.startsWith('3');
+                    return true;
+                  }).filter(a => {
+                    const q = filterText.toLowerCase();
+                    return a.numero?.toLowerCase().includes(q) || a.designation?.toLowerCase().includes(q);
+                  }).length === 0 && (
+                    <div className="p-8 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                      Aucun article trouvé
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Selection Summary if an article is selected and filter matches */}
+              {selectedArticle && formData.articleId && (
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, articleId: '' }));
+                    setFilterText('');
+                  }}
+                  className="mt-2 w-full p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-between group hover:bg-blue-100 transition-all"
+                >
+                   <div className="flex items-center gap-3">
+                     <Check className="text-blue-600" size={16} />
+                     <span className="text-xs font-black text-blue-900">{selectedArticle.numero ? `[${selectedArticle.numero}] ` : ''}{selectedArticle.designation}</span>
+                   </div>
+                   <X className="text-blue-300 group-hover:text-blue-600" size={16} />
+                </button>
+              )}
+            </div>
+            
             {selectedArticle && (
               <div className="space-y-2 mt-2">
                 <div className="px-4 py-2 bg-blue-50 rounded-xl text-[10px] font-bold text-blue-600 flex items-center gap-2">

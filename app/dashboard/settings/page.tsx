@@ -613,7 +613,7 @@ export default function SettingsPage() {
                       <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">N° de pré-bordereau (/11/)</label>
                       <input 
                         type="text" 
-                        maxLength={4}
+                        maxLength={10}
                         className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
                         placeholder="1235"
                         value={settings.filienPreBordereau || ''}
@@ -627,7 +627,7 @@ export default function SettingsPage() {
                       <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">N° de poste (/12/)</label>
                       <input 
                         type="text" 
-                        maxLength={4}
+                        maxLength={10}
                         className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
                         placeholder="0001"
                         value={settings.filienPoste || ''}
@@ -638,7 +638,7 @@ export default function SettingsPage() {
                       <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">N° de bordereau (/13/)</label>
                       <input 
                         type="text" 
-                        maxLength={4}
+                        maxLength={10}
                         className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
                         placeholder="0001"
                         value={settings.filienBordereau || ''}

@@ -66,14 +66,19 @@ interface Tiers {
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
-  'DECLARED': { label: 'Déclaré', color: 'text-slate-500', bg: 'bg-slate-100' },
-  'IN_PROGRESS': { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-50' },
-  'COMPLETED': { label: 'Terminé', color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  'VERIFIED': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  'EN_ATTENTE': { label: 'En attente', color: 'text-amber-500', bg: 'bg-amber-50' },
+  'EN_COURS': { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-50' },
+  'TERMINE': { label: 'Terminé', color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  'VERIFIE': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  'FACTURE': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50' },
   'INVOICED': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50' },
-  'PAID': { label: 'Payé', color: 'text-emerald-700', bg: 'bg-emerald-100' },
-  'EN_ATTENTE': { label: 'En attente', color: 'text-amber-500', bg: 'bg-amber-50' }, // Legacy support
-  'VALIDE': { label: 'Validé', color: 'text-emerald-600', bg: 'bg-emerald-50' }    // Legacy support
+  'PAYE': { label: 'Payé', color: 'text-emerald-700', bg: 'bg-emerald-100' },
+};
+
+const TYPE_MAP: Record<string, { label: string; icon: any; color: string; bg: string }> = {
+  'COMMERCE': { label: 'Commerce', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
+  'CHANTIER': { label: 'Chantier', icon: MapPin, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  'TOURNAGE': { label: 'Tournage', icon: Info, color: 'text-amber-600', bg: 'bg-amber-50' },
 };
 
 function OccupationsPageContent() {
@@ -114,7 +119,7 @@ function OccupationsPageContent() {
     latitude: '',
     longitude: '',
     description: '',
-    statut: 'DECLARED'
+    statut: 'EN_ATTENTE'
   });
 
   const isEditing = !!formData.id;
@@ -149,7 +154,7 @@ function OccupationsPageContent() {
     const tid = searchParams.get('tiersId');
     if (tid) {
       setTiersFilter(tid);
-      setYearFilter('ALL');
+      // setYearFilter('ALL'); // Remove this to preserve the selected year filter
     }
   }, [searchParams]);
 
@@ -254,8 +259,18 @@ function OccupationsPageContent() {
 
   const resetForm = () => {
     setFormData({
-      id: null, nom: '', tiersId: '', type: 'COMMERCE', anneeTaxation: new Date().getFullYear().toString(), dateDebut: '', dateFin: '',
-      adresse: '', latitude: '', longitude: '', description: '', statut: 'DECLARED'
+      id: null, 
+      nom: '', 
+      tiersId: '', 
+      type: 'COMMERCE', 
+      anneeTaxation: yearFilter !== 'ALL' ? yearFilter : new Date().getFullYear().toString(), 
+      dateDebut: '', 
+      dateFin: '',
+      adresse: '', 
+      latitude: '', 
+      longitude: '', 
+      description: '', 
+      statut: 'EN_ATTENTE'
     });
     setAddressQuery('');
     setUploadedPhotos([]);
@@ -289,7 +304,7 @@ function OccupationsPageContent() {
   const handleApprove = async (id: number) => {
     if (!confirm('Passer ce dossier en statut "Vérifié" ?')) return;
     try {
-      await axios.patch(`/api/occupations/${id}`, { statut: 'VERIFIED' });
+      await axios.patch(`/api/occupations/${id}`, { statut: 'VERIFIE' });
       fetchOccupations();
     } catch (err) { alert('Erreur lors de la mise à jour du statut'); }
   };
@@ -437,7 +452,7 @@ function OccupationsPageContent() {
               onChange={e => setYearFilter(e.target.value)}
             >
               <option value="ALL">Toutes les années</option>
-              {Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - 5 + i).map(year => (
+              {Array.from({ length: 6 }, (_, i) => new Date().getFullYear() - 5 + i).map(year => (
                 <option key={year} value={year}>{year}</option>
               ))}
             </select>
@@ -535,7 +550,9 @@ function OccupationsPageContent() {
                          {((occ.lignes?.reduce((sum: number, l: any) => sum + (l.montant || 0), 0) || occ.montantCalcule || 0)).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} € <span className="text-[9px] text-slate-400">TTC</span>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black">
-                        <span className="bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 text-slate-600 uppercase tracking-widest">{occ.type}</span>
+                        <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest ${TYPE_MAP[occ.type]?.bg || 'bg-slate-50'} ${TYPE_MAP[occ.type]?.color || 'text-slate-600'} ${TYPE_MAP[occ.type]?.bg.replace('bg-', 'border-') || 'border-slate-100'}`}>
+                          {TYPE_MAP[occ.type]?.label || occ.type}
+                        </span>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black text-slate-400">
                          <div className="flex items-center gap-2">
@@ -559,8 +576,8 @@ function OccupationsPageContent() {
                       <td className="px-6 py-5 rounded-r-3xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
                         <div className="flex items-center justify-end gap-1">
                           <button onClick={() => { setSelectedOccForLigne(occ); setEditingLigne(null); setIsLigneModalOpen(true); }} className="p-2.5 text-blue-500 hover:bg-blue-50 rounded-xl transition-all" title="Ajouter Article"><Package size={18} /></button>
-                          {occ.statut === 'EN_ATTENTE' && <button onClick={() => handleApprove(occ.id)} className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approuver"><CheckCircle2 size={18} /></button>}
-                          {occ.statut === 'VALIDE' && <button onClick={() => downloadFacture(occ.id)} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Télécharger Facture"><FileText size={18} /></button>}
+                          {['EN_ATTENTE', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleApprove(occ.id)} className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approuver"><CheckCircle2 size={18} /></button>}
+                          {['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => downloadFacture(occ.id)} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Télécharger Facture"><FileText size={18} /></button>}
                           <button onClick={() => handleEdit(occ)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Modifier"><Pencil size={18} /></button>
                           <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer"><Trash2 size={18} /></button>
                         </div>
@@ -697,7 +714,7 @@ function OccupationsPageContent() {
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Année de taxation</label>
                       <select required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.anneeTaxation} onChange={e => setFormData({...formData, anneeTaxation: e.target.value})}>
-                        {[2022, 2023, 2024, 2025, 2026, 2027].map(year => (
+                        {Array.from({ length: 6 }, (_, i) => new Date().getFullYear() - 5 + i).map(year => (
                           <option key={year} value={year}>{year}</option>
                         ))}
                       </select>

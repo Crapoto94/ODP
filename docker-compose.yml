@@ -12,6 +12,7 @@ services:
       - NODE_ENV=production
     volumes:
       - ./prisma:/app/prisma
+      - ./public/uploads:/app/public/uploads
     restart: always
 
   mobile:

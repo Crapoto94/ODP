@@ -1,6 +1,26 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.9",
   "changes": [
+    {
+      "date": "2026-03-24",
+      "version": "1.0.9",
+      "description": "Refonte Premium Glassmorphic de l'ODP (Occupation Detail Page), affichage des dates constatées (terrain), correction du formatage des dates (chantier #12) et verrouillage métier des dossiers facturés."
+    },
+    {
+      "date": "2026-03-24",
+      "version": "1.0.8",
+      "description": "Redesign complet du Tableau de Bord (Cockpit Premium), nouvelles statistiques temps réel, flux d'activité récent et synchronisation visuelle de la cartographie SIG avec la version mobile (Pins personnalisés, clustering)."
+    },
+    {
+      "date": "2026-03-24",
+      "version": "1.0.7",
+      "description": "Refonte du gabarit de facture DGFIP (Haute Précision), adresses multilignes, rapprochement des articles, traductions françaises (Chantiers/Commerces) et persistance du filtre année."
+    },
+    {
+      "date": "2026-03-24",
+      "version": "1.0.6",
+      "description": "Optimisation Filien (formats tags 505/506, padding 5 chiffres), uniformisation des contacts (Nom, Entreprise, Photo), listing des articles au focus et correction SSL mail proxy."
+    },
     {
       "date": "2026-03-24",
       "version": "1.0.5",

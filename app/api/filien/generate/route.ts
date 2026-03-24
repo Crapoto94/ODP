@@ -45,15 +45,15 @@ export async function POST(req: NextRequest) {
     });
 
     const startMouvement = (settings as any).filienMouvement || "1";
-    const startNum = parseInt(startMouvement);
-    const isAlphanumeric = isNaN(startNum);
+    const isNumeric = /^\d+$/.exec(startMouvement);
+    const startNum = isNumeric ? parseInt(startMouvement) : 0;
 
     const movements: FilienMovement[] = occupations.map((occ, idx) => {
       let movId = startMouvement;
-      if (!isAlphanumeric) {
+      if (isNumeric) {
         movId = (startNum + idx).toString().padStart(10, '0');
       } else {
-        // If alphanumeric, append index if multiple occupations, else use as is
+        // Alphanumeric: use as is for first one, or append index if multiple
         movId = occupations.length > 1
           ? `${startMouvement}${idx + 1}`.slice(0, 10)
           : startMouvement.slice(0, 10);
@@ -78,8 +78,8 @@ export async function POST(req: NextRequest) {
           dateDebut: l.dateDebut || undefined,
           dateFin: l.dateFin || undefined,
           description: l.article?.designation || '',
-          quantite: (l as any).quantite || 1,
-          prixUnitaire: l.montant || 0,
+          quantite: (l.quantite1 || 1) * (l.quantite2 || 1),
+          prixUnitaire: l.article?.montant || 0,
           // Analytical Ventilation
           chapitre: (l.article as any)?.chapitre || '',
           nature: (l.article as any)?.nature || '',

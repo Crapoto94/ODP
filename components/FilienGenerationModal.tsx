@@ -30,7 +30,7 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
   // Eligible dossiers: Status 'VERIFIED' or 'COMPLETED' by default, 
   // but let's allow all 'VALIDE' or 'VERIFIED' ones.
   const eligibleOccupations = occupations.filter(o => 
-    ['VERIFIED', 'COMPLETED', 'VALIDE', 'FACTURER'].includes(o.statut)
+    ['VERIFIE', 'TERMINE', 'FACTURE', 'PAYE'].includes(o.statut)
   );
 
   const filtered = eligibleOccupations.filter(o => 

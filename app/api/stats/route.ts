@@ -5,25 +5,45 @@ import { fr } from 'date-fns/locale';
 
 export async function GET() {
   try {
-    const totalRevenue = await prisma.occupation.aggregate({
-      where: { statut: 'VALIDE' },
+    const revenueStats = await prisma.occupation.groupBy({
+      by: ['statut'],
       _sum: { montantCalcule: true }
     });
 
-    const potentialRevenue = await prisma.occupation.aggregate({
-      where: { statut: { in: ['VALIDE', 'EN_ATTENTE'] } },
-      _sum: { montantCalcule: true }
-    });
+    const totalRevenue = revenueStats
+      .filter(s => ['VERIFIE', 'FACTURE', 'PAYE'].includes(s.statut))
+      .reduce((sum, s) => sum + (s._sum.montantCalcule || 0), 0);
+
+    const potentialRevenue = revenueStats.reduce((sum, s) => sum + (s._sum.montantCalcule || 0), 0);
 
     const tiersCount = await prisma.tiers.count();
     const activeDossiers = await prisma.occupation.count({
-      where: { statut: 'VALIDE', dateFin: { gte: new Date() } }
+      where: { statut: { in: ['EN_COURS', 'VERIFIE', 'FACTURE'] } }
     });
     const pendingDossiers = await prisma.occupation.count({
       where: { statut: 'EN_ATTENTE' }
     });
 
-    // Monthly revenue for the last 6 months (including pending for better visualization of activity)
+    // Recent Activity
+    const recentDossiers = await prisma.occupation.findMany({
+      take: 5,
+      orderBy: { created_at: 'desc' },
+      include: { tiers: true }
+    });
+
+    // Revenue by Type
+    const typeStatsRaw = await prisma.occupation.groupBy({
+      by: ['type'],
+      where: { statut: { in: ['VERIFIE', 'FACTURE', 'PAYE'] } },
+      _sum: { montantCalcule: true }
+    });
+    const typeStats = typeStatsRaw.map(s => ({
+      label: s.type === 'COMMERCE' ? 'Commerce' : (s.type === 'CHANTIER' ? 'Chantier' : 'Autre'),
+      value: s._sum.montantCalcule || 0,
+      percentage: totalRevenue > 0 ? Math.round(((s._sum.montantCalcule || 0) / totalRevenue) * 100) : 0
+    }));
+
+    // Monthly revenue for the last 6 months
     const monthlyStats = [];
     for (let i = 5; i >= 0; i--) {
       const monthStart = startOfMonth(subMonths(new Date(), i));
@@ -31,7 +51,7 @@ export async function GET() {
       
       const revenue = await prisma.occupation.aggregate({
         where: {
-          statut: { in: ['VALIDE', 'EN_ATTENTE'] },
+          statut: { in: ['VERIFIE', 'FACTURE', 'PAYE'] },
           created_at: { gte: monthStart, lte: monthEnd }
         },
         _sum: { montantCalcule: true }
@@ -44,12 +64,14 @@ export async function GET() {
     }
 
     return NextResponse.json({
-      totalRevenue: totalRevenue._sum.montantCalcule || 0,
-      potentialRevenue: potentialRevenue._sum.montantCalcule || 0,
+      totalRevenue,
+      potentialRevenue,
       tiersCount,
       activeDossiers,
       pendingDossiers,
-      monthlyStats
+      monthlyStats,
+      recentDossiers,
+      typeStats
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

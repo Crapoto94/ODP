@@ -56,11 +56,25 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         let result = val;
         const totalSum = occ.lignes?.reduce((sum: number, l: any) => sum + (l.montant || 0), 0) || 0;
 
+        const TYPE_MAP: Record<string, string> = {
+          'COMMERCE': 'Commerce',
+          'CHANTIER': 'Chantier',
+          'TOURNAGE': 'Tournage',
+        };
+
+        const formatAddress = (addr: string) => {
+          if (!addr) return '';
+          const match = addr.match(/^(.*?)(\d{5}\s+.*)$/);
+          if (match) return `${match[1].trim()}\n${match[2].trim()}`;
+          return addr;
+        };
+
         const replacements: Record<string, string> = {
           '{id}': occ.id.toString(),
+          '{type}': TYPE_MAP[occ.type] || occ.type,
           '{nom}': occ.nom || '',
           '{tiers.nom}': occ.tiers.nom || '',
-          '{adresse}': occ.adresse || '',
+          '{adresse}': formatAddress(occ.adresse || ''),
           '{dateDebut}': occ.dateDebut ? format(new Date(occ.dateDebut), 'dd/MM/yyyy') : '',
           '{dateFin}': occ.dateFin ? format(new Date(occ.dateFin), 'dd/MM/yyyy') : '',
           '{numeroFacture}': (occ as any).numeroFacture || 'Brouillon',
@@ -88,12 +102,29 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
           replacements['{article.pu}'] = `${(ligne.article.montant || 0).toFixed(2)} €`;
           replacements['{article.totalHT}'] = `${(ligne.montant || 0).toFixed(2)} €`;
           
+          // New Precise Variables
+          const dateS = ligne.dateDebutConstatee || ligne.dateDebut;
+          const dateE = ligne.dateFinConstatee || ligne.dateFin;
+          const dS = dateS ? format(new Date(dateS), 'dd/MM/yyyy') : '';
+          const dE = dateE ? format(new Date(dateE), 'dd/MM/yyyy') : '';
+          replacements['{article.dates}'] = dS && dE ? `${dS} - ${dE}` : (dS || dE || '');
+          
+          const u1 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[1] || 'unité';
+          const u2 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[2] || (ligne.article.modeTaxation?.nom?.includes('jour') ? 'jours' : 'mois');
+          
+          let detailStr = `${ligne.quantite1} ${u1}`;
+          if (ligne.quantite2 > 1) detailStr += ` x ${ligne.quantite2} ${u2}`;
+          detailStr += ` à ${(ligne.article.montant || 0).toFixed(2)}€ soit ${(ligne.montant || 0).toFixed(2)} €`;
+          replacements['{article.details}'] = detailStr;
+
+          replacements['{article.full_description}'] = `${ligne.article.designation}\n${replacements['{article.dates}']}\n${detailStr}`;
+          
           // Allow article to override analytical fields if they were defined on the article level
           if (ligne.article.chapitre) replacements['{v541.chapitre}'] = ligne.article.chapitre;
           if (ligne.article.nature) replacements['{v541.nature}'] = ligne.article.nature;
           if (ligne.article.fonction) replacements['{v541.fonction}'] = ligne.article.fonction;
           if (ligne.article.codeInterne) replacements['{v541.codeInterne}'] = ligne.article.codeInterne;
-          if (ligne.article.typeMouvement) replacements['{v541.typeMvmt}'] = ligne.article.typeMouvement;
+          if (ligne.article.typeMouvement) replacements['{v541.typeMvmt'] = ligne.article.typeMouvement;
           if (ligne.article.sens) replacements['{v541.sens}'] = ligne.article.sens;
           if (ligne.article.structure) replacements['{v542.structure}'] = ligne.article.structure;
           if (ligne.article.gestionnaire) replacements['{v542.gestionnaire}'] = ligne.article.gestionnaire;
@@ -143,11 +174,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
                 doc.setTextColor(style.color || '#000000');
                 
                 const weight = style.fontWeight === 'bold' || style.fontWeight === 'black' ? 'bold' : 'normal';
+                const fontStyle = style.italic ? 'italic' : weight;
                 let family = 'helvetica';
                 if (style.fontFamily?.includes('Times')) family = 'times';
                 else if (style.fontFamily?.includes('Courier')) family = 'courier';
                 
-                doc.setFont(family, weight);
+                doc.setFont(family, fontStyle);
 
                 const splitText = doc.splitTextToSize(text, w);
                 if (style.textAlign === 'center') {

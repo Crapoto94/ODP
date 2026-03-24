@@ -21,9 +21,12 @@ const TYPE_CONFIG: Record<string, { gradient: string; accent: string; muted: str
 const DEFAULT_CFG = { gradient: 'from-violet-600 to-purple-700', accent: 'text-violet-500', muted: 'bg-violet-500/10 border-violet-500/20 text-violet-600' };
 
 const STATUT_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  'VERIFIE': { label: 'Vérifié', icon: CheckCircle2, color: 'text-emerald-400' },
-  'INVOICED': { label: 'Facturé', icon: FileText, color: 'text-blue-400' },
   'EN_ATTENTE': { label: 'En attente', icon: Clock, color: 'text-amber-400' },
+  'EN_COURS': { label: 'En cours', icon: BarChart3, color: 'text-blue-400' },
+  'TERMINE': { label: 'Terminé', icon: CheckCircle2, color: 'text-indigo-400' },
+  'VERIFIE': { label: 'Vérifié', icon: CheckCircle2, color: 'text-emerald-400' },
+  'FACTURE': { label: 'Facturé', icon: FileText, color: 'text-orange-400' },
+  'PAYE': { label: 'Payé', icon: Wallet, color: 'text-emerald-500' },
 };
 
 export function DossierDetail({ id, onBack }: DossierDetailProps) {
@@ -49,7 +52,15 @@ export function DossierDetail({ id, onBack }: DossierDetailProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null);
   const [editingContact, setEditingContact] = useState<any>(null);
   const [showDispositifModal, setShowDispositifModal] = useState(false);
-  const [newDispositifNom, setNewDispositifNom] = useState('');
+  
+  // Articles Reference
+  const [articles, setArticles] = useState<any[]>([]);
+  const [searchArticle, setSearchArticle] = useState('');
+  const [selectedArticle, setSelectedArticle] = useState<any>(null);
+  const [quantity, setQuantity] = useState<string>('1');
+  const [dateDebutNew, setDateDebutNew] = useState<string>('');
+  const [dateFinNew, setDateFinNew] = useState<string>('');
+  const [pricingYear, setPricingYear] = useState<number>(new Date().getFullYear());
 
   const recognitionRef = useRef<any>(null);
 
@@ -66,8 +77,21 @@ export function DossierDetail({ id, onBack }: DossierDetailProps) {
           api.get(`/api/occupations/${id}`),
           api.get(`/api/occupations/${id}/contacts`)
         ]);
-        setDossier(dRes.data);
+        const d = dRes.data;
+        setDossier(d);
         setContacts(cRes.data);
+
+        // Determine relevant year for articles
+        let year = new Date().getFullYear();
+        if (d.dateDebut || d.date_debut) {
+          year = new Date(d.dateDebut || d.date_debut).getFullYear();
+        } else if (d.anneeTaxation || d.annee_taxation) {
+          year = d.anneeTaxation || d.annee_taxation;
+        }
+        setPricingYear(year);
+
+        const aRes = await api.get(`/api/articles?annee=${year}`);
+        setArticles(aRes.data);
       } catch (err) {
         console.error(err);
       } finally {
@@ -76,6 +100,75 @@ export function DossierDetail({ id, onBack }: DossierDetailProps) {
     };
     fetchDossierData();
   }, [id]);
+
+  useEffect(() => {
+    if (showDispositifModal && dossier) {
+      // Default to dossier dates
+      if (dossier.dateDebut || dossier.date_debut) {
+        setDateDebutNew(new Date(dossier.dateDebut || dossier.date_debut).toISOString().split('T')[0]);
+      }
+      if (dossier.dateFin || dossier.date_fin) {
+        setDateFinNew(new Date(dossier.dateFin || dossier.date_fin).toISOString().split('T')[0]);
+      }
+    }
+  }, [showDispositifModal, dossier]);
+
+  useEffect(() => {
+    if (!dateDebutNew) return;
+    const year = new Date(dateDebutNew).getFullYear();
+    if (year && year !== pricingYear) {
+      const refetchArticles = async () => {
+        try {
+          const aRes = await api.get(`/api/articles?annee=${year}`);
+          setArticles(aRes.data);
+          setPricingYear(year);
+          setSelectedArticle(null);
+        } catch (err) {
+          console.error('Refetch articles error:', err);
+        }
+      };
+      refetchArticles();
+    }
+  }, [dateDebutNew, pricingYear]);
+
+  const calculatedDuration = useMemo(() => {
+    if (!selectedArticle || !dateDebutNew || !dateFinNew) return null;
+    const s = new Date(dateDebutNew);
+    const e = new Date(dateFinNew);
+    if (isNaN(s.getTime()) || isNaN(e.getTime()) || e < s) return null;
+
+    const diffDays = Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const mode = (selectedArticle.modeTaxation?.nom || '').toLowerCase();
+
+    if (mode.includes('mois')) {
+      const m = Math.ceil(diffDays / 31);
+      return { value: m, label: `${m} mois` };
+    }
+    if (mode.includes('10 jour')) {
+      const d = Math.ceil(diffDays / 10);
+      return { value: d, label: `${d} x 10 jours` };
+    }
+    if (mode.includes('jour')) {
+      return { value: diffDays, label: `${diffDays} jours` };
+    }
+    return { value: 1, label: '1 unité' };
+  }, [selectedArticle, dateDebutNew, dateFinNew]);
+
+  const filteredArticles = useMemo(() => {
+    const q = searchArticle.toLowerCase().trim();
+    let list = articles;
+    if (q) {
+      list = list.filter(a => 
+        a.designation?.toLowerCase().includes(q) || 
+        a.numero?.toLowerCase().includes(q) ||
+        a.categorie?.nom?.toLowerCase().includes(q)
+      );
+    }
+    
+    return list
+      .sort((a, b) => (a.numero || '').localeCompare(b.numero || '', undefined, { numeric: true }))
+      .slice(0, 20);
+  }, [articles, searchArticle]);
 
   const handleSendNote = async () => {
     if (!note.trim() && !audioURL && !selectedFile) return;
@@ -305,21 +398,26 @@ export function DossierDetail({ id, onBack }: DossierDetailProps) {
   };
 
   const handleCreateDispositif = async () => {
-    if (!newDispositifNom.trim()) return;
+    if (!selectedArticle) return;
     setIsSavingDispositif(true);
     try {
-      const res = await api.post('/api/dispositifs', {
-        nom: newDispositifNom,
-        occupationId: id
+      await api.post(`/api/occupations/${id}/lignes`, {
+        articleId: selectedArticle.id,
+        quantite1: parseFloat(quantity) || 0,
+        dateDebut: dateDebutNew,
+        dateFin: dateFinNew
       });
-      setDossier((prev: any) => ({
-        ...prev,
-        dispositifs: [...(prev.dispositifs || []), res.data]
-      }));
+      // Refresh dossier to get the new total and lines
+      const dossierRes = await api.get(`/api/occupations/${id}`);
+      setDossier(dossierRes.data);
+      
       setShowDispositifModal(false);
-      setNewDispositifNom('');
+      setSelectedArticle(null);
+      setSearchArticle('');
+      setQuantity('1');
     } catch (err) {
       console.error(err);
+      alert("Erreur lors de l'ajout de l'article");
     } finally {
       setIsSavingDispositif(false);
     }
@@ -496,8 +594,10 @@ export function DossierDetail({ id, onBack }: DossierDetailProps) {
                               {l.montant.toFixed(2)}€
                             </span>
                           </div>
-                          <p className="text-[9px] font-bold text-[var(--text-dim)] uppercase mt-2 tracking-widest">
-                            {l.quantite1} x {l.article?.montant || 0}€
+                          <p className="text-[9px] font-bold text-[var(--text-dim)] uppercase mt-2 tracking-widest leading-relaxed">
+                            {l.quantite1} {l.article?.modeTaxation?.nom?.split('/')[1] || 'unité'} 
+                            {l.quantite2 > 1 && ` x ${l.quantite2} ${l.article?.modeTaxation?.nom?.split('/')[2] || (l.article?.modeTaxation?.nom?.includes('jour') ? 'jours' : 'mois')}`}
+                            {` à ${l.article?.montant || 0}€`}
                           </p>
                         </div>
                       </div>
@@ -983,8 +1083,8 @@ export function DossierDetail({ id, onBack }: DossierDetailProps) {
                   <PlusCircle size={28} />
                 </div>
                 <div>
-                  <h4 className="text-2xl font-black text-[var(--text)] uppercase tracking-tighter">Nouveau Dispositif</h4>
-                  <p className="text-[10px] font-black text-violet-400 uppercase tracking-widest mt-1">Équipement du dossier</p>
+                  <h4 className="text-2xl font-black text-[var(--text)] uppercase tracking-tighter">Ajouter un article</h4>
+                  <p className="text-[10px] font-black text-violet-400 uppercase tracking-widest mt-1">TARIFS {pricingYear}</p>
                 </div>
               </div>
               <button 
@@ -995,23 +1095,116 @@ export function DossierDetail({ id, onBack }: DossierDetailProps) {
               </button>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-[10px] font-black text-violet-600 dark:text-violet-300 uppercase tracking-widest ml-2">Nom du dispositif</p>
-              <input 
-                autoFocus
-                value={newDispositifNom}
-                onChange={e => setNewDispositifNom(e.target.value)}
-                placeholder="Ex: Étalage 1, Panneau A..."
-                className="w-full bg-[var(--input-bg)] border-2 border-[var(--input-bd)] rounded-2xl p-4 text-[var(--text)] font-bold focus:border-violet-500"
-              />
+            <div className="space-y-6">
+              {!selectedArticle ? (
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-violet-600 dark:text-violet-300 uppercase tracking-widest ml-2">Rechercher un article du référentiel</p>
+                    <div className="relative">
+                      <input 
+                        autoFocus
+                        value={searchArticle}
+                        onChange={e => setSearchArticle(e.target.value)}
+                        placeholder="Ex: Étalage, Terrasse, Enseigne..."
+                        className="w-full bg-[var(--input-bg)] border-2 border-[var(--input-bd)] rounded-2xl p-4 text-[var(--text)] font-bold focus:border-violet-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                    {filteredArticles.map((art: any) => (
+                      <button 
+                        key={art.id}
+                        onClick={() => {
+                          setSelectedArticle(art);
+                          setSearchArticle('');
+                        }}
+                        className="w-full p-4 rounded-2xl bg-white/5 border border-white/10 text-left hover:bg-white/10 transition-all flex justify-between items-center group"
+                      >
+                        <div className="flex-1">
+                          <p className="text-[9px] font-black text-violet-400 uppercase tracking-widest">{art.categorie?.nom || 'Article'}</p>
+                          <h5 className="text-sm font-bold text-white group-hover:text-violet-400 transition-colors">{art.designation}</h5>
+                          <p className="text-[10px] text-white/40 mt-1">{art.montant.toFixed(2)}€ / {art.modeTaxation?.nom || 'unité'}</p>
+                        </div>
+                        <PlusCircle size={20} className="text-white/20 group-hover:text-violet-400" />
+                      </button>
+                    ))}
+                    {searchArticle && filteredArticles.length === 0 && (
+                      <p className="text-center py-8 text-xs font-bold text-[var(--text-dim)] uppercase tracking-widest italic opacity-50">Aucun article trouvé</p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
+                  <div className="p-6 rounded-3xl bg-violet-600/10 border-2 border-violet-500/30 flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <p className="text-[9px] font-black text-violet-400 uppercase tracking-widest">Article sélectionné</p>
+                      <h5 className="text-base font-black text-white leading-tight">{selectedArticle.designation}</h5>
+                      <p className="text-xs font-bold text-violet-400 mt-1">{selectedArticle.montant.toFixed(2)}€ / {selectedArticle.modeTaxation?.nom || 'unité'}</p>
+                    </div>
+                    <button 
+                      onClick={() => setSelectedArticle(null)}
+                      className="p-2 rounded-xl bg-violet-500/20 text-violet-400 hover:bg-rose-500/20 hover:text-rose-400 transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                       <p className="text-[10px] font-black text-violet-600 dark:text-violet-300 uppercase tracking-widest ml-2">
+                         {selectedArticle.modeTaxation?.nom?.includes('m²') ? 'Surface (m²)' : 'Quantité'}
+                       </p>
+                       <input 
+                         type="number"
+                         step="any"
+                         value={quantity}
+                         onChange={e => setQuantity(e.target.value)}
+                         className="w-full bg-[var(--input-bg)] border-2 border-[var(--input-bd)] rounded-2xl p-4 text-[var(--text)] font-black text-center text-3xl focus:border-violet-500"
+                       />
+                    </div>
+
+                    {dossier.type === 'CHANTIER' && (
+                      <div className="space-y-4 pt-2 animate-in fade-in slide-in-from-top-2">
+                        {calculatedDuration && (
+                          <div className="px-6 py-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-3 text-amber-500">
+                             <Clock size={18} />
+                             <span className="text-xs font-black uppercase tracking-widest">Durée calculée : {calculatedDuration.label}</span>
+                          </div>
+                        )}
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                             <p className="text-[9px] font-black text-violet-400 uppercase tracking-[0.2em] ml-2">Début prévu</p>
+                             <input 
+                               type="date" 
+                               value={dateDebutNew}
+                               onChange={e => setDateDebutNew(e.target.value)}
+                               className="w-full bg-[var(--input-bg)] border-2 border-[var(--input-bd)] rounded-2xl p-4 text-sm font-bold text-[var(--text)] focus:border-violet-500"
+                             />
+                          </div>
+                          <div className="space-y-1">
+                             <p className="text-[9px] font-black text-violet-400 uppercase tracking-[0.2em] ml-2">Fin prévue</p>
+                             <input 
+                               type="date" 
+                               value={dateFinNew}
+                               onChange={e => setDateFinNew(e.target.value)}
+                               className="w-full bg-[var(--input-bg)] border-2 border-[var(--input-bd)] rounded-2xl p-4 text-sm font-bold text-[var(--text)] focus:border-violet-500"
+                             />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <button 
               onClick={handleCreateDispositif}
-              disabled={isSavingDispositif || !newDispositifNom.trim()}
-              className="w-full h-16 bg-violet-600 rounded-3xl font-black uppercase tracking-widest text-white shadow-lg active:scale-95 transition-all disabled:opacity-30"
+              disabled={isSavingDispositif || !selectedArticle}
+              className="w-full h-16 bg-violet-600 rounded-3xl font-black uppercase tracking-widest text-white shadow-lg active:scale-95 transition-all disabled:opacity-30 disabled:grayscale"
             >
-              Créer le dispositif
+              Ajouter au dossier
             </button>
           </div>
         </div>

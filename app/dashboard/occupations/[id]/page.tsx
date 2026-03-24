@@ -53,7 +53,16 @@ export default function OccupationDetailPage({ params }: Props) {
   
   // Contacts states
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [newContact, setNewContact] = useState({ prenom: '', email: '', role: 'Contact principal' });
+  const [newContact, setNewContact] = useState({ 
+    nom: '', 
+    prenom: '', 
+    email: '', 
+    telephone: '', 
+    titre: '', 
+    entreprise: '', 
+    role: 'Contact principal', 
+    pjPath: '' 
+  });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
 
   const fetchOccupation = async () => {
@@ -98,20 +107,23 @@ export default function OccupationDetailPage({ params }: Props) {
   const totalAmount = occ.lignes?.reduce((sum: number, l: any) => sum + l.montant, 0) || 0;
 
   const STATUS_MAP: Record<string, { label: string; color: string; bg: string; border: string }> = {
-    'DECLARE': { label: 'Déclaré', color: 'text-slate-600', bg: 'bg-slate-50', border: 'border-slate-200' },
+    'EN_ATTENTE': { label: 'En attente', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
     'EN_COURS': { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
     'TERMINE': { label: 'Terminé', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
     'VERIFIE': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
     'FACTURE': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-    'PAYE': { label: 'Payé', color: 'text-emerald-700', bg: 'bg-emerald-100', border: 'border-emerald-200' },
-    // Legacy fallbacks
-    'EN_ATTENTE': { label: 'En attente', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-    'VALIDE': { label: 'Validé', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    'VERIFIED': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
     'INVOICED': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
   };
+
+  const TYPE_MAP: Record<string, { label: string; color: string; bg: string; border: string }> = {
+    'COMMERCE': { label: 'Commerce', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+    'CHANTIER': { label: 'Chantier', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    'TOURNAGE': { label: 'Tournage', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+  };
+
   const statusInfo = STATUS_MAP[occ.statut] || { label: occ.statut, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' };
-  const isLocked = ['VERIFIE', 'FACTURE', 'PAYE', 'VERIFIED', 'INVOICED'].includes(occ.statut);
+  const typeInfo = TYPE_MAP[occ.type] || { label: occ.type, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' };
+  const isLocked = ['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut);
 
   const handleToggleVerifie = async () => {
     const newStatut = occ.statut === 'VERIFIE' ? 'EN_COURS' : 'VERIFIE';
@@ -178,7 +190,16 @@ export default function OccupationDetailPage({ params }: Props) {
     try {
       await axios.post(`/api/occupations/${occ.id}/contacts`, newContact);
       setIsContactModalOpen(false);
-      setNewContact({ prenom: '', email: '', role: 'Contact principal' });
+      setNewContact({ 
+        nom: '', 
+        prenom: '', 
+        email: '', 
+        telephone: '', 
+        titre: '', 
+        entreprise: '', 
+        role: 'Contact principal', 
+        pjPath: '' 
+      });
       fetchOccupation();
     } catch (err) {
       alert('Erreur lors de l\'ajout du contact');
@@ -197,366 +218,487 @@ export default function OccupationDetailPage({ params }: Props) {
     }
   };
 
+  const resizeImage = (file: File, maxWidth = 1200, maxHeight = 1200): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error('Canvas toBlob failed'));
+          }, 'image/jpeg', 0.8);
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handlePhotoContact = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const resizedBlob = await resizeImage(file);
+      const fd = new FormData();
+      fd.append('file', resizedBlob, 'contact_card.jpg');
+      const res = await axios.post('/api/upload', fd);
+      setNewContact(prev => ({ ...prev, pjPath: res.data.url }));
+    } catch (err: any) {
+      console.error('[Upload] Error:', err);
+      alert("Erreur lors de l'envoi de la photo");
+    } finally {
+      e.target.value = '';
+    }
+  };
+
+  const isFactured = ['FACTURE', 'PAYE'].includes(occ.statut);
+
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Breadcrumb & Navigation */}
-      <div className="flex items-center justify-between">
-        <Link 
-          href="/dashboard/occupations"
-          className="flex items-center gap-2 text-slate-400 hover:text-slate-900 transition-colors font-bold text-sm group"
-        >
-          <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:bg-slate-50 transition-all">
-            <ChevronLeft size={16} />
-          </div>
-          Retour à la liste
-        </Link>
-
-        {/* Action Quick Bar */}
-        <div className="flex items-center gap-3">
-           {!isLocked && (
-             <button 
-               onClick={() => router.push(`/dashboard/occupations?edit=${occ.id}`)}
-               className="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 hover:text-blue-600 rounded-xl transition-all shadow-sm font-bold text-xs flex items-center gap-2"
-             >
-               <Pencil size={14} /> Modifier info
-             </button>
-           )}
-           <button
-             onClick={handleToggleVerifie}
-             disabled={['FACTURE','PAYE','INVOICED'].includes(occ.statut)}
-             className={`px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-sm disabled:opacity-40 ${
-               isLocked
-                 ? 'bg-emerald-600 text-white hover:bg-emerald-500'
-                 : 'bg-white border border-emerald-300 text-emerald-700 hover:bg-emerald-50'
-             }`}
-           >
-             <CheckCircle2 size={14} />
-             {isLocked ? 'Modifier (dévérouiller)' : 'Marquer Vérifié'}
-           </button>
-        </div>
-      </div>
-
-      {/* Main Header Card */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-200 p-10 flex flex-col md:flex-row items-start justify-between gap-10">
-        <div className="space-y-6 flex-1">
-          <div className="flex items-center gap-3">
-            <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border}`}>
-              {statusInfo.label}
-            </span>
-            <span className="bg-slate-50 px-4 py-1 rounded-full border border-slate-100 text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">
-              {occ.type}
-            </span>
-            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
-              ID #{occ.id}
-            </span>
-          </div>
-
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-tight">
-            {occ.nom || `Dossier sans nom`}
-          </h1>
-
-          <div className="flex flex-wrap items-center gap-y-3 gap-x-8 text-slate-500">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <User size={18} />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Demandeur</p>
-                <p className="text-sm font-black text-slate-900 leading-none">{occ.tiers?.nom || 'Non spécifié'}</p>
-              </div>
+    <div className="min-h-screen pb-20 space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      {/* Sticky Premium Header */}
+      <div className="sticky top-0 z-50 -mx-4 px-4 py-4 bg-slate-50/80 backdrop-blur-xl border-b border-white/20">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <Link 
+            href="/dashboard/occupations"
+            className="flex items-center gap-3 text-slate-400 hover:text-slate-900 transition-all font-black text-xs uppercase tracking-widest group"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all shadow-sm">
+              <ChevronLeft size={18} />
             </div>
-            
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <MapPin size={18} />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Localisation</p>
-                <p className="text-sm font-black text-slate-900 leading-none">{occ.adresse}</p>
-              </div>
-            </div>
+            <span className="hidden md:block">Retour à l'inventaire</span>
+          </Link>
 
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                <Calendar size={18} />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Période</p>
-                <p className="text-sm font-black text-slate-900 leading-none">
-                  {occ.type === 'COMMERCE' ? (occ.anneeTaxation || '-') : (
-                    <>
-                      {occ.dateDebut ? format(new Date(occ.dateDebut), 'dd MMM yyyy', { locale: fr }) : '?'} - {occ.dateFin ? format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr }) : '?'}
-                    </>
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full md:w-80 space-y-4">
-           <div className="bg-slate-950 rounded-[2rem] p-8 text-white relative overflow-hidden group">
-              <div className="absolute -right-6 -bottom-6 opacity-10 group-hover:scale-110 transition-transform">
-                <Euro size={120} />
-              </div>
-              <div className="relative z-10">
-                <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest mb-2">Total TTC</p>
-                <p className="text-4xl font-black tracking-tighter mb-6">{totalAmount.toLocaleString('fr-FR')} €</p>
-                
-                <button 
-                    onClick={downloadFacture}
-                    disabled={generatingPdf}
-                    className="w-full bg-white/10 hover:bg-white/20 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all backdrop-blur-sm border border-white/10 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
-                  >
-                    {generatingPdf ? (
-                      <Loader2 size={16} className="animate-spin" />
-                    ) : (
-                      <Download size={16} />
-                    )}
-                    {generatingPdf ? 'Génération...' : 'Facture PDF'}
-                  </button>
-                </div>
-           </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2 space-y-10">
-          {/* Articles Section */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
-               <div>
-                 <h2 className="text-2xl font-black text-slate-900 tracking-tight">Articles Taxables</h2>
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Détail des éléments d'occupation</p>
-               </div>
+          <div className="flex items-center gap-4">
+             {!isFactured && !isLocked && (
                <button 
-                 onClick={() => { setEditingLigne(null); setIsLigneModalOpen(true); }}
-                 className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95"
+                 onClick={() => router.push(`/dashboard/occupations?edit=${occ.id}`)}
+                 className="px-6 py-3 bg-white border border-slate-200 text-slate-600 hover:text-blue-600 rounded-2xl transition-all shadow-sm font-black text-[10px] uppercase tracking-widest flex items-center gap-2 active:scale-95"
                >
-                 <Plus size={16} /> Ajouter un article
+                 <Pencil size={14} /> Modifier info
                </button>
+             )}
+             <button
+               onClick={handleToggleVerifie}
+               disabled={isFactured}
+               className={`px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg active:scale-95 disabled:opacity-40 ${
+                 isLocked
+                   ? 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/20'
+                   : 'bg-white border border-emerald-200 text-emerald-600 hover:bg-emerald-50'
+               }`}
+             >
+               <CheckCircle2 size={16} />
+               {isLocked ? 'Déverrouiller' : 'Valider le dossier'}
+             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Layout */}
+      <div className="max-w-7xl mx-auto space-y-12">
+        
+        {/* Hero Section: Glass Card */}
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-emerald-600/20 rounded-[3rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+          <div className="relative bg-white/80 backdrop-blur-sm rounded-[3rem] border border-white p-10 md:p-14 flex flex-col lg:flex-row items-center justify-between gap-12 shadow-2xl shadow-slate-200/50">
+            <div className="space-y-8 flex-1 w-full">
+              <div className="flex flex-wrap items-center gap-4">
+                <span className={`px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border shadow-sm ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border}`}>
+                  {statusInfo.label}
+                </span>
+                <span className={`px-5 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] shadow-sm ${typeInfo.bg} ${typeInfo.color} ${typeInfo.border}`}>
+                  {typeInfo.label}
+                </span>
+                <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-2">
+                  DOSSIER #{occ.id}
+                </span>
+              </div>
+
+              <h1 className="text-4xl md:text-6xl font-black text-slate-950 tracking-tight leading-[1.1] max-w-3xl">
+                {occ.nom || `Dossier sans nom`}
+              </h1>
+
+              {/* Info Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
+                <div className="flex items-center gap-5 p-4 rounded-3xl hover:bg-slate-50 transition-colors">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-inner border border-blue-100">
+                    <User size={24} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Demandeur</p>
+                    <p className="text-base font-black text-slate-900 leading-none">{occ.tiers?.nom || 'Non spécifié'}</p>
+                    <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">Sedit : {occ.tiers?.code_sedit || '-'}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-5 p-4 rounded-3xl hover:bg-slate-50 transition-colors">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-inner border border-emerald-100">
+                    <MapPin size={24} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Localisation</p>
+                    <p className="text-base font-black text-slate-900 leading-snug truncate">{occ.adresse}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-5 p-4 rounded-3xl hover:bg-slate-50 transition-colors">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-inner border border-amber-100">
+                    <Calendar size={24} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Période d'occupation</p>
+                    <p className="text-base font-black text-slate-900 leading-none">
+                      {occ.type === 'COMMERCE' ? (occ.anneeTaxation || '-') : (
+                        <span className="flex items-center gap-2">
+                          {occ.dateDebut ? format(new Date(occ.dateDebut), 'dd MMM yyyy', { locale: fr }) : '?'} 
+                          <ArrowRight size={14} className="text-slate-300" />
+                          {occ.dateFin ? format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr }) : '?'}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-              {!occ.lignes || occ.lignes.length === 0 ? (
-                <div className="py-16 bg-white rounded-[2rem] border border-dashed border-slate-200 text-center">
-                   <Package size={40} className="mx-auto text-slate-200 mb-4" />
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Aucun article enregistré</p>
-                </div>
-              ) : (
-                occ.lignes.map((ligne: any) => (
-                  <div key={ligne.id} className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 flex flex-col md:flex-row items-center justify-between group transition-all hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5">
-                    <div className="flex items-center gap-6 flex-1">
-                      <div className="w-16 h-16 rounded-2xl bg-slate-50 flex flex-col items-center justify-center border border-slate-200 p-2 text-center group-hover:bg-white transition-colors">
-                         <p className="text-[8px] font-black text-slate-400 uppercase mb-1">Article</p>
-                         <p className="font-black text-slate-900 leading-none">{ligne.article?.numero || '#'}</p>
+            {/* Financial Card: Dark Mode */}
+            <div className="w-full lg:w-[400px] shrink-0">
+               <div className="bg-slate-950 rounded-[3rem] p-10 text-white relative overflow-hidden group/wallet shadow-2xl shadow-slate-900/40">
+                  <div className="absolute -right-10 -bottom-10 opacity-20 group-hover/wallet:scale-110 group-hover/wallet:-rotate-12 transition-all duration-700">
+                    <Euro size={200} className="text-white/10" />
+                  </div>
+                  <div className="relative z-10 flex flex-col h-full justify-between gap-10">
+                    <div>
+                      <p className="text-slate-500 font-black text-[11px] uppercase tracking-[0.2em] mb-3">Redevance Totale TTC</p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-6xl font-black tracking-tighter tabular-nums">
+                          {totalAmount.toLocaleString('fr-FR')} 
+                        </span>
+                        <span className="text-3xl font-black text-blue-400">€</span>
                       </div>
+                    </div>
+                    
+                    <button 
+                        onClick={downloadFacture}
+                        disabled={generatingPdf}
+                        className="w-full bg-white text-slate-950 hover:bg-blue-50 py-5 rounded-3xl font-black text-[11px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 ring-offset-2 ring-offset-slate-950 focus:ring-4 focus:ring-white/20"
+                      >
+                        {generatingPdf ? (
+                          <Loader2 size={18} className="animate-spin" />
+                        ) : (
+                          <Download size={18} />
+                        )}
+                        {generatingPdf ? 'Génération en cours...' : 'Générer la Facture PDF'}
+                      </button>
+                    </div>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* LEFT SIDE: Articles & Discussion */}
+          <div className="lg:col-span-8 space-y-12">
+            
+            {/* Articles Section */}
+            <section className="space-y-8">
+              <div className="flex items-center justify-between pb-6 border-b border-slate-200">
+                 <div>
+                   <h2 className="text-3xl font-black text-slate-950 tracking-tight">Détail des Articles</h2>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{isFactured ? 'Consultation uniquement (Facture émise)' : 'Articles taxables rattachés au dossier'}</p>
+                 </div>
+                 {!isFactured && (
+                   <button 
+                     onClick={() => { setEditingLigne(null); setIsLigneModalOpen(true); }}
+                     className="flex items-center gap-3 bg-slate-950 hover:bg-slate-800 text-white px-8 py-4 rounded-[2rem] font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 group"
+                   >
+                     <Plus size={18} className="group-hover:rotate-90 transition-transform" /> 
+                     Ajouter un article
+                   </button>
+                 )}
+              </div>
+
+              <div className="grid grid-cols-1 gap-6">
+                {!occ.lignes || occ.lignes.length === 0 ? (
+                  <div className="py-24 bg-slate-50/50 rounded-[3rem] border-2 border-dashed border-slate-200 text-center flex flex-col items-center justify-center">
+                     <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-6 shadow-sm border border-slate-100">
+                        <Package size={28} className="text-slate-200" />
+                     </div>
+                     <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Aucun article enregistré pour le moment</p>
+                  </div>
+                ) : (
+                  occ.lignes.map((ligne: any) => (
+                    <div key={ligne.id} className="bg-white p-8 md:p-10 rounded-[3rem] border border-slate-100 flex flex-col md:flex-row items-center justify-between group transition-all hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/5 relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-2 h-full bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                       
-                      <div className="space-y-1.5 text-left">
-                         <div className="flex items-center gap-3">
-                           <h4 className="text-base font-black text-slate-900">{ligne.article?.designation}</h4>
-                           <span className="bg-slate-50 text-slate-500 px-3 py-1 rounded-lg text-[8px] font-black uppercase border border-slate-200">
-                             {ligne.article?.modeTaxation?.nom || 'Tarif Fixe'}
-                           </span>
+                      <div className="flex items-start gap-8 flex-1 w-full">
+                        <div className="w-20 h-20 rounded-[2rem] bg-slate-50 flex flex-col items-center justify-center border border-slate-200 p-3 text-center group-hover:bg-white group-hover:border-blue-100 transition-all shrink-0">
+                           <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Code</p>
+                           <p className="font-black text-slate-950 text-xl leading-none">{ligne.article?.numero || '#'}</p>
+                        </div>
+                        
+                        <div className="space-y-4 text-left flex-1 min-w-0">
+                           <div className="flex flex-wrap items-center gap-3">
+                             <h4 className="text-xl font-black text-slate-950 tracking-tight">{ligne.article?.designation}</h4>
+                             <span className="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-blue-100/50">
+                               {ligne.article?.modeTaxation?.nom || 'Tarif Fixe'}
+                             </span>
+                           </div>
+
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-3 text-slate-500">
+                                  <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                    <Clock size={14} />
+                                  </div>
+                                <span className="text-xs font-bold uppercase tracking-wide">
+                                  {occ.type === 'COMMERCE' 
+                                    ? `Exercice ${occ.anneeTaxation}`
+                                    : `Prévu : Du ${(() => { try { return ligne.dateDebut ? format(new Date(ligne.dateDebut), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()} au ${(() => { try { return ligne.dateFin ? format(new Date(ligne.dateFin), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()}`
+                                  }
+                                </span>
+                                </div>
+                                {ligne.dateDebutConstatee && (
+                                  <div className="flex items-center gap-2 ml-1">
+                                    <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100/50">
+                                      Constaté : Du {(() => {
+                                          try { return format(new Date(ligne.dateDebutConstatee), 'dd/MM/yyyy'); } catch(e) { return '?'; }
+                                        })()} au {(() => {
+                                          try { return format(new Date(ligne.dateFinConstatee), 'dd/MM/yyyy'); } catch(e) { return '?'; }
+                                        })()}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="flex items-center gap-3 text-slate-500">
+                                <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                  <Hash size={14} />
+                                </div>
+                                <div className="text-xs font-bold uppercase tracking-wide leading-relaxed">
+                                  {(() => {
+                                    const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
+                                    const parts = rawMode.split('/').map((p: string) => p.trim());
+                                    const u1 = parts[0] || 'unité';
+                                    const u2 = parts[1] || 'unité';
+                                    
+                                    if (occ.type === 'CHANTIER') {
+                                      return <span>{ligne.quantite1} {u1} x {ligne.quantite2} {u2} à {ligne.article?.montant}€</span>;
+                                    }
+                                    return <span>{ligne.quantite1} {u1} à {ligne.article?.montant}€</span>;
+                                  })()}
+                                </div>
+                              </div>
+                           </div>
+                           
+                           {ligne.photos && (
+                              <div className="flex flex-wrap gap-3 mt-2">
+                                 {ligne.photos.split(',').filter(Boolean).map((url: string, i: number) => (
+                                   <a key={i} href={url} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-2xl overflow-hidden border border-slate-100 hover:border-blue-400 transition-all shadow-sm hover:scale-105">
+                                     <img src={url} alt="Attachment" className="w-full h-full object-cover" />
+                                   </a>
+                                 ))}
+                              </div>
+                           )}
+                        </div>
+                      </div>
+
+                      <div className="mt-8 md:mt-0 flex items-center gap-10 pl-28 md:pl-0 w-full md:w-auto border-t md:border-t-0 border-slate-100 pt-6 md:pt-0">
+                         <div className="text-right">
+                            <p className="text-[10px] font-black text-slate-400 uppercase mb-2 leading-none tracking-widest">Sous-total</p>
+                            <p className="text-3xl font-black text-slate-950 leading-none tabular-nums">
+                              {ligne.montant.toLocaleString('fr-FR')} <span className="text-lg text-blue-500">€</span>
+                            </p>
                          </div>
-                         <div className="text-xs font-bold text-slate-400 flex flex-wrap items-center gap-y-2 gap-x-5">
-                             <>
-                               <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-[10px] font-bold text-slate-400 uppercase w-full">
-                                 <span className="flex items-center gap-1.5">
-                                   <Clock size={12} className="text-slate-300" /> 
-                                   {occ.type === 'COMMERCE' 
-                                     ? occ.anneeTaxation 
-                                     : `${format(new Date(ligne.dateDebut), 'dd/MM/yyyy', { locale: fr })} - ${format(new Date(ligne.dateFin), 'dd/MM/yyyy', { locale: fr })}`
-                                   }
-                                 </span>
-                                 <span className="flex items-center gap-1.5 leading-relaxed">
-                                   <Hash size={12} className="text-slate-300 shrink-0" />
-                                   {(() => {
-                                     const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
-                                     const parts = rawMode.split('/').map((p: string) => p.trim());
-                                     const u1 = parts[0] || 'unité';
-                                     const u2 = parts[1] || 'unité';
-                                     const displayU1 = u1.toLowerCase() === 'unité' ? 'unité' : u1;
-                                     const displayU2 = u2.toLowerCase() === 'unité' ? 'unité' : u2;
-
-                                     if (occ.type === 'CHANTIER') {
-                                       const startStr = format(new Date(ligne.dateDebutConstatee || ligne.dateDebut), 'dd/MM/yyyy', { locale: fr });
-                                       const endStr = format(new Date(ligne.dateFinConstatee || ligne.dateFin), 'dd/MM/yyyy', { locale: fr });
-                                       return (
-                                         <div className="flex flex-col normal-case">
-                                           <span className="text-slate-500">{ligne.quantite1} {displayU1} x {ligne.quantite2} {displayU2} à {ligne.article?.montant}€ soit </span>
-                                           <span className="text-[9px] text-slate-400 font-medium italic">Période réelle : Du {startStr} au {endStr}</span>
-                                         </div>
-                                       );
-                                     }
-                                     
-                                     if (occ.type === 'COMMERCE') {
-                                       return <span className="normal-case text-slate-500">{ligne.quantite1} {displayU1} à {ligne.article?.montant}€/{displayU1} soit </span>;
-                                     }
-
-                                     return (
-                                       <span className="normal-case text-slate-500">
-                                         {ligne.quantite1} {displayU1} 
-                                         {ligne.quantite2 !== 1 ? ` x ${ligne.quantite2} ${displayU2}` : ''} 
-                                         {` à ${ligne.article?.montant}€ soit `}
-                                       </span>
-                                     );
-                                   })()}
-                                   <span className="text-slate-900 font-extrabold ml-auto">{ligne.montant.toLocaleString('fr-FR')} €</span>
-                                 </span>
-                               </div>
-                             </>
-                          </div>
-                         {ligne.photos && (
-                            <div className="flex flex-wrap gap-2 mt-3 text-left">
-                               {ligne.photos.split(',').filter(Boolean).map((url: string, i: number) => (
-                                 <a key={i} href={url} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-xl overflow-hidden border border-slate-100 hover:border-blue-300 transition-all shadow-sm block">
-                                   <img src={url} alt={`Article attachment ${i+1}`} className="w-full h-full object-cover" />
-                                 </a>
-                               ))}
-                            </div>
+                         
+                         {!isFactured && (
+                           <div className="flex gap-3">
+                              <button 
+                                onClick={() => { setEditingLigne(ligne); setIsLigneModalOpen(true); }}
+                                className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all border border-transparent hover:border-blue-100"
+                              >
+                                <Pencil size={20} />
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteLigne(ligne.id)}
+                                className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-all border border-transparent hover:border-rose-100"
+                              >
+                                <Trash2 size={20} />
+                              </button>
+                           </div>
                          )}
                       </div>
                     </div>
-
-                    <div className="mt-6 md:mt-0 flex items-center gap-12">
-                       <div className="text-right">
-                          <p className="text-[10px] font-black text-slate-400 uppercase mb-1.5 leading-none">Montant TTC</p>
-                          <p className="text-2xl font-black text-slate-900 leading-none">
-                            {ligne.montant.toLocaleString('fr-FR')} €
-                          </p>
-                       </div>
-                       
-                       <div className="flex gap-2">
-                          <button 
-                            onClick={() => { setEditingLigne(ligne); setIsLigneModalOpen(true); }}
-                            className="p-3.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                          >
-                            <Pencil size={20} />
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteLigne(ligne.id)}
-                            className="p-3.5 text-slate-200 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
-                          >
-                            <Trash2 size={20} />
-                          </button>
-                       </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
-
-          {/* Notes Section (WhatsApp style) */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
-               <div>
-                 <h2 className="text-2xl font-black text-slate-900 tracking-tight">Discussion / Notes</h2>
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Historique des échanges sur ce dossier</p>
-               </div>
-            </div>
-            
-            <NotesThread occupationId={occ.id} currentUser={currentUser} />
-          </section>
-        </div>
-
-        <aside className="space-y-10">
-          {/* PJ Section */}
-          <section className="space-y-6">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-              <ImageIcon size={14} /> Pièces Jointes ({(occ.photos ? occ.photos.split(',').filter(Boolean).length : 0) + (occ.facturePath ? 1 : 0)})
-            </h3>
-            {occ.photos ? (
-              <div className="grid grid-cols-2 gap-4">
-                {occ.photos.split(',').filter(Boolean).map((url: string, i: number) => (
-                  <a key={i} href={url} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-[2rem] overflow-hidden border border-slate-200 shadow-sm transition-all hover:scale-[1.02] hover:shadow-xl">
-                    <img src={url} alt={`Justificatif ${i+1}`} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <ExternalLink size={20} className="text-white" />
-                    </div>
-                  </a>
-                ))}
-                {occ.facturePath && (
-                  <a href={occ.facturePath} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-[2rem] overflow-hidden border border-blue-100 bg-blue-50/30 shadow-sm transition-all hover:scale-[1.02] hover:shadow-xl flex flex-col items-center justify-center p-6 text-center">
-                    <FileText size={40} className="text-blue-500 mb-3" />
-                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Facture PDF</p>
-                    <p className="text-[8px] font-bold text-slate-400 mt-1">Générée automatiquement</p>
-                    <div className="absolute inset-0 bg-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
+                  ))
                 )}
               </div>
-            ) : occ.facturePath ? (
-              <div className="grid grid-cols-2 gap-4">
-                  <a href={occ.facturePath} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-[2rem] overflow-hidden border border-blue-100 bg-blue-50/30 shadow-sm transition-all hover:scale-[1.02] hover:shadow-xl flex flex-col items-center justify-center p-6 text-center">
-                    <FileText size={40} className="text-blue-500 mb-3" />
-                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Facture PDF</p>
-                    <p className="text-[8px] font-bold text-slate-400 mt-1">Générée automatiquement</p>
-                  </a>
-              </div>
-            ) : (
-              <div className="py-10 bg-white rounded-[2rem] border border-dashed border-slate-200 text-center">
-                <p className="text-[10px] font-black text-slate-300 uppercase italic">Aucune pièce jointe</p>
-              </div>
-            )}
-          </section>
+            </section>
 
-          {/* Contacts Section */}
-          <section className="space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
-               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                 <User size={14} /> Contacts ({occ.contacts?.length || 0})
-               </h3>
-               <button 
-                 onClick={() => setIsContactModalOpen(true)}
-                 className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all shadow-sm"
-               >
-                 <Plus size={14} />
-               </button>
-            </div>
+            {/* Collaboration Section */}
+            <section className="space-y-8">
+              <div className="flex items-center justify-between pb-6 border-b border-slate-200">
+                 <div>
+                   <h2 className="text-3xl font-black text-slate-950 tracking-tight">Collaboration</h2>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Échanges et notes de suivi</p>
+                 </div>
+              </div>
+              
+              <NotesThread occupationId={occ.id} currentUser={currentUser} />
+            </section>
+          </div>
+
+          {/* RIGHT SIDE: Sidebar (Docs, Contacts, Obs) */}
+          <aside className="lg:col-span-4 space-y-12">
             
-            <div className="space-y-3">
-              {occ.contacts?.length > 0 ? (
-                occ.contacts.map((contact: any) => (
-                  <div key={contact.id} className="bg-white p-5 rounded-[2rem] border border-slate-200 shadow-sm group hover:border-blue-400 transition-all">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100/50">
-                        {contact.role}
-                      </span>
-                      <button 
-                        onClick={() => handleDeleteContact(contact.id)}
-                        className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-300 hover:text-rose-600 transition-all"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm font-black text-slate-900">{contact.prenom}</p>
-                      <a href={`mailto:${contact.email}`} className="text-xs font-bold text-slate-400 hover:text-blue-600 flex items-center gap-2 transition-colors">
-                        <Mail size={12} className="shrink-0" />
-                        {contact.email}
-                      </a>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="py-8 bg-slate-50/50 rounded-[2rem] border border-dashed border-slate-200 text-center">
-                  <p className="text-[10px] font-bold text-slate-400 italic">Aucun contact enregistré</p>
-                </div>
-              )}
-            </div>
-          </section>
+            {/* Documents Section */}
+            <section className="space-y-8">
+              <div className="flex items-center justify-between group/title">
+                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
+                  <ImageIcon size={16} className="text-blue-500" /> Documents & PJ ({(occ.photos ? occ.photos.split(',').filter(Boolean).length : 0) + (occ.facturePath ? 1 : 0)})
+                </h3>
+              </div>
 
-          {/* Observations Section */}
-          <section className="space-y-4">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Observations</h3>
-            <div className="bg-white p-8 rounded-[2rem] border border-slate-200 min-h-[140px] shadow-sm">
-              <p className="text-slate-600 font-medium leading-relaxed italic text-sm">
-                {occ.description || "Aucune observation particulière n'a été ajoutée à ce dossier."}
-              </p>
-            </div>
-          </section>
-        </aside>
+              <div className="grid grid-cols-2 gap-4">
+                {occ.photos ? (
+                  occ.photos.split(',').filter(Boolean).map((url: string, i: number) => (
+                    <a key={i} href={url} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-sm transition-all hover:scale-[1.02] hover:shadow-2xl">
+                      <img src={url} alt={`Dossier PJ ${i+1}`} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center p-4 text-center">
+                        <ExternalLink size={24} className="text-white mb-2" />
+                        <span className="text-[9px] font-black text-white uppercase tracking-widest">Voir le document</span>
+                      </div>
+                    </a>
+                  ))
+                ) : null}
+
+                {occ.facturePath && (
+                  <a href={occ.facturePath} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-[2.5rem] overflow-hidden border-2 border-blue-100 bg-blue-50/50 shadow-sm transition-all hover:scale-[1.02] hover:shadow-2xl flex flex-col items-center justify-center p-6 text-center">
+                    <div className="w-16 h-16 rounded-3xl bg-white flex items-center justify-center shadow-lg border border-blue-100 mb-4 group-hover:scale-110 transition-transform">
+                      <FileText size={32} className="text-blue-600" />
+                    </div>
+                    <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest">Facture Officielle</p>
+                    <p className="text-[8px] font-black text-slate-400 mt-2 uppercase">Générée par Sedit</p>
+                    <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                )}
+
+                {(!occ.photos && !occ.facturePath) && (
+                  <div className="col-span-2 py-12 bg-white rounded-[2.5rem] border border-dashed border-slate-200 text-center flex flex-col items-center">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-4">
+                      <FileArchive size={20} className="text-slate-300" />
+                    </div>
+                    <p className="text-[10px] font-black text-slate-300 uppercase italic tracking-widest">Aucun document joint</p>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {/* Contacts Section */}
+            <section className="space-y-8">
+              <div className="flex items-center justify-between">
+                 <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
+                   <User size={16} className="text-emerald-500" /> Contacts Référents ({occ.contacts?.length || 0})
+                 </h3>
+                 {!isFactured && (
+                   <button 
+                     onClick={() => setIsContactModalOpen(true)}
+                     className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-2xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center"
+                   >
+                     <Plus size={20} />
+                   </button>
+                 )}
+              </div>
+              
+              <div className="grid grid-cols-1 gap-4">
+                {occ.contacts?.length > 0 ? (
+                  occ.contacts.map((contact: any) => (
+                    <div key={contact.id} className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm group hover:border-emerald-400 transition-all flex items-center justify-between hover:shadow-xl">
+                      <div className="flex items-center gap-5 min-w-0">
+                        {contact.pjPath ? (
+                          <div className="w-16 h-16 rounded-[1.5rem] overflow-hidden border border-slate-100 bg-slate-50 shrink-0 shadow-inner">
+                            <img src={contact.pjPath} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-16 h-16 rounded-[1.5rem] bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-300 shrink-0">
+                            <User size={28} />
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100/50">
+                            {contact.role}
+                          </span>
+                          <p className="text-base font-black text-slate-950 truncate mt-2">{contact.prenom} {contact.nom}</p>
+                          <div className="flex flex-col gap-1.5 mt-2">
+                            {contact.email && (
+                              <a href={`mailto:${contact.email}`} className="text-[10px] font-black text-slate-400 hover:text-blue-600 flex items-center gap-2 transition-colors">
+                                <Mail size={12} className="shrink-0 text-slate-300" />
+                                {contact.email}
+                              </a>
+                            )}
+                            {contact.telephone && (
+                              <a href={`tel:${contact.telephone}`} className="text-[10px] font-black text-slate-400 hover:text-emerald-600 flex items-center gap-2 transition-colors">
+                                <Smartphone size={12} className="shrink-0 text-slate-300" />
+                                {contact.telephone}
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      {!isFactured && (
+                        <button 
+                          onClick={() => handleDeleteContact(contact.id)}
+                          className="opacity-0 group-hover:opacity-100 w-10 h-10 flex items-center justify-center text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="py-12 bg-slate-50/50 rounded-[2.5rem] border border-dashed border-slate-200 text-center flex flex-col items-center">
+                    <User size={24} className="text-slate-200 mb-4" />
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">Aucun contact référent</p>
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {/* Observations Section */}
+            <section className="space-y-6">
+              <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
+                 <FileArchive size={16} className="text-amber-500" /> Observations Techniques
+              </h3>
+              <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden min-h-[160px]">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-[4rem] flex items-center justify-center -mr-10 -mt-10 opacity-50">
+                   <Clock size={32} className="text-amber-200" />
+                </div>
+                <p className="text-slate-600 font-medium leading-relaxed italic text-sm relative z-10">
+                  {occ.description || "Aucune observation technique complémentaire n'a été consignée pour ce dossier d'occupation."}
+                </p>
+              </div>
+            </section>
+          </aside>
+        </div>
       </div>
 
       {isLigneModalOpen && (
@@ -565,7 +707,7 @@ export default function OccupationDetailPage({ params }: Props) {
           onClose={() => setIsLigneModalOpen(false)}
           onSave={fetchOccupation}
           occupationId={occ.id}
-          annee={occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear())}
+          annee={occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear())}
           defaultDates={{
             start: occ.dateDebut?.split('T')[0] || format(new Date(), 'yyyy-MM-dd'),
             end: occ.dateFin?.split('T')[0] || format(new Date(), 'yyyy-MM-dd')
@@ -596,36 +738,108 @@ export default function OccupationDetailPage({ params }: Props) {
               </div>
 
               <form onSubmit={handleAddContact} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Prénom / Nom</label>
-                  <input
-                    type="text"
-                    required
-                    value={newContact.prenom}
-                    onChange={e => setNewContact({...newContact, prenom: e.target.value})}
-                    placeholder="Jean Dupont"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-bold transition-all text-sm"
-                  />
+                <div className="flex justify-center">
+                  {newContact.pjPath ? (
+                    <div className="relative w-40 aspect-[1.6/1] rounded-2xl overflow-hidden border-2 border-slate-100 shadow-md">
+                      <img src={newContact.pjPath} className="w-full h-full object-contain bg-slate-50" />
+                      <button 
+                        type="button"
+                        onClick={() => setNewContact({...newContact, pjPath: ''})}
+                        className="absolute top-2 right-2 p-1.5 bg-black/60 text-white rounded-lg hover:bg-rose-600 transition-all"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ) : (
+                    <button 
+                      type="button"
+                      onClick={() => document.getElementById('contact-photo-input')?.click()}
+                      className="w-40 aspect-[1.6/1] rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 text-slate-300 hover:text-blue-500 hover:border-blue-300 transition-all bg-slate-50/50"
+                    >
+                      <ImageIcon size={32} />
+                      <span className="text-[9px] font-black uppercase tracking-widest">Carte de visite</span>
+                    </button>
+                  )}
+                  <input id="contact-photo-input" type="file" accept="image/*" className="hidden" onChange={handlePhotoContact} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Prénom</label>
+                    <input
+                      type="text"
+                      required
+                      value={newContact.prenom}
+                      onChange={e => setNewContact({...newContact, prenom: e.target.value})}
+                      placeholder="Jean"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:border-blue-500 font-bold transition-all text-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Nom</label>
+                    <input
+                      type="text"
+                      value={newContact.nom}
+                      onChange={e => setNewContact({...newContact, nom: e.target.value})}
+                      placeholder="Dupont"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:border-blue-500 font-bold transition-all text-sm uppercase"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Entreprise</label>
+                    <input
+                      type="text"
+                      value={newContact.entreprise}
+                      onChange={e => setNewContact({...newContact, entreprise: e.target.value})}
+                      placeholder="Société..."
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:border-blue-500 font-bold transition-all text-sm uppercase"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Titre / Fonction</label>
+                    <input
+                      type="text"
+                      value={newContact.titre}
+                      onChange={e => setNewContact({...newContact, titre: e.target.value})}
+                      placeholder="Gérant, Dirigeant..."
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:border-blue-500 font-bold transition-all text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Email</label>
+                    <input
+                      type="email"
+                      required
+                      value={newContact.email}
+                      onChange={e => setNewContact({...newContact, email: e.target.value})}
+                      placeholder="jean@exemple.fr"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:border-blue-500 font-bold transition-all text-sm"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Téléphone</label>
+                    <input
+                      type="tel"
+                      value={newContact.telephone}
+                      onChange={e => setNewContact({...newContact, telephone: e.target.value})}
+                      placeholder="06..."
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:border-blue-500 font-bold transition-all text-sm"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Email</label>
-                  <input
-                    type="email"
-                    required
-                    value={newContact.email}
-                    onChange={e => setNewContact({...newContact, email: e.target.value})}
-                    placeholder="jean@exemple.fr"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-bold transition-all text-sm"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Rôle / Fonction</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Rôle / Type de Contact</label>
                   <select
                     value={newContact.role}
                     onChange={e => setNewContact({...newContact, role: e.target.value})}
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 font-bold transition-all text-sm appearance-none"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:border-blue-500 font-bold transition-all text-sm appearance-none"
                   >
                     <option value="Contact principal">Contact principal</option>
                     <option value="Gérant">Gérant</option>

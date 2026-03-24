@@ -22,11 +22,25 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string)
     let result = val;
     const totalSum = occ.lignes?.reduce((sum: number, l: any) => sum + (l.montant || 0), 0) || 0;
 
+    const TYPE_MAP: Record<string, string> = {
+      'COMMERCE': 'Commerce',
+      'CHANTIER': 'Chantier',
+      'TOURNAGE': 'Tournage',
+    };
+
+    const formatAddress = (addr: string) => {
+      if (!addr) return '';
+      const match = addr.match(/^(.*?)(\d{5}\s+.*)$/);
+      if (match) return `${match[1].trim()}\n${match[2].trim()}`;
+      return addr;
+    };
+
     const replacements: Record<string, string> = {
       '{id}': occ.id.toString(),
+      '{type}': TYPE_MAP[occ.type] || occ.type,
       '{nom}': occ.nom || '',
       '{tiers.nom}': occ.tiers?.nom || '',
-      '{adresse}': occ.adresse || '',
+      '{adresse}': formatAddress(occ.adresse || ''),
       '{dateDebut}': occ.dateDebut ? format(new Date(occ.dateDebut), 'dd/MM/yyyy') : '',
       '{dateFin}': occ.dateFin ? format(new Date(occ.dateFin), 'dd/MM/yyyy') : '',
       '{numeroFacture}': invoiceNumber,
@@ -41,6 +55,22 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string)
       replacements['{article.quantite}'] = (ligne.quantite1 || 0).toString();
       replacements['{article.pu}'] = `${(ligne.article.montant || 0).toFixed(2)} €`;
       replacements['{article.totalHT}'] = `${(ligne.montant || 0).toFixed(2)} €`;
+
+      const dateS = ligne.dateDebutConstatee || ligne.dateDebut;
+      const dateE = ligne.dateFinConstatee || ligne.dateFin;
+      const dS = dateS ? format(new Date(dateS), 'dd/MM/yyyy') : '';
+      const dE = dateE ? format(new Date(dateE), 'dd/MM/yyyy') : '';
+      replacements['{article.dates}'] = dS && dE ? `${dS} - ${dE}` : (dS || dE || '');
+
+      const u1 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[1] || 'unité';
+      const u2 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[2] || (ligne.article.modeTaxation?.nom?.includes('jour') ? 'jours' : 'mois');
+      
+      let detailStr = `${ligne.quantite1} ${u1}`;
+      if (ligne.quantite2 > 1) detailStr += ` x ${ligne.quantite2} ${u2}`;
+      detailStr += ` à ${(ligne.article.montant || 0).toFixed(2)}€ soit ${(ligne.montant || 0).toFixed(2)} €`;
+      replacements['{article.details}'] = detailStr;
+
+      replacements['{article.full_description}'] = `${ligne.article.designation}\n${replacements['{article.dates}']}\n${detailStr}`;
     }
 
     Object.entries(replacements)
@@ -82,10 +112,11 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string)
         doc.setFontSize(fontSize);
         doc.setTextColor(style.color || '#000000');
         const weight = style.fontWeight === 'bold' || style.fontWeight === 'black' ? 'bold' : 'normal';
+        const fontStyle = style.italic ? 'italic' : weight;
         let family = 'helvetica';
         if (style.fontFamily?.includes('Times')) family = 'times';
         else if (style.fontFamily?.includes('Courier')) family = 'courier';
-        doc.setFont(family, weight);
+        doc.setFont(family, fontStyle);
         const lines = text.split('\n');
         lines.forEach((line: string, lineIdx: number) => {
           const splitLine = doc.splitTextToSize(line, w);
@@ -171,7 +202,7 @@ export async function POST(req: NextRequest) {
       await (prisma as any).occupation.update({
         where: { id: occ.id },
         data: {
-          statut: 'INVOICED',
+          statut: 'FACTURE',
           numeroFacture: invoiceNumber,
           facturePath: `/Factures/${filename}`
         }
@@ -261,8 +292,8 @@ export async function POST(req: NextRequest) {
           dateDebut: l.dateDebut || undefined,
           dateFin: l.dateFin || undefined,
           description: l.article?.designation || '',
-          quantite: l.quantite1 || 1,
-          prixUnitaire: l.article?.montant || l.montant,
+          quantite: (l.quantite1 || 1) * (l.quantite2 || 1),
+          prixUnitaire: l.article?.montant || 0,
           // Analytical Ventilation (fallback to article or settings)
           chapitre: l.article?.chapitre || '',
           nature: l.article?.nature || '',
