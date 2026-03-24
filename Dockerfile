@@ -47,7 +47,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 RUN chown -R nextjs:nodejs /app/prisma
 
-USER nextjs
+# Run as root to avoid host volume permission issues (SQLite & Uploads)
+# USER nextjs
 
 EXPOSE 3000
 
