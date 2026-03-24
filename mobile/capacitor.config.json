@@ -1,6 +1,6 @@
 {
   "appId": "fr.ivry.odp.mobile",
-  "appName": "ODP Mobile",
+  "appName": "Domaine Public",
   "webDir": "dist",
   "android": {
     "buildOptions": {

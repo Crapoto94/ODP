@@ -10,210 +10,222 @@ datasource db {
 model Tiers {
   id              Int          @id @default(autoincrement())
   nom             String
-  natureJuridique String?
   siret           String?      @unique
   email           String?
   adresse         String?
   latitude        Float?
   longitude       Float?
-  code_sedit      String?      // Code pour le système financier municipal
-  statut          String       @default("PROVISOIRE") // PROVISOIRE, DEFINITIF
-  occupations     Occupation[]
+  code_sedit      String?
+  statut          String       @default("PROVISOIRE")
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
+  natureJuridique String?
+  occupations     Occupation[]
 }
 
 model Occupation {
-  id              Int               @id @default(autoincrement())
-  nom             String?
-  tiersId         Int
-  tiers           Tiers             @relation(fields: [tiersId], references: [id])
-  type            String            // COMMERCE, CHANTIER, TOURNAGE
-  statut          String            // EN_ATTENTE, VALIDE, EXPIRE, REFUSE
-  dateDebut       DateTime?
-  dateFin         DateTime?
-  anneeTaxation   Int?
-  adresse         String
-  latitude        Float?
-  longitude       Float?
-  description     String?
-  photos          String?           // Liste de chemins vers les photos (séparés par virgule ou JSON)
-  montantCalcule  Float             @default(0)
-  facturePath     String?
-  numeroFacture   String?           // Numéro séquentiel AAAA-ODP-X
-  created_at      DateTime          @default(now())
-  updated_at      DateTime          @updatedAt
-  lignes          LigneOccupation[]
-  notes           Note[]
-  contacts        Contact[]
+  id             Int               @id @default(autoincrement())
+  nom            String?
+  tiersId        Int
+  type           String
+  statut         String
+  dateDebut      DateTime?
+  dateFin        DateTime?
+  anneeTaxation  Int?
+  adresse        String
+  latitude       Float?
+  longitude      Float?
+  description    String?
+  photos         String?
+  montantCalcule Float             @default(0)
+  facturePath    String?
+  created_at     DateTime          @default(now())
+  updated_at     DateTime          @updatedAt
+  numeroFacture  String?
+  contacts       Contact[]
+  lignes         LigneOccupation[]
+  notes          Note[]
+  dispositifs    Dispositif[]
+  tiers          Tiers             @relation(fields: [tiersId], references: [id])
 }
 
 model Contact {
   id           Int        @id @default(autoincrement())
-  prenom       String
-  email        String
-  role         String
+  nom          String?
+  prenom       String?
+  email        String?
+  telephone    String?
+  titre        String?
+  role         String     @default("CONTACT_DIRECT")
   occupationId Int
-  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  pjPath       String?
   created_at   DateTime   @default(now())
   updated_at   DateTime   @updatedAt
+  entreprise   String?
+  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
 }
 
 model Note {
   id           Int        @id @default(autoincrement())
   occupationId Int
-  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
   content      String
   author       String?
-  pjPath       String?    // Chemin vers la pièce jointe
-  pjName       String?    // Nom d'origine du fichier
-  pjThumb      String?    // Thumbnail base64
+  pjPath       String?
+  pjName       String?
+  pjThumb      String?
   isEmail      Boolean    @default(false)
-  externalId   String?    // Message-ID pour les emails
+  externalId   String?
   fromEmail    String?
   toEmail      String?
   origin       String?    @default("desktop")
   created_at   DateTime   @default(now())
+  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
 }
 
 model O365Message {
-  id           String   @id // L'ID Graph API
-  subject      String?
-  fromName     String?
-  fromEmail    String?
-  bodyPreview  String?
-  receivedAt   DateTime
-  processed    Boolean  @default(false)
-  created_at   DateTime @default(now())
+  id          String   @id
+  subject     String?
+  fromName    String?
+  fromEmail   String?
+  bodyPreview String?
+  receivedAt  DateTime
+  processed   Boolean  @default(false)
+  created_at  DateTime @default(now())
 }
 
 model Categorie {
-  id        Int         @id @default(autoincrement())
-  nom       String
-  couleur   String?     // Hex code or Tailwind class
-  niveau    Int         // 1 for Type, 2 for Sous type, 3 for sous sous type
-  parentId  Int?
-  parent    Categorie?  @relation("SubCategories", fields: [parentId], references: [id])
-  subs      Categorie[] @relation("SubCategories")
-  articles  Article[]
+  id       Int         @id @default(autoincrement())
+  nom      String
+  couleur  String?
+  niveau   Int
+  parentId Int?
+  articles Article[]
+  parent   Categorie?  @relation("SubCategories", fields: [parentId], references: [id])
+  subs     Categorie[] @relation("SubCategories")
 }
 
 model ModeTaxation {
-  id      Int      @id @default(autoincrement())
-  nom     String   @unique
+  id       Int       @id @default(autoincrement())
+  nom      String    @unique
   articles Article[]
 }
 
 model Article {
   id             Int               @id @default(autoincrement())
-  numero         String?           // N° Article
+  numero         String?
   designation    String
   categorieId    Int?
-  categorie      Categorie?        @relation(fields: [categorieId], references: [id])
   modeTaxationId Int?
-  modeTaxation   ModeTaxation?     @relation(fields: [modeTaxationId], references: [id])
   annee          Int
   montant        Float             @default(0)
   notes          String?
-  // Analytical Ventilation (Filien /541/ and /542/)
-  chapitre       String?           @default("")
-  nature         String?           @default("")
-  fonction       String?           @default("")
-  codeInterne    String?           @default("")
-  typeMouvement  String?           @default("")
-  sens           String?           @default("")
-  structure      String?           @default("")
-  gestionnaire   String?           @default("")
   created_at     DateTime          @default(now())
   updated_at     DateTime          @updatedAt
+  chapitre       String?           @default("")
+  codeInterne    String?           @default("")
+  fonction       String?           @default("")
+  gestionnaire   String?           @default("")
+  nature         String?           @default("")
+  sens           String?           @default("")
+  structure      String?           @default("")
+  typeMouvement  String?           @default("")
+  modeTaxation   ModeTaxation?     @relation(fields: [modeTaxationId], references: [id])
+  categorie      Categorie?        @relation(fields: [categorieId], references: [id])
   lignes         LigneOccupation[]
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  nom       String
-  prenom    String
-  email     String   @unique
-  login     String   @unique
-  password  String
-  role      String   // AGENT_TERRAIN, AGENT_BUREAU, AGENT_COMPTABLE, ADMIN
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id         Int         @id @default(autoincrement())
+  nom        String
+  prenom     String
+  email      String      @unique
+  login      String      @unique
+  password   String
+  role       String
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
   logs       MobileLog[]
 }
 
 model MobileLog {
   id         Int      @id @default(autoincrement())
   userId     Int?
-  user       User?    @relation(fields: [userId], references: [id])
-  action     String?  // ACCESS, LOGIN, NOTE_ADD, etc.
+  action     String?
   userAgent  String?
-  deviceInfo String?  // Stringified JSON
+  deviceInfo String?
   ip         String?
   created_at DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id])
 }
 
 model AppSettings {
-  id           Int      @id @default(1)
-  financeEmail String?
-  appUrl       String?
-  apmUrl       String?
-  apmToken     String?
-  senderName   String?  @default("ODP Console")
-  senderEmail  String?  @default("dsihub@fbc.fr")
-  // Filien settings
-  filienOrga        String?  @default("01")
-  filienBudget      String?  @default("BA")
-  filienExercice    Int?
-  filienAvancement  String?  @default("5")
-  filienRejetDispo  Boolean? @default(true)
-  filienRejetCA     Boolean? @default(false)
-  filienRejetMarche Boolean? @default(false)
-  // New Filien defaults
-  filienMouvement   String?  @default("1")
-  filienType        String?  @default("R")
-  filienLibelle     String?
-  filienCalendrier  String?  @default("01")
-  filienMonnaie     String?  @default("E")
-  filienMouvementEx String?  @default("N")
-  filienPreBordereau String? @default("1235")
-  filienPoste       String?  @default("0001")
-  filienBordereau   String?  @default("0001")
-  filienObjet       String?
-  // Analytical Ventilation defaults
-  filienChapitre    String?  @default("")
-  filienNature      String?  @default("")
-  filienFonction    String?  @default("")
-  filienCodeInterne String?  @default("")
-  filienTypeMouvement String? @default("")
-  filienSens        String?  @default("")
-  filienStructure   String?  @default("")
-  filienGestionnaire String? @default("")
-  updated_at   DateTime @updatedAt
+  id                  Int      @id @default(autoincrement())
+  financeEmail        String?
+  appUrl              String?
+  apmUrl              String?
+  apmToken            String?
+  senderName          String?  @default("Domaine Public")
+  senderEmail         String?  @default("dsihub@fbc.fr")
+  filienOrga          String?  @default("01")
+  filienBudget        String?  @default("BA")
+  filienExercice      Int?
+  filienAvancement    String?  @default("5")
+  filienRejetDispo    Boolean? @default(true)
+  filienRejetCA       Boolean? @default(false)
+  filienRejetMarche   Boolean? @default(false)
+  filienMouvement     String?  @default("1")
+  filienType          String?  @default("R")
+  filienLibelle       String?
+  filienCalendrier    String?  @default("01")
+  filienMonnaie       String?  @default("E")
+  filienMouvementEx   String?  @default("N")
+  filienPreBordereau  String?  @default("1235")
+  filienPoste         String?  @default("0001")
+  filienBordereau     String?  @default("0001")
+  filienObjet         String?
+  filienChapitre      String?  @default("")
+  filienNature        String?  @default("")
+  filienFonction      String?  @default("")
+  filienCodeInterne   String?  @default("")
+  filienTypeMouvement String?  @default("")
+  filienSens          String?  @default("")
+  filienStructure     String?  @default("")
+  filienGestionnaire  String?  @default("")
+  updated_at          DateTime @updatedAt
 }
 
 model LigneOccupation {
-  id           Int        @id @default(autoincrement())
-  occupationId Int
-  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
-  articleId    Int
-  article      Article    @relation(fields: [articleId], references: [id])
-  quantite1    Float      @default(0) // ex: Surface / Nombre d'objets
-  quantite2    Float      @default(0) // ex: Durée / Linéaire
-  dateDebut    DateTime?
-  dateFin      DateTime?
-  dateDebutConstatee DateTime? // Date de début constatée sur le terrain
-  dateFinConstatee   DateTime?   // Date de fin constatée sur le terrain
-  montant      Float      @default(0)
-  photos       String?    // Pièces jointes spécifiques à la ligne
-  created_at   DateTime   @default(now())
-  updated_at   DateTime   @updatedAt
+  id                 Int          @id @default(autoincrement())
+  occupationId       Int
+  articleId          Int
+  quantite1          Float        @default(0)
+  quantite2          Float        @default(0)
+  dateDebut          DateTime?
+  dateFin            DateTime?
+  dateDebutConstatee DateTime?
+  dateFinConstatee   DateTime?
+  montant            Float        @default(0)
+  created_at         DateTime     @default(now())
+  updated_at         DateTime     @updatedAt
+  photos             String?
+  article            Article      @relation(fields: [articleId], references: [id])
+  occupation         Occupation   @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+}
+
+model Dispositif {
+  id                Int             @id @default(autoincrement())
+  nom               String
+  statut            String          @default("EN_ATTENTE") // EN_ATTENTE, VERIFIE
+  occupationId      Int
+  occupation        Occupation      @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
 }
 
 model Gabarit {
   id         Int      @id @default(autoincrement())
   nom        String
-  contenu    String   // JSON string: { elements: Array<{ type, x, y, width, height, value, style }> }
+  contenu    String
   isDefault  Boolean  @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

@@ -6,9 +6,9 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { userId, action, deviceInfo, userAgent } = body;
 
-    // Use raw query to bypass out-of-sync Prisma Client (due to file lock on Windows)
-    // The table exists because 'prisma db push' succeeded, but 'prisma generate' failed.
-    await (prisma as any).$executeRawUnsafe(
+    console.log('[LOG] Incoming activity:', { userId, action, deviceInfo: typeof deviceInfo === 'object' ? 'object' : deviceInfo });
+
+    const result = await (prisma as any).$executeRawUnsafe(
       `INSERT INTO MobileLog (userId, action, deviceInfo, userAgent, ip, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
       userId || null,
       action || 'ACCESS',
@@ -17,6 +17,8 @@ export async function POST(request: Request) {
       request.headers.get('x-forwarded-for') || '127.0.0.1',
       new Date().toISOString()
     );
+
+    console.log('[LOG] Insert result:', result);
 
     return NextResponse.json({ success: true });
   } catch (error) {

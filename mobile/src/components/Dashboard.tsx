@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import api from '../services/api';
-import { MapPin, LogOut, Loader2, Search, Sun, Moon, Package, RefreshCw, LayoutGrid, HardHat, Store, Video, Calendar, Settings as SettingsIcon } from 'lucide-react';
+import { MapPin, LogOut, Loader2, Search, Sun, Moon, RefreshCw, LayoutGrid, HardHat, Store, Video, Calendar, CheckCircle2, Clock, FileText, AlertCircle, Map as MapIcon } from 'lucide-react';
 import { useGeolocation, type Coordinates } from '../hooks/useGeolocation';
 import { useTheme } from '../hooks/useTheme';
+import { MapDashboard } from './MapDashboard';
 
 interface Occupation {
   id: number;
@@ -33,7 +34,14 @@ const TYPE_CONFIG: Record<string, { color: string; bg: string; dot: string }> = 
   EVENEMENT: { color: 'text-blue-500 dark:text-blue-300',   bg: 'bg-blue-400/10 border-blue-400/20',     dot: 'bg-blue-400' },
 };
 
-export function Dashboard({ onSelectDossier, onLogout, onOpenSettings, isVpnConnected }: DashboardProps) {
+const STATUT_CONFIG: Record<string, { icon: any; color: string }> = {
+  'VERIFIE': { icon: CheckCircle2, color: 'text-emerald-500' },
+  'INVOICED': { icon: FileText, color: 'text-blue-500' },
+  'EN_ATTENTE': { icon: Clock, color: 'text-amber-500' },
+};
+
+
+export function Dashboard({ onSelectDossier, onLogout }: DashboardProps) {
   const [occupations, setOccupations] = useState<Occupation[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
@@ -42,6 +50,8 @@ export function Dashboard({ onSelectDossier, onLogout, onOpenSettings, isVpnConn
   const sentinelRef = useRef<HTMLDivElement>(null);
   const { coords, loading: gpsLoading, refresh: refreshGps, error: gpsError } = useGeolocation();
   const { toggle, isDark } = useTheme();
+  const [showMap, setShowMap] = useState(false);
+  const [mapFocus, setMapFocus] = useState<[number, number] | undefined>(undefined);
 
   useEffect(() => {
     api.get('/api/occupations').then(r => setOccupations(r.data)).catch(console.error).finally(() => setLoading(false));
@@ -105,40 +115,38 @@ export function Dashboard({ onSelectDossier, onLogout, onOpenSettings, isVpnConn
       <div className="sticky top-0 z-40 bg-[var(--bg)]/90 backdrop-blur-3xl border-b border-[var(--divider)]">
 
         {/* App bar - Compacted */}
-        <div className="flex items-center justify-between px-5 pt-4 pb-2">
-          <div>
-            <h1 className="text-xl font-black tracking-tight uppercase">Dossiers</h1>
-            <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest leading-none">
-              {sortedAndFiltered.length} au total
-              {coords && <span className="text-emerald-500 ml-1">· GPS ON</span>}
-              {gpsError && <span className="text-rose-500 ml-1">· Erreur GPS: {gpsError}</span>}
-            </p>
+        <div className="flex items-center justify-between px-6 pt-10 pb-6">
+          <div className="flex items-center gap-3">
+            <img src="/logo.jpg" alt="Logo" className="w-12 h-12 rounded-xl object-contain bg-white/5 p-1.5" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <div>
+              <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest leading-none">
+                {coords && <span className="text-emerald-500 mr-1">GPS ON</span>}
+                {gpsError && <span className="text-rose-500 mr-1">GPS ERROR</span>}
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button 
-              onClick={onOpenSettings} 
-              className="w-10 h-10 rounded-xl bg-[var(--bg-card)] border border-[var(--card-border)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text)] transition-colors active:scale-95 relative"
-              title="Paramètres API"
-            >
-              <SettingsIcon size={16} />
-              {isVpnConnected && (
-                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-[var(--bg-card)] animate-pulse" />
-              )}
-            </button>
-            <button 
               onClick={refreshGps} 
               disabled={gpsLoading}
-              className="w-10 h-10 rounded-xl bg-[var(--bg-card)] border border-[var(--card-border)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text)] transition-colors active:scale-95 disabled:opacity-50"
+              className="w-14 h-14 rounded-2xl bg-[var(--bg-card)] border border-[var(--card-border)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text)] transition-colors active:scale-95 disabled:opacity-50"
               title="Rafraîchir GPS"
             >
-              <RefreshCw size={16} className={gpsLoading ? 'animate-spin' : ''} />
+              <RefreshCw size={24} className={gpsLoading ? 'animate-spin' : ''} />
             </button>
             <button 
               onClick={toggle} 
-              className="w-10 h-10 rounded-xl bg-[var(--bg-card)] border border-[var(--card-border)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text)] transition-colors active:scale-95"
+              className="w-14 h-14 rounded-2xl bg-[var(--bg-card)] border border-[var(--card-border)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text)] transition-colors active:scale-95"
             >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              {isDark ? <Sun size={24} /> : <Moon size={24} />}
+            </button>
+            <button 
+              onClick={() => { setShowMap(true); setMapFocus(undefined); }} 
+              className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 hover:text-blue-300 transition-colors active:scale-95 shadow-lg shadow-blue-500/10"
+              title="Cartographie"
+            >
+              <MapIcon size={24} />
             </button>
             <button 
               onClick={onLogout} 
@@ -149,21 +157,21 @@ export function Dashboard({ onSelectDossier, onLogout, onOpenSettings, isVpnConn
           </div>
         </div>
 
-        {/* Search bar - Extra Large */}
-        <div className="px-5 pb-5 pt-2">
+        {/* Search bar - Sized down */}
+        <div className="px-6 pb-6 pt-2">
           <div className="relative">
-            <Search size={24} className="absolute left-8 top-1/2 -translate-y-1/2 text-[var(--text-dim)] opacity-60" />
+            <Search size={22} className="absolute left-8 top-1/2 -translate-y-1/2 text-[var(--text-dim)] opacity-60" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Rechercher dossiers..."
-              className="w-full input-field rounded-[3rem] py-8 pl-20 pr-8 text-xl font-black transition-all shadow-2xl"
+              placeholder=""
+              className="w-full h-16 input-field rounded-2xl pl-16 pr-8 text-lg font-black transition-all shadow-xl"
             />
           </div>
         </div>
 
-        {/* Filter pills — MASSIVE with Color Palette */}
-        <div className="flex gap-4 px-5 pb-7 overflow-x-auto no-scrollbar">
+        {/* Filter pills — Rounded and Sized Down */}
+        <div className="flex gap-2 px-6 pb-8 overflow-x-auto no-scrollbar snap-x">
           {types.map(t => {
             const isActive = filter === t;
             let grad = 'gradient-primary';
@@ -192,13 +200,13 @@ export function Dashboard({ onSelectDossier, onLogout, onOpenSettings, isVpnConn
               <button
                 key={t}
                 onClick={() => setFilter(t)}
-                className={`shrink-0 flex flex-col items-center gap-2 px-8 py-5 rounded-3xl transition-all duration-300 border-2 ${
+                className={`snap-center shrink-0 flex flex-col items-center justify-center gap-2 w-[80px] h-[80px] rounded-2xl transition-all duration-300 border-2 ${
                   isActive
                     ? `${grad} text-white shadow-2xl ${shadow} scale-105 border-transparent`
-                    : 'bg-[var(--bg-card)] border-[var(--card-border)] text-[var(--text-muted)]'
+                    : 'bg-[var(--bg-card)] border-[var(--card-border)] text-[var(--text-muted)] shadow-lg shadow-black/20 hover:bg-white/[0.08]'
                 }`}
               >
-                <Icon size={24} strokeWidth={isActive ? 3 : 2} />
+                <Icon size={18} strokeWidth={isActive ? 3 : 2} />
                 <span className="text-[9px] font-black uppercase tracking-widest leading-none">
                   {t === 'ALL' ? 'TOUS' : t}
                 </span>
@@ -209,7 +217,7 @@ export function Dashboard({ onSelectDossier, onLogout, onOpenSettings, isVpnConn
       </div>
 
       {/* ── List ────────────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {displayed.map(o => {
           const cfg = TYPE_CONFIG[o.type] ?? { color: 'text-[var(--text-muted)]', bg: 'bg-[var(--bg-card)] border-[var(--card-border)]', dot: 'bg-neutral-500' };
           const totalAmount = o.lignes?.reduce((sum, l) => sum + l.montant, 0) || 0;
@@ -218,15 +226,19 @@ export function Dashboard({ onSelectDossier, onLogout, onOpenSettings, isVpnConn
             <div
               key={o.id}
               onClick={() => onSelectDossier(o.id)}
-              className="glass-card rounded-[2.5rem] p-7 flex items-center gap-5 active:scale-[0.98] transition-all cursor-pointer group relative overflow-hidden shadow-sm"
+              className="glass-card rounded-3xl p-8 flex items-center gap-6 active:scale-[0.98] transition-all cursor-pointer group relative overflow-hidden shadow-2xl"
             >
-              {/* Type dot with badge */}
+              {/* Type icon based on status */}
               <div className="relative shrink-0">
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${cfg.bg} border-2 transition-colors shadow-inner`}>
-                  <div className={`w-3 h-3 rounded-full ${cfg.dot} shadow-md`} />
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center bg-white/[0.03] border-2 border-white/[0.06] shadow-inner transition-transform group-hover:scale-110 duration-500`}>
+                  {(() => {
+                    const statusCfg = STATUT_CONFIG[o.statut] || { icon: AlertCircle, color: 'text-slate-400' };
+                    const StatusIcon = statusCfg.icon;
+                    return <StatusIcon size={28} className={statusCfg.color} strokeWidth={2.5} />;
+                  })()}
                 </div>
                 {(o._count?.lignes || 0) > 0 && (
-                  <div className="absolute -top-2 -right-2 min-w-[24px] h-[24px] bg-emerald-500 text-white rounded-full flex items-center justify-center px-1.5 border-4 border-[var(--bg)] shadow-lg animate-in zoom-in duration-300">
+                  <div className="absolute top-2 right-1 min-w-[24px] h-[24px] bg-emerald-500 text-white rounded-full flex items-center justify-center px-1.5 border-4 border-[var(--bg)] shadow-lg animate-in zoom-in duration-300">
                     <span className="text-[10px] font-black text-white">{o._count.lignes}</span>
                   </div>
                 )}
@@ -242,24 +254,28 @@ export function Dashboard({ onSelectDossier, onLogout, onOpenSettings, isVpnConn
                   {o.nom || o.tiers.nom}
                 </h3>
                 <div className="flex items-center gap-2">
-                  <MapPin size={13} className="shrink-0 text-[var(--text-dim)]" />
+                  <div 
+                    className="cursor-pointer active:scale-125 transition-transform p-1 -m-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (o.latitude && o.longitude) {
+                        setMapFocus([o.latitude, o.longitude]);
+                        setShowMap(true);
+                      }
+                    }}
+                  >
+                    <MapPin size={13} className={`shrink-0 ${o.latitude && o.longitude ? 'text-blue-400' : 'text-[var(--text-dim)]'}`} />
+                  </div>
                   <p className="text-xs font-bold text-[var(--text-muted)] truncate">{o.adresse}</p>
                 </div>
               </div>
 
-              {/* Right: Amount & Stats */}
-              <div className="flex flex-col items-end justify-center gap-2 shrink-0 pl-4 pr-1">
+              {/* Right: Amount only (Badge removed as requested) */}
+              <div className="flex flex-col items-end justify-center shrink-0 pl-4 pr-1">
                 <div className="text-right">
-                  <p className="text-2xl font-black text-[var(--text)] tabular-nums tracking-tighter">
-                    {totalAmount.toFixed(2)}<span className="text-[10px] ml-0.5 text-[var(--text-dim)] uppercase">€ TTC</span>
+                  <p className="text-base font-medium text-[var(--text)] tabular-nums tracking-tight">
+                    {totalAmount.toFixed(2)}€
                   </p>
-                </div>
-                
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-card)]/50 border border-[var(--card-border)] shadow-sm">
-                  <Package size={12} className="text-[var(--text-dim)]" />
-                  <span className="text-[10px] font-black text-[var(--text-muted)] tracking-tighter">
-                    {o._count?.lignes || 0} p.
-                  </span>
                 </div>
               </div>
 
@@ -281,6 +297,16 @@ export function Dashboard({ onSelectDossier, onLogout, onOpenSettings, isVpnConn
           )}
         </div>
       </div>
+
+      {showMap && (
+        <MapDashboard 
+          occupations={sortedAndFiltered}
+          onClose={() => setShowMap(false)}
+          onSelectDossier={onSelectDossier}
+          initialCenter={mapFocus}
+          initialZoom={mapFocus ? 18 : 14}
+        />
+      )}
     </div>
   );
 }

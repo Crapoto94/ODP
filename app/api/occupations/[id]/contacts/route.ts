@@ -20,18 +20,44 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const { id } = await params;
     const occupationId = parseInt(id);
     const body = await req.json();
-    const { prenom, email, role } = body;
-
-    if (!prenom || !email || !role) {
-      return NextResponse.json({ error: 'Tous les champs sont requis' }, { status: 400 });
-    }
+    const { nom, prenom, email, telephone, titre, entreprise, role, pjPath } = body;
 
     const contact = await (prisma as any).contact.create({
       data: {
-        prenom,
-        email,
-        role,
+        nom: nom || null,
+        prenom: prenom || null,
+        email: email || null,
+        telephone: telephone || null,
+        titre: titre || null,
+        entreprise: entreprise || null,
+        role: role || 'CONTACT_DIRECT',
+        pjPath: pjPath || null,
         occupationId
+      }
+    });
+
+    return NextResponse.json(contact);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const body = await req.json();
+    const { id: contactId, nom, prenom, email, telephone, titre, entreprise, role } = body;
+
+    const contact = await (prisma as any).contact.update({
+      where: { id: parseInt(contactId) },
+      data: {
+        nom: nom || null,
+        prenom: prenom || null,
+        email: email || null,
+        telephone: telephone || null,
+        titre: titre || null,
+        entreprise: entreprise || null,
+        role: role || 'CONTACT_DIRECT',
+        pjPath: body.pjPath || undefined
       }
     });
 

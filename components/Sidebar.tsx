@@ -53,12 +53,12 @@ export default function Sidebar() {
     <aside className={`w-72 bg-slate-900 h-screen fixed left-0 top-0 text-white flex flex-col z-50 shadow-2xl transition-all duration-700 ${blurClasses}`}>
       <div className="p-8 border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-black text-xl italic shadow-lg shadow-blue-500/30">
-            D
+          <div className="w-10 h-10 bg-slate-800 rounded-xl overflow-hidden border border-slate-700 flex items-center justify-center shadow-lg">
+            <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
           <div>
-            <h1 className="text-xl font-black tracking-tighter">OPD Manager</h1>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ville dIvry-sur-Seine</p>
+            <h1 className="text-xl font-black tracking-tighter text-white">Domaine Public</h1>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Gestion du Domaine Public</p>
           </div>
         </div>
       </div>

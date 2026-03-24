@@ -9,8 +9,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       where: { id },
       include: { 
         tiers: true,
-        lignes: { include: { article: { include: { modeTaxation: true } } } },
-        contacts: true
+        lignes: { include: { article: { include: { modeTaxation: true, categorie: true } } } },
+        contacts: true,
+        dispositifs: true,
+        notes: { orderBy: { created_at: 'desc' } }
       }
     });
 

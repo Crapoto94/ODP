@@ -1,26 +1,18 @@
-import { useState, useRef } from 'react';
-import { Globe, Save, X, CheckCircle2, AlertCircle, Loader2, Shield, Key, User, Upload, Trash2, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { Globe, Save, X, CheckCircle2, AlertCircle, Loader2, Shield, Zap, ShieldCheck, ShieldAlert } from 'lucide-react';
 
 interface SettingsProps {
   onSave: (url: string) => void;
   onCancel: () => void;
   isVpnConnected: boolean;
-  onVpnToggle: (connected: boolean) => void;
 }
 
-export function Settings({ onSave, onCancel, isVpnConnected, onVpnToggle }: SettingsProps) {
+export function Settings({ onSave, onCancel, isVpnConnected }: SettingsProps) {
   const [url, setUrl] = useState(localStorage.getItem('odp_api_url') || window.location.origin);
-  const [vpnConfig, setVpnConfig] = useState(localStorage.getItem('odp_vpn_config') || '');
-  const [vpnFileName, setVpnFileName] = useState(localStorage.getItem('odp_vpn_file_name') || '');
-  const [vpnUser, setVpnUser] = useState(localStorage.getItem('odp_vpn_user') || '');
-  const [vpnPass, setVpnPass] = useState(localStorage.getItem('odp_vpn_pass') || '');
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [testError, setTestError] = useState('');
   const [pingStatus, setPingStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [pingError, setPingError] = useState('');
-  const [vpnTestStatus, setVpnTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
-  const [isVpnConnecting, setIsVpnConnecting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleTest = async () => {
     setTestStatus('testing');
@@ -74,60 +66,7 @@ export function Settings({ onSave, onCancel, isVpnConnected, onVpnToggle }: Sett
     }
   };
 
-  const handleVpnTest = async () => {
-    if (!vpnConfig) return;
-    setVpnTestStatus('testing');
-    try {
-      // Extract remote host from OVPN: remote <host> <port>
-      const remoteMatch = vpnConfig.match(/remote\s+([^\s]+)\s+(\d+)/);
-      if (remoteMatch) {
-         const host = remoteMatch[1];
-         const controller = new AbortController();
-         const timeoutId = setTimeout(() => controller.abort(), 5000);
-         try {
-           await fetch(`https://${host}`, { method: 'GET', mode: 'no-cors', signal: controller.signal });
-           clearTimeout(timeoutId);
-           setVpnTestStatus('success');
-         } catch (err: any) {
-           clearTimeout(timeoutId);
-           if (err.name !== 'AbortError') setVpnTestStatus('success');
-           else setVpnTestStatus('error');
-         }
-      } else {
-        setTimeout(() => setVpnTestStatus('success'), 1500);
-      }
-    } catch { setVpnTestStatus('error'); }
-  };
-
-  const handleVpnConnect = () => {
-    if (isVpnConnected) {
-      onVpnToggle(false);
-      return;
-    }
-    
-    setIsVpnConnecting(true);
-    setTimeout(() => {
-      setIsVpnConnecting(false);
-      onVpnToggle(true);
-    }, 2000);
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setVpnFileName(file.name);
-      setVpnTestStatus('idle');
-      const reader = new FileReader();
-      reader.onload = (event) => setVpnConfig(event.target?.result as string);
-      reader.readAsText(file);
-    }
-  };
-
   const handleSaveAll = () => {
-    localStorage.setItem('odp_vpn_config', vpnConfig);
-    localStorage.setItem('odp_vpn_file_name', vpnFileName);
-    localStorage.setItem('odp_vpn_user', vpnUser);
-    localStorage.setItem('odp_vpn_pass', vpnPass);
     onSave(url);
   };
 
@@ -149,7 +88,7 @@ export function Settings({ onSave, onCancel, isVpnConnected, onVpnToggle }: Sett
           </div>
           <div>
             <h1 className="text-4xl font-black tracking-tighter text-white mb-2 uppercase">Configuration</h1>
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">Infrastructure & Sécurité • v1.0.2</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">Infrastructure & Sécurité • v1.0.3</p>
           </div>
         </div>
 
@@ -182,61 +121,17 @@ export function Settings({ onSave, onCancel, isVpnConnected, onVpnToggle }: Sett
 
         {/* VPN Section */}
         <div className="space-y-6">
-          <div className="flex items-center gap-3 px-2">
-            <Shield size={18} className="text-blue-400" />
-            <div className="flex-1 flex items-center justify-between">
-              <h2 className="text-sm font-black uppercase tracking-widest text-white/60">OpenVPN</h2>
-              {isVpnConnected && (
-                <div className="flex items-center gap-2 text-[10px] font-black text-emerald-400 uppercase tracking-widest animate-pulse">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  Connecté
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="space-y-6">
-            <input type="file" accept=".ovpn" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
-            <div className="relative group">
-              <div onClick={() => fileInputRef.current?.click()} className="w-full h-24 bg-white/[0.03] border border-white/[0.08] rounded-[2rem] flex items-center justify-between px-8 cursor-pointer hover:bg-white/[0.06] transition-all group-active:scale-[0.98]">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center"><Upload size={20} className="text-blue-400" /></div>
-                  <div className="text-left">
-                    <p className="text-xs font-black uppercase tracking-widest text-white/80">Profil .ovpn</p>
-                    <p className="text-[10px] font-bold text-white/30 truncate max-w-[180px]">{vpnFileName || 'Aucun fichier'}</p>
-                  </div>
-                </div>
-                {vpnConfig && (
-                  <button onClick={(e) => { e.stopPropagation(); setVpnConfig(''); setVpnFileName(''); setVpnTestStatus('idle'); onVpnToggle(false); }} className="p-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-all"><Trash2 size={18} /></button>
-                )}
+          <div className="bg-white/5 rounded-2xl p-6 border border-white/5 relative overflow-hidden">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-1">Tunnel VPN</h3>
+                <p className="text-xs text-white/50">Détecté automatiquement depuis l'appareil</p>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="relative group">
-                <input type="text" value={vpnUser} onChange={e => setVpnUser(e.target.value)} placeholder="Utilisateur" className="w-full h-20 bg-white/[0.03] border border-white/[0.08] rounded-[2rem] pl-8 pr-14 text-sm font-bold text-white text-left focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/40 outline-none transition-all placeholder:text-white/10" />
-                <User size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-blue-400 transition-all duration-300 pointer-events-none" />
-              </div>
-              <div className="relative group">
-                <input type="password" value={vpnPass} onChange={e => setVpnPass(e.target.value)} placeholder="Pass" className="w-full h-20 bg-white/[0.03] border border-white/[0.08] rounded-[2rem] pl-8 pr-14 text-sm font-bold text-white text-left focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/40 outline-none transition-all placeholder:text-white/10" />
-                <Key size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-blue-400 transition-all duration-300 pointer-events-none" />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <button 
-                onClick={handleVpnConnect}
-                disabled={isVpnConnecting || !vpnConfig}
-                className={`w-full h-20 rounded-[2rem] text-sm font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-[0.98] ${isVpnConnected ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-blue-600 text-white shadow-[0_12px_24px_-8px_rgba(37,99,235,0.3)]'}`}
-              >
-                {isVpnConnecting ? <Loader2 size={20} className="animate-spin" /> : <Shield size={20} />}
-                {isVpnConnecting ? 'Connexion...' : isVpnConnected ? 'Se Déconnecter' : 'Se Connecter au VPN'}
-              </button>
-
-              <div className="flex items-center justify-center">
-                <button onClick={handleVpnTest} disabled={vpnTestStatus === 'testing' || !vpnConfig} className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all hover:opacity-80 active:scale-95 disabled:opacity-50 ${vpnTestStatus === 'success' ? 'text-emerald-400' : vpnTestStatus === 'error' ? 'text-rose-400' : 'text-white/20'}`}>
-                  {vpnTestStatus === 'testing' ? <Loader2 size={12} className="animate-spin" /> : vpnTestStatus === 'success' ? <CheckCircle2 size={12} /> : vpnTestStatus === 'error' ? <AlertCircle size={12} /> : <Zap size={12} />}
-                  {vpnTestStatus === 'testing' ? 'Vérification...' : vpnTestStatus === 'success' ? 'VPN Joignable' : vpnTestStatus === 'error' ? 'VPN Hors-ligne' : 'Tester la configuration'}
-                </button>
+              <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-full border ${isVpnConnected ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}>
+                {isVpnConnected ? <ShieldCheck size={14} /> : <ShieldAlert size={14} />}
+                <span className="text-[10px] font-bold uppercase tracking-wider">
+                  {isVpnConnected ? 'VPN Actif' : 'Déconnecté'}
+                </span>
               </div>
             </div>
           </div>

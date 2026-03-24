@@ -4,6 +4,7 @@ import { Login } from './components/Login';
 import { Dashboard } from './components/Dashboard';
 import { DossierDetail } from './components/DossierDetail';
 import { Settings } from './components/Settings';
+import VpnDetector from './services/vpnDetector';
 
 type View = 'LOGIN' | 'DASHBOARD' | 'DETAIL';
 
@@ -26,15 +27,22 @@ export default function App() {
   });
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isVpnConnected, setIsVpnConnected] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('odp_vpn_connected') === 'true';
-  });
+  const [isVpnConnected, setIsVpnConnected] = useState(false);
 
-  const toggleVpn = (connected: boolean) => {
-    setIsVpnConnected(connected);
-    localStorage.setItem('odp_vpn_connected', connected.toString());
-  };
+  useEffect(() => {
+    const checkVpn = async () => {
+      try {
+        const { isActive } = await VpnDetector.isVpnActive();
+        setIsVpnConnected(isActive);
+      } catch (e) {
+        console.warn("VPN Check not supported in this environment");
+      }
+    };
+    
+    checkVpn();
+    const interval = setInterval(checkVpn, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const logActivity = async (action: string, userData?: any) => {
     const u = userData || user;
@@ -105,7 +113,6 @@ export default function App() {
           onSave={handleSaveSettings} 
           onCancel={() => setIsSettingsOpen(false)} 
           isVpnConnected={isVpnConnected}
-          onVpnToggle={toggleVpn}
         />
       )}
 

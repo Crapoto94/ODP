@@ -22,15 +22,26 @@ export async function POST(req: Request) {
 
     const ext = file.name.split('.').pop() || 'png';
     const filename = `${crypto.randomUUID()}.${ext}`;
-    const path = join(process.cwd(), 'public', 'uploads', filename);
+    const uploadDir = join(process.cwd(), 'public', 'uploads');
+    
+    // Ensure directory exists
+    const fs = require('fs');
+    if (!fs.existsSync(uploadDir)){
+        fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    const path = join(uploadDir, filename);
+    console.log('[UPLOAD] Saving to:', path, 'Size:', file.size);
 
     await writeFile(path, buffer);
+    console.log('[UPLOAD] Success:', filename);
 
     return NextResponse.json({ 
       url: `/uploads/${filename}`,
       name: file.name
     });
   } catch (error: any) {
+    console.error('[UPLOAD ERROR]', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
