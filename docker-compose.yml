@@ -6,7 +6,6 @@ services:
     container_name: odp-web
     ports:
       - "3000:3000"
-      - "5000:5000"
     environment:
       - DATABASE_URL=file:/app/prisma/dev.db
       - NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -15,6 +14,12 @@ services:
       - ./prisma:/app/prisma
     restart: always
 
+  mobile:
+    build: ./mobile
+    container_name: odp-mobile
+    ports:
+      - "5000:80"
+    restart: always
 
 networks:
   default:
