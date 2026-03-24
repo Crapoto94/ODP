@@ -1,6 +1,11 @@
 {
-  "version": "1.0.10",
+  "version": "1.0.11",
   "changes": [
+    {
+      "date": "2026-03-24",
+      "version": "1.0.11",
+      "description": "Création d'une route API dynamique dynamique pour servir les fichiers uploadés (images, factures) en mode standalone (Proxmox), palliant la restriction de Next.js qui ne sert que les fichiers statiques présents au moment du build."
+    },
     {
       "date": "2026-03-24",
       "version": "1.0.10",
