@@ -34,6 +34,15 @@ export async function PATCH(
       return NextResponse.json({ error: 'Le code SEDIT est requis' }, { status: 400 });
     }
     
+    // Check if code_sedit already exists for another tiers
+    const existingSedit = await (prisma as any).tiers.findFirst({
+      where: { code_sedit, NOT: { id: Number(paramId) } }
+    });
+    
+    if (existingSedit) {
+      return NextResponse.json({ error: 'Ce code tiers SEDIT est déjà utilisé par un autre tiers' }, { status: 400 });
+    }
+    
     const tier = await (prisma as any).tiers.update({
       where: { id: Number(paramId) },
       data: {

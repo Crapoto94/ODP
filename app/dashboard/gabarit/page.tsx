@@ -524,22 +524,51 @@ export default function GabaritPage() {
                   </button>
                </div>
              )}
-             <div className="flex items-center gap-4 mt-1">
-                <input value={gabaritNom} onChange={e => setGabaritNom(e.target.value)} className="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-black text-slate-900 uppercase tracking-widest outline-none focus:border-blue-500 transition-colors w-64" placeholder="Nom du gabarit..." />
-                <label className="flex items-center gap-2 cursor-pointer group">
+              <div className="flex items-center gap-4 mt-1">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Nom du gabarit (Renommer)</span>
+                  <input value={gabaritNom} onChange={e => setGabaritNom(e.target.value)} className="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-black text-slate-900 uppercase tracking-widest outline-none focus:border-blue-500 transition-colors w-64" placeholder="Nom du gabarit..." />
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer group mt-4">
                   <input type="checkbox" checked={isDefault} onChange={e => setIsDefault(e.target.checked)} className="w-3 h-3 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-600 transition-colors">Défaut pour facturation</span>
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest group-hover:text-slate-600 transition-colors">Défaut</span>
                 </label>
-             </div>
-           </div>
+              </div>
+              
+              <div className="mt-2 flex items-center gap-3">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Choisir un gabarit :</span>
+                <select 
+                  className="bg-white border border-slate-200 rounded-lg px-3 py-1 text-xs font-bold text-slate-600 outline-none focus:border-blue-500 transition-all cursor-pointer"
+                  value={gabaritId || ""}
+                  onChange={(e) => {
+                    const id = parseInt(e.target.value);
+                    const g = allGabarits.find(item => item.id === id);
+                    if (g) loadGabarit(g);
+                  }}
+                >
+                  <option value="" disabled>-- Sélectionner --</option>
+                  {allGabarits.map(g => (
+                    <option key={g.id} value={g.id}>{g.nom} {g.isDefault ? ' (Défaut)' : ''}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
         </div>
         <div className="flex items-center gap-3">
            <button onClick={createNewGabarit} className="flex items-center gap-2 bg-slate-900 border border-slate-800 text-white px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg active:scale-95">
              <Plus size={14} /> Nouveau
            </button>
-           <button onClick={handleDuplicate} disabled={saving || !gabaritId} className="flex items-center gap-2 bg-white border border-slate-200 text-slate-600 px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-50">
-             {saving ? <Loader2 size={14} className="animate-spin" /> : <Copy size={14} />} Copier
-           </button>
+            <button onClick={handleDuplicate} disabled={saving || !gabaritId} className="flex items-center gap-2 bg-white border border-slate-200 text-slate-600 px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-50">
+              {saving ? <Loader2 size={14} className="animate-spin" /> : <Copy size={14} />} Copier
+            </button>
+            {gabaritId && (
+              <button 
+                onClick={() => handleDeleteGabarit(gabaritId)} 
+                className="flex items-center gap-2 bg-rose-50 text-rose-600 border border-rose-100 px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-rose-100 transition-all shadow-lg active:scale-95"
+              >
+                <Trash2 size={14} /> Supprimer
+              </button>
+            )}
            <button onClick={() => setIsPreview(!isPreview)} className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95 ${isPreview ? 'bg-emerald-600 text-white shadow-emerald-500/20' : 'bg-white border border-slate-200 text-slate-600'}`}>
              {isPreview ? <LayoutDashboard size={14} /> : <Maximize size={14} />} {isPreview ? 'Édition' : 'Aperçu'}
            </button>

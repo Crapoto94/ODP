@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../lib/prisma-client"
 }
 
 datasource db {
@@ -15,12 +16,14 @@ model Tiers {
   adresse         String?
   latitude        Float?
   longitude       Float?
-  code_sedit      String?
+  code_sedit      String?      @unique
   statut          String       @default("PROVISOIRE")
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
-  natureJuridique String?
-  occupations     Occupation[]
+  natureJuridique   String?
+  etatAdministratif String?
+  occupations       Occupation[]
+  contacts        Contact[]
 }
 
 model Occupation {
@@ -42,10 +45,11 @@ model Occupation {
   created_at     DateTime          @default(now())
   updated_at     DateTime          @updatedAt
   numeroFacture  String?
+  dossierParentId Int?
   contacts       Contact[]
+  dispositifs    Dispositif[]
   lignes         LigneOccupation[]
   notes          Note[]
-  dispositifs    Dispositif[]
   tiers          Tiers             @relation(fields: [tiersId], references: [id])
 }
 
@@ -57,12 +61,14 @@ model Contact {
   telephone    String?
   titre        String?
   role         String     @default("CONTACT_DIRECT")
-  occupationId Int
+  occupationId Int?       // Optional link to a dossier
+  tiersId      Int?       // Optional link to a tiers
   pjPath       String?
   created_at   DateTime   @default(now())
   updated_at   DateTime   @updatedAt
   entreprise   String?
-  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  occupation   Occupation? @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  tiers        Tiers?      @relation(fields: [tiersId], references: [id], onDelete: Cascade)
 }
 
 model Note {
@@ -191,35 +197,36 @@ model AppSettings {
   filienSens          String?  @default("")
   filienStructure     String?  @default("")
   filienGestionnaire  String?  @default("")
+  filienUncPj         String?  @default("")
   updated_at          DateTime @updatedAt
 }
 
 model LigneOccupation {
-  id                 Int          @id @default(autoincrement())
+  id                 Int        @id @default(autoincrement())
   occupationId       Int
   articleId          Int
-  quantite1          Float        @default(0)
-  quantite2          Float        @default(0)
+  quantite1          Float      @default(0)
+  quantite2          Float      @default(0)
   dateDebut          DateTime?
   dateFin            DateTime?
   dateDebutConstatee DateTime?
   dateFinConstatee   DateTime?
-  montant            Float        @default(0)
-  created_at         DateTime     @default(now())
-  updated_at         DateTime     @updatedAt
+  montant            Float      @default(0)
+  created_at         DateTime   @default(now())
+  updated_at         DateTime   @updatedAt
   photos             String?
-  article            Article      @relation(fields: [articleId], references: [id])
-  occupation         Occupation   @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  article            Article    @relation(fields: [articleId], references: [id])
+  occupation         Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
 }
 
 model Dispositif {
-  id                Int             @id @default(autoincrement())
-  nom               String
-  statut            String          @default("EN_ATTENTE") // EN_ATTENTE, VERIFIE
-  occupationId      Int
-  occupation        Occupation      @relation(fields: [occupationId], references: [id], onDelete: Cascade)
-  created_at        DateTime        @default(now())
-  updated_at        DateTime        @updatedAt
+  id           Int        @id @default(autoincrement())
+  nom          String
+  statut       String     @default("EN_ATTENTE")
+  occupationId Int
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
 }
 
 model Gabarit {
@@ -229,4 +236,27 @@ model Gabarit {
   isDefault  Boolean  @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+model TlpeConfig {
+  annee            Int     @id @default(autoincrement())
+  exoneration      Float   @default(12)
+  deliberationPath String?
+  tarifsPath       String?
+}
+
+model TypeDossierConfig {
+  id                  Int      @id @default(autoincrement())
+  type                String   @unique
+  filienObjet         String?  @default("")
+  filienChapitre      String?  @default("")
+  filienNature        String?  @default("")
+  filienFonction      String?  @default("")
+  filienCodeInterne   String?  @default("")
+  filienTypeMouvement String?  @default("")
+  filienSens          String?  @default("")
+  filienStructure     String?  @default("")
+  filienGestionnaire  String?  @default("")
+  invoiceTemplateId   String?
+  updated_at          DateTime @updatedAt
 }

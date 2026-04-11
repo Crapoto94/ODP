@@ -95,7 +95,7 @@ export default function DashboardPage() {
           <p className="text-slate-500 font-medium text-sm">Prêt à piloter le domaine public d'Ivry-sur-Seine ?</p>
         </div>
         
-        <div className="flex items-center gap-4 bg-white/40 backdrop-blur-xl p-2 rounded-3xl border border-white shadow-xl shadow-slate-200/50">
+        <div className="flex items-center gap-4 bg-white/40 backdrop-blur-xl p-2 rounded-xl border border-white shadow-xl shadow-slate-200/50">
            <div className="px-5 py-3 flex items-center gap-3">
               <Calendar size={18} className="text-slate-400" />
               <span className="text-xs font-black text-slate-700 uppercase tracking-widest">
@@ -143,7 +143,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Chart - Left 2/3 */}
-        <div className="lg:col-span-2 bg-white rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 p-10 space-y-10 relative overflow-hidden group">
+        <div className="lg:col-span-2 bg-white rounded-xl border border-slate-100 shadow-2xl shadow-slate-200/40 p-10 space-y-10 relative overflow-hidden group">
           <div className="absolute -right-20 -top-20 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl group-hover:bg-blue-100/50 transition-colors duration-1000"></div>
           
           <div className="flex items-center justify-between relative z-10">
@@ -151,7 +151,7 @@ export default function DashboardPage() {
               <h3 className="text-xl font-black text-slate-900 tracking-tight">Évolution du Chiffre d'Affaires</h3>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Données consolidées sur 6 mois</p>
             </div>
-            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-blue-600">
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-blue-600">
                <TrendingUp size={24} />
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function DashboardPage() {
         {/* Right Column: Types & Shortcuts */}
         <div className="space-y-8">
            {/* Category Breakdown */}
-           <div className="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden group">
+           <div className="bg-slate-900 rounded-xl p-10 text-white shadow-2xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-1000">
                 <LayoutDashboard size={100} />
               </div>
@@ -235,7 +235,7 @@ export default function DashboardPage() {
            </div>
 
            {/* Quick Actions */}
-           <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-xl shadow-slate-200/20 space-y-6">
+           <div className="bg-white rounded-xl border border-slate-100 p-8 shadow-xl shadow-slate-200/20 space-y-6">
               <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Actions Rapides</h4>
               <div className="grid grid-cols-1 gap-3">
                  <QuickActionLink 
@@ -271,10 +271,10 @@ export default function DashboardPage() {
             
             <div className="space-y-4">
                {stats.recentDossiers?.map((dossier: any) => (
-                 <div key={dossier.id} className="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center justify-between border-l-8 group hover:border-blue-500 transition-all hover:translate-x-1" 
+                 <div key={dossier.id} className="bg-white p-6 rounded-xl border border-slate-100 flex items-center justify-between border-l-8 group hover:border-blue-500 transition-all hover:translate-x-1" 
                       style={{ borderLeftColor: STATUS_MAP[dossier.statut]?.color.includes('blue') ? '#3b82f6' : (STATUS_MAP[dossier.statut]?.color.includes('emerald') ? '#10b981' : '#f59e0b') }}>
                     <div className="flex items-center gap-6">
-                       <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
+                       <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
                           {dossier.type === 'COMMERCE' ? <Package size={20} /> : <MapPin size={20} />}
                        </div>
                        <div>
@@ -309,9 +309,9 @@ export default function DashboardPage() {
          </div>
 
          {/* Efficiency Widget / Info */}
-         <div className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-xl shadow-slate-200/20 space-y-8 h-fit">
+         <div className="bg-white rounded-xl p-10 border border-slate-100 shadow-xl shadow-slate-200/20 space-y-8 h-fit">
             <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500">
+                <div className="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500">
                   <Info size={24} />
                 </div>
                 <div>
@@ -325,7 +325,7 @@ export default function DashboardPage() {
             </p>
 
             <div className="pt-4">
-               <div className="bg-blue-600 text-white p-6 rounded-[2rem] space-y-4">
+               <div className="bg-blue-600 text-white p-6 rounded-xl space-y-4">
                   <div className="flex items-center justify-between">
                      <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Collecte FILIEN</span>
                      <TrendingUp size={16} />
@@ -354,9 +354,9 @@ function StatCard({ title, value, subtitle, icon: Icon, color, trend, percentage
   };
 
   return (
-    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+    <div className="bg-white p-8 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
       <div className="flex items-center justify-between relative z-10">
-        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center group-hover:text-white transition-all duration-500 shadow-lg ${colorMap[color]}`}>
+        <div className={`w-14 h-14 rounded-xl flex items-center justify-center group-hover:text-white transition-all duration-500 shadow-lg ${colorMap[color]}`}>
           <Icon size={28} className="group-hover:scale-110 transition-transform duration-500" />
         </div>
         {trend && (
@@ -403,7 +403,7 @@ function QuickActionLink({ href, icon: Icon, label, color }: any) {
   return (
     <Link 
       href={href}
-      className={`flex items-center gap-4 p-4 rounded-2xl border transition-all group hover:text-white hover:shadow-lg active:scale-95 ${colors[color]}`}
+      className={`flex items-center gap-4 p-4 rounded-xl border transition-all group hover:text-white hover:shadow-lg active:scale-95 ${colors[color]}`}
     >
       <div className={`p-2 rounded-xl bg-white shadow-sm group-hover:bg-white/20 group-hover:text-white transition-colors`}>
         <Icon size={18} />
@@ -417,7 +417,7 @@ function QuickActionLink({ href, icon: Icon, label, color }: any) {
 function CustomTooltip({ active, payload, label }: any) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-2xl space-y-1">
+      <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-2xl space-y-1">
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
         <p className="text-lg font-black text-slate-900">{payload[0].value.toLocaleString()} €</p>
         <div className="flex items-center gap-1.5 text-emerald-500 text-[10px] font-black uppercase">

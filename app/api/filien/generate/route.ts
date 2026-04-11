@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { generateFilienFile, FilienParams, FilienMovement, FilienLine } from '@/lib/filien';
+import { generateFilienFile, FilienParams } from '@/lib/filien';
+import { join } from 'path';
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,7 +10,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Aucun dossier sélectionné' }, { status: 400 });
     }
 
-    const settings = await prisma.appSettings.findFirst();
+    const settingsRecords = await (prisma as any).$queryRaw`SELECT * FROM AppSettings WHERE id = 1`;
+    const settings = (settingsRecords as any[])[0] || null;
     if (!settings) {
       return NextResponse.json({ error: 'Paramètres Filien non configurés' }, { status: 500 });
     }
@@ -44,62 +46,59 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    const startMouvement = (settings as any).filienMouvement || "1";
-    const isNumeric = /^\d+$/.exec(startMouvement);
-    const startNum = isNumeric ? parseInt(startMouvement) : 0;
+    const typeConfigs = await (prisma as any).typeDossierConfig.findMany();
+    const typeConfigMap: Record<string, any> = typeConfigs.reduce((acc: any, tc: any) => ({ ...acc, [tc.type]: tc }), {});
 
-    const movements: FilienMovement[] = occupations.map((occ, idx) => {
-      let movId = startMouvement;
-      if (isNumeric) {
-        movId = (startNum + idx).toString().padStart(10, '0');
-      } else {
-        // Alphanumeric: use as is for first one, or append index if multiple
-        movId = occupations.length > 1
-          ? `${startMouvement}${idx + 1}`.slice(0, 10)
-          : startMouvement.slice(0, 10);
-      }
+    const year = new Date().getFullYear();
+    const records = await (prisma as any).$queryRaw`SELECT * FROM TlpeConfig WHERE annee = ${year}` as any[];
+    const tlpeConfig = records[0] || null;
 
-      return {
-        id: movId,
-        type: (settings as any).filienType || 'R',
-        tiersCode: (occ.tiers as any)?.code_sedit || 'TIERS_INCONNU',
-        libelle: (settings as any).filienLibelle || occ.nom || `Dossier #${occ.id}`,
-        calendrier: (settings as any).filienCalendrier || '01',
-        monnaie: (settings as any).filienMonnaie || 'E',
-        existant: (settings as any).filienMouvementEx || 'N',
-        preBordereau: (settings as any).filienPreBordereau || '1235',
-        poste: (settings as any).filienPoste || '0001',
-        bordereau: (settings as any).filienBordereau || '0001',
-        objet: (settings as any).filienObjet || '',
-        lines: occ.lignes.map((l, lIdx) => ({
-          numero: lIdx + 1,
-          imputation: l.article?.numero || 'IMPUT_VIDE',
-          montant: l.montant,
-          dateDebut: l.dateDebut || undefined,
-          dateFin: l.dateFin || undefined,
-          description: l.article?.designation || '',
-          quantite: (l.quantite1 || 1) * (l.quantite2 || 1),
-          prixUnitaire: l.article?.montant || 0,
-          // Analytical Ventilation
-          chapitre: (l.article as any)?.chapitre || '',
-          nature: (l.article as any)?.nature || '',
-          fonction: (l.article as any)?.fonction || '',
-          codeInterne: (l.article as any)?.codeInterne || '',
-          typeMouvement: (l.article as any)?.typeMouvement || '',
-          sens: (l.article as any)?.sens || '',
-          structure: (l.article as any)?.structure || '',
-          gestionnaire: (l.article as any)?.gestionnaire || ''
-        }))
-      };
+    const { prepareFilienMovements, exportToUnc, generateFilienFile } = require('@/lib/billing-service');
+
+    // Prepare standardized results for the shared service
+    const results = occupations.map(occ => ({
+      id: occ.id,
+      numero: occ.numeroFacture || `${year}-ODP-${occ.id}`,
+      path: occ.facturePath || '',
+      tiers: (occ.tiers as any)?.nom || 'INCONNU',
+      total: occ.montantCalcule || 0,
+      lignes: occ.lignes.map(l => ({ ...l, calculatedTotal: l.montant }))
+    }));
+
+    const { format } = require('date-fns');
+    const timestamp = format(new Date(), 'yyyy-MM-dd-HHmm');
+    const runName = `EXPORT-${timestamp}`;
+    const filienFilename = `${runName}.filien`;
+    const facturesDir = join(process.cwd(), 'public', 'Factures');
+
+    const movements = prepareFilienMovements(results, occupations, settings, tlpeConfig, year, runName);
+
+    // Apply specific overrides from type configs if applicable
+    movements.forEach((mov: any, idx: number) => {
+      const occ = occupations[idx];
+      const tc = typeConfigMap[occ.type] || {};
+      if (tc.filienObjet) mov.objet = tc.filienObjet;
     });
 
     const fileContent = generateFilienFile(filienParams, movements);
 
-    // Return as a downloadable text file
+    // Automatically copy to UNC if configured (Sync with main billing process)
+    if ((settings as any).filienUncPj) {
+      await exportToUnc({
+        uncDir: (settings as any).filienUncPj,
+        runName,
+        filienContent: fileContent,
+        filienFilename,
+        results,
+        tlpeConfig,
+        facturesDir
+      });
+    }
+
     return new NextResponse(fileContent, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Disposition': `attachment; filename="filien_${format(new Date(), 'yyyyMMdd_HHmm')}.txt"`
+        'Content-Disposition': `attachment; filename="${filienFilename}"`
       }
     });
 
@@ -107,11 +106,4 @@ export async function POST(req: NextRequest) {
     console.error('Filien generation error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
-
-function format(date: Date, str: string) {
-  // Simple custom formatter to avoid extra dependencies if needed, 
-  // but date-fns is already in the project.
-  const { format: dfmt } = require('date-fns');
-  return dfmt(date, str);
 }

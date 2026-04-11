@@ -125,7 +125,7 @@ export default function FacturationPage() {
       </div>
 
       {view === 'history' ? (
-        <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden min-h-[500px] flex flex-col p-8 md:p-12">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[500px] flex flex-col p-8 md:p-12">
           <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-8">Historique des Traitements</h2>
           
           {loadingHistory ? (
@@ -138,9 +138,9 @@ export default function FacturationPage() {
               <p className="font-bold uppercase tracking-widest text-[10px]">Aucun historique disponible</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar max-h-[60vh]">
               {history.map(run => (
-                <div key={run.id} className="border border-slate-100 rounded-3xl overflow-hidden transition-all hover:border-blue-200">
+                <div key={run.id} className="border border-slate-100 rounded-xl overflow-hidden transition-all hover:border-blue-200 shrink-0">
                   <div 
                     onClick={() => setExpandedHistory(expandedHistory === run.id ? null : run.id)}
                     className="p-6 bg-slate-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50"
@@ -224,7 +224,7 @@ export default function FacturationPage() {
             ))}
           </div>
 
-          <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden min-h-[500px] flex flex-col">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[500px] flex flex-col">
           {/* Step 1: Type Selection */}
           {step === 1 && (
             <div className="p-12 space-y-10 flex-1 flex flex-col justify-center items-center text-center">
@@ -232,18 +232,19 @@ export default function FacturationPage() {
                 <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Choisissez le type de dossiers</h2>
                 <p className="text-slate-400 font-bold max-w-md">La facturation groupée s'effectue par type d'occupation du domaine public.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-4xl">
                 {[
                   { id: 'CHANTIER', label: 'Chantiers', icon: Package, color: 'text-amber-600', bg: 'bg-amber-50' },
                   { id: 'COMMERCE', label: 'Commerces', icon: Euro, color: 'text-blue-600', bg: 'bg-blue-50' },
-                  { id: 'TOURNAGE', label: 'Tournages', icon: FileText, color: 'text-purple-600', bg: 'bg-purple-50' }
+                  { id: 'TOURNAGE', label: 'Tournages', icon: FileText, color: 'text-purple-600', bg: 'bg-purple-50' },
+                  { id: 'TLPE', label: 'TLPE', icon: FileBadge, color: 'text-emerald-600', bg: 'bg-emerald-50' }
                 ].map(t => (
                   <button
                     key={t.id}
                     onClick={() => { setType(t.id); nextStep(); }}
-                    className="group p-8 rounded-[2rem] border-2 border-slate-100 hover:border-blue-500 transition-all hover:bg-slate-50 flex flex-col items-center gap-4 text-center"
+                    className="group p-8 rounded-xl border-2 border-slate-100 hover:border-blue-500 transition-all hover:bg-slate-50 flex flex-col items-center gap-4 text-center"
                   >
-                    <div className={`w-16 h-16 rounded-[1.5rem] ${t.bg} ${t.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <div className={`w-16 h-16 rounded-xl ${t.bg} ${t.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
                       <t.icon size={32} />
                     </div>
                     <span className="font-black uppercase tracking-widest text-xs text-slate-900">{t.label}</span>

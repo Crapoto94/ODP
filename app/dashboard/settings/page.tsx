@@ -24,6 +24,7 @@ import {
   History
 } from 'lucide-react';
 import SQLEditor from '@/components/SQLEditor';
+import FilienTypeConfigs from '@/components/FilienTypeConfigs';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'general' | 'sql' | 'users' | 'filien' | 'mobile_logs'>('general');
@@ -60,7 +61,8 @@ export default function SettingsPage() {
     filienTypeMouvement: '',
     filienSens: '',
     filienStructure: '',
-    filienGestionnaire: ''
+    filienGestionnaire: '',
+    filienUncPj: ''
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -383,7 +385,7 @@ export default function SettingsPage() {
                         <Globe className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={20} />
                         <input 
                           type="url" 
-                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 pl-14 pr-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
+                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-xl py-5 pl-14 pr-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
                           placeholder="http://localhost:8001/api/proxy"
                           value={settings.apmUrl || ''}
                           onChange={e => setSettings({...settings, apmUrl: e.target.value})}
@@ -397,7 +399,7 @@ export default function SettingsPage() {
                         <Key className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={20} />
                         <input 
                           type="password" 
-                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 pl-14 pr-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
+                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-xl py-5 pl-14 pr-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
                           placeholder="••••••••••••••••"
                           value={settings.apmToken || ''}
                           onChange={e => setSettings({...settings, apmToken: e.target.value})}
@@ -408,7 +410,7 @@ export default function SettingsPage() {
                 </div>
 
                 {message && (
-                  <div className={`p-6 rounded-[1.5rem] flex items-center gap-4 animate-in zoom-in-95 duration-300 ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700 shadow-inner' : 'bg-rose-50 text-rose-700 shadow-inner'}`}>
+                  <div className={`p-6 rounded-xl flex items-center gap-4 animate-in zoom-in-95 duration-300 ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700 shadow-inner' : 'bg-rose-50 text-rose-700 shadow-inner'}`}>
                     {message.type === 'success' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
                     <span className="font-black text-sm uppercase tracking-widest">{message.text}</span>
                   </div>
@@ -417,7 +419,7 @@ export default function SettingsPage() {
                 <button 
                   type="submit" 
                   disabled={saving}
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 rounded-[2rem] font-black shadow-2xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4 uppercase tracking-[0.2em] text-xs"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 rounded-xl font-black shadow-2xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4 uppercase tracking-[0.2em] text-xs"
                 >
                   {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
                   Enregistrer les paramètres
@@ -427,7 +429,7 @@ export default function SettingsPage() {
           </div>
         ) : activeTab === 'filien' ? (
           <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
-            <div className="bg-white rounded-[3rem] border border-slate-200 shadow-2xl shadow-slate-100 overflow-hidden max-w-3xl mx-auto">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-2xl shadow-slate-100 overflow-hidden max-w-3xl mx-auto">
               <form onSubmit={handleSubmit} className="p-12 space-y-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                   <div className="space-y-8">
@@ -624,7 +626,7 @@ export default function SettingsPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">N° de poste (/12/)</label>
+                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Titre Créé ou Réduit (/12/)</label>
                       <input 
                         type="text" 
                         maxLength={10}
@@ -635,7 +637,7 @@ export default function SettingsPage() {
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">N° de bordereau (/13/)</label>
+                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">N° de titre (/13/)</label>
                       <input 
                         type="text" 
                         maxLength={10}
@@ -658,88 +660,26 @@ export default function SettingsPage() {
                       onChange={e => setSettings({...settings, filienObjet: e.target.value})}
                     />
                   </div>
+
+                  <div className="space-y-3 pt-6 border-t border-slate-100">
+                    <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Dossier des PJ (UNC)</label>
+                    <input 
+                      type="text" 
+                      className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
+                      placeholder="\\server\share\folder"
+                      value={settings.filienUncPj || ''}
+                      onChange={e => setSettings({...settings, filienUncPj: e.target.value})}
+                    />
+                    <p className="text-[10px] font-bold text-slate-400 ml-4">Chemin réseau pour l'export des factures PDF.</p>
+                  </div>
                 </div>
 
                 <div className="pt-8 border-t border-slate-100 space-y-8">
                   <div className="flex items-center gap-3">
                     <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Ventilation Analytique (/541/ & /542/)</h4>
+                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Configurations par Type de Dossier</h4>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Chapitre</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        value={settings.filienChapitre || ''}
-                        onChange={e => setSettings({...settings, filienChapitre: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Nature</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        value={settings.filienNature || ''}
-                        onChange={e => setSettings({...settings, filienNature: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Fonction</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        value={settings.filienFonction || ''}
-                        onChange={e => setSettings({...settings, filienFonction: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Code Interne</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        value={settings.filienCodeInterne || ''}
-                        onChange={e => setSettings({...settings, filienCodeInterne: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Type Mouvement</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        value={settings.filienTypeMouvement || ''}
-                        onChange={e => setSettings({...settings, filienTypeMouvement: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Sens</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        value={settings.filienSens || ''}
-                        onChange={e => setSettings({...settings, filienSens: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Structure</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        value={settings.filienStructure || ''}
-                        onChange={e => setSettings({...settings, filienStructure: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Gestionnaire (/542/)</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg font-black text-indigo-600"
-                        value={settings.filienGestionnaire || ''}
-                        onChange={e => setSettings({...settings, filienGestionnaire: e.target.value})}
-                      />
-                    </div>
-                  </div>
+                  <FilienTypeConfigs />
                 </div>
 
                 {message && (

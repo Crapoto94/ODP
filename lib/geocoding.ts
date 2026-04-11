@@ -10,15 +10,11 @@ export interface GeocodeResult {
 
 export async function searchAddress(query: string): Promise<GeocodeResult[]> {
   try {
-    const response = await axios.get(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
+    const response = await axios.get(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&citycode=94041&limit=5`);
     const data = response.data;
 
     return data.features
-      .filter((feature: any) => 
-        feature.properties.citycode === '94041' || 
-        feature.properties.postcode === '94200' ||
-        feature.properties.city.toLowerCase().includes('ivry')
-      )
+      .filter((feature: any) => feature.properties.city === 'Ivry-sur-Seine' || feature.properties.postcode === '94200')
       .map((feature: any) => ({
         label: feature.properties.label,
         latitude: feature.geometry.coordinates[1],

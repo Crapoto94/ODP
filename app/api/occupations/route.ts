@@ -6,10 +6,12 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
     const type = searchParams.get('type');
+    const anneeTaxation = searchParams.get('anneeTaxation');
 
     const where: any = {};
     if (status) where.statut = status;
     if (type) where.type = type;
+    if (anneeTaxation) where.anneeTaxation = parseInt(anneeTaxation);
 
     const occupations = await (prisma as any).occupation.findMany({
       where,
@@ -69,11 +71,11 @@ export async function POST(req: Request) {
     if (!tiersId || !type) {
       return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
     }
-    if (type !== 'COMMERCE' && (!dateDebut || !dateFin)) {
-      return NextResponse.json({ error: 'Dates required for non-commerce types' }, { status: 400 });
+    if (type !== 'COMMERCE' && type !== 'TLPE' && (!dateDebut || !dateFin)) {
+      return NextResponse.json({ error: 'Dates required for non-commerce/TLPE types' }, { status: 400 });
     }
-    if (type === 'COMMERCE' && !anneeTaxation) {
-      return NextResponse.json({ error: 'Taxation year required for commerce types' }, { status: 400 });
+    if ((type === 'COMMERCE' || type === 'TLPE') && !anneeTaxation) {
+      return NextResponse.json({ error: 'Taxation year required for commerce/TLPE types' }, { status: 400 });
     }
 
     const occupation = await (prisma as any).occupation.create({

@@ -90,13 +90,13 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose}></div>
-      <div className="bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col max-h-[85vh]">
+      <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col max-h-[85vh]">
         <div className="p-10 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
           <div>
             <h3 className="text-2xl font-black text-slate-900 tracking-tight">Générer Fichier FILIEN</h3>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Sélétionnez les dossiers à exporter</p>
           </div>
-          <button onClick={onClose} className="p-3 hover:bg-white rounded-2xl text-slate-300 hover:text-slate-900 transition-all"><X size={24} /></button>
+          <button onClick={onClose} className="p-3 hover:bg-white rounded-xl text-slate-300 hover:text-slate-900 transition-all"><X size={24} /></button>
         </div>
 
         <div className="p-8 border-b border-slate-50 bg-slate-50/10 flex items-center gap-6">
@@ -105,14 +105,14 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
             <input 
               type="text" 
               placeholder="Rechercher par demandeur, adresse, libellé..." 
-              className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-bold text-sm"
+              className="w-full bg-white border border-slate-200 rounded-xl py-4 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-bold text-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <button 
             onClick={toggleAll}
-            className="flex items-center gap-2 px-6 py-4 bg-white border border-slate-200 rounded-2xl font-black text-[10px] uppercase tracking-widest text-slate-600 hover:border-blue-500 hover:text-blue-600 transition-all"
+            className="flex items-center gap-2 px-6 py-4 bg-white border border-slate-200 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-600 hover:border-blue-500 hover:text-blue-600 transition-all"
           >
             {selectedIds.length === filtered.length && filtered.length > 0 ? <CheckSquare size={16} /> : <Square size={16} />}
             {selectedIds.length === filtered.length && filtered.length > 0 ? 'Tout désélectionner' : 'Tout sélectionner'}
@@ -130,7 +130,7 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
                 <div 
                   key={occ.id} 
                   onClick={() => toggleSelect(occ.id)}
-                  className={`p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
+                  className={`p-6 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
                     selectedIds.includes(occ.id) 
                       ? 'bg-blue-50/50 border-blue-500 shadow-lg shadow-blue-500/5' 
                       : 'bg-white border-slate-100 hover:border-blue-200'
@@ -166,7 +166,7 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
 
         <div className="p-10 border-t border-slate-50 bg-slate-50/30 flex items-center justify-between sticky bottom-0">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-blue-600 shadow-sm">
+            <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-blue-600 shadow-sm">
               <FileText size={24} />
             </div>
             <div>
@@ -177,7 +177,7 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
           <button 
             onClick={handleGenerate}
             disabled={generating || selectedIds.length === 0}
-            className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-[2rem] font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-xl font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95 disabled:opacity-50"
           >
             {generating ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
             Générer le fichier

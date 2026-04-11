@@ -33,7 +33,17 @@ export interface FilienMovement {
   poste?: string; // /12/
   bordereau?: string; // /13/
   objet?: string; // /20/
+  attachments?: FilienAttachment[];
   lines: FilienLine[];
+}
+
+export interface FilienAttachment {
+  name: string;
+  supportType: string; // "01" (Electronic), "02" (Paper), etc.
+  path: string; // UNC path or URL
+  typePiece?: string; // e.g. "002"
+  format?: string; // e.g. "PDF"
+  docType?: string; // e.g. "MDT"
 }
 
 export interface FilienLine {
@@ -80,6 +90,22 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
     output += `/13/${(mov.bordereau || '1').toString().padStart(5, '0').slice(0, 5)}\n`;
     output += `/20/${(mov.objet || mov.libelle || 'Occupation du domaine public').slice(0, 40)}\n`;
     
+    // Attachments (up to 5)
+    if (mov.attachments && mov.attachments.length > 0) {
+      mov.attachments.slice(0, 5).forEach((att, idx) => {
+        const base = 26 + idx;
+        const sub = base * 10;
+        
+        output += `/${base}/${att.name.slice(0, 40)}\n`;
+        output += `/${sub + 1}/${att.name.slice(0, 100)}\n`;
+        output += `/${sub + 2}/${att.supportType || '01'}\n`;
+        output += `/${sub + 3}/${att.path.slice(0, 255)}\n`;
+        if (att.typePiece) output += `/${sub + 4}/${att.typePiece}\n`;
+        if (att.format) output += `/${sub + 5}/${att.format}\n`;
+        if (att.docType) output += `/${sub + 6}/${att.docType}\n`;
+      });
+    }
+
     // Lines
     for (const line of mov.lines) {
       if (mov.monnaie === 'E') {

@@ -2,30 +2,56 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import jsPDF from 'jspdf';
-import { format } from 'date-fns';
-import { writeFile, mkdir } from 'fs/promises';
+import { format, differenceInDays, isLeapYear } from 'date-fns';
+import { writeFile, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 
 // Helper to generate a single invoice PDF (mirrors the main facture-pdf engine)
-async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string) {
+async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string, tlpeConfig: any = null) {
   const { elements } = JSON.parse(gabarit.contenu);
   const doc = new jsPDF({
     orientation: 'p',
     unit: 'pt',
     format: 'a4'
   });
-  // NO watermark for mass billing - these are official invoices
 
   const replaceVars = (val: string, ligne?: any) => {
     if (!val) return val;
     let result = val;
-    const totalSum = occ.lignes?.reduce((sum: number, l: any) => sum + (l.montant || 0), 0) || 0;
+    
+    // TLPE Logic Prep
+    const threshold = tlpeConfig?.exoneration ?? 12;
+    const totalEnseigneSurface = (occ.lignes || []).reduce((sum: number, l: any) => {
+      let mt: any = {};
+      try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
+      if (mt.tlpeType === 'ENSEIGNE') return sum + (l.quantite1 || 0);
+      return sum;
+    }, 0) || 0;
+    const isEnseigneExempt = totalEnseigneSurface <= threshold;
+
+    const totalSum = (occ.lignes || []).reduce((sum: number, l: any) => {
+      let mt: any = {};
+      try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
+      if (occ.type === 'TLPE') {
+        if (mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt) return sum;
+        const d1 = new Date(l.dateDebut);
+        const d2 = new Date(l.dateFin);
+        const year = (occ as any).anneeTaxation || d1.getFullYear();
+        const daysInYear = isLeapYear(new Date(year, 0, 1)) ? 366 : 365;
+        const daysActive = differenceInDays(d2, d1) + 1;
+        const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
+        const pu = (l.montant || 0);
+        return sum + (pu * (l.quantite1 || 0) * prorata);
+      }
+      return sum + (l.montant || 0);
+    }, 0) || 0;
 
     const TYPE_MAP: Record<string, string> = {
       'COMMERCE': 'Commerce',
       'CHANTIER': 'Chantier',
       'TOURNAGE': 'Tournage',
+      'TLPE': 'TLPE',
     };
 
     const formatAddress = (addr: string) => {
@@ -51,25 +77,38 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string)
     };
 
     if (ligne && ligne.article) {
+      let mt: any = {};
+      try { mt = ligne.article.notes ? JSON.parse(ligne.article.notes) : {}; } catch(e){}
       replacements['{article.designation}'] = ligne.article.designation || '';
       replacements['{article.quantite}'] = (ligne.quantite1 || 0).toString();
-      replacements['{article.pu}'] = `${(ligne.article.montant || 0).toFixed(2)} €`;
-      replacements['{article.totalHT}'] = `${(ligne.montant || 0).toFixed(2)} €`;
-
-      const dateS = ligne.dateDebutConstatee || ligne.dateDebut;
-      const dateE = ligne.dateFinConstatee || ligne.dateFin;
-      const dS = dateS ? format(new Date(dateS), 'dd/MM/yyyy') : '';
-      const dE = dateE ? format(new Date(dateE), 'dd/MM/yyyy') : '';
-      replacements['{article.dates}'] = dS && dE ? `${dS} - ${dE}` : (dS || dE || '');
-
-      const u1 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[1] || 'unité';
-      const u2 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[2] || (ligne.article.modeTaxation?.nom?.includes('jour') ? 'jours' : 'mois');
       
-      let detailStr = `${ligne.quantite1} ${u1}`;
-      if (ligne.quantite2 > 1) detailStr += ` x ${ligne.quantite2} ${u2}`;
-      detailStr += ` à ${(ligne.article.montant || 0).toFixed(2)}€ soit ${(ligne.montant || 0).toFixed(2)} €`;
-      replacements['{article.details}'] = detailStr;
+      const d1 = new Date(ligne.dateDebut);
+      const d2 = new Date(ligne.dateFin);
+      replacements['{article.dates}'] = `${format(d1, 'dd/MM/yyyy')} - ${format(d2, 'dd/MM/yyyy')}`;
+      
+      const pu = occ.type === 'TLPE' ? (ligne.montant || 0) : (ligne.article.montant || 0);
+      let lineVal = (ligne.montant || 0) * (ligne.quantite1 || 0);
+      let detailStr = '';
 
+      if (occ.type === 'TLPE') {
+        const year = (occ as any).anneeTaxation || d1.getFullYear();
+        const daysInYear = isLeapYear(new Date(year, 0, 1)) ? 366 : 365;
+        const daysActive = differenceInDays(d2, d1) + 1;
+        const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
+        const isExempt = mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt;
+        lineVal = isExempt ? 0 : (pu * (ligne.quantite1 || 0) * prorata);
+        detailStr = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (${daysActive}j)` : ''}${isExempt ? ' (Exonéré)' : ''} soit ${lineVal.toFixed(2)} €`;
+      } else {
+        const u1 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[1] || 'unité';
+        const u2 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[2] || (ligne.article.modeTaxation?.nom?.includes('jour') ? 'jours' : 'mois');
+        detailStr = `${ligne.quantite1} ${u1}`;
+        if (ligne.quantite2 > 1) detailStr += ` x ${ligne.quantite2} ${u2}`;
+        detailStr += ` à ${pu.toFixed(2)}€ soit ${lineVal.toFixed(2)} €`;
+      }
+
+      replacements['{article.details}'] = detailStr;
+      replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
+      replacements['{article.totalHT}'] = `${lineVal.toFixed(2)} €`;
       replacements['{article.full_description}'] = `${ligne.article.designation}\n${replacements['{article.dates}']}\n${detailStr}`;
     }
 
@@ -136,6 +175,7 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string)
 }
 
 export async function POST(req: NextRequest) {
+  console.log('--- REFRESHED BILLING PROCESS ---');
   try {
     const session = await getSession();
     const agentName = session ? `${session.prenom} ${session.nom}` : 'Système';
@@ -146,17 +186,24 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Fetch data
-    const [dossiers, gabarit] = await Promise.all([
+    const [dossiers, gabarit, settingsRecords] = await Promise.all([
       (prisma as any).occupation.findMany({
         where: { id: { in: ids } },
         include: { tiers: true, lignes: { include: { article: { include: { modeTaxation: true } } } } }
       }),
-      (prisma as any).gabarit.findFirst({ where: { isDefault: true } })
+      (prisma as any).gabarit.findFirst({ where: { isDefault: true } }),
+      (prisma as any).$queryRaw`SELECT * FROM AppSettings WHERE id = 1`
     ]);
 
-    if (!gabarit) return NextResponse.json({ error: 'Gabarit par défaut manquant' }, { status: 500 });
+    const appSettings = (settingsRecords as any[])[0] || null;
 
+    if (!gabarit) return NextResponse.json({ error: 'Gabarit par défaut manquant' }, { status: 500 });
+    
+    // For Regulatory attachments, we need the config for the year
     const year = new Date().getFullYear();
+    const records = await (prisma as any).$queryRaw`SELECT * FROM TlpeConfig WHERE annee = ${year}` as any[];
+    const tlpeConfig = records[0] || null;
+
     const now = new Date();
     // US Format Date-Time: YYYY-MM-DD-HHMM
     const timestampStr = format(now, 'yyyy-MM-dd-HHmm');
@@ -189,13 +236,47 @@ export async function POST(req: NextRequest) {
     // 3. Process each dossier
     for (const occ of dossiers) {
       const invoiceNumber = `${year}-ODP-${nextIndex++}`;
-      const pdfBuffer = await generateInvoicePdf(occ, gabarit, invoiceNumber);
+      const pdfBuffer = await generateInvoicePdf(occ, gabarit, invoiceNumber, tlpeConfig);
       
       const filename = `${invoiceNumber}.pdf`;
       const fullPath = join(facturesDir, filename);
       await writeFile(fullPath, pdfBuffer);
 
-      const total = occ.lignes?.reduce((s: number, l: any) => s + (l.montant || 0), 0) || 0;
+      const threshold = tlpeConfig?.exoneration ?? 12;
+      const totalEnseigneSurface = (occ.lignes || []).reduce((sum: number, l: any) => {
+        let mt: any = {};
+        try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
+        if (mt.tlpeType === 'ENSEIGNE') return sum + (l.quantite1 || 0);
+        return sum;
+      }, 0) || 0;
+      const isEnseigneExempt = totalEnseigneSurface <= threshold;
+
+      const lineResults: any[] = [];
+      const total = (occ.lignes || []).reduce((sum: number, l: any) => {
+          let mt: any = {};
+          try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
+          let lineVal = (l.montant || 0);
+
+          if (occ.type === 'TLPE') {
+              const isExempt = mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt;
+              if (isExempt) {
+                  lineResults.push({ ...l, calculatedTotal: 0 });
+                  return sum;
+              }
+              const d1 = new Date(l.dateDebut);
+              const d2 = new Date(l.dateFin);
+              const curYear = (occ as any).anneeTaxation || d1.getFullYear();
+              const daysInYear = isLeapYear(new Date(curYear, 0, 1)) ? 366 : 365;
+              const daysActive = differenceInDays(d2, d1) + 1;
+              const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
+              const pu = (l.montant || 0);
+              lineVal = (pu * (l.quantite1 || 0) * prorata);
+          }
+          
+          lineResults.push({ ...l, calculatedTotal: lineVal });
+          return sum + lineVal;
+      }, 0) || 0;
+
       grandTotal += total;
 
       // Update dossier
@@ -214,7 +295,7 @@ export async function POST(req: NextRequest) {
         path: `/Factures/${filename}`,
         tiers: occ.tiers.nom, 
         total,
-        lignes: occ.lignes 
+        lignes: lineResults 
       });
     }
 
@@ -237,7 +318,7 @@ export async function POST(req: NextRequest) {
       recapDoc.text(`${r.total.toFixed(2)} €`, 170, y, { align: 'right' });
       y += 5;
       r.lignes.forEach((l: any) => {
-        recapDoc.text(`  - ${l.article.designation}: ${l.montant.toFixed(2)} €`, 25, y);
+        recapDoc.text(`  - ${l.article.designation}: ${l.calculatedTotal.toFixed(2)} €`, 25, y);
         y += 5;
       });
       y += 5;
@@ -248,69 +329,50 @@ export async function POST(req: NextRequest) {
     await writeFile(recapPath, Buffer.from(recapDoc.output('arraybuffer')));
 
     // 5. Generate .filien Flat File (Official Format)
-    const settings = await (prisma as any).appSettings.findFirst();
     const filienParams = {
-      orga: settings?.filienOrga || '01',
-      budget: settings?.filienBudget || 'BA',
-      exercice: settings?.filienExercice || year,
-      avancement: settings?.filienAvancement || '5',
-      rejetDispo: settings?.filienRejetDispo ?? true,
-      rejetCA: settings?.filienRejetCA ?? false,
-      rejetMarche: settings?.filienRejetMarche ?? false,
-      filienChapitre: settings?.filienChapitre || '',
-      filienNature: settings?.filienNature || '',
-      filienFonction: settings?.filienFonction || '',
-      filienCodeInterne: settings?.filienCodeInterne || '',
-      filienTypeMouvement: settings?.filienTypeMouvement || '',
-      filienSens: settings?.filienSens || '',
-      filienStructure: settings?.filienStructure || '',
-      filienGestionnaire: settings?.filienGestionnaire || '',
+      orga: appSettings?.filienOrga || '01',
+      budget: appSettings?.filienBudget || 'BA',
+      exercice: appSettings?.filienExercice || year,
+      avancement: appSettings?.filienAvancement || '5',
+      rejetDispo: appSettings?.filienRejetDispo ?? true,
+      rejetCA: appSettings?.filienRejetCA ?? false,
+      rejetMarche: appSettings?.filienRejetMarche ?? false,
+      filienChapitre: appSettings?.filienChapitre || '',
+      filienNature: appSettings?.filienNature || '',
+      filienFonction: appSettings?.filienFonction || '',
+      filienCodeInterne: appSettings?.filienCodeInterne || '',
+      filienTypeMouvement: appSettings?.filienTypeMouvement || '',
+      filienSens: appSettings?.filienSens || '',
+      filienStructure: appSettings?.filienStructure || '',
+      filienGestionnaire: appSettings?.filienGestionnaire || '',
     };
 
-    const { generateFilienFile } = require('@/lib/filien');
+    const { prepareFilienMovements, exportToUnc, generateFilienFile } = require('@/lib/billing-service');
     
-    const movements = results.map((r, idx) => {
-      // Find the original occupation to get tiers details etc.
-      const occ = dossiers.find((d: any) => d.id === r.id);
-      
-      return {
-        id: r.numero.replace(/-/g, '').slice(-10), // Use invoice number digits as movement ID
-        type: settings?.filienType || 'R',
-        tiersCode: occ?.tiers?.code_sedit || 'TIERS_INCONNU',
-        libelle: settings?.filienLibelle || occ?.nom || `Dossier #${occ?.id}`,
-        calendrier: settings?.filienCalendrier || '01',
-        monnaie: settings?.filienMonnaie || 'E',
-        existant: settings?.filienMouvementEx || 'N',
-        preBordereau: settings?.filienPreBordereau || '1235',
-        poste: settings?.filienPoste || '0001',
-        bordereau: settings?.filienBordereau || '0001',
-        objet: settings?.filienObjet || '',
-        lines: (occ?.lignes || []).map((l: any, lIdx: number) => ({
-          numero: lIdx + 1,
-          imputation: l.article?.numero || 'IMPUT_VIDE',
-          montant: l.montant,
-          dateDebut: l.dateDebut || undefined,
-          dateFin: l.dateFin || undefined,
-          description: l.article?.designation || '',
-          quantite: (l.quantite1 || 1) * (l.quantite2 || 1),
-          prixUnitaire: l.article?.montant || 0,
-          // Analytical Ventilation (fallback to article or settings)
-          chapitre: l.article?.chapitre || '',
-          nature: l.article?.nature || '',
-          fonction: l.article?.fonction || '',
-          codeInterne: l.article?.codeInterne || '',
-          typeMouvement: l.article?.typeMouvement || '',
-          sens: l.article?.sens || '',
-          structure: l.article?.structure || '',
-          gestionnaire: l.article?.gestionnaire || ''
-        }))
-      };
-    });
+    // runName will be the subfolder name
+    const runName = timestampStr; 
+
+    const movements = prepareFilienMovements(results, dossiers, appSettings, tlpeConfig, year, runName);
 
     const filienContent = generateFilienFile(filienParams, movements);
     const filienFilename = `FACT-${timestampStr}.filien`;
     const filienPath = join(facturesDir, filienFilename);
     await writeFile(filienPath, filienContent);
+
+    // 6. Optional: Copy to UNC path if configured
+    if (appSettings?.filienUncPj) {
+      await exportToUnc({
+        uncDir: appSettings.filienUncPj,
+        runName,
+        filienContent,
+        filienFilename,
+        results,
+        tlpeConfig,
+        recapFilename,
+        recapPath,
+        facturesDir
+      });
+    }
 
     return NextResponse.json({
       success: true,

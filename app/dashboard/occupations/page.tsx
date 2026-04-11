@@ -30,7 +30,8 @@ import {
   ExternalLink,
   MessageSquare,
   Download,
-  Users
+  Users,
+  Unlock
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -76,6 +77,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
 };
 
 const TYPE_MAP: Record<string, { label: string; icon: any; color: string; bg: string }> = {
+  'TLPE': { label: 'TLPE', icon: Euro, color: 'text-purple-600', bg: 'bg-purple-50' },
   'COMMERCE': { label: 'Commerce', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
   'CHANTIER': { label: 'Chantier', icon: MapPin, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   'TOURNAGE': { label: 'Tournage', icon: Info, color: 'text-amber-600', bg: 'bg-amber-50' },
@@ -96,6 +98,8 @@ function OccupationsPageContent() {
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
   const [tiersFilter, setTiersFilter] = useState<string | null>(null);
+  const [tiersSearchQuery, setTiersSearchQuery] = useState('');
+  const [isTiersDropdownOpen, setIsTiersDropdownOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   
@@ -211,7 +215,30 @@ function OccupationsPageContent() {
     }
     setSubmitting(true);
     try {
-      const payload = { ...formData, photos: uploadedPhotos.join(',') };
+      let finalLat = formData.latitude;
+      let finalLng = formData.longitude;
+
+      // If address exists and coordinates are missing or might be stale, 
+      // do a quick final geocode search to ensure Street View link will work
+      if (formData.adresse && (!finalLat || !finalLng)) {
+        try {
+          const geoRes = await axios.get(`/api/geocoding?q=${formData.adresse}`);
+          if (geoRes.data && geoRes.data.length > 0) {
+            const topMatch = geoRes.data[0];
+            finalLat = topMatch.latitude.toString();
+            finalLng = topMatch.longitude.toString();
+          }
+        } catch (e) {
+          console.error("Geocoding failed on submit", e);
+        }
+      }
+
+      const payload = { 
+        ...formData, 
+        latitude: finalLat,
+        longitude: finalLng,
+        photos: uploadedPhotos.join(',') 
+      };
       if (isEditing) {
         await axios.patch(`/api/occupations/${formData.id}`, payload);
       } else {
@@ -313,6 +340,18 @@ function OccupationsPageContent() {
     window.location.href = `/api/facture-pdf/${id}`;
   };
 
+  const handleUnlock = async (id: number) => {
+    if (!confirm('Déverrouiller ce dossier ? Cela supprimera le numéro de facture associé et remettra le dossier en statut "Vérifié" pour permettre des modifications.')) return;
+    try {
+      await axios.patch(`/api/occupations/${id}`, { 
+        statut: 'VERIFIE',
+        numeroFacture: null,
+        facturePath: null
+      });
+      fetchOccupations();
+    } catch (err) { alert('Erreur lors du déverrouillage'); }
+  };
+
   const toggleRow = (id: number) => {
     setExpandedRows(prev => prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]);
   };
@@ -340,17 +379,34 @@ function OccupationsPageContent() {
                           o.adresse.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'ALL' || o.type === typeFilter;
     const matchesStatus = statusFilter === 'ALL' || o.statut === statusFilter;
-    const dossierAnnee = o.type === 'COMMERCE' ? o.anneeTaxation : (o.dateDebut ? new Date(o.dateDebut).getFullYear() : null);
+    const dossierAnnee = (o.type === 'COMMERCE' || o.type === 'TLPE') ? o.anneeTaxation : (o.dateDebut ? new Date(o.dateDebut).getFullYear() : null);
     const matchesYear = yearFilter === 'ALL' || (dossierAnnee && dossierAnnee.toString() === yearFilter.toString());
     const matchesTiers = !tiersFilter || o.tiersId.toString() === tiersFilter;
     return matchesSearch && matchesType && matchesStatus && matchesYear && matchesTiers;
   });
 
+  const availableYears = Array.from(new Set(
+    occupations.map(o => (o.type === 'COMMERCE' || o.type === 'TLPE') ? o.anneeTaxation : (o.dateDebut ? new Date(o.dateDebut).getFullYear() : null))
+      .filter(Boolean)
+  )).sort((a, b) => (b as number) - (a as number));
+
   const totalsByType = occupations.reduce((acc, o) => {
-    const occTotal = o.lignes?.reduce((sum, l) => sum + (l.montant || 0), 0) || o.montantCalcule || 0;
-    acc[o.type] = (acc[o.type] || 0) + occTotal;
+    if (!acc[o.type]) {
+      acc[o.type] = { total: 0, enCours: 0, aFacturer: 0, facture: 0 };
+    }
+    const amount = o.montantCalcule || 0;
+    acc[o.type].total += amount;
+    
+    if (['EN_COURS', 'EN_ATTENTE', 'TERMINE'].includes(o.statut)) {
+      acc[o.type].enCours += amount;
+    } else if (o.statut === 'VERIFIE') {
+      acc[o.type].aFacturer += amount;
+    } else if (['FACTURE', 'PAYE', 'INVOICED'].includes(o.statut)) {
+      acc[o.type].facture += amount;
+    }
+    
     return acc;
-  }, {} as Record<string, number>);
+  }, {} as Record<string, { total: number; enCours: number; aFacturer: number; facture: number }>);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -384,11 +440,12 @@ function OccupationsPageContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
           { type: 'COMMERCE', label: 'Commerces', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
           { type: 'CHANTIER', label: 'Chantiers', icon: MapPin, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           { type: 'TOURNAGE', label: 'Tournages', icon: Info, color: 'text-amber-600', bg: 'bg-amber-50' },
+          { type: 'TLPE', label: 'T.L.P.E.', icon: Euro, color: 'text-purple-600', bg: 'bg-purple-50' },
         ].map((cat) => (
           <button
             key={cat.type}
@@ -396,24 +453,38 @@ function OccupationsPageContent() {
             className={`p-6 rounded-[2.5rem] border transition-all text-left group ${
               typeFilter === cat.type 
                 ? 'bg-white border-blue-500 shadow-xl shadow-blue-500/10' 
-                : 'bg-white border-slate-200 hover:border-blue-200'
+                : 'bg-white border-slate-200 hover:border-blue-200 shadow-sm shadow-slate-200/50'
             }`}
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`p-3 rounded-2xl ${cat.bg} ${cat.color}`}>
-                <cat.icon size={24} />
+                <cat.icon size={20} />
               </div>
               {typeFilter === cat.type && <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Actif</span>}
             </div>
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{cat.label}</h3>
-            <p className="text-2xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">
-              {(totalsByType[cat.type] || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-base text-slate-400">€ TTC</span>
+            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{cat.label}</h3>
+            <p className="text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors mb-4">
+              {(totalsByType[cat.type]?.total || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-xs text-slate-400">€</span>
             </p>
+            <div className="space-y-1 border-t border-slate-50 pt-3">
+              <div className="flex justify-between items-center text-[9px] font-bold">
+                <span className="text-slate-400">EN COURS</span>
+                <span className="text-slate-900">{(totalsByType[cat.type]?.enCours || 0).toLocaleString('fr-FR')}€</span>
+              </div>
+              <div className="flex justify-between items-center text-[9px] font-bold">
+                <span className="text-emerald-500">À FACTURER</span>
+                <span className="text-emerald-600">{(totalsByType[cat.type]?.aFacturer || 0).toLocaleString('fr-FR')}€</span>
+              </div>
+              <div className="flex justify-between items-center text-[9px] font-bold">
+                <span className="text-amber-500">FACTURÉ</span>
+                <span className="text-amber-600">{(totalsByType[cat.type]?.facture || 0).toLocaleString('fr-FR')}€</span>
+              </div>
+            </div>
           </button>
         ))}
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden min-h-[500px]">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[500px]">
         <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/10 gap-6">
           <div className="flex flex-col gap-2 flex-1 max-w-md">
             <div className="relative">
@@ -421,7 +492,7 @@ function OccupationsPageContent() {
               <input 
                 type="text" 
                 placeholder="Rechercher un tiers ou une adresse..." 
-                className="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-semibold text-sm"
+                className="w-full bg-white border border-slate-200 rounded-xl py-3.5 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-semibold text-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -452,19 +523,9 @@ function OccupationsPageContent() {
               onChange={e => setYearFilter(e.target.value)}
             >
               <option value="ALL">Toutes les années</option>
-              {Array.from({ length: 6 }, (_, i) => new Date().getFullYear() - 5 + i).map(year => (
-                <option key={year} value={year}>{year}</option>
+              {availableYears.map(year => (
+                <option key={year} value={year?.toString()}>{year}</option>
               ))}
-            </select>
-            <select 
-              className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-500 outline-none focus:border-blue-500 transition-all"
-              value={typeFilter}
-              onChange={e => setTypeFilter(e.target.value)}
-            >
-              <option value="ALL">Tous les Types</option>
-              <option value="COMMERCE">Commerce</option>
-              <option value="CHANTIER">Chantier</option>
-              <option value="TOURNAGE">Tournage</option>
             </select>
             <select 
               className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-500 outline-none focus:border-blue-500 transition-all"
@@ -508,7 +569,7 @@ function OccupationsPageContent() {
                 {filtered.map((occ) => (
                   <React.Fragment key={occ.id}>
                     <tr className="group transition-all hover:bg-slate-50/50">
-                      <td className="px-6 py-5 rounded-l-3xl border-y border-l border-slate-100 bg-white group-hover:border-blue-200">
+                      <td className="px-6 py-5 rounded-l-xl border-y border-l border-slate-100 bg-white group-hover:border-blue-200">
                         <div className="flex items-center gap-4">
                           <button onClick={() => toggleRow(occ.id)} className="p-1 hover:bg-slate-100 rounded-lg text-slate-400">
                             {expandedRows.includes(occ.id) ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -528,7 +589,7 @@ function OccupationsPageContent() {
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
                         <p className="text-xs font-black text-slate-400 uppercase flex items-center gap-1">
                           <Clock size={12} /> 
-                          {occ.type === 'COMMERCE' ? (occ.anneeTaxation || '-') : (
+                          {(occ.type === 'COMMERCE' || occ.type === 'TLPE') ? (occ.anneeTaxation || '-') : (
                             <>
                               {occ.dateDebut ? format(new Date(occ.dateDebut), 'dd MMM', { locale: fr }) : '-'} - {occ.dateFin ? format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr }) : '-'}
                             </>
@@ -547,7 +608,7 @@ function OccupationsPageContent() {
                          </div>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 font-bold text-blue-600 uppercase text-[11px]">
-                         {((occ.lignes?.reduce((sum: number, l: any) => sum + (l.montant || 0), 0) || occ.montantCalcule || 0)).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} € <span className="text-[9px] text-slate-400">TTC</span>
+                         {(occ.montantCalcule || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € <span className="text-[9px] text-slate-400">TTC</span>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black">
                         <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest ${TYPE_MAP[occ.type]?.bg || 'bg-slate-50'} ${TYPE_MAP[occ.type]?.color || 'text-slate-600'} ${TYPE_MAP[occ.type]?.bg.replace('bg-', 'border-') || 'border-slate-100'}`}>
@@ -573,11 +634,12 @@ function OccupationsPageContent() {
                            </a>
                          )}
                       </td>
-                      <td className="px-6 py-5 rounded-r-3xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
+                      <td className="px-6 py-5 rounded-r-xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
                         <div className="flex items-center justify-end gap-1">
                           <button onClick={() => { setSelectedOccForLigne(occ); setEditingLigne(null); setIsLigneModalOpen(true); }} className="p-2.5 text-blue-500 hover:bg-blue-50 rounded-xl transition-all" title="Ajouter Article"><Package size={18} /></button>
                           {['EN_ATTENTE', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleApprove(occ.id)} className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approuver"><CheckCircle2 size={18} /></button>}
                           {['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => downloadFacture(occ.id)} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Télécharger Facture"><FileText size={18} /></button>}
+                          {['FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => handleUnlock(occ.id)} className="p-2.5 text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Déverrouiller Dossier"><Unlock size={18} /></button>}
                           <button onClick={() => handleEdit(occ)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Modifier"><Pencil size={18} /></button>
                           <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer"><Trash2 size={18} /></button>
                         </div>
@@ -596,7 +658,7 @@ function OccupationsPageContent() {
                             ) : (
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {occ.lignes.map((ligne: any) => (
-                                  <div key={ligne.id} className="bg-white p-4 rounded-2xl border border-slate-100 flex items-center justify-between group/item transition-all hover:border-blue-100">
+                                  <div key={ligne.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md group">
                                     <div className="flex items-center gap-4">
                                       <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 font-bold text-[10px]">{ligne.article?.numero || '#'}</div>
                                       <div>
@@ -606,24 +668,29 @@ function OccupationsPageContent() {
                                             <>
                                               {(() => {
                                                 const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
-                                                const parts = rawMode.split('/').map((p: string) => p.trim());
-                                                const u1 = parts[0] || 'unité';
-                                                const u2 = parts[1] || 'unité';
-                                                const displayU1 = u1.toLowerCase() === 'unité' ? 'unité' : u1;
-                                                const displayU2 = u2.toLowerCase() === 'unité' ? 'unité' : u2;
+                                                const parts = rawMode.split('/').filter(Boolean).map((p: string) => p.trim().toLowerCase());
+                                                const u1 = parts[0] || 'unités';
+                                                const u2 = parts[1] || 'unités';
                                                 
                                                 if (occ.type === 'CHANTIER') {
-                                                  const startStr = format(new Date(ligne.dateDebutConstatee || ligne.dateDebut), 'dd/MM/yy');
-                                                  const endStr = format(new Date(ligne.dateFinConstatee || ligne.dateFin), 'dd/MM/yy');
+                                                  const startTh = format(new Date(ligne.dateDebut), 'dd/MM/yy');
+                                                  const endTh = format(new Date(ligne.dateFin), 'dd/MM/yy');
+                                                  const hasReel = !!(ligne.dateDebutConstatee || ligne.dateFinConstatee);
+                                                  const startReel = ligne.dateDebutConstatee ? format(new Date(ligne.dateDebutConstatee), 'dd/MM/yy') : '--';
+                                                  const endReel = ligne.dateFinConstatee ? format(new Date(ligne.dateFinConstatee), 'dd/MM/yy') : '--';
+                                                  
                                                   return (
                                                     <span className="flex flex-col gap-0.5">
-                                                      <span>{ligne.quantite1} {displayU1} x {ligne.quantite2} {displayU2} à {ligne.article?.montant}€ soit </span>
-                                                      <span className="text-[9px] text-slate-300 normal-case italic">Période : {startStr} au {endStr}</span>
+                                                      <span>{ligne.quantite1} {u1} x {ligne.quantite2} {u2} à {ligne.article?.montant}€ soit </span>
+                                                      <span className="text-[9px] text-slate-400 normal-case italic flex flex-col">
+                                                        <span>Théo : {startTh} au {endTh}</span>
+                                                        {hasReel && <span className="text-emerald-600">Réel : {startReel} au {endReel}</span>}
+                                                      </span>
                                                     </span>
                                                   );
                                                 }
                                                 
-                                                return `${ligne.quantite1} ${displayU1} à ${ligne.article?.montant}€/${displayU1} soit `;
+                                                return `${ligne.quantite1} ${u1} à ${ligne.article?.montant}€/${u1} soit `;
                                               })()}
                                               <span className="text-blue-600 font-extrabold">{ligne.montant}€</span>
                                             </>
@@ -637,7 +704,7 @@ function OccupationsPageContent() {
                                         </p>
                                       </div>
                                     </div>
-                                    <div className="flex gap-1 opacity-10 group-hover/item:opacity-100 transition-opacity">
+                                    <div className="flex gap-1 opacity-10 group-hover:opacity-100 transition-opacity">
                                       <button onClick={() => { setSelectedOccForLigne(occ); setEditingLigne(ligne); setIsLigneModalOpen(true); }} className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg"><Pencil size={14} /></button>
                                       <button onClick={() => handleDeleteLigne(occ.id, ligne.id)} className="p-2 hover:bg-rose-50 text-rose-600 rounded-lg"><Trash2 size={14} /></button>
                                     </div>
@@ -660,13 +727,13 @@ function OccupationsPageContent() {
       {isModalOpen && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={() => setIsModalOpen(false)}></div>
-          <div className="bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
+          <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
             <div className="p-10 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">{isEditing ? 'Modifier le Dossier' : 'Nouveau Dossier RODP'}</h3>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Saisie des informations de base</p>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white rounded-2xl text-slate-300 hover:text-slate-900 transition-all"><X size={24} /></button>
+              <button onClick={() => setIsModalOpen(false)} className="p-3 hover:bg-white rounded-xl text-slate-300 hover:text-slate-900 transition-all"><X size={24} /></button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-10 overflow-y-auto space-y-8 flex-1">
@@ -674,30 +741,111 @@ function OccupationsPageContent() {
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Type d'occupation</label>
-                    <select className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.type} onChange={e => {
-                      const newType = e.target.value;
-                      const selectedTier = tiers.find(t => t.id === Number(formData.tiersId));
-                      const newNom = (newType === 'COMMERCE' && selectedTier) ? selectedTier.nom : formData.nom;
-                      setFormData({...formData, type: newType, nom: newNom});
-                    }}>
+                    <select 
+                      disabled={isEditing}
+                      required 
+                      className={`w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none transition-all font-bold appearance-none ${isEditing ? 'cursor-not-allowed opacity-60' : 'cursor-pointer focus:border-blue-500'}`} 
+                      value={formData.type} 
+                      onChange={e => {
+                        const newType = e.target.value;
+                        const selectedTier = tiers.find(t => t.id === Number(formData.tiersId));
+                        const newNom = (newType === 'COMMERCE' && selectedTier) ? selectedTier.nom : formData.nom;
+                        setFormData({...formData, type: newType, nom: newNom});
+                      }}
+                    >
                       <option value="COMMERCE">Terrasse / Commerce</option>
                       <option value="CHANTIER">Echafaudage / Chantier</option>
                       <option value="TOURNAGE">Tournage / Événement</option>
+                      <option value="TLPE">T.L.P.E. Dossier</option>
                     </select>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Libellé du Dossier</label>
                     <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" placeholder="Ex: Terrasse été 2024..." value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">
                        Demandeur (Tiers)
                        {fetchingTiers && <Loader2 size={12} className="animate-spin text-blue-500" />}
                     </label>
-                    <select required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.tiersId} onChange={e => handleTierChange(e.target.value)}>
-                      <option value="">{fetchingTiers ? 'Chargement...' : 'Sélectionner un tiers...'}</option>
-                      {tiers.map(t => <option key={t.id} value={t.id}>{t.nom} {t.statut === 'PROVISOIRE' ? '(PROVISOIRE)' : ''}</option>)}
-                    </select>
+                    
+                    {!formData.tiersId ? (
+                      <div className="relative">
+                        <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                        <input 
+                          type="text"
+                          placeholder="Chercher par nom ou code SEDIT..."
+                          className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all font-bold"
+                          value={tiersSearchQuery}
+                          onChange={(e) => {
+                            setTiersSearchQuery(e.target.value);
+                            setIsTiersDropdownOpen(true);
+                          }}
+                          onFocus={() => setIsTiersDropdownOpen(true)}
+                        />
+                        
+                        {isTiersDropdownOpen && (tiersSearchQuery.length > 0 || tiers.length > 0) && (
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[150] overflow-hidden divide-y divide-slate-50 max-h-60 overflow-y-auto">
+                            {tiers
+                              .filter(t => 
+                                t.nom.toLowerCase().includes(tiersSearchQuery.toLowerCase()) || 
+                                (t as any).code_sedit?.includes(tiersSearchQuery)
+                              )
+                              .slice(0, 15)
+                              .map(t => (
+                                <button 
+                                  key={t.id} 
+                                  type="button" 
+                                  className="w-full px-6 py-4 text-left hover:bg-blue-50 transition-colors flex items-center justify-between group"
+                                  onClick={() => {
+                                    handleTierChange(t.id.toString());
+                                    setTiersSearchQuery('');
+                                    setIsTiersDropdownOpen(false);
+                                  }}
+                                >
+                                  <div>
+                                     <p className="font-bold text-slate-900 group-hover:text-blue-600 uppercase text-xs">{t.nom}</p>
+                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                        {(t as any).code_sedit || 'SANS CODE SEDIT'}
+                                        {t.statut === 'PROVISOIRE' && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
+                                     </p>
+                                  </div>
+                                  <ChevronRight size={14} className="text-slate-300" />
+                                </button>
+                              ))}
+                            {tiersSearchQuery.length > 0 && tiers.filter(t => t.nom.toLowerCase().includes(tiersSearchQuery.toLowerCase()) || (t as any).code_sedit?.includes(tiersSearchQuery)).length === 0 && (
+                              <div className="p-8 text-center text-[10px] font-black text-slate-400 uppercase italic tracking-widest">Aucun tiers trouvé</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-2xl p-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                            <Users size={18} />
+                          </div>
+                          <div>
+                            <p className="font-black text-blue-900 uppercase text-xs">
+                              {tiers.find(t => t.id === Number(formData.tiersId))?.nom}
+                            </p>
+                            <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest">
+                              ID #{formData.tiersId} — {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.code_sedit || 'SANS CODE'}
+                            </p>
+                          </div>
+                        </div>
+                        <button 
+                          type="button"
+                          onClick={() => {
+                            setFormData({...formData, tiersId: ''});
+                            setTiersSearchQuery('');
+                          }}
+                          className="p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-all border border-blue-100"
+                        >
+                          <X size={18} />
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Statut du dossier</label>
@@ -710,7 +858,7 @@ function OccupationsPageContent() {
                 </div>
 
                 <div className="space-y-6">
-                  {formData.type === 'COMMERCE' ? (
+                  {(formData.type === 'COMMERCE' || formData.type === 'TLPE') ? (
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Année de taxation</label>
                       <select required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.anneeTaxation} onChange={e => setFormData({...formData, anneeTaxation: e.target.value})}>

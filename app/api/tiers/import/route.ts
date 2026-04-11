@@ -15,17 +15,32 @@ export async function POST(req: Request) {
     let foldersCreated = 0;
 
     for (const biz of businesses) {
-      if (!biz.siret) continue;
+      if (!biz.nom) continue; // Minimum requirement is a name
 
-      let tiers = await (prisma as any).tiers.findFirst({
-        where: { siret: biz.siret }
-      });
+      const cleanSiret = biz.siret?.replace(/\s+/g, '') || null;
+      let tiers;
+
+      if (cleanSiret) {
+        // Dedup by SIRET if available
+        tiers = await (prisma as any).tiers.findFirst({
+          where: { siret: cleanSiret }
+        });
+      } else {
+        // Dedup by Name + Address for individuals/tiers without SIRET
+        tiers = await (prisma as any).tiers.findFirst({
+          where: { 
+            nom: biz.nom,
+            adresse: biz.adresse || ''
+          }
+        });
+      }
 
       if (!tiers) {
         tiers = await (prisma as any).tiers.create({
           data: {
             nom: biz.nom,
-            siret: biz.siret,
+            siret: cleanSiret,
+            natureJuridique: cleanSiret ? (biz.natureJuridique || '03') : '01', // Default to 01 if no SIRET
             adresse: biz.adresse,
             latitude: biz.latitude || null,
             longitude: biz.longitude || null,

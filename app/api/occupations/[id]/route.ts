@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { updateOccupationTotal } from '@/lib/tlpe-utils';
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -8,7 +9,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const occupation: any = await (prisma as any).occupation.findUnique({
       where: { id },
       include: { 
-        tiers: true,
+        tiers: { include: { contacts: true } },
         lignes: { include: { article: { include: { modeTaxation: true, categorie: true } } } },
         contacts: true,
         dispositifs: true,
@@ -18,14 +19,28 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     if (!occupation) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-    // History for COMMERCE
+    // 2. Parse meta for articles
+    if (occupation.lignes) {
+      occupation.lignes = occupation.lignes.map((l: any) => {
+        if (l.article) {
+          let meta = {};
+          try {
+            if (l.article.notes) meta = JSON.parse(l.article.notes);
+          } catch (e) {}
+          l.article.meta = meta;
+        }
+        return l;
+      });
+    }
+
+    // 3. History for COMMERCE and TLPE
     let history = [];
-    if (occupation.type === 'COMMERCE') {
+    if (occupation.type === 'COMMERCE' || occupation.type === 'TLPE') {
       history = await (prisma as any).occupation.findMany({
         where: {
           tiersId: occupation.tiersId,
           adresse: occupation.adresse,
-          type: 'COMMERCE',
+          type: occupation.type,
           id: { not: id }
         },
         select: { id: true, anneeTaxation: true },
@@ -56,7 +71,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       latitude, 
       longitude, 
       description,
-      photos
+      photos,
+      numeroFacture,
+      facturePath
     } = body;
 
     const updateData: any = { 
@@ -71,13 +88,18 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       latitude: latitude !== undefined ? (latitude ? parseFloat(latitude) : null) : undefined,
       longitude: longitude !== undefined ? (longitude ? parseFloat(longitude) : null) : undefined,
       description,
-      photos
+      photos,
+      numeroFacture: numeroFacture !== undefined ? numeroFacture : undefined,
+      facturePath: facturePath !== undefined ? facturePath : undefined,
     };
 
     const occupation = await (prisma as any).occupation.update({
       where: { id },
       data: updateData
     });
+
+    // Recalculer le montant net total (exonération globale, etc.)
+    await updateOccupationTotal(id);
 
     return NextResponse.json(occupation);
   } catch (error: any) {

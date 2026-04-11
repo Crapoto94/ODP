@@ -38,7 +38,8 @@ export async function GET() {
           filienTypeMouvement: '',
           filienSens: '',
           filienStructure: '',
-          filienGestionnaire: ''
+          filienGestionnaire: '',
+          filienUncPj: ''
         }
       });
     }
@@ -67,42 +68,83 @@ export async function PATCH(req: Request) {
       filienTypeMouvement,
       filienSens,
       filienStructure,
-      filienGestionnaire
+      filienGestionnaire,
+      filienUncPj
     } = body;
 
-    const settings = await (prisma.appSettings as any).upsert({
-      where: { id: 1 },
-      update: { 
-        financeEmail, appUrl, apmUrl, apmToken, senderName, senderEmail,
-        filienOrga, filienBudget, filienExercice, filienAvancement,
-        filienRejetDispo, filienRejetCA, filienRejetMarche,
-        filienMouvement, filienType, filienLibelle, filienCalendrier,
-        filienMonnaie, filienMouvementEx, filienPreBordereau,
-        filienPoste,
-        filienBordereau,
-        filienObjet,
-        filienChapitre,
-        filienNature,
-        filienFonction,
-        filienCodeInterne,
-        filienTypeMouvement,
-        filienSens,
-        filienStructure,
-        filienGestionnaire
-      },
-      create: { 
-        id: 1, 
-        filienCalendrier: filienCalendrier || '01',
-        filienMonnaie: filienMonnaie || 'E',
-        filienMouvementEx: filienMouvementEx || 'N',
-        filienPreBordereau: filienPreBordereau || '1235',
-        filienPoste: filienPoste || '0001',
-        filienBordereau: filienBordereau || '0001',
-        filienObjet: filienObjet || ''
-      }
-    });
+    // Use Raw SQL to bypass Prisma Client sync issues (due to locked files during generate)
+    // We use parameterized queries to prevent SQL Injection
+    
+    // 1. Check if it exists
+    const existing = await (prisma as any).$queryRaw`SELECT id FROM AppSettings WHERE id = 1`;
+    
+    if (existing && existing.length > 0) {
+      await (prisma as any).$executeRaw`
+        UPDATE AppSettings 
+        SET 
+          financeEmail = ${financeEmail},
+          appUrl = ${appUrl},
+          apmUrl = ${apmUrl},
+          apmToken = ${apmToken},
+          senderName = ${senderName},
+          senderEmail = ${senderEmail},
+          filienOrga = ${filienOrga},
+          filienBudget = ${filienBudget},
+          filienExercice = ${parseInt(filienExercice) || new Date().getFullYear()},
+          filienAvancement = ${filienAvancement},
+          filienRejetDispo = ${filienRejetDispo ? 1 : 0},
+          filienRejetCA = ${filienRejetCA ? 1 : 0},
+          filienRejetMarche = ${filienRejetMarche ? 1 : 0},
+          filienMouvement = ${filienMouvement},
+          filienType = ${filienType},
+          filienLibelle = ${filienLibelle},
+          filienCalendrier = ${filienCalendrier},
+          filienMonnaie = ${filienMonnaie},
+          filienMouvementEx = ${filienMouvementEx},
+          filienPreBordereau = ${filienPreBordereau},
+          filienPoste = ${filienPoste},
+          filienBordereau = ${filienBordereau},
+          filienObjet = ${filienObjet},
+          filienChapitre = ${filienChapitre},
+          filienNature = ${filienNature},
+          filienFonction = ${filienFonction},
+          filienCodeInterne = ${filienCodeInterne},
+          filienTypeMouvement = ${filienTypeMouvement},
+          filienSens = ${filienSens},
+          filienStructure = ${filienStructure},
+          filienGestionnaire = ${filienGestionnaire},
+          filienUncPj = ${filienUncPj},
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = 1
+      `;
+    } else {
+      await (prisma as any).$executeRaw`
+        INSERT INTO AppSettings (
+          id, financeEmail, appUrl, apmUrl, apmToken, senderName, senderEmail,
+          filienOrga, filienBudget, filienExercice, filienAvancement,
+          filienRejetDispo, filienRejetCA, filienRejetMarche,
+          filienMouvement, filienType, filienLibelle, filienCalendrier,
+          filienMonnaie, filienMouvementEx, filienPreBordereau,
+          filienPoste, filienBordereau, filienObjet,
+          filienChapitre, filienNature, filienFonction, filienCodeInterne,
+          filienTypeMouvement, filienSens, filienStructure, filienGestionnaire,
+          filienUncPj, updated_at
+        ) VALUES (
+          1, ${financeEmail}, ${appUrl}, ${apmUrl}, ${apmToken}, ${senderName}, ${senderEmail},
+          ${filienOrga}, ${filienBudget}, ${parseInt(filienExercice) || new Date().getFullYear()}, ${filienAvancement},
+          ${filienRejetDispo ? 1 : 0}, ${filienRejetCA ? 1 : 0}, ${filienRejetMarche ? 1 : 0},
+          ${filienMouvement}, ${filienType}, ${filienLibelle}, ${filienCalendrier},
+          ${filienMonnaie}, ${filienMouvementEx}, ${filienPreBordereau},
+          ${filienPoste}, ${filienBordereau}, ${filienObjet},
+          ${filienChapitre}, ${filienNature}, ${filienFonction}, ${filienCodeInterne},
+          ${filienTypeMouvement}, ${filienSens}, ${filienStructure}, ${filienGestionnaire},
+          ${filienUncPj}, CURRENT_TIMESTAMP
+        )
+      `;
+    }
 
-    return NextResponse.json(settings);
+    const results = await (prisma as any).$queryRaw`SELECT * FROM AppSettings WHERE id = 1`;
+    return NextResponse.json(results[0] || null);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

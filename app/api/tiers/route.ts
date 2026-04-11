@@ -26,7 +26,7 @@ function mapNatureJuridique(apiNature: string): string {
 export async function GET() {
   try {
     const tiers = await (prisma as any).tiers.findMany({
-      orderBy: { created_at: 'desc' },
+      orderBy: { nom: 'asc' },
       include: {
         _count: {
           select: { occupations: true }
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     let finalAdresse = adresse;
 
     // Auto-fetch info if SIRET is provided and name is generic or missing
-    const cleanSiret = siret?.replace(/\s+/g, '');
+    const cleanSiret = (siret && siret.trim() !== '') ? siret.replace(/\s+/g, '') : null;
     if (cleanSiret && cleanSiret.length === 14 && !id) {
       const info = await fetchSiretInfo(cleanSiret);
       if (info) {
@@ -77,6 +77,14 @@ export async function POST(req: Request) {
           return NextResponse.json({ error: 'Un tiers avec ce SIRET existe déjà' }, { status: 400 });
         }
       }
+      if (code_sedit) {
+        const existingSedit = await (prisma as any).tiers.findUnique({
+          where: { code_sedit }
+        });
+        if (existingSedit) {
+          return NextResponse.json({ error: 'Ce code tiers SEDIT est déjà utilisé par un autre tiers' }, { status: 400 });
+        }
+      }
       const existingNom = await (prisma as any).tiers.findFirst({
         where: { nom: finalNom }
       });
@@ -93,6 +101,14 @@ export async function POST(req: Request) {
            return NextResponse.json({ error: 'Un tiers avec ce SIRET existe déjà' }, { status: 400 });
          }
       }
+      if (code_sedit) {
+        const existingSedit = await (prisma as any).tiers.findFirst({
+          where: { code_sedit, NOT: { id: Number(id) } }
+        });
+        if (existingSedit) {
+          return NextResponse.json({ error: 'Ce code tiers SEDIT est déjà utilisé par un autre tiers' }, { status: 400 });
+        }
+      }
       const existingNom = await (prisma as any).tiers.findFirst({
         where: { nom: finalNom, NOT: { id: Number(id) } }
       });
@@ -104,28 +120,28 @@ export async function POST(req: Request) {
     // Upsert or Create/Update
     let tiers;
     if (id) {
-       tiers = await (prisma as any).tiers.update({
-         where: { id: Number(id) },
-         data: {
-           nom: finalNom,
-           natureJuridique: updatedNature || natureJuridique,
-           siret,
-           email,
-           adresse: finalAdresse,
-           code_sedit: code_sedit || undefined
-         }
-       });
+        tiers = await (prisma as any).tiers.update({
+          where: { id: Number(id) },
+          data: {
+            nom: finalNom,
+            natureJuridique: updatedNature || natureJuridique,
+            siret: cleanSiret,
+            email,
+            adresse: finalAdresse,
+            code_sedit: code_sedit || undefined
+          }
+        });
     } else {
-       tiers = await (prisma as any).tiers.create({
-         data: {
-           nom: finalNom,
-           natureJuridique: updatedNature || natureJuridique,
-           siret,
-           email,
-           adresse: finalAdresse,
-           code_sedit
-         }
-       });
+        tiers = await (prisma as any).tiers.create({
+          data: {
+            nom: finalNom,
+            natureJuridique: updatedNature || natureJuridique,
+            siret: cleanSiret,
+            email,
+            adresse: finalAdresse,
+            code_sedit
+          }
+        });
     }
 
     // Handle SEDIT/RH requests
@@ -195,20 +211,56 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "L'ID est requis pour la modification" }, { status: 400 });
     }
 
+    // Check duplicates before update
+    if (nom) {
+      const existingNom = await (prisma as any).tiers.findFirst({
+        where: { nom: nom, NOT: { id: Number(id) } }
+      });
+      if (existingNom) {
+        return NextResponse.json({ error: 'Un tiers avec ce nom existe déjà' }, { status: 400 });
+      }
+    }
+
+    if (siret) {
+      const cleanSiret = siret.replace(/\s+/g, '');
+      const existingSiret = await (prisma as any).tiers.findFirst({
+        where: { siret: cleanSiret, NOT: { id: Number(id) } }
+      });
+      if (existingSiret) {
+        return NextResponse.json({ error: 'Un tiers avec ce SIRET existe déjà' }, { status: 400 });
+      }
+    }
+
+    if (code_sedit) {
+      const existingSedit = await (prisma as any).tiers.findFirst({
+        where: { code_sedit: code_sedit, NOT: { id: Number(id) } }
+      });
+      if (existingSedit) {
+        return NextResponse.json({ error: 'Ce code tiers SEDIT est déjà utilisé par un autre tiers' }, { status: 400 });
+      }
+    }
+
+    const finalCleanSiret = (siret && siret.trim() !== '') ? siret.replace(/\s+/g, '') : null;
+
     const tiers = await (prisma as any).tiers.update({
       where: { id: Number(id) },
       data: {
         nom,
         natureJuridique,
-        siret,
+        siret: finalCleanSiret,
         email,
         adresse,
-        code_sedit
+        code_sedit: code_sedit || null
       }
     });
 
     return NextResponse.json(tiers);
   } catch (error: any) {
+    if (error.code === 'P2002') {
+       const target = error.meta?.target || '';
+       const field = target.includes('siret') ? 'SIRET' : (target.includes('code_sedit') ? 'Code SEDIT' : 'donnée unique');
+       return NextResponse.json({ error: `La valeur de ${field} est déjà utilisée par un autre tiers.` }, { status: 400 });
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

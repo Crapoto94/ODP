@@ -28,6 +28,7 @@ import {
 import CategorieManagerModal from '@/components/CategorieManagerModal';
 import ImportTarifModal from '@/components/ImportTarifModal';
 import ModeTaxationModal from '@/components/ModeTaxationModal';
+import TlpeTarifsModal from '@/components/TlpeTarifsModal';
 
 interface Categorie {
   id: number;
@@ -69,15 +70,18 @@ export default function TarifsPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Categorie[]>([]);
   const [modesTaxation, setModesTaxation] = useState<ModeTaxation[]>([]);
+  const [tlpeConfig, setTlpeConfig] = useState<any>(null);
   const [availableYears, setAvailableYears] = useState<number[]>([new Date().getFullYear()]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isModeModalOpen, setIsModeModalOpen] = useState(false);
+  const [isTlpeModalOpen, setIsTlpeModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     id: null as number | null,
@@ -102,15 +106,17 @@ export default function TarifsPage() {
 
   const fetchData = async () => {
     try {
-      const [artRes, catRes, modeRes, allArtRes] = await Promise.all([
+      const [artRes, catRes, modeRes, allArtRes, tlpeRes] = await Promise.all([
         axios.get(`/api/articles?annee=${selectedYear}`),
         axios.get('/api/categories'),
         axios.get('/api/modes-taxation'),
-        axios.get('/api/articles') // Fetch all to get available years
+        axios.get('/api/articles'), // Fetch all to get available years
+        axios.get(`/api/articles/tlpe?annee=${selectedYear}`).catch(() => ({ data: { config: null } }))
       ]);
       setArticles(artRes.data);
       setCategories(catRes.data);
       setModesTaxation(modeRes.data);
+      setTlpeConfig(tlpeRes.data?.config || null);
       
       const years = Array.from(new Set([
         new Date().getFullYear(),
@@ -141,6 +147,14 @@ export default function TarifsPage() {
     traverse(categories);
     return flat;
   }, [categories]);
+
+  const toggleGroup = (key: string) => {
+    setExpandedGroups(prev => 
+      prev.includes(key) 
+        ? prev.filter(k => k !== key) 
+        : [...prev, key]
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -283,6 +297,13 @@ export default function TarifsPage() {
             Importer Excel
           </button>
           <button 
+            onClick={() => setIsTlpeModalOpen(true)}
+            className="flex items-center gap-3 bg-white border border-purple-200 text-purple-900 hover:bg-purple-50 px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm transition-all active:scale-95"
+          >
+            <Euro size={18} className="text-purple-600" />
+            Tarifs TLPE
+          </button>
+          <button 
             onClick={() => setIsCatModalOpen(true)}
             className="flex items-center gap-3 bg-white border border-slate-200 text-slate-900 hover:bg-slate-50 px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm transition-all active:scale-95"
           >
@@ -306,6 +327,46 @@ export default function TarifsPage() {
         </div>
       </div>
 
+      {tlpeConfig && (tlpeConfig.deliberationPath || tlpeConfig.tarifsPath) && (
+        <div className="bg-purple-50 border border-purple-100 rounded-[2rem] p-6 flex flex-wrap items-center justify-between gap-6 animate-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
+              <Info size={20} />
+            </div>
+            <div>
+              <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Référentiel TLPE {selectedYear}</h4>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Documents officiels associés</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {tlpeConfig.deliberationPath && (
+              <a 
+                href={tlpeConfig.deliberationPath} 
+                target="_blank" 
+                rel="noreferrer"
+                className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
+              >
+                Délibération (PDF)
+              </a>
+            )}
+            {tlpeConfig.tarifsPath && (
+              <a 
+                href={tlpeConfig.tarifsPath} 
+                target="_blank" 
+                rel="noreferrer"
+                className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
+              >
+                Fichier Tarifs (PDF)
+              </a>
+            )}
+            <div className="ml-4 pl-4 border-l border-purple-200">
+              <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-none mb-1">Seuil exonération</p>
+              <p className="text-sm font-black text-purple-700">{tlpeConfig.exoneration} m²</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden min-h-[500px]">
         <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/10 gap-6">
           <div className="relative flex-1 max-w-md">
@@ -320,12 +381,12 @@ export default function TarifsPage() {
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="flex bg-slate-100 p-1.5 rounded-2xl">
-              {[2023, 2024, 2025].map(year => (
+            <div className="flex bg-slate-100 p-1.5 rounded-2xl overflow-x-auto max-w-[300px] hide-scrollbar">
+              {availableYears.map(year => (
                 <button
                   key={year}
                   onClick={() => setSelectedYear(year)}
-                  className={`px-6 py-2 rounded-xl text-xs font-black transition-all ${selectedYear === year ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`px-6 py-2 rounded-xl text-xs font-black transition-all flex-shrink-0 ${selectedYear === year ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   {year}
                 </button>
@@ -359,86 +420,119 @@ export default function TarifsPage() {
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(groupedArticles).map(([typeName, subGroups]) => (
-                  <React.Fragment key={typeName}>
-                    <tr className="bg-slate-50/50">
-                      <td colSpan={5} className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
-                          <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">{typeName}</h4>
-                        </div>
-                      </td>
-                    </tr>
-                    {Object.entries(subGroups).map(([subTypeName, groupArticles]) => (
-                      <React.Fragment key={subTypeName}>
-                        {subTypeName !== 'Divers' && (
-                          <tr>
-                            <td colSpan={5} className="px-10 py-2">
-                              <div className="flex items-center gap-2 text-slate-400">
-                                <ChevronRight size={14} />
-                                <span className="text-[10px] font-black uppercase tracking-widest">{subTypeName}</span>
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                        {groupArticles.map((art) => (
-                          <tr key={art.id} className="group transition-all hover:-translate-y-1">
-                            <td className="px-6 py-5 rounded-l-3xl border-y border-l border-slate-100 bg-white group-hover:border-blue-200 relative overflow-hidden">
-                               <div 
-                                 className="absolute left-0 top-0 bottom-0 w-1 opacity-40 group-hover:opacity-100 transition-opacity" 
-                                 style={{ backgroundColor: getCatColor(art.categorie) }}
-                               />
-                               <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 font-black text-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
-                                   {art.numero || '#'}
+                {Object.entries(groupedArticles).map(([typeName, subGroups]) => {
+                  const l1Key = `L1-${typeName}`;
+                  const isL1Expanded = expandedGroups.includes(l1Key);
+                  const totalInGroup = Object.values(subGroups).reduce((acc, g) => acc + g.length, 0);
+
+                  return (
+                    <React.Fragment key={typeName}>
+                      {/* LEVEL 1: MAIN TYPE */}
+                      <tr 
+                        className="bg-slate-50/50 cursor-pointer hover:bg-slate-100 transition-colors" 
+                        onClick={() => toggleGroup(l1Key)}
+                      >
+                        <td colSpan={5} className="px-6 py-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-1.5 h-6 rounded-full transition-all duration-300 ${isL1Expanded ? 'bg-blue-600 h-8 shadow-lg shadow-blue-500/20' : 'bg-slate-300'}`} />
+                              <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">{typeName}</h4>
+                              <span className="text-[10px] font-black text-slate-400 bg-slate-200/50 px-2 py-0.5 rounded-md ml-2">{totalInGroup} articles</span>
+                            </div>
+                            <div className={`transition-transform duration-300 ${isL1Expanded ? 'rotate-180' : ''}`}>
+                              <ChevronRight className="text-blue-500" size={20} />
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* LEVEL 2: SUB-TYPES */}
+                      {isL1Expanded && Object.entries(subGroups).map(([subTypeName, groupArticles]) => {
+                        const l2Key = `L2-${typeName}-${subTypeName}`;
+                        const isL2Expanded = expandedGroups.includes(l2Key);
+
+                        return (
+                          <React.Fragment key={subTypeName}>
+                            <tr 
+                              className="bg-white cursor-pointer hover:bg-slate-50 transition-colors border-l-4 border-l-transparent hover:border-l-blue-400"
+                              onClick={() => toggleGroup(l2Key)}
+                            >
+                              <td colSpan={5} className="px-10 py-3">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className={`transition-transform duration-300 ${isL2Expanded ? 'rotate-90 text-blue-500' : 'text-slate-300'}`}>
+                                      <ChevronRight size={16} />
+                                    </div>
+                                    <span className={`text-[11px] font-black uppercase tracking-widest transition-colors ${isL2Expanded ? 'text-slate-900' : 'text-slate-400'}`}>
+                                      {subTypeName}
+                                    </span>
+                                    <span className="text-[9px] font-bold text-slate-400 px-1.5 py-0.5 border border-slate-100 rounded ml-1">
+                                      {groupArticles.length} items
+                                    </span>
+                                  </div>
+                                  <div className="h-px flex-1 bg-slate-50 mx-4 opacity-50" />
                                 </div>
-                                <div>
-                                  <p className="font-bold text-slate-900 leading-tight mb-1">{art.designation}</p>
-                                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Année {art.annee}</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 italic font-bold">
-                               <span 
-                                 className="text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest bg-slate-50 border border-slate-100"
-                                 style={{ color: getCatColor(art.categorie), borderColor: `${getCatColor(art.categorie)}22` }}
-                               >
-                                 {art.categorie?.nom || 'Non classé'}
-                               </span>
-                            </td>
-                            <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
-                               <div className="flex items-center gap-2 text-blue-600 font-black">
-                                  <Euro size={14} />
-                                  <span>{art.montant.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}</span>
-                               </div>
-                            </td>
-                            <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
-                               <span className="text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">
-                                 {art.modeTaxation?.nom || '-'}
-                               </span>
-                            </td>
-                            <td className="px-6 py-5 rounded-r-3xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
-                              <div className="flex items-center justify-end gap-2">
-                                <button 
-                                  onClick={() => handleEdit(art)}
-                                  className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                                >
-                                  <Edit3 size={18} />
-                                </button>
-                                <button 
-                                  onClick={() => handleDelete(art.id, art.designation)}
-                                  className="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                                >
-                                  <Trash2 size={18} />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </React.Fragment>
-                    ))}
-                  </React.Fragment>
-                ))}
+                              </td>
+                            </tr>
+
+                            {/* ARTICLES */}
+                            {isL2Expanded && groupArticles.map((art) => (
+                              <tr key={art.id} className="group transition-all hover:-translate-x-1">
+                                <td className="px-14 py-4 rounded-l-3xl border-y border-l border-slate-100 bg-white group-hover:border-blue-200 relative overflow-hidden">
+                                   <div 
+                                     className="absolute left-0 top-0 bottom-0 w-1 opacity-40 group-hover:opacity-100 transition-opacity" 
+                                     style={{ backgroundColor: getCatColor(art.categorie) }}
+                                   />
+                                   <div className="flex items-center gap-4">
+                                    <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 font-black text-xs group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                       {art.numero || '#'}
+                                    </div>
+                                    <div>
+                                      <p className="font-bold text-slate-900 leading-tight mb-1">{art.designation}</p>
+                                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter italic">Article {art.numero}</p>
+                                    </div>
+                                   </div>
+                                </td>
+                                <td className="px-6 py-4 border-y border-slate-100 bg-white group-hover:border-blue-200">
+                                   <span className="text-[10px] font-black text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                                     {art.categorie?.nom || 'Sans catégorie'}
+                                   </span>
+                                </td>
+                                <td className="px-6 py-4 border-y border-slate-100 bg-white group-hover:border-blue-200">
+                                   <div className="flex flex-col">
+                                     <span className="text-sm font-black text-slate-900">{art.montant.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</span>
+                                   </div>
+                                </td>
+                                <td className="px-6 py-4 border-y border-slate-100 bg-white group-hover:border-blue-200">
+                                   <div className="flex items-center gap-2">
+                                     <div className="w-2 h-2 rounded-full bg-blue-400" />
+                                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">{art.modeTaxation?.nom || 'U/M²'}</span>
+                                   </div>
+                                </td>
+                                <td className="px-6 py-4 rounded-r-3xl border-y border-r border-slate-100 bg-white group-hover:border-blue-200 text-right">
+                                   <div className="flex items-center justify-end gap-1">
+                                      <button 
+                                        onClick={() => handleEdit(art)}
+                                        className="p-2 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                      >
+                                        <Edit3 size={16} />
+                                      </button>
+                                      <button 
+                                        onClick={() => handleDelete(art.id, art.designation)}
+                                        className="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                                      >
+                                        <Trash2 size={16} />
+                                      </button>
+                                   </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </React.Fragment>
+                        );
+                      })}
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </table>
           )}
@@ -683,6 +777,13 @@ export default function TarifsPage() {
           isOpen={isModeModalOpen}
           onClose={() => setIsModeModalOpen(false)}
           onUpdate={fetchData}
+        />
+      )}
+      {isTlpeModalOpen && (
+        <TlpeTarifsModal 
+          isOpen={isTlpeModalOpen}
+          onClose={() => setIsTlpeModalOpen(false)}
+          onSuccess={fetchData}
         />
       )}
     </div>
