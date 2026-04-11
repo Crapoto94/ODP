@@ -260,7 +260,8 @@ export default function TarifsPage() {
           typeName = art.categorie.parent?.nom || 'Autre';
         } else if (art.categorie.niveau === 3) {
           subTypeName = art.categorie.parent?.nom || 'Autre';
-          typeName = art.categorie.parent?.parent?.nom || 'Autre';
+          // Fix: Reach parent of parent (Level 1)
+          typeName = (art.categorie.parent as any)?.parent?.nom || art.categorie.parent?.nom || 'Autre';
         }
       }
       

@@ -10,7 +10,11 @@ export async function GET(req: Request) {
       where: annee ? { annee: parseInt(annee) } : {},
       include: { 
         categorie: {
-          include: { parent: true }
+          include: { 
+            parent: {
+              include: { parent: true }
+            }
+          }
         },
         modeTaxation: true
       },
