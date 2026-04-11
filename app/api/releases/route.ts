@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import fs from 'fs';
 import path from 'path';
 
+
 export async function GET() {
   try {
     const releases = await (prisma as any).versionRelease.findMany({
@@ -11,6 +12,7 @@ export async function GET() {
     });
     return NextResponse.json(releases);
   } catch (error) {
+    console.error('[GET /api/releases] Error:', error);
     return NextResponse.json({ error: 'Failed to fetch releases' }, { status: 500 });
   }
 }
@@ -50,6 +52,8 @@ export async function POST(req: Request) {
     } catch (fsError) {
       console.warn('Could not update package.json version automatically:', fsError);
     }
+
+
 
     return NextResponse.json(release);
   } catch (error) {
