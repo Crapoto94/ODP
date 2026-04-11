@@ -318,13 +318,6 @@ export default function TarifsPage() {
             Tarifs TLPE
           </button>
           <button 
-            onClick={() => setIsCatModalOpen(true)}
-            className="flex items-center gap-3 bg-white border border-slate-200 text-slate-900 hover:bg-slate-50 px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm transition-all active:scale-95"
-          >
-            <Palette size={18} className="text-blue-500" />
-            Catégories
-          </button>
-          <button 
             onClick={() => setIsModeModalOpen(true)}
             className="flex items-center gap-3 bg-white border border-slate-200 text-slate-900 hover:bg-slate-50 px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm transition-all active:scale-95"
           >
@@ -395,20 +388,7 @@ export default function TarifsPage() {
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="flex bg-slate-100 p-1.5 rounded-2xl overflow-x-auto max-w-[300px] hide-scrollbar">
-              {availableYears.map(year => (
-                <button
-                  key={year}
-                  onClick={() => setSelectedYear(year)}
-                  className={`px-6 py-2 rounded-xl text-xs font-black transition-all flex-shrink-0 ${selectedYear === year ? 'bg-white shadow-sm text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
-                >
-                  {year}
-                </button>
-              ))}
-            </div>
-            <button className="p-3.5 rounded-2xl border border-slate-200 text-slate-400 hover:bg-slate-50 transition-all">
-              <Filter size={20} />
-            </button>
+            {/* Year selector and Filter removed as per user request */}
           </div>
         </div>
 
