@@ -80,17 +80,13 @@ export default function ImportTarifModal({ isOpen, onClose, onSuccess }: Props) 
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
                   <Calendar size={14} /> Année d'application
                 </label>
-                <div className="flex bg-slate-100 p-1.5 rounded-2xl w-fit">
-                   {['2023', '2024', '2025', '2026'].map(y => (
-                     <button
-                       key={y}
-                       onClick={() => setYear(y)}
-                       className={`px-6 py-2 rounded-xl text-xs font-black transition-all ${year === y ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-400 hover:text-slate-600'}`}
-                     >
-                       {y}
-                     </button>
-                   ))}
-                </div>
+                <input 
+                  type="text"
+                  placeholder="Année d'application (ex: 2026)"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-2xl p-4 outline-none focus:border-emerald-500 transition-all font-black text-sm"
+                  value={year}
+                  onChange={e => setYear(e.target.value)}
+                />
               </div>
 
               <div className="space-y-2">

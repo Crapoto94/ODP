@@ -212,7 +212,13 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
                   {articles
                     .filter(a => {
                       if (occupationType === 'COMMERCE') return a.numero?.startsWith('1');
-                      if (occupationType === 'CHANTIER') return a.numero?.startsWith('2') || a.numero?.startsWith('3');
+                      if (occupationType === 'CHANTIER') return a.numero?.startsWith('2') || a.numero?.startsWith('4') || a.numero?.startsWith('3');
+                      if (occupationType === 'TOURNAGE') {
+                        const c = (a as any).categorie;
+                        return c?.nom?.toUpperCase().includes('TOURNAGE') || 
+                               c?.parent?.nom?.toUpperCase().includes('TOURNAGE') ||
+                               c?.parent?.parent?.nom?.toUpperCase().includes('TOURNAGE');
+                      }
                       return true;
                     })
                     .filter(a => {
