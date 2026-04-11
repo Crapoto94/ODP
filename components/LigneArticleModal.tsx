@@ -125,7 +125,8 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
   const labels = parseMode(selectedArticle?.modeTaxation?.nom);
 
   useEffect(() => {
-    if (occupationType === 'CHANTIER' && !manualQ2 && labels.u2) {
+    const isDayUnit = labels.u2?.toLowerCase().includes('jour');
+    if ((occupationType === 'CHANTIER' || isDayUnit) && !manualQ2 && labels.u2) {
       const calculated = calculateQ2(labels.u2, formData.dateDebut, formData.dateFin, formData.dateDebutConstatee, formData.dateFinConstatee);
       setFormData(prev => ({ ...prev, quantite2: calculated.toString() }));
     }

@@ -32,15 +32,17 @@ export async function POST(
       u2Label = parts.find((p: string) => temporalUnits.some(tu => p.toLowerCase().includes(tu))) || parts[1];
     }
 
+    const isDayUnit = u2Label?.toLowerCase().includes('jour');
     const q1 = parseFloat(quantite1 || '0');
-    // For a new line, if quantite2 is missing, we calculate a suggestion
     let q2 = parseFloat(quantite2 || '0');
-    if (!q2) {
+    
+    // Auto-calculate for day units OR if missing
+    if (!q2 || isDayUnit) {
        q2 = calculateQ2(u2Label, 
-         dateDebut ? new Date(dateDebut) : null, 
-         dateFin ? new Date(dateFin) : null,
-         dateDebutConstatee ? new Date(dateDebutConstatee) : null,
-         dateFinConstatee ? new Date(dateFinConstatee) : null
+          dateDebut ? new Date(dateDebut) : null, 
+          dateFin ? new Date(dateFin) : null,
+          dateDebutConstatee ? new Date(dateDebutConstatee) : null,
+          dateFinConstatee ? new Date(dateFinConstatee) : null
        );
     }
 

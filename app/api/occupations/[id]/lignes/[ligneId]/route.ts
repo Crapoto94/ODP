@@ -41,7 +41,10 @@ export async function PATCH(
     const finalQuantite1 = quantite1 !== undefined ? parseFloat(quantite1) : existingLigne.quantite1;
     let finalQuantite2 = quantite2 !== undefined ? parseFloat(quantite2) : existingLigne.quantite2;
 
-    if (quantite2 === undefined && (dateDebut !== undefined || dateFin !== undefined || dateDebutConstatee !== undefined || dateFinConstatee !== undefined)) {
+    const isDayUnit = u2Label?.toLowerCase().includes('jour');
+    const datesChanged = (dateDebut !== undefined || dateFin !== undefined || dateDebutConstatee !== undefined || dateFinConstatee !== undefined);
+
+    if (isDayUnit || (quantite2 === undefined && datesChanged)) {
        const fd = dateDebut !== undefined ? (dateDebut ? new Date(dateDebut) : null) : existingLigne.dateDebut;
        const ff = dateFin !== undefined ? (dateFin ? new Date(dateFin) : null) : existingLigne.dateFin;
        const fdc = dateDebutConstatee !== undefined ? (dateDebutConstatee ? new Date(dateDebutConstatee) : null) : existingLigne.dateDebutConstatee;
