@@ -1,7 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Plus, Package, Clock, Hash, Pencil, Trash2, FileText } from 'lucide-react';
+import { Plus, Package, Clock, Hash, Pencil, Trash2 } from 'lucide-react';
 import { Occupation, LigneArticle } from '../types';
 
 interface Props {
