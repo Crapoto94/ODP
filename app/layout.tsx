@@ -24,6 +24,8 @@ export const metadata: Metadata = {
   }
 };
 
+import GlobalVersionModal from "@/components/GlobalVersionModal";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,9 +36,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="fixed top-2 left-2 z-[9999] text-xs font-mono text-zinc-500 opacity-50 pointer-events-none select-none">
-          v{changelog.version}
-        </div>
+        <GlobalVersionModal />
         {children}
       </body>
     </html>

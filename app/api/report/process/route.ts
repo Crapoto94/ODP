@@ -68,13 +68,15 @@ export async function POST(req: NextRequest) {
             _hasError: true
           });
         } else {
+          const q1 = ligne.quantite1 || 0;
+          const q2 = ligne.quantite2 || 1;
           lignesDataToCreate.push({
             articleId: targetArticle.id,
-            quantite1: ligne.quantite1,
-            quantite2: ligne.quantite2,
+            quantite1: q1,
+            quantite2: q2,
             dateDebut: ligne.dateDebut ? addYears(new Date(ligne.dateDebut), yearDiff) : null,
             dateFin: ligne.dateFin ? addYears(new Date(ligne.dateFin), yearDiff) : null,
-            montant: targetArticle.montant,
+            montant: targetArticle.montant * q1 * q2,
             photos: ligne.photos,
             _hasError: false
           });

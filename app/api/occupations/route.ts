@@ -65,7 +65,8 @@ export async function POST(req: Request) {
       latitude, 
       longitude, 
       description,
-      photos
+      photos,
+      isCourtMetrage
     } = body;
 
     if (!tiersId || !type) {
@@ -95,6 +96,10 @@ export async function POST(req: Request) {
         montantCalcule: 0
       }
     });
+
+    if (isCourtMetrage !== undefined) {
+      await (prisma as any).$executeRaw`UPDATE Occupation SET isCourtMetrage = ${!!isCourtMetrage} WHERE id = ${occupation.id}`;
+    }
 
     return NextResponse.json(occupation);
   } catch (error: any) {

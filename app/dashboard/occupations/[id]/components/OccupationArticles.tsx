@@ -31,7 +31,7 @@ export default function OccupationArticles({
         {!isFactured && (
           <button 
             onClick={onAddArticle}
-            className="flex items-center gap-3 bg-slate-950 hover:bg-slate-800 text-white px-8 py-4 rounded-[2rem] font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 group"
+            className="flex items-center gap-3 bg-slate-950 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 group"
           >
             <Plus size={18} className="group-hover:rotate-90 transition-transform" /> 
             Ajouter un article
@@ -41,19 +41,19 @@ export default function OccupationArticles({
 
       <div className="grid grid-cols-1 gap-6">
         {!occupation.lignes || occupation.lignes.length === 0 ? (
-          <div className="py-24 bg-slate-50/50 rounded-[3rem] border-2 border-dashed border-slate-200 text-center flex flex-col items-center justify-center">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-6 shadow-sm border border-slate-100">
+          <div className="py-24 bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-200 text-center flex flex-col items-center justify-center">
+            <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center mb-6 shadow-sm border border-slate-100">
               <Package size={28} className="text-slate-200" />
             </div>
             <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Aucun article enregistré pour le moment</p>
           </div>
         ) : (
           occupation.lignes.map((ligne) => (
-            <div key={ligne.id} className="bg-white p-8 md:p-10 rounded-[3rem] border border-slate-100 flex flex-col md:flex-row items-center justify-between group transition-all hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/5 relative overflow-hidden">
+            <div key={ligne.id} className="bg-white p-8 md:p-10 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-center justify-between group transition-all hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/5 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-2 h-full bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
               <div className="flex items-start gap-8 flex-1 w-full">
-                <div className="w-20 h-20 rounded-[2rem] bg-slate-50 flex flex-col items-center justify-center border border-slate-200 p-3 text-center group-hover:bg-white group-hover:border-blue-100 transition-all shrink-0">
+                <div className="w-20 h-20 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-slate-200 p-3 text-center group-hover:bg-white group-hover:border-blue-100 transition-all shrink-0">
                   <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Code</p>
                   <p className="font-black text-slate-950 text-xl leading-none">{ligne.article?.numero || '#'}</p>
                 </div>
@@ -105,7 +105,7 @@ export default function OccupationArticles({
                           const u1 = parts[0] || 'unités';
                           const u2 = parts[1] || 'unités';
                           
-                          if (occupation.type === 'CHANTIER') {
+                          if (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') {
                             return <span>{ligne.quantite1} {u1} x {ligne.quantite2} {u2} à {ligne.article?.montant}€</span>;
                           }
                           return <span>{ligne.quantite1} {u1} à {ligne.article?.montant}€</span>;
@@ -116,11 +116,18 @@ export default function OccupationArticles({
                   
                   {ligne.photos && (
                     <div className="flex flex-wrap gap-3 mt-2">
-                       {ligne.photos.split(',').filter(Boolean).map((url, i) => (
-                         <a key={i} href={url} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-2xl overflow-hidden border border-slate-100 hover:border-blue-400 transition-all shadow-sm hover:scale-105">
-                           <img src={url} alt="Attachment" className="w-full h-full object-cover" />
-                         </a>
-                       ))}
+                       {ligne.photos.split(',').filter(Boolean).map((url, i) => {
+                         const isPdf = url.toLowerCase().endsWith('.pdf');
+                         return (
+                           <a key={i} href={url} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-xl overflow-hidden border border-slate-100 hover:border-blue-400 transition-all shadow-sm hover:scale-105 bg-slate-50 flex items-center justify-center">
+                             {isPdf ? (
+                               <FileText size={20} className="text-rose-500" />
+                             ) : (
+                               <img src={url} alt="Attachment" className="w-full h-full object-cover" />
+                             )}
+                           </a>
+                         );
+                       })}
                     </div>
                   )}
                 </div>

@@ -48,7 +48,7 @@ export default function OccupationNotes({ occupationId, currentUser }: Props) {
   } = useNotesLogic(occupationId, currentUser);
 
   return (
-    <div className="bg-slate-50/50 rounded-[2.5rem] border border-slate-100 p-8 flex flex-col gap-8 min-h-[400px]">
+    <div className="bg-slate-50/50 rounded-2xl border border-slate-100 p-8 flex flex-col gap-8 min-h-[400px]">
       <div className="flex items-center justify-between pb-2 border-b border-slate-200/50">
         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
           <MessageSquare size={14} /> Fil de discussion
@@ -112,7 +112,7 @@ export default function OccupationNotes({ occupationId, currentUser }: Props) {
 
             return (
             <div key={note.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-               <div className={`max-w-[80%] rounded-3xl p-5 shadow-sm border ${
+               <div className={`max-w-[80%] rounded-2xl p-5 shadow-sm border ${
                  isMe ? 'rounded-tr-none' : 'rounded-tl-none'
                } ${bgColor} ${textColor}`}>
                   <div className="flex items-center justify-between gap-10 mb-2">
@@ -261,7 +261,7 @@ export default function OccupationNotes({ occupationId, currentUser }: Props) {
             <textarea
               rows={1}
               placeholder={isRecording ? "Écoute en cours..." : (isEmailMode ? "Rédigez votre email..." : "Écrivez une note interne...")}
-              className={`w-full bg-white border rounded-[2rem] py-5 pl-8 pr-12 outline-none focus:ring-4 focus:ring-blue-500/5 transition-all font-medium text-sm shadow-sm resize-none ${
+              className={`w-full bg-white border rounded-xl py-5 pl-8 pr-12 outline-none focus:ring-4 focus:ring-blue-500/5 transition-all font-medium text-sm shadow-sm resize-none ${
                 isRecording ? 'animate-pulse border-blue-400 ring-4 ring-blue-500/5' : 
                 isEmailMode ? 'border-blue-300 border-2' : 'border-slate-200'
               }`}
@@ -294,7 +294,7 @@ export default function OccupationNotes({ occupationId, currentUser }: Props) {
           <button 
             type="submit"
             disabled={submitting || (!newNote.trim() && !pj) || (isEmailMode && !selectedContactId)}
-            className={`w-14 h-14 disabled:opacity-20 text-white rounded-[1.5rem] flex items-center justify-center transition-all active:scale-95 shadow-lg ${
+            className={`w-14 h-14 disabled:opacity-20 text-white rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-lg ${
               isEmailMode ? 'bg-blue-600 shadow-blue-500/30' : 'bg-slate-900 shadow-black/10'
             }`}
           >

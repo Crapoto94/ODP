@@ -53,6 +53,7 @@ interface Occupation {
   montantCalcule: number;
   photos: string | null;
   created_at: string;
+  isCourtMetrage?: boolean;
   lignes?: any[];
   _count?: { notes: number };
 }
@@ -123,7 +124,8 @@ function OccupationsPageContent() {
     latitude: '',
     longitude: '',
     description: '',
-    statut: 'EN_ATTENTE'
+    statut: 'EN_ATTENTE',
+    isCourtMetrage: false
   });
 
   const isEditing = !!formData.id;
@@ -277,7 +279,8 @@ function OccupationsPageContent() {
       latitude: '', 
       longitude: '',
       description: occ.description || '',
-      statut: occ.statut
+      statut: occ.statut,
+      isCourtMetrage: !!occ.isCourtMetrage
     });
     setAddressQuery(occ.adresse);
     setUploadedPhotos(occ.photos ? occ.photos.split(',') : []);
@@ -297,7 +300,8 @@ function OccupationsPageContent() {
       latitude: '', 
       longitude: '', 
       description: '', 
-      statut: 'EN_ATTENTE'
+      statut: 'EN_ATTENTE',
+      isCourtMetrage: false
     });
     setAddressQuery('');
     setUploadedPhotos([]);
@@ -418,21 +422,21 @@ function OccupationsPageContent() {
         <div className="flex gap-4">
            <button 
              onClick={() => { fetchTiers(); fetchOccupations(); }}
-             className="p-3.5 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-blue-600 transition-all shadow-sm"
+             className="p-3.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 transition-all shadow-sm"
              title="Actualiser"
            >
              <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
            </button>
            <button 
              onClick={() => { resetForm(); setIsModalOpen(true); }}
-             className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95"
+             className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95"
            >
              <Plus size={18} />
              Nouveau Dossier
            </button>
            <button 
              onClick={() => setIsFilienModalOpen(true)}
-             className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95"
+             className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95"
            >
              <FileText size={18} />
              GENERER FILIEN
@@ -450,14 +454,14 @@ function OccupationsPageContent() {
           <button
             key={cat.type}
             onClick={() => setTypeFilter(typeFilter === cat.type ? 'ALL' : cat.type)}
-            className={`p-6 rounded-[2.5rem] border transition-all text-left group ${
+            className={`p-6 rounded-2xl border transition-all text-left group ${
               typeFilter === cat.type 
                 ? 'bg-white border-blue-500 shadow-xl shadow-blue-500/10' 
                 : 'bg-white border-slate-200 hover:border-blue-200 shadow-sm shadow-slate-200/50'
             }`}
           >
             <div className="flex items-center justify-between mb-4">
-              <div className={`p-3 rounded-2xl ${cat.bg} ${cat.color}`}>
+              <div className={`p-3 rounded-xl ${cat.bg} ${cat.color}`}>
                 <cat.icon size={20} />
               </div>
               {typeFilter === cat.type && <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Actif</span>}
@@ -690,6 +694,26 @@ function OccupationsPageContent() {
                                                   );
                                                 }
                                                 
+                                                if (occ.type === 'TOURNAGE') {
+                                                  const start = format(new Date(ligne.dateDebut), 'dd/MM/yy');
+                                                  const end = format(new Date(ligne.dateFin), 'dd/MM/yy');
+                                                  return (
+                                                    <span className="flex flex-col gap-0.5">
+                                                       <span>{ligne.quantite1} {u1} x {ligne.quantite2} {u2} à {ligne.article?.montant}€ soit </span>
+                                                       <span className="text-[9px] text-amber-600 normal-case italic">Du {start} au {end}</span>
+                                                    </span>
+                                                  );
+                                                }
+                                                
+                                                if (occ.type === 'COMMERCE' || occ.type === 'TLPE') {
+                                                  return (
+                                                    <span className="flex flex-col gap-0.5">
+                                                      <span>{ligne.quantite1} {u1} à {ligne.article?.montant}€ soit </span>
+                                                      <span className="text-[9px] text-emerald-600 font-bold uppercase tracking-widest">Année de taxation : {occ.anneeTaxation}</span>
+                                                    </span>
+                                                  );
+                                                }
+                                                
                                                 return `${ligne.quantite1} ${u1} à ${ligne.article?.montant}€/${u1} soit `;
                                               })()}
                                               <span className="text-blue-600 font-extrabold">{ligne.montant}€</span>
@@ -855,6 +879,22 @@ function OccupationsPageContent() {
                       ))}
                     </select>
                   </div>
+                  {formData.type === 'TOURNAGE' && (
+                    <div className="pt-2">
+                      <label className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl cursor-pointer hover:bg-amber-100 transition-all group">
+                        <input 
+                          type="checkbox" 
+                          className="w-5 h-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500 cursor-pointer" 
+                          checked={formData.isCourtMetrage} 
+                          onChange={e => setFormData({...formData, isCourtMetrage: e.target.checked})} 
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-xs font-black text-amber-900 uppercase tracking-tight">Court métrage <span className="lowercase font-bold tracking-normal">&lt; 59 minutes</span></span>
+                          <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest leading-none mt-0.5">Abattement de 50% (Hors pub)</span>
+                        </div>
+                      </label>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-6">
@@ -915,14 +955,26 @@ function OccupationsPageContent() {
                 <div className="md:col-span-2 space-y-4">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Photos / Justificatifs</label>
                   <div className="grid grid-cols-4 md:grid-cols-6 gap-4">
-                    {uploadedPhotos.map((url, i) => (
-                      <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-slate-200 group">
-                        <img src={url} alt="Uploaded" className="w-full h-full object-cover" />
-                        <button type="button" onClick={() => setUploadedPhotos(prev => prev.filter((_, idx) => idx !== i))} className="absolute inset-0 bg-rose-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white"><X size={20} /></button>
-                      </div>
-                    ))}
+                    {uploadedPhotos.map((url, i) => {
+                      const isPdf = url.toLowerCase().endsWith('.pdf');
+                      return (
+                        <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-slate-200 group bg-slate-50">
+                          {isPdf ? (
+                            <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center">
+                              <FileText size={24} className="text-rose-500 mb-1" />
+                              <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest">Document PDF</span>
+                            </div>
+                          ) : (
+                            <img src={url} alt="Uploaded" className="w-full h-full object-cover" />
+                          )}
+                          <button type="button" onClick={() => setUploadedPhotos(prev => prev.filter((_, idx) => idx !== i))} className="absolute inset-0 bg-rose-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white">
+                            <X size={20} />
+                          </button>
+                        </div>
+                      );
+                    })}
                     <label className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 hover:border-blue-400 transition-all text-slate-400">
-                      <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={uploading} />
+                      <input type="file" className="hidden" accept="image/*,application/pdf" onChange={handleFileUpload} disabled={uploading} />
                       {uploading ? <Loader2 className="animate-spin" size={20} /> : <Upload size={20} />}
                     </label>
                   </div>

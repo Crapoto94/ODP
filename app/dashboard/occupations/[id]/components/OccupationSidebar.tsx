@@ -41,19 +41,29 @@ export default function OccupationSidebar({
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          {photoList.map((url, i) => (
-            <a key={i} href={url} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-sm transition-all hover:scale-[1.02] hover:shadow-2xl">
-              <img src={url} alt={`Dossier PJ ${i+1}`} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center p-4 text-center">
-                <ExternalLink size={24} className="text-white mb-2" />
-                <span className="text-[9px] font-black text-white uppercase tracking-widest">Voir le document</span>
-              </div>
-            </a>
-          ))}
+          {photoList.map((url, i) => {
+            const isPdf = url.toLowerCase().endsWith('.pdf');
+            return (
+              <a key={i} href={url} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-2xl overflow-hidden border border-slate-200 shadow-sm transition-all hover:scale-[1.02] hover:shadow-2xl bg-slate-50">
+                {isPdf ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                    <FileText size={32} className="text-rose-500 mb-2" />
+                    <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">Document PDF</span>
+                  </div>
+                ) : (
+                  <img src={url} alt={`Dossier PJ ${i+1}`} className="w-full h-full object-cover" />
+                )}
+                <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center p-4 text-center">
+                  <ExternalLink size={24} className="text-white mb-2" />
+                  <span className="text-[9px] font-black text-white uppercase tracking-widest">Voir le document</span>
+                </div>
+              </a>
+            );
+          })}
 
           {occupation.facturePath && (
-            <a href={occupation.facturePath} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-[2.5rem] overflow-hidden border-2 border-blue-100 bg-blue-50/50 shadow-sm transition-all hover:scale-[1.02] hover:shadow-2xl flex flex-col items-center justify-center p-6 text-center">
-              <div className="w-16 h-16 rounded-3xl bg-white flex items-center justify-center shadow-lg border border-blue-100 mb-4 group-hover:scale-110 transition-transform">
+            <a href={occupation.facturePath} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-2xl overflow-hidden border-2 border-blue-100 bg-blue-50/50 shadow-sm transition-all hover:scale-[1.02] hover:shadow-2xl flex flex-col items-center justify-center p-6 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border border-blue-100 mb-4 group-hover:scale-110 transition-transform">
                 <FileText size={32} className="text-blue-600" />
               </div>
               <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest">Facture Officielle</p>
@@ -63,7 +73,7 @@ export default function OccupationSidebar({
           )}
 
           {docCount === 0 && (
-            <div className="col-span-2 py-12 bg-white rounded-[2.5rem] border border-dashed border-slate-200 text-center flex flex-col items-center">
+            <div className="col-span-2 py-12 bg-white rounded-2xl border border-dashed border-slate-200 text-center flex flex-col items-center">
               <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-4">
                 <FileArchive size={20} className="text-slate-300" />
               </div>
@@ -98,7 +108,7 @@ export default function OccupationSidebar({
               ...(occupation.contacts || []).map(c => ({ ...c, source: 'DOSSIER' })),
               ...(occupation.tiers?.contacts || []).map(c => ({ ...c, source: 'TIERS' }))
             ].map((contact: any) => (
-              <div key={`${contact.source}-${contact.id}`} className={`bg-white p-6 rounded-[2.5rem] border ${contact.source === 'TIERS' ? 'border-blue-100' : 'border-slate-100'} shadow-sm group hover:border-emerald-400 transition-all flex items-center justify-between hover:shadow-xl relative overflow-hidden`}>
+              <div key={`${contact.source}-${contact.id}`} className={`bg-white p-6 rounded-2xl border ${contact.source === 'TIERS' ? 'border-blue-100' : 'border-slate-100'} shadow-sm group hover:border-emerald-400 transition-all flex items-center justify-between hover:shadow-xl relative overflow-hidden`}>
                 {contact.source === 'TIERS' && (
                   <div className="absolute top-0 right-0 px-4 py-1.5 bg-blue-600 text-[8px] font-black text-white uppercase tracking-widest rounded-bl-2xl">
                     Hérité du Tiers
@@ -147,7 +157,7 @@ export default function OccupationSidebar({
               </div>
             ))
           ) : (
-            <div className="py-12 bg-slate-50/50 rounded-[2.5rem] border border-dashed border-slate-200 text-center flex flex-col items-center">
+            <div className="py-12 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 text-center flex flex-col items-center">
               <User size={24} className="text-slate-200 mb-4" />
               <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">Aucun contact référent</p>
             </div>
@@ -160,7 +170,7 @@ export default function OccupationSidebar({
         <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
            <FileArchive size={16} className="text-amber-500" /> Observations Techniques
         </h3>
-        <div className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden min-h-[160px]">
+        <div className="bg-white p-10 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden min-h-[160px]">
           <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-[4rem] flex items-center justify-center -mr-10 -mt-10 opacity-50">
              <Clock size={32} className="text-amber-200" />
           </div>

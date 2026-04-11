@@ -24,7 +24,13 @@ export async function updateOccupationTotal(occupationId: number) {
 
     // Pour les dossiers RODP classiques, le calcul reste simple (somme des lignes)
     if (occupation.type !== 'TLPE') {
-      const total = occupation.lignes.reduce((sum: number, l: any) => sum + (l.montant || 0), 0);
+      let total = occupation.lignes.reduce((sum: number, l: any) => sum + (l.montant || 0), 0);
+      
+      // Abattement Court Métrage 50%
+      if (occupation.type === 'TOURNAGE' && occupation.isCourtMetrage) {
+        total = total * 0.5;
+      }
+
       await (prisma as any).occupation.update({
         where: { id: occupationId },
         data: { montantCalcule: total }
@@ -96,9 +102,11 @@ export function calculateQ2(u2: string, start: Date | null, end: Date | null, st
   const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + 1;
 
   const unit = (u2 || '').toLowerCase();
+  
   if (unit.includes('an')) return 1;
   if (unit.includes('10 jour')) return Math.ceil(diffDays / 10);
-  if (unit.includes('mois')) return Math.ceil(diffDays / 31);
-  if (unit.includes('jour')) return diffDays;
+  if (unit.includes('mois')) return Math.ceil(diffDays / 30);
+  if (unit.includes('jour') || unit.includes('nuit')) return diffDays;
+  
   return 1;
 }

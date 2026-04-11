@@ -3,107 +3,70 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
-  Settings, 
-  Mail, 
-  Globe, 
-  Key, 
-  Save, 
-  Loader2, 
-  CheckCircle2,
-  AlertCircle,
-  Database,
-  LayoutGrid,
-  Users,
-  Plus,
-  Trash2,
-  Edit2,
-  MonitorSmartphone,
-  Smartphone,
-  FileText,
+  LayoutGrid, 
+  Users, 
+  FileText, 
+  Smartphone, 
+  Database, 
+  Loader2,
   Clock,
-  History
+  Zap
 } from 'lucide-react';
+
 import SQLEditor from '@/components/SQLEditor';
-import FilienTypeConfigs from '@/components/FilienTypeConfigs';
+import VersionHeader from './components/VersionHeader';
+import GeneralTab from './components/GeneralTab';
+import UsersTab from './components/UsersTab';
+import FilienTab from './components/FilienTab';
+import MobileLogsTab from './components/MobileLogsTab';
+import BacklogTab from './components/BacklogTab';
+import UserModal from './components/UserModal';
+
+type TabType = 'general' | 'users' | 'filien' | 'mobile_logs' | 'backlog' | 'sql';
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<'general' | 'sql' | 'users' | 'filien' | 'mobile_logs'>('general');
-  
-  // -- General Settings State --
-  const [settings, setSettings] = useState({
-    financeEmail: '',
-    appUrl: '',
-    apmUrl: '',
-    apmToken: '',
-    senderName: '',
-    senderEmail: '',
-    filienOrga: '01',
-    filienBudget: 'BA',
-    filienExercice: new Date().getFullYear(),
-    filienAvancement: '5',
-    filienRejetDispo: true,
-    filienRejetCA: false,
-    filienRejetMarche: false,
-    filienMouvement: '1',
-    filienType: 'R',
-    filienLibelle: '',
-    filienCalendrier: '01',
-    filienMonnaie: 'E',
-    filienMouvementEx: 'N',
-    filienPreBordereau: '1235',
-    filienPoste: '0001',
-    filienBordereau: '0001',
-    filienObjet: '',
-    filienChapitre: '',
-    filienNature: '',
-    filienFonction: '',
-    filienCodeInterne: '',
-    filienTypeMouvement: '',
-    filienSens: '',
-    filienStructure: '',
-    filienGestionnaire: '',
-    filienUncPj: ''
-  });
+  const [activeTab, setActiveTab] = useState<TabType>('general');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [apmStatus, setApmStatus] = useState<'pending' | 'online' | 'offline'>('pending');
-  
-  // -- Users State --
+
+  const [settings, setSettings] = useState<any>({});
   const [users, setUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
-  const [showUserModal, setShowUserModal] = useState(false);
-  const [editingUser, setEditingUser] = useState<any>(null);
-  const [userForm, setUserForm] = useState({ nom: '', prenom: '', email: '', login: '', password: '', role: 'AGENT_TERRAIN' });
-  
-  // -- Mobile Logs --
   const [mobileLogs, setMobileLogs] = useState<any[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
 
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [userForm, setUserForm] = useState({ nom: '', prenom: '', email: '', login: '', password: '', role: 'AGENT_TERRAIN' });
+
   useEffect(() => {
-    Promise.all([
-      axios.get('/api/settings'),
-      axios.get('/api/users').catch(() => ({ data: [] }))
-    ]).then(([settingsRes, usersRes]) => {
+    loadInitialData();
+  }, []);
+
+  const loadInitialData = async () => {
+    try {
+      setLoading(true);
+      const [settingsRes, usersRes] = await Promise.all([
+        axios.get('/api/settings'),
+        axios.get('/api/users').catch(() => ({ data: [] }))
+      ]);
       setSettings(settingsRes.data);
       setUsers(usersRes.data);
+    } catch (err) {
+       console.error('Failed to load initial data:', err);
+    } finally {
       setLoading(false);
-    }).catch(err => {
-      console.error('Failed to load initial data:', err);
-      setLoading(false);
-    });
-  }, []);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
       setLoadingUsers(true);
       const res = await axios.get('/api/users');
       setUsers(res.data);
-    } catch(err) {
-      console.error(err);
-    } finally {
-      setLoadingUsers(false);
-    }
+    } catch(err) { console.error(err); } finally { setLoadingUsers(false); }
   }
 
   const fetchMobileLogs = async () => {
@@ -111,44 +74,48 @@ export default function SettingsPage() {
       setLoadingLogs(true);
       const res = await axios.get('/api/logs');
       setMobileLogs(res.data);
-    } catch(err) {
-      console.error(err);
-    } finally {
-      setLoadingLogs(false);
-    }
+    } catch(err) { console.error(err); } finally { setLoadingLogs(false); }
   }
 
-  const handleSaveUser = async (e: React.FormEvent) => {
+  useEffect(() => {
+    if (settings.apmUrl) checkApm();
+  }, [settings.apmUrl]);
+
+  useEffect(() => {
+    if (activeTab === 'mobile_logs') fetchMobileLogs();
+  }, [activeTab]);
+
+  const checkApm = async () => {
+    setApmStatus('pending');
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      await fetch(settings.apmUrl, { method: 'HEAD', mode: 'no-cors', signal: controller.signal });
+      clearTimeout(timeoutId);
+      setApmStatus('online');
+    } catch (e) { setApmStatus('offline'); }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setMessage(null);
     try {
-      if (editingUser) {
-        await axios.patch(`/api/users/${editingUser.id}`, userForm);
-      } else {
-        await axios.post('/api/users', userForm);
-      }
-      setShowUserModal(false);
-      setEditingUser(null);
-      setUserForm({ nom: '', prenom: '', email: '', login: '', password: '', role: 'AGENT_TERRAIN' });
-      fetchUsers();
-    } catch (err: any) {
-      alert(err.response?.data?.error || "Erreur lors de la sauvegarde de l'utilisateur");
-    } finally {
-      setSaving(false);
-    }
+      await axios.patch('/api/settings', settings);
+      setMessage({ type: 'success', text: 'Paramètres enregistrés avec succès' });
+    } catch (err) { setMessage({ type: 'error', text: 'Erreur lors de l\'enregistrement' }); } finally { setSaving(false); }
   };
 
-  const handleDeleteUser = async (id: number) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) return;
+  const handleTestMail = async () => {
+    setSaving(true);
+    setMessage(null);
     try {
-      await axios.delete(`/api/users/${id}`);
-      fetchUsers();
-    } catch (err: any) {
-      alert(err.response?.data?.error || "Erreur lors de la suppression");
-    }
+      const res = await axios.post('/api/settings/test-mail');
+      setMessage({ type: 'success', text: `Mail de test envoyé avec succès à ${res.data.target}` });
+    } catch (err: any) { setMessage({ type: 'error', text: err.response?.data?.error || 'Erreur lors de l\'envoi du test' }); } finally { setSaving(false); }
   };
 
-  const openUserModal = (user: any = null) => {
+  const openUserModal = async (user: any = null) => {
     if (user) {
       setEditingUser(user);
       setUserForm({ nom: user.nom, prenom: user.prenom, email: user.email, login: user.login, password: '', role: user.role });
@@ -159,773 +126,97 @@ export default function SettingsPage() {
     setShowUserModal(true);
   };
 
-  useEffect(() => {
-    if (settings.apmUrl) {
-      checkApm();
-    }
-  }, [settings.apmUrl]);
-
-  useEffect(() => {
-    if (activeTab === 'mobile_logs') {
-      fetchMobileLogs();
-    }
-  }, [activeTab]);
-
-  const checkApm = async () => {
-    setApmStatus('pending');
-    try {
-      // Small timeout to avoid long waits
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      
-      await fetch(settings.apmUrl, { 
-        method: 'HEAD', 
-        mode: 'no-cors',
-        signal: controller.signal 
-      });
-      
-      clearTimeout(timeoutId);
-      setApmStatus('online');
-    } catch (e) {
-      setApmStatus('offline');
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSaveUser = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    setMessage(null);
     try {
-      await axios.patch('/api/settings', settings);
-      setMessage({ type: 'success', text: 'Paramètres enregistrés avec succès' });
-    } catch (err) {
-      setMessage({ type: 'error', text: 'Erreur lors de l\'enregistrement' });
-    } finally {
-      setSaving(false);
-    }
-  };
+      if (editingUser) await axios.patch(`/api/users/${editingUser.id}`, userForm);
+      else await axios.post('/api/users', userForm);
+      setShowUserModal(false);
+      fetchUsers();
+    } catch (error: any) { alert(error.response?.data?.error || "Erreur de sauvegarde"); } finally { setSaving(false); }
+  }
 
-  const handleTestMail = async () => {
-    setSaving(true);
-    setMessage(null);
+  const handleDeleteUser = async (id: number) => {
+    if (!confirm("Supprimer ce compte ?")) return;
     try {
-      const res = await axios.post('/api/settings/test-mail');
-      setMessage({ type: 'success', text: `Mail de test envoyé avec succès à ${res.data.target}` });
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.response?.data?.error || 'Erreur lors de l\'envoi du test' });
-    } finally {
-      setSaving(false);
-    }
-  };
+      await axios.delete(`/api/users/${id}`);
+      fetchUsers();
+    } catch (err) { alert("Erreur de suppression"); }
+  }
 
   if (loading) {
     return (
-      <div className="py-20 text-center flex flex-col items-center gap-4">
-        <Loader2 className="animate-spin text-blue-600" size={40} />
-        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Chargement des paramètres...</p>
+      <div className="py-20 text-center flex flex-col items-center gap-6 animate-pulse">
+        <Loader2 className="animate-spin text-blue-600" size={48} />
+        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Initialisation des paramètres...</p>
       </div>
     );
   }
 
+  const tabs = [
+    { id: 'general', label: 'Général', icon: LayoutGrid },
+    { id: 'users', label: 'Utilisateurs', icon: Users },
+    { id: 'filien', label: 'Filien', icon: FileText },
+    { id: 'backlog', label: 'Backlog', icon: Clock },
+    { id: 'mobile_logs', label: 'Logs Mobiles', icon: Smartphone },
+    { id: 'sql', label: 'Console SQL', icon: Database, accent: 'bg-indigo-600' },
+  ];
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <h2 className="text-4xl font-black text-slate-900 tracking-tight">Paramètres</h2>
-          <p className="text-slate-500 font-medium tracking-wide text-lg">Configuration globale et outils système</p>
-        </div>
-        <div className="flex items-center gap-3 bg-slate-100 p-1.5 rounded-[2rem] border border-slate-200">
-          <button 
-            onClick={() => setActiveTab('general')}
-            className={`flex items-center gap-3 px-8 py-3 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'general' ? 'bg-white text-indigo-600 shadow-md border border-slate-200 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
-          >
-            <LayoutGrid size={16} />
-            Général
-          </button>
-          <button 
-            onClick={() => setActiveTab('users')}
-            className={`flex items-center gap-3 px-8 py-3 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'users' ? 'bg-white text-indigo-600 shadow-md border border-slate-200 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
-          >
-            <Users size={16} />
-            Comptes Utilisateurs
-          </button>
-          <button 
-            onClick={() => setActiveTab('filien')}
-            className={`flex items-center gap-3 px-8 py-3 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'filien' ? 'bg-white text-indigo-600 shadow-md border border-slate-200 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
-          >
-            <FileText size={16} />
-            Filien
-          </button>
-          <button 
-            onClick={() => setActiveTab('mobile_logs')}
-            className={`flex items-center gap-3 px-8 py-3 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'mobile_logs' ? 'bg-white text-emerald-600 shadow-md border border-slate-200 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
-          >
-            <Smartphone size={16} />
-            Logs Mobiles
-          </button>
-          <button 
-            onClick={() => setActiveTab('sql')}
-            className={`flex items-center gap-3 px-8 py-3 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'sql' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 scale-105' : 'text-slate-400 hover:text-slate-600'}`}
-          >
-            <Database size={16} />
-            Console SQL
-          </button>
-        </div>
+    <div className="max-w-7xl mx-auto space-y-10 py-6 animate-in fade-in duration-700">
+      <VersionHeader />
+
+      <div className="flex flex-wrap items-center gap-2 bg-white/50 backdrop-blur-sm p-1.5 rounded-2xl border border-slate-100 shadow-sm w-fit">
+        {tabs.map(tab => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button 
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as TabType)}
+              className={`flex items-center gap-2.5 px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 ${
+                isActive 
+                  ? (tab.accent ? `${tab.accent} text-white shadow-lg` : 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 scale-105') 
+                  : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              <Icon size={14} />
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
-      <div className="pt-4">
-        {activeTab === 'general' ? (
-          <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
-            <div className="flex justify-end">
-              <button 
-                onClick={handleTestMail}
-                disabled={saving}
-                className="flex items-center gap-3 bg-white hover:bg-slate-50 text-slate-900 px-8 py-4 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200 border border-slate-100"
-              >
-                {saving ? <Loader2 size={18} className="animate-spin" /> : <Mail size={18} className="text-indigo-600" />}
-                Tester l'envoi de mail
-              </button>
-            </div>
-
-            <div className="bg-white rounded-[3rem] border border-slate-200 shadow-2xl shadow-slate-100 overflow-hidden max-w-3xl">
-              <form onSubmit={handleSubmit} className="p-12 space-y-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                  {/* Notifications & Finance */}
-                  <div className="space-y-8">
-                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                        <Mail size={12} />
-                      </div>
-                      Flux Financiers
-                    </h3>
-                    
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Email des Finances</label>
-                      <div className="relative group">
-                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={20} />
-                        <input 
-                          type="email" 
-                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 pl-14 pr-6 outline-none focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-lg"
-                          placeholder="finances@mairie.fr"
-                          value={settings.financeEmail || ''}
-                          onChange={e => setSettings({...settings, financeEmail: e.target.value})}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 pt-6 border-t border-slate-100">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">URL de l'application</label>
-                      <div className="relative group">
-                        <Globe className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={20} />
-                        <input 
-                          type="url" 
-                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 pl-14 pr-6 outline-none focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 transition-all font-bold text-lg"
-                          placeholder="http://localhost:3000"
-                          value={settings.appUrl || ''}
-                          onChange={e => setSettings({...settings, appUrl: e.target.value})}
-                        />
-                      </div>
-                      <p className="text-[10px] font-bold text-slate-400 ml-4">Utilisée pour les liens envoyés par mail (e.g. Finances).</p>
-                    </div>
-
-                    <div className="pt-8 border-t border-slate-100 space-y-6">
-                      <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-                         <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                          <Settings size={12} />
-                        </div>
-                        Identité Expéditeur
-                      </h3>
-                      <div className="space-y-3">
-                        <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Nom affiché</label>
-                        <input 
-                          type="text" 
-                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                          placeholder="ODP Console"
-                          value={settings.senderName || ''}
-                          onChange={e => setSettings({...settings, senderName: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-3">
-                        <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Email d'envoi</label>
-                        <input 
-                          type="email" 
-                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                          placeholder="dsihub@fbc.fr"
-                          value={settings.senderEmail || ''}
-                          onChange={e => setSettings({...settings, senderEmail: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* APM Config */}
-                  <div className="space-y-8">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-                           <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                            <Globe size={12} />
-                          </div>
-                          Proxy API (APM)
-                        </h3>
-                        <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 rounded-full border border-slate-100">
-                          <div className={`w-2 h-2 rounded-full ${
-                            apmStatus === 'online' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 
-                            apmStatus === 'offline' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]' : 
-                            'bg-slate-300 animate-pulse'
-                          }`} />
-                          <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">
-                            {apmStatus === 'online' ? 'Disponible' : apmStatus === 'offline' ? 'Indisponible' : 'Vérification...'}
-                          </span>
-                        </div>
-                      </div>
-                    
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">URL Endpoint</label>
-                      <div className="relative group">
-                        <Globe className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={20} />
-                        <input 
-                          type="url" 
-                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-xl py-5 pl-14 pr-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                          placeholder="http://localhost:8001/api/proxy"
-                          value={settings.apmUrl || ''}
-                          onChange={e => setSettings({...settings, apmUrl: e.target.value})}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Clé API (X-API-KEY)</label>
-                      <div className="relative group">
-                        <Key className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-600 transition-colors" size={20} />
-                        <input 
-                          type="password" 
-                          className="w-full bg-slate-50 border-2 border-slate-50 rounded-xl py-5 pl-14 pr-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                          placeholder="••••••••••••••••"
-                          value={settings.apmToken || ''}
-                          onChange={e => setSettings({...settings, apmToken: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                  </div>
+      <div className="relative">
+        {activeTab === 'general' && <GeneralTab {...{settings, setSettings, handleSubmit, handleTestMail, saving, message, apmStatus}} />}
+        {activeTab === 'users' && <UsersTab {...{users, loadingUsers, openUserModal, handleDeleteUser}} />}
+        {activeTab === 'filien' && <FilienTab {...{settings, setSettings, handleSubmit, saving, message}} />}
+        {activeTab === 'backlog' && <BacklogTab />}
+        {activeTab === 'mobile_logs' && <MobileLogsTab {...{mobileLogs, loadingLogs, fetchMobileLogs}} />}
+        {activeTab === 'sql' && (
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl overflow-hidden animate-in slide-in-from-top-4 duration-500">
+             <div className="p-8 bg-indigo-600 flex items-center gap-4 text-white">
+                <Database size={24} />
+                <div>
+                   <h3 className="text-xl font-black tracking-tight leading-none">Console SQL</h3>
+                   <p className="text-[10px] font-bold text-indigo-100 uppercase tracking-widest mt-1">Exécution directe sur la base de données</p>
                 </div>
-
-                {message && (
-                  <div className={`p-6 rounded-xl flex items-center gap-4 animate-in zoom-in-95 duration-300 ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700 shadow-inner' : 'bg-rose-50 text-rose-700 shadow-inner'}`}>
-                    {message.type === 'success' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
-                    <span className="font-black text-sm uppercase tracking-widest">{message.text}</span>
-                  </div>
-                )}
-
-                <button 
-                  type="submit" 
-                  disabled={saving}
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 rounded-xl font-black shadow-2xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4 uppercase tracking-[0.2em] text-xs"
-                >
-                  {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
-                  Enregistrer les paramètres
-                </button>
-              </form>
-            </div>
-          </div>
-        ) : activeTab === 'filien' ? (
-          <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
-            <div className="bg-white rounded-xl border border-slate-200 shadow-2xl shadow-slate-100 overflow-hidden max-w-3xl mx-auto">
-              <form onSubmit={handleSubmit} className="p-12 space-y-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                  <div className="space-y-8">
-                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                        <FileText size={12} />
-                      </div>
-                      Paramètres de base (/##/PARAM/)
-                    </h3>
-                    
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Code Organisme</label>
-                      <input 
-                        type="text" 
-                        maxLength={2}
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        placeholder="01"
-                        value={settings.filienOrga || ''}
-                        onChange={e => setSettings({...settings, filienOrga: e.target.value})}
-                      />
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Code Budget</label>
-                      <input 
-                        type="text" 
-                        maxLength={2}
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        placeholder="BA"
-                        value={settings.filienBudget || ''}
-                        onChange={e => setSettings({...settings, filienBudget: e.target.value})}
-                      />
-                    </div>
-
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Exercice</label>
-                      <input 
-                        type="number" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        placeholder="2024"
-                        value={settings.filienExercice || ''}
-                        onChange={e => setSettings({...settings, filienExercice: parseInt(e.target.value)})}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-8">
-                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                        <Settings size={12} />
-                      </div>
-                      Règles & Avancement
-                    </h3>
-
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Code Avancement</label>
-                      <select 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg appearance-none"
-                        value={settings.filienAvancement || '5'}
-                        onChange={e => setSettings({...settings, filienAvancement: e.target.value})}
-                      >
-                        <option value="1">1 - Prévision</option>
-                        <option value="2">2 - Pré-engagé</option>
-                        <option value="3">3 - Engagé</option>
-                        <option value="4">4 - Facturé</option>
-                        <option value="5">5 - Pré-mandaté</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-4 pt-4">
-                      <label className="flex items-center gap-4 cursor-pointer group">
-                        <input 
-                          type="checkbox" 
-                          className="w-6 h-6 rounded-lg border-2 border-slate-200 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer"
-                          checked={settings.filienRejetDispo || false}
-                          onChange={e => setSettings({...settings, filienRejetDispo: e.target.checked})}
-                        />
-                        <span className="text-sm font-bold text-slate-600 group-hover:text-indigo-600 transition-colors uppercase tracking-wider">Rejet si dépassement disponible</span>
-                      </label>
-                      <label className="flex items-center gap-4 cursor-pointer group">
-                        <input 
-                          type="checkbox" 
-                          className="w-6 h-6 rounded-lg border-2 border-slate-200 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer"
-                          checked={settings.filienRejetCA || false}
-                          onChange={e => setSettings({...settings, filienRejetCA: e.target.checked})}
-                        />
-                        <span className="text-sm font-bold text-slate-600 group-hover:text-indigo-600 transition-colors uppercase tracking-wider">Rejet si dépassement C.A. maxi</span>
-                      </label>
-                      <label className="flex items-center gap-4 cursor-pointer group">
-                        <input 
-                          type="checkbox" 
-                          className="w-6 h-6 rounded-lg border-2 border-slate-200 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer"
-                          checked={settings.filienRejetMarche || false}
-                          onChange={e => setSettings({...settings, filienRejetMarche: e.target.checked})}
-                        />
-                        <span className="text-sm font-bold text-slate-600 group-hover:text-indigo-600 transition-colors uppercase tracking-wider">Rejet si dépassement marché</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-12 border-t border-slate-100 space-y-8">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-                    <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                      <LayoutGrid size={12} />
-                    </div>
-                    Valeurs par défaut des mouvements
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">N° de 1er mouvement (/01/)</label>
-                      <input 
-                        type="text" 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        placeholder="1"
-                        value={settings.filienMouvement || ''}
-                        onChange={e => setSettings({...settings, filienMouvement: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Type de mouvement (/02/)</label>
-                      <select 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg appearance-none"
-                        value={settings.filienType || 'R'}
-                        onChange={e => setSettings({...settings, filienType: e.target.value})}
-                      >
-                        <option value="R">Recette (R)</option>
-                        <option value="D">Dépense (D)</option>
-                      </select>
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Code monnaie (/06/)</label>
-                      <select 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg appearance-none"
-                        value={settings.filienMonnaie || 'E'}
-                        onChange={e => setSettings({...settings, filienMonnaie: e.target.value})}
-                      >
-                        <option value="E">Euros (E)</option>
-                        <option value="F">Francs (F)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Libellé par défaut (/04/)</label>
-                      <input 
-                        type="text" 
-                        maxLength={40}
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        placeholder="Libellé du mouvement"
-                        value={settings.filienLibelle || ''}
-                        onChange={e => setSettings({...settings, filienLibelle: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Code calendrier (/05/)</label>
-                      <input 
-                        type="text" 
-                        maxLength={2}
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        placeholder="01"
-                        value={settings.filienCalendrier || ''}
-                        onChange={e => setSettings({...settings, filienCalendrier: e.target.value})}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Mouvement existant (/10/)</label>
-                      <select 
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg appearance-none"
-                        value={settings.filienMouvementEx || 'N'}
-                        onChange={e => setSettings({...settings, filienMouvementEx: e.target.value})}
-                      >
-                        <option value="N">Nouveau mouvement (N)</option>
-                        <option value="O">Mouvement existant (O)</option>
-                      </select>
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">N° de pré-bordereau (/11/)</label>
-                      <input 
-                        type="text" 
-                        maxLength={10}
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        placeholder="1235"
-                        value={settings.filienPreBordereau || ''}
-                        onChange={e => setSettings({...settings, filienPreBordereau: e.target.value})}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Titre Créé ou Réduit (/12/)</label>
-                      <input 
-                        type="text" 
-                        maxLength={10}
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        placeholder="0001"
-                        value={settings.filienPoste || ''}
-                        onChange={e => setSettings({...settings, filienPoste: e.target.value})}
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">N° de titre (/13/)</label>
-                      <input 
-                        type="text" 
-                        maxLength={10}
-                        className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                        placeholder="0001"
-                        value={settings.filienBordereau || ''}
-                        onChange={e => setSettings({...settings, filienBordereau: e.target.value})}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Objet (/20/)</label>
-                    <input 
-                      type="text" 
-                      maxLength={40}
-                      className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                      placeholder="Objet du mouvement"
-                      value={settings.filienObjet || ''}
-                      onChange={e => setSettings({...settings, filienObjet: e.target.value})}
-                    />
-                  </div>
-
-                  <div className="space-y-3 pt-6 border-t border-slate-100">
-                    <label className="text-xs font-black text-slate-700 ml-1 uppercase tracking-wider">Dossier des PJ (UNC)</label>
-                    <input 
-                      type="text" 
-                      className="w-full bg-slate-50 border-2 border-slate-50 rounded-[1.5rem] py-5 px-6 outline-none focus:border-indigo-500 focus:bg-white transition-all font-bold text-lg"
-                      placeholder="\\server\share\folder"
-                      value={settings.filienUncPj || ''}
-                      onChange={e => setSettings({...settings, filienUncPj: e.target.value})}
-                    />
-                    <p className="text-[10px] font-bold text-slate-400 ml-4">Chemin réseau pour l'export des factures PDF.</p>
-                  </div>
-                </div>
-
-                <div className="pt-8 border-t border-slate-100 space-y-8">
-                  <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Configurations par Type de Dossier</h4>
-                  </div>
-                  <FilienTypeConfigs />
-                </div>
-
-                {message && (
-                  <div className={`p-6 rounded-[1.5rem] flex items-center gap-4 animate-in zoom-in-95 duration-300 ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700 shadow-inner' : 'bg-rose-50 text-rose-700 shadow-inner'}`}>
-                    {message.type === 'success' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
-                    <span className="font-black text-sm uppercase tracking-widest">{message.text}</span>
-                  </div>
-                )}
-
-                <button 
-                  type="submit" 
-                  disabled={saving}
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 rounded-[2rem] font-black shadow-2xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-4 uppercase tracking-[0.2em] text-xs"
-                >
-                  {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} />}
-                  Enregistrer les paramètres Filien
-                </button>
-              </form>
-            </div>
-          </div>
-        ) : activeTab === 'mobile_logs' ? (
-          <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
-            <div className="flex justify-between items-center bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
-              <div>
-                <h3 className="text-xl font-black text-slate-900 tracking-tight">Activité Mobile</h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Derniers accès et synchronisations terrain</p>
-              </div>
-              <button 
-                onClick={fetchMobileLogs}
-                disabled={loadingLogs}
-                className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all disabled:opacity-50"
-              >
-                {loadingLogs ? <Loader2 size={16} className="animate-spin" /> : <History size={16} />} Actualiser
-              </button>
-            </div>
-
-            <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden min-h-[400px]">
-              {loadingLogs && mobileLogs.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[400px] gap-4">
-                  <Loader2 className="animate-spin text-indigo-600" size={32} />
-                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Chargement des logs...</p>
-                </div>
-              ) : mobileLogs.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[400px] gap-4 opacity-40">
-                  <History size={48} className="text-slate-300" />
-                  <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Aucun log trouvé</p>
-                </div>
-              ) : (
-                <table className="w-full text-left">
-                  <thead className="bg-slate-50 border-b border-slate-100">
-                    <tr>
-                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center w-24">Date</th>
-                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Utilisateur</th>
-                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
-                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Device / Info</th>
-                      <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">IP</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-50">
-                    {mobileLogs.map((log: any) => {
-                       let deviceInfo: any = {};
-                       try { deviceInfo = typeof log.deviceInfo === 'string' ? JSON.parse(log.deviceInfo) : log.deviceInfo; } catch(e) {}
-                       
-                       return (
-                        <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-8 py-4">
-                            <div className="text-center">
-                              <p className="font-black text-slate-900 text-sm">{new Date(log.created_at).toLocaleDateString()}</p>
-                              <p className="text-[10px] font-bold text-slate-400 tabular-nums uppercase tracking-widest">{new Date(log.created_at).toLocaleTimeString()}</p>
-                            </div>
-                          </td>
-                          <td className="px-8 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-[10px]">
-                                {log.userPrenom?.[0] || '?'}{log.userNom?.[0] || '?'}
-                              </div>
-                              <div>
-                                <p className="font-bold text-slate-900 text-sm whitespace-nowrap">{log.userPrenom} {log.userNom}</p>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">ID: {log.userId || 'System'}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-8 py-4">
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                              log.action === 'LOGIN' ? 'bg-emerald-100 text-emerald-700' : 
-                              log.action === 'ACCESS' ? 'bg-blue-100 text-blue-700' :
-                              'bg-slate-100 text-slate-600'
-                            }`}>
-                              {log.action}
-                            </span>
-                          </td>
-                          <td className="px-8 py-4 max-w-[300px]">
-                            <div className="space-y-1">
-                              <p className="text-xs font-bold text-slate-700 truncate" title={log.userAgent}>
-                                {deviceInfo.platform || 'Inconnu'} · {deviceInfo.vendor || 'OS'} 
-                              </p>
-                              <div className="flex gap-2 flex-wrap">
-                                <span className="text-[9px] font-black bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded uppercase tracking-tighter text-slate-400">
-                                  {deviceInfo.screenWidth}x{deviceInfo.screenHeight}
-                                </span>
-                                {deviceInfo.connection && (
-                                  <span className="text-[9px] font-black bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded uppercase tracking-tighter text-slate-400 italic">
-                                    {deviceInfo.connection}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-8 py-4">
-                            <p className="text-xs font-black text-slate-400 tabular-nums">{log.ip || '0.0.0.0'}</p>
-                          </td>
-                        </tr>
-                       );
-                    })}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
-        ) : activeTab === 'users' ? (
-          <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
-            <div className="flex justify-between items-center bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
-              <div>
-                <h3 className="text-xl font-black text-slate-900 tracking-tight">Gestion des accès</h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">({users.length} comptes actifs)</p>
-              </div>
-              <button 
-                onClick={() => openUserModal()}
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 active:scale-95 transition-all"
-              >
-                <Plus size={16} /> Ajouter un utilisateur
-              </button>
-            </div>
-
-            <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
-              <table className="w-full text-left">
-                <thead className="bg-slate-50 border-b border-slate-100">
-                  <tr>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Utilisateur</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact / Login</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Rôle</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {users.map(u => (
-                    <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-8 py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-black">
-                            {u.prenom[0]}{u.nom[0]}
-                          </div>
-                          <div>
-                            <p className="font-black text-slate-900">{u.prenom} {u.nom}</p>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID: {u.id}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-8 py-4">
-                        <p className="font-bold text-slate-600 text-sm">{u.email}</p>
-                        <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">Login: {u.login}</p>
-                      </td>
-                      <td className="px-8 py-4">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                          u.role === 'ADMIN' ? 'bg-rose-100 text-rose-700' : 
-                          u.role === 'AGENT_COMPTABLE' ? 'bg-amber-100 text-amber-700' :
-                          'bg-slate-100 text-slate-600'
-                        }`}>
-                          {u.role.replace('AGENT_', '')}
-                        </span>
-                      </td>
-                      <td className="px-8 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button onClick={() => openUserModal(u)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors">
-                            <Edit2 size={16} />
-                          </button>
-                          <button onClick={() => handleDeleteUser(u.id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Modal */}
-            {showUserModal && (
-              <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                  <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 className="font-black text-slate-900 text-lg">{editingUser ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}</h3>
-                    <button onClick={() => setShowUserModal(false)} className="text-slate-400 hover:text-slate-600"><AlertCircle size={20}/></button>
-                  </div>
-                  <form onSubmit={handleSaveUser} className="p-8 space-y-6">
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block">Prénom</label>
-                         <input required type="text" value={userForm.prenom} onChange={e => setUserForm({...userForm, prenom: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:border-indigo-500 outline-none font-bold text-sm" />
-                      </div>
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block">Nom</label>
-                         <input required type="text" value={userForm.nom} onChange={e => setUserForm({...userForm, nom: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:border-indigo-500 outline-none font-bold text-sm" />
-                      </div>
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block">Email</label>
-                         <input required type="email" value={userForm.email} onChange={e => setUserForm({...userForm, email: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:border-indigo-500 outline-none font-bold text-sm" />
-                      </div>
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block">Login</label>
-                         <input required type="text" value={userForm.login} onChange={e => setUserForm({...userForm, login: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:border-indigo-500 outline-none font-bold text-sm" />
-                      </div>
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block">Mot de passe {editingUser && '(laisser vide pour ne pas changer)'}</label>
-                         <input required={!editingUser} type="password" value={userForm.password} onChange={e => setUserForm({...userForm, password: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:border-indigo-500 outline-none font-bold text-sm" />
-                      </div>
-                      <div className="space-y-2">
-                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2 block">Rôle</label>
-                         <select value={userForm.role} onChange={e => setUserForm({...userForm, role: e.target.value})} className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:border-indigo-500 outline-none font-bold text-sm">
-                           <option value="AGENT_TERRAIN">Agent Terrain</option>
-                           <option value="AGENT_BUREAU">Agent Bureau</option>
-                           <option value="AGENT_COMPTABLE">Agent Comptable</option>
-                           <option value="ADMIN">Administrateur</option>
-                         </select>
-                      </div>
-                    </div>
-                    <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">
-                      <button type="button" onClick={() => setShowUserModal(false)} className="px-6 py-3 text-slate-400 font-bold text-xs uppercase hover:text-slate-600 transition-colors">Annuler</button>
-                      <button type="submit" disabled={saving} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 active:scale-95 transition-all disabled:opacity-50">
-                        {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                        {editingUser ? 'Mettre à jour' : 'Créer le compte'}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-
-          </div>
-        ) : (
-          <div className="animate-in slide-in-from-right-4 duration-500">
-            <SQLEditor />
+             </div>
+             <SQLEditor />
           </div>
         )}
       </div>
+
+      <UserModal 
+        show={showUserModal} 
+        onClose={() => setShowUserModal(false)}
+        editingUser={editingUser}
+        userForm={userForm}
+        setUserForm={setUserForm}
+        handleSaveUser={handleSaveUser}
+        saving={saving}
+      />
     </div>
   );
 }

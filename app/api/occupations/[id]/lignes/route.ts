@@ -32,12 +32,13 @@ export async function POST(
       u2Label = parts.find((p: string) => temporalUnits.some(tu => p.toLowerCase().includes(tu))) || parts[1];
     }
 
-    const isDayUnit = u2Label?.toLowerCase().includes('jour');
+    const u2 = u2Label?.toLowerCase() || '';
+    const isAutoUnit = u2.includes('jour') || u2.includes('nuit') || u2.includes('mois');
     const q1 = parseFloat(quantite1 || '0');
     let q2 = parseFloat(quantite2 || '0');
     
-    // Auto-calculate for day units OR if missing
-    if (!q2 || isDayUnit) {
+    // Auto-calculate for auto units OR if missing
+    if (!q2 || isAutoUnit) {
        q2 = calculateQ2(u2Label, 
           dateDebut ? new Date(dateDebut) : null, 
           dateFin ? new Date(dateFin) : null,

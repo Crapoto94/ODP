@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { X, Check, Save, Loader2, Calendar, Hash, Info, Euro, Clock, Search } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Check, Save, Loader2, Calendar, Hash, Info, Euro, Clock, Search, FileText } from 'lucide-react';
 import axios from 'axios';
 
 interface Article {
@@ -38,18 +38,55 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
     dateDebutConstatee: '',
     dateFinConstatee: ''
   });
+  const [manualQ2, setManualQ2] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
   const [filterText, setFilterText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [manualQ2, setManualQ2] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const justOpened = useRef(true);
 
-  const fetchArticles = async (yearToFetch: number = currentYear) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await axios.post('/api/upload', formData);
+      if (res.data?.url) {
+        setPhotos(prev => [...prev, res.data.url]);
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Erreur lors de l\'envoi du fichier');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const fetchArticles = async (yearToFetch: number = currentYear, tryFallback: boolean = true) => {
     setLoading(true);
     try {
       const res = await axios.get(`/api/articles?annee=${yearToFetch}`);
-      setArticles(res.data);
+      if (res.data && res.data.length > 0) {
+        setArticles(res.data);
+        setCurrentYear(yearToFetch);
+        return res.data.length;
+      } else if (tryFallback && yearToFetch === new Date().getFullYear() + 1) {
+        // Fallback simple : si on cherche 2026 et que c'est vide, on tente 2025
+        return await fetchArticles(yearToFetch - 1, false);
+      } else if (tryFallback && yearToFetch > 2020) {
+        // Si vraiment vide, on tente l'année d'avant quoi qu'il arrive
+        return await fetchArticles(yearToFetch - 1, false);
+      }
+      setArticles([]);
       setCurrentYear(yearToFetch);
+      return 0;
     } catch (e) {
       console.error(e);
+      return 0;
     } finally {
       setLoading(false);
     }
@@ -61,6 +98,8 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
       setCurrentYear(initialYear);
       fetchArticles(initialYear);
       setManualQ2(null);
+      setShowAll(false);
+      justOpened.current = true;
 
       if (initialData) {
         setFormData({
@@ -113,20 +152,25 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
     const diffMs = e.getTime() - s.getTime();
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + 1;
 
-    const unit = u2.toLowerCase();
+    const unit = (u2 || '').toLowerCase();
+    
     if (unit.includes('an')) return 1;
     if (unit.includes('10 jour')) return Math.ceil(diffDays / 10);
-    if (unit.includes('mois')) return Math.ceil(diffDays / 31);
-    if (unit.includes('jour')) return diffDays;
+    if (unit.includes('mois')) return Math.ceil(diffDays / 30);
+    if (unit.includes('jour') || unit.includes('nuit')) return diffDays;
+    
     return 1;
   };
 
-  const selectedArticle = articles.find(a => a.id.toString() === formData.articleId);
+  const selectedArticleFromList = articles.find(a => a.id.toString() === formData.articleId);
+  const selectedArticle = selectedArticleFromList || (initialData?.articleId?.toString() === formData.articleId ? initialData.article : null);
   const labels = parseMode(selectedArticle?.modeTaxation?.nom);
 
   useEffect(() => {
-    const isDayUnit = labels.u2?.toLowerCase().includes('jour');
-    if ((occupationType === 'CHANTIER' || isDayUnit) && !manualQ2 && labels.u2) {
+    const u2 = labels.u2?.toLowerCase() || '';
+    const isAutoUnit = u2.includes('jour') || u2.includes('nuit') || u2.includes('mois');
+    
+    if ((occupationType === 'CHANTIER' || isAutoUnit) && !manualQ2 && labels.u2) {
       const calculated = calculateQ2(labels.u2, formData.dateDebut, formData.dateFin, formData.dateDebutConstatee, formData.dateFinConstatee);
       setFormData(prev => ({ ...prev, quantite2: calculated.toString() }));
     }
@@ -136,9 +180,15 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
     if (!formData.dateDebut) return;
     const year = new Date(formData.dateDebut).getFullYear();
     if (year && year !== currentYear) {
+      if (justOpened.current) {
+        justOpened.current = false;
+        return;
+      }
       fetchArticles(year);
       setFormData(prev => ({ ...prev, articleId: '' }));
       setFilterText('');
+    } else if (year) {
+      justOpened.current = false;
     }
   }, [formData.dateDebut, currentYear]);
 
@@ -175,7 +225,7 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={onClose}></div>
-      <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col">
+      <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col">
         <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
           <div>
             <h3 className="text-xl font-black text-slate-900 tracking-tight">
@@ -197,7 +247,7 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
                 <input 
                   type="text"
                   placeholder="Filtrer les articles..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 pl-12 pr-16 outline-none focus:border-blue-500 transition-all font-bold text-sm"
                   value={filterText}
                   onChange={e => {
                     setFilterText(e.target.value);
@@ -206,19 +256,44 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setTimeout(() => setIsFocused(false), 200)}
                 />
+                <button 
+                  type="button"
+                  onClick={() => setShowAll(!showAll)}
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 text-[8px] font-black uppercase tracking-widest px-2 py-1.5 rounded-lg transition-all ${
+                    showAll ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' : 'bg-slate-200 text-slate-500 hover:bg-slate-300'
+                  }`}
+                >
+                  {showAll ? 'Filtre OFF' : 'Voir tout'}
+                </button>
               </div>
 
               {(isFocused && !formData.articleId) && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl z-[120] max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
                   {articles
                     .filter(a => {
+                      if (showAll) return true; // By-pass total
+
                       if (occupationType === 'COMMERCE') return a.numero?.startsWith('1');
                       if (occupationType === 'CHANTIER') return a.numero?.startsWith('2') || a.numero?.startsWith('4') || a.numero?.startsWith('3');
                       if (occupationType === 'TOURNAGE') {
+                        // Toujours montrer l'article déjà sélectionné
+                        if (a.id.toString() === formData.articleId) return true;
+                        
                         const c = (a as any).categorie;
-                        return c?.nom?.toUpperCase().includes('TOURNAGE') || 
-                               c?.parent?.nom?.toUpperCase().includes('TOURNAGE') ||
-                               c?.parent?.parent?.nom?.toUpperCase().includes('TOURNAGE');
+                        const keywords = ['TOURNAGE', 'COURT METRAGE', 'COURT MÉTRAGE', 'FILM', 'FILMS', 'EVENEMENT', 'MANIFESTATION'];
+                        const isTournage = (n?: string) => keywords.some(k => n?.toUpperCase().includes(k));
+                        
+                        const match = isTournage(c?.nom) || isTournage(c?.parent?.nom) || isTournage(c?.parent?.parent?.nom);
+                        
+                        // Si après application du filtre spécifique TOURNAGE la liste serait vide, 
+                        // on ignore le filtre de type pour laisser l'utilisateur choisir dans tout le catalogue de l'année
+                        const hasTournageArticles = articles.some(art => {
+                           const cat = (art as any).categorie;
+                           return isTournage(cat?.nom) || isTournage(cat?.parent?.nom) || isTournage(cat?.parent?.parent?.nom);
+                        });
+                        
+                        if (!hasTournageArticles) return true;
+                        return match;
                       }
                       return true;
                     })
@@ -353,6 +428,34 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
               </div>
             </div>
           )}
+          
+          <div className="space-y-4 pt-4">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Photos / Justificatifs</label>
+            <div className="grid grid-cols-4 gap-4">
+              {photos.map((url, i) => {
+                const isPdf = url.toLowerCase().endsWith('.pdf');
+                return (
+                  <div key={i} className="relative aspect-square rounded-2xl overflow-hidden border border-slate-200 group bg-slate-50">
+                    {isPdf ? (
+                      <div className="w-full h-full flex flex-col items-center justify-center p-2 text-center">
+                        <FileText size={20} className="text-rose-500 mb-1" />
+                        <span className="text-[7px] font-black text-rose-500 uppercase tracking-widest">PDF</span>
+                      </div>
+                    ) : (
+                      <img src={url} alt="Attachment" className="w-full h-full object-cover" />
+                    )}
+                    <button type="button" onClick={() => setPhotos(prev => prev.filter((_, idx) => idx !== i))} className="absolute inset-0 bg-rose-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white">
+                      <X size={20} />
+                    </button>
+                  </div>
+                );
+              })}
+              <label className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 hover:border-blue-400 transition-all text-slate-400">
+                <input type="file" className="hidden" accept="image/*,application/pdf" onChange={handleFileUpload} disabled={uploading} />
+                {uploading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
+              </label>
+            </div>
+          </div>
 
           <div className="pt-4 flex gap-3">
             <button type="button" onClick={onClose} className="flex-1 py-4 font-black text-slate-400 hover:bg-slate-50 rounded-2xl transition-all uppercase tracking-widest text-[10px]">

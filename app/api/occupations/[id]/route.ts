@@ -73,7 +73,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       description,
       photos,
       numeroFacture,
-      facturePath
+      facturePath,
+      isCourtMetrage
     } = body;
 
     const updateData: any = { 
@@ -97,6 +98,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       where: { id },
       data: updateData
     });
+
+    if (isCourtMetrage !== undefined) {
+      await (prisma as any).$executeRaw`UPDATE Occupation SET isCourtMetrage = ${!!isCourtMetrage} WHERE id = ${id}`;
+    }
 
     // Recalculer le montant net total (exonération globale, etc.)
     await updateOccupationTotal(id);

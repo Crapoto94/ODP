@@ -37,6 +37,7 @@ export default function Sidebar() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [version, setVersion] = useState("0.1.0");
   
   useEffect(() => {
     // Load initial state
@@ -44,6 +45,11 @@ export default function Sidebar() {
     if (saved === 'true') setIsCollapsed(true);
     
     axios.get('/api/auth/me').then(res => setUser(res.data)).catch(() => {});
+    
+    // Fetch latest version
+    axios.get('/api/releases').then(res => {
+      if (res.data.length > 0) setVersion(res.data[0].versionNumber);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -93,8 +99,12 @@ export default function Sidebar() {
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
 
-          if (item.label === 'Paramètres' && user?.role !== 'ADMIN') return null;
-          if (item.label === 'Facturation' && user?.role !== 'ADMIN' && user?.role !== 'AGENT_COMPTABLE') return null;
+          // Access controls - more robust with href checks
+          if (item.href === '/dashboard/settings' && user?.role && user.role !== 'ADMIN') return null;
+          if (item.href === '/dashboard/facturation' && user?.role && (user.role !== 'ADMIN' && user.role !== 'AGENT_COMPTABLE')) return null;
+
+          // Hide until user is loaded for sensitive menus to avoid flicker, or show if user is likely admin
+          if (item.href === '/dashboard/settings' && !user) return null;
 
           return (
             <Link 
@@ -141,6 +151,14 @@ export default function Sidebar() {
           <LogOut size={18} className="group-hover:translate-x-1 transition-transform" />
           {!isCollapsed && <span>Déconnexion</span>}
         </button>
+
+        <div 
+          onClick={() => window.dispatchEvent(new CustomEvent('open-whatsnew'))}
+          className={`flex items-center gap-2 ${isCollapsed ? 'justify-center cursor-pointer' : 'px-4 justify-between cursor-pointer'} opacity-30 hover:opacity-100 transition-opacity group/version`}
+        >
+          {!isCollapsed && <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em] group-hover/version:text-slate-400">Application</span>}
+          <span className="text-[9px] font-black text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-lg border border-blue-500/20 group-hover/version:bg-blue-600 group-hover/version:text-white transition-all">v{version}</span>
+        </div>
       </div>
     </aside>
   );

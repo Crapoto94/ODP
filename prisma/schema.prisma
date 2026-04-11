@@ -46,6 +46,7 @@ model Occupation {
   updated_at     DateTime          @updatedAt
   numeroFacture  String?
   dossierParentId Int?
+  isCourtMetrage Boolean           @default(false)
   contacts       Contact[]
   dispositifs    Dispositif[]
   lignes         LigneOccupation[]
@@ -259,4 +260,36 @@ model TypeDossierConfig {
   filienGestionnaire  String?  @default("")
   invoiceTemplateId   String?
   updated_at          DateTime @updatedAt
+}
+
+model BacklogItem {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  type        String   @default("FEATURE") // BUG, FEATURE, IMPROVEMENT
+  priority    String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  status      String   @default("OPEN")   // OPEN, DONE, REJECTED
+  versionId   Int?     // Link to the version where it was released
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  version     VersionRelease? @relation(fields: [versionId], references: [id])
+  comments    BacklogComment[]
+}
+
+model BacklogComment {
+  id            Int         @id @default(autoincrement())
+  backlogItemId Int
+  content       String
+  author        String?
+  created_at    DateTime    @default(now())
+  backlogItem   BacklogItem @relation(fields: [backlogItemId], references: [id], onDelete: Cascade)
+}
+
+model VersionRelease {
+  id             Int           @id @default(autoincrement())
+  versionNumber  String        @unique
+  notes          String?
+  releasedAt     DateTime      @default(now())
+  created_at     DateTime      @default(now())
+  backlogItems   BacklogItem[]
 }

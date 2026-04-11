@@ -1,0 +1,114 @@
+"use client";
+import React from 'react';
+import { 
+  Smartphone, 
+  History, 
+  Loader2 
+} from 'lucide-react';
+
+interface Props {
+  mobileLogs: any[];
+  loadingLogs: boolean;
+  fetchMobileLogs: () => void;
+}
+
+export default function MobileLogsTab({ mobileLogs, loadingLogs, fetchMobileLogs }: Props) {
+  return (
+    <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
+      <div className="flex justify-between items-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div>
+          <h3 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+             <Smartphone className="text-emerald-600" size={24} />
+             Activité Mobile
+          </h3>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Derniers accès et synchronisations terrain</p>
+        </div>
+        <button 
+          onClick={fetchMobileLogs}
+          disabled={loadingLogs}
+          className="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest active:scale-95 transition-all disabled:opacity-50 border border-slate-100"
+        >
+          {loadingLogs ? <Loader2 size={16} className="animate-spin" /> : <History size={16} />} Actualiser
+        </button>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden min-h-[400px]">
+        {loadingLogs && mobileLogs.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-[400px] gap-4">
+            <Loader2 className="animate-spin text-emerald-600" size={32} />
+            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Chargement des logs...</p>
+          </div>
+        ) : mobileLogs.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-[400px] gap-4 opacity-40">
+            <History size={48} className="text-slate-300" />
+            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Aucun log trouvé</p>
+          </div>
+        ) : (
+          <table className="w-full text-left">
+            <thead className="bg-slate-50 border-b border-slate-100">
+              <tr>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center w-24">Date</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Utilisateur</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Device / Info</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">IP</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {mobileLogs.map((log: any) => {
+                 let deviceInfo: any = {};
+                 try { deviceInfo = typeof log.deviceInfo === 'string' ? JSON.parse(log.deviceInfo) : log.deviceInfo; } catch(e) {}
+                 
+                 return (
+                  <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-8 py-5">
+                      <div className="text-center">
+                        <p className="font-black text-slate-900 text-sm whitespace-nowrap">{new Date(log.created_at).toLocaleDateString()}</p>
+                        <p className="text-[10px] font-bold text-slate-400 tabular-nums uppercase tracking-widest">{new Date(log.created_at).toLocaleTimeString()}</p>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-[10px]">
+                          {log.userPrenom?.[0] || '?'}{log.userNom?.[0] || '?'}
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900 text-sm whitespace-nowrap">{log.userPrenom} {log.userNom}</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">ID: {log.userId || 'System'}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
+                        log.action === 'LOGIN' ? 'bg-emerald-100 text-emerald-700' : 
+                        log.action === 'ACCESS' ? 'bg-blue-100 text-blue-700' :
+                        'bg-slate-100 text-slate-600'
+                      }`}>
+                        {log.action}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5 max-w-[300px]">
+                      <div className="space-y-1">
+                        <p className="text-xs font-bold text-slate-700 truncate" title={log.userAgent}>
+                          {deviceInfo.platform || 'Inconnu'} \u00b7 {deviceInfo.vendor || 'OS'} 
+                        </p>
+                        <div className="flex gap-2 flex-wrap">
+                          <span className="text-[8px] font-black bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded uppercase tracking-tighter text-slate-400">
+                            {deviceInfo.screenWidth}x{deviceInfo.screenHeight}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      <p className="text-xs font-black text-slate-400 tabular-nums">{log.ip || '0.0.0.0'}</p>
+                    </td>
+                  </tr>
+                 );
+              })}
+            </tbody>
+          </table>
+        ) }
+      </div>
+    </div>
+  );
+}
