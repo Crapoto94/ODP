@@ -23,7 +23,11 @@ import {
   Layers,
   Palette,
   Settings2,
-  RefreshCw
+  RefreshCw,
+  Box,
+  Car,
+  Film,
+  Wind
 } from 'lucide-react';
 import CategorieManagerModal from '@/components/CategorieManagerModal';
 import ImportTarifModal from '@/components/ImportTarifModal';
@@ -268,6 +272,15 @@ export default function TarifsPage() {
     return groups;
   }, [filtered]);
 
+  const getPrimaryCategoryStyle = (name: string) => {
+    const n = name.toUpperCase();
+    if (n.includes('SURVOL')) return { color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100', icon: <Wind size={18} />, gradient: 'from-blue-500 to-indigo-600' };
+    if (n.includes('SUPERFICIELLES')) return { color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100', icon: <Box size={18} />, gradient: 'from-orange-500 to-amber-600' };
+    if (n.includes('STATIONNEMENT')) return { color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100', icon: <Car size={18} />, gradient: 'from-emerald-500 to-teal-600' };
+    if (n.includes('TOURNAGE')) return { color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100', icon: <Film size={18} />, gradient: 'from-rose-500 to-pink-600' };
+    return { color: 'text-slate-600', bg: 'bg-slate-50', border: 'border-slate-100', icon: <Layers size={18} />, gradient: 'from-slate-500 to-slate-700' };
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
@@ -432,15 +445,31 @@ export default function TarifsPage() {
                         className="bg-slate-50/50 cursor-pointer hover:bg-slate-100 transition-colors" 
                         onClick={() => toggleGroup(l1Key)}
                       >
-                        <td colSpan={5} className="px-6 py-4">
+                        <td colSpan={5} className="px-6 py-6">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-1.5 h-6 rounded-full transition-all duration-300 ${isL1Expanded ? 'bg-blue-600 h-8 shadow-lg shadow-blue-500/20' : 'bg-slate-300'}`} />
-                              <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">{typeName}</h4>
-                              <span className="text-[10px] font-black text-slate-400 bg-slate-200/50 px-2 py-0.5 rounded-md ml-2">{totalInGroup} articles</span>
+                            <div className="flex items-center gap-4">
+                              {(() => {
+                                const style = getPrimaryCategoryStyle(typeName);
+                                return (
+                                  <>
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg ${style.bg} ${style.color} group-hover:scale-110 transition-transform ${isL1Expanded ? 'bg-gradient-to-br ' + style.gradient + ' text-white' : 'bg-white border ' + style.border}`}>
+                                      {style.icon}
+                                    </div>
+                                    <div>
+                                      <h4 className={`text-base font-black uppercase tracking-tight transition-colors ${isL1Expanded ? 'text-slate-900' : 'text-slate-500'}`}>
+                                        {typeName}
+                                      </h4>
+                                      <div className="flex items-center gap-2 mt-0.5">
+                                        <div className={`w-1.5 h-1.5 rounded-full ${isL1Expanded ? 'bg-blue-500' : 'bg-slate-300'}`} />
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{totalInGroup} articles référencés</span>
+                                      </div>
+                                    </div>
+                                  </>
+                                );
+                              })()}
                             </div>
-                            <div className={`transition-transform duration-300 ${isL1Expanded ? 'rotate-180' : ''}`}>
-                              <ChevronRight className="text-blue-500" size={20} />
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-white border border-slate-100 shadow-sm transition-all duration-300 ${isL1Expanded ? 'rotate-180 bg-slate-900 border-slate-900 text-white' : 'text-slate-400'}`}>
+                              <ChevronRight size={20} />
                             </div>
                           </div>
                         </td>
