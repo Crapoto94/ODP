@@ -11,8 +11,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Client
+# Generate Prisma Clients
 RUN npx prisma generate
+RUN npx prisma generate --schema=prisma/schema-postgres.prisma
 
 # Disable telemetry during the build
 ENV NEXT_TELEMETRY_DISABLED 1
