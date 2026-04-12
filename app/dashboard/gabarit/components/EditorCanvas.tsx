@@ -7,7 +7,7 @@ interface Props {
   isPreview: boolean;
   zoom: number;
   offset: { x: number; y: number };
-  canvasRef: React.RefObject<HTMLDivElement>;
+  canvasRef: React.RefObject<HTMLDivElement | null>;
   handleMouseDown: (e: React.MouseEvent, el: Element, resizeHandle?: 'nw' | 'se') => void;
   isDragging: boolean;
   replaceVars: (val: string, article?: any) => string;

@@ -17,7 +17,7 @@ interface Props {
   handleDuplicate: () => void;
   handleSave: () => void;
   handleExportTemplate: () => void;
-  importInputRef: React.RefObject<HTMLInputElement>;
+  importInputRef: React.RefObject<HTMLInputElement | null>;
   saving: boolean;
   isPreview: boolean;
   setIsPreview: (val: boolean) => void;

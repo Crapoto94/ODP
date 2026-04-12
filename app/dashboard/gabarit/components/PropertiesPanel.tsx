@@ -1,16 +1,16 @@
 import React, { useRef, useEffect } from 'react';
 import { Settings2, ArrowUp, ArrowDown, Upload } from 'lucide-react';
-import { Element, VARIABLES, FONTS } from '../types';
+import { Element, ElementUpdate, VARIABLES, FONTS } from '../types';
 
 interface Props {
   elements: Element[];
   selectedElement: Element | null;
   selectedIds: string[];
-  updateElement: (id: string, updates: Partial<Element>) => void;
-  updateMultipleElements: (ids: string[], updates: Partial<Element>) => void;
+  updateElement: (id: string, updates: ElementUpdate) => void;
+  updateMultipleElements: (ids: string[], updates: ElementUpdate) => void;
   bringToFront: () => void;
   sendToBack: () => void;
-  fileInputRef: React.RefObject<HTMLInputElement>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 export default function PropertiesPanel({

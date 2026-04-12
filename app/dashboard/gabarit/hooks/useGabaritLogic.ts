@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { Element, Gabarit, VARIABLES, FONTS } from '../types';
+import { Element, ElementUpdate, Gabarit, VARIABLES, FONTS } from '../types';
 
 export function useGabaritLogic() {
   const [elements, setElements] = useState<Element[]>([]);
@@ -71,25 +71,27 @@ export function useGabaritLogic() {
     fetchGabarits();
   }, [fetchGabarits]);
 
-  const updateElement = (id: string, updates: Partial<Element>) => {
+  const updateElement = (id: string, updates: ElementUpdate) => {
     setElements(prev => prev.map(el => {
        if (el.id === id) {
-         if (updates.style) {
-           return { ...el, ...updates, style: { ...el.style, ...updates.style } };
+         const { style, ...rest } = updates;
+         if (style) {
+           return { ...el, ...rest, style: { ...el.style, ...style } };
          }
-         return { ...el, ...updates };
+         return { ...el, ...rest };
        }
        return el;
     }));
   };
 
-  const updateMultipleElements = (ids: string[], updates: Partial<Element>) => {
+  const updateMultipleElements = (ids: string[], updates: ElementUpdate) => {
     setElements(prev => prev.map(el => {
       if (ids.includes(el.id)) {
-        if (updates.style) {
-          return { ...el, ...updates, style: { ...el.style, ...updates.style } };
+        const { style, ...rest } = updates;
+        if (style) {
+          return { ...el, ...rest, style: { ...el.style, ...style } };
         }
-        return { ...el, ...updates };
+        return { ...el, ...rest };
       }
       return el;
     }));

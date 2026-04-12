@@ -58,6 +58,7 @@ interface Occupation {
   isCourtMetrage?: boolean;
   lignes?: any[];
   _count?: { notes: number };
+  agissantPour?: string | null;
 }
 
 interface Tiers {
@@ -286,7 +287,8 @@ function OccupationsPageContent() {
       longitude: '',
       description: occ.description || '',
       statut: occ.statut,
-      isCourtMetrage: !!occ.isCourtMetrage
+      isCourtMetrage: !!occ.isCourtMetrage,
+      agissantPour: occ.agissantPour || ''
     });
     setAddressQuery(occ.adresse);
     setUploadedPhotos(occ.photos ? occ.photos.split(',') : []);
@@ -307,7 +309,8 @@ function OccupationsPageContent() {
       longitude: '', 
       description: '', 
       statut: 'EN_ATTENTE',
-      isCourtMetrage: false
+      isCourtMetrage: false,
+      agissantPour: ''
     });
     setAddressQuery('');
     setUploadedPhotos([]);

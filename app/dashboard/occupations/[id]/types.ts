@@ -82,12 +82,12 @@ export interface StatusConfig {
   label: string;
   color: string;
   bg: string;
-  border: string;
+  border?: string;
 }
 
 export interface TypeConfig {
   label: string;
   color: string;
   bg: string;
-  border: string;
+  border?: string;
 }

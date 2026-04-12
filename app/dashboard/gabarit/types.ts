@@ -26,6 +26,11 @@ export interface Element {
   verticalPitch?: number;
 }
 
+/** Allows partial style updates (merged at runtime via spread) */
+export type ElementUpdate = Omit<Partial<Element>, 'style'> & {
+  style?: Partial<Element['style']>;
+};
+
 export const mapFont = (fontFamily: string) => {
     if (!fontFamily) return 'roboto';
     const f = fontFamily.toLowerCase();
