@@ -11,12 +11,19 @@ interface Release {
 }
 
 export default function VersionHeader() {
-  const [version, setVersion] = useState("0.1.0");
+  const [version, setVersion] = useState("...");
 
   useEffect(() => {
-    axios.get('/api/releases').then(res => {
-      if (res.data.length > 0) {
-        setVersion(res.data[0].versionNumber);
+    // Fetch version from package.json first (source of truth)
+    Promise.all([
+      axios.get('/api/releases').catch(() => ({ data: [] })),
+      axios.get('/api/version').catch(() => ({ data: { version: "0.2.0" } })),
+    ]).then(([releasesRes, versionRes]) => {
+      // Prioritize releases DB, fallback to package.json
+      if (releasesRes.data.length > 0) {
+        setVersion(releasesRes.data[0].versionNumber);
+      } else {
+        setVersion(versionRes.data.version);
       }
     });
   }, []);

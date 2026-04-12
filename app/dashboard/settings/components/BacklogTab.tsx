@@ -17,9 +17,12 @@ import {
   Ban,
   TrendingUp,
   Zap,
-  Save
+  Save,
+  Unlink,
+  History
 } from 'lucide-react';
 import axios from 'axios';
+import ReleaseHistory from './backlog/ReleaseHistory';
 
 interface BacklogComment {
   id: number;
@@ -35,22 +38,25 @@ interface BacklogItem {
   type: string;
   priority: string;
   status: string;
+  versionId?: number | null;
   created_at: string;
   comments?: BacklogComment[];
 }
 
 export default function BacklogTab() {
   const [items, setItems] = useState<BacklogItem[]>([]);
+  const [releases, setReleases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newVersionModal, setNewVersionModal] = useState(false);
-  const [newVersion, setNewVersion] = useState({ number: "0.1.1", notes: "" });
+  const [newVersion, setNewVersion] = useState({ number: "0.2.0", notes: "" });
   
   const [selectedItem, setSelectedItem] = useState<BacklogItem | null>(null);
   const [newComment, setNewComment] = useState("");
   const [rejectionModal, setRejectionModal] = useState<BacklogItem | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [showHistory, setShowHistory] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -62,9 +68,29 @@ export default function BacklogTab() {
   const fetchBacklog = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('/api/backlog');
-      // For each item, we might want to fetch comments if they aren't included
-      setItems(res.data);
+      const [backlogRes, releasesRes] = await Promise.all([
+        axios.get('/api/backlog'),
+        axios.get('/api/releases')
+      ]);
+
+      // Define priority weights
+      const weights: Record<string, number> = {
+        'URGENT': 4,
+        'HIGH': 3,
+        'MEDIUM': 2,
+        'LOW': 1
+      };
+
+      // Sort items by priority desc, then by date desc
+      const sortedItems = backlogRes.data.sort((a: any, b: any) => {
+        const weightA = weights[a.priority] || 0;
+        const weightB = weights[b.priority] || 0;
+        if (weightA !== weightB) return weightB - weightA;
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+
+      setItems(sortedItems);
+      setReleases(releasesRes.data);
     } catch (e) {
       console.error(e);
     } finally {
@@ -186,7 +212,19 @@ export default function BacklogTab() {
         
         <div className="flex gap-3">
           <button 
-            onClick={() => setNewVersionModal(true)}
+            onClick={() => setShowHistory(!showHistory)}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 border ${showHistory ? 'bg-slate-100 text-slate-900 border-slate-300' : 'bg-white text-slate-400 border-slate-200 hover:text-slate-600'}`}
+          >
+            <History size={14} /> {showHistory ? "Masquer Réalisés" : "Voir Réalisés"}
+          </button>
+          <button 
+            onClick={async () => {
+              try {
+                const vRes = await axios.get('/api/version');
+                setNewVersion({ ...newVersion, number: vRes.data.version });
+              } catch (e) {}
+              setNewVersionModal(true);
+            }}
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20 transition-all active:scale-95"
           >
             <Zap size={14} /> Définir une Version
@@ -261,7 +299,7 @@ export default function BacklogTab() {
       )}
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden min-h-[400px]">
-        {items.length === 0 ? (
+        {items.filter(i => !i.versionId || showHistory).length === 0 ? (
           <div className="flex flex-col items-center justify-center h-[400px] opacity-20">
              <Clock size={48} />
              <p className="font-black uppercase tracking-widest text-sm mt-4">Le backlog est vide</p>
@@ -277,7 +315,7 @@ export default function BacklogTab() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {items.map(item => (
+              {items.filter(item => !item.versionId || showHistory).map(item => (
                 <React.Fragment key={item.id}>
                   <tr className={`group hover:bg-slate-50/30 transition-all ${item.status === 'DONE' ? 'bg-slate-50/50' : item.status === 'REJECTED' ? 'bg-rose-50/20' : ''}`}>
                     <td className="px-8 py-5">
@@ -326,7 +364,23 @@ export default function BacklogTab() {
                        </div>
                     </td>
                     <td className="px-8 py-5 text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-2 text-slate-400">
+                        {item.versionId && (
+                          <button 
+                            onClick={async () => {
+                              if(confirm("Détacher cet élément de sa version ?")) {
+                                try {
+                                  await axios.patch(`/api/backlog/${item.id}`, { versionId: null });
+                                  fetchBacklog();
+                                } catch(e) { alert("Erreur"); }
+                              }
+                            }}
+                            className="p-2 hover:bg-slate-100 hover:text-slate-900 rounded-lg transition-all"
+                            title="Détacher de la version"
+                          >
+                            <Unlink size={16} />
+                          </button>
+                        )}
                         <button 
                           onClick={() => setSelectedItem(selectedItem?.id === item.id ? null : item)}
                           className={`p-2 rounded-lg transition-all ${selectedItem?.id === item.id ? 'bg-blue-50 text-blue-600' : 'text-slate-300 hover:text-blue-600'}`}
@@ -482,6 +536,7 @@ export default function BacklogTab() {
           </div>
         </div>
       )}
+      <ReleaseHistory releases={releases} onRefresh={fetchBacklog} />
     </div>
   );
 }

@@ -1,16 +1,18 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPostgresClient } from '@/lib/postgresClient';
 import fs from 'fs';
 import path from 'path';
 
 export async function GET() {
   try {
-    const releases = await (prisma as any).versionRelease.findMany({
+    const pgPrisma = await getPostgresClient();
+    const releases = await pgPrisma.versionRelease.findMany({
       include: { backlogItems: true },
       orderBy: { releasedAt: 'desc' }
     });
     return NextResponse.json(releases);
   } catch (error) {
+    console.error('[GET /api/releases]', error);
     return NextResponse.json({ error: 'Failed to fetch releases' }, { status: 500 });
   }
 }
@@ -19,9 +21,10 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { versionNumber, notes, backlogItemIds } = body;
+    const pgPrisma = await getPostgresClient();
 
     // 1. Transaction to create release and update items
-    const release = await (prisma as any).$transaction(async (tx: any) => {
+    const release = await pgPrisma.$transaction(async (tx) => {
       const newRelease = await tx.versionRelease.create({
         data: {
           versionNumber,
@@ -53,7 +56,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(release);
   } catch (error) {
-    console.error(error);
+    console.error('[POST /api/releases]', error);
     return NextResponse.json({ error: 'Failed to create release' }, { status: 500 });
   }
 }

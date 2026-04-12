@@ -37,7 +37,7 @@ export default function Sidebar() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [version, setVersion] = useState("0.1.0");
+  const [version, setVersion] = useState("...");
   
   useEffect(() => {
     // Load initial state
@@ -46,9 +46,16 @@ export default function Sidebar() {
     
     axios.get('/api/auth/me').then(res => setUser(res.data)).catch(() => {});
     
-    // Fetch latest version
-    axios.get('/api/releases').then(res => {
-      if (res.data.length > 0) setVersion(res.data[0].versionNumber);
+    // Fetch latest version with fallback to package.json
+    Promise.all([
+      axios.get('/api/releases').catch(() => ({ data: [] })),
+      axios.get('/api/version').catch(() => ({ data: { version: "0.2.0" } })),
+    ]).then(([releasesRes, versionRes]) => {
+      if (releasesRes.data.length > 0) {
+        setVersion(releasesRes.data[0].versionNumber);
+      } else {
+        setVersion(versionRes.data.version);
+      }
     }).catch(() => {});
   }, []);
 

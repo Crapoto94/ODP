@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/prisma-postgres-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model BacklogItem {
+  id          Int              @id @default(autoincrement())
+  title       String
+  description String?
+  type        String           @default("FEATURE")
+  priority    String           @default("MEDIUM")
+  status      String           @default("OPEN")
+  versionId   Int?
+  created_at  DateTime         @default(now())
+  updated_at  DateTime         @updatedAt
+  version     VersionRelease?  @relation(fields: [versionId], references: [id])
+  comments    BacklogComment[]
+}
+
+model BacklogComment {
+  id            Int         @id @default(autoincrement())
+  backlogItemId Int
+  content       String
+  author        String?
+  created_at    DateTime    @default(now())
+  backlogItem   BacklogItem @relation(fields: [backlogItemId], references: [id], onDelete: Cascade)
+}
+
+model VersionRelease {
+  id            Int           @id @default(autoincrement())
+  versionNumber String        @unique
+  notes         String?
+  releasedAt    DateTime      @default(now())
+  created_at    DateTime      @default(now())
+  backlogItems  BacklogItem[]
+}

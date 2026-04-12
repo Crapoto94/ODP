@@ -293,3 +293,14 @@ model VersionRelease {
   created_at     DateTime      @default(now())
   backlogItems   BacklogItem[]
 }
+
+model PostgresConfig {
+  id       Int    @id @default(autoincrement())
+  host     String
+  port     Int    @default(5432)
+  database String
+  schema   String @default("public")
+  user     String
+  password String
+}
+

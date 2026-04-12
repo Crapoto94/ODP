@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPostgresClient } from '@/lib/postgresClient';
 
 export async function GET() {
   try {
-    const items = await (prisma as any).backlogItem.findMany({
+    const pgPrisma = await getPostgresClient();
+    const items = await pgPrisma.backlogItem.findMany({
       include: { 
         version: true,
         comments: {
@@ -15,14 +16,16 @@ export async function GET() {
     });
     return NextResponse.json(items);
   } catch (error) {
+    console.error('[GET /api/backlog]', error);
     return NextResponse.json({ error: 'Failed to fetch backlog' }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
   try {
+    const pgPrisma = await getPostgresClient();
     const body = await req.json();
-    const item = await (prisma as any).backlogItem.create({
+    const item = await pgPrisma.backlogItem.create({
       data: {
         title: body.title,
         description: body.description,
@@ -33,7 +36,7 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(item);
   } catch (error) {
-    console.error(error);
+    console.error('[POST /api/backlog]', error);
     return NextResponse.json({ error: 'Failed to create backlog item' }, { status: 500 });
   }
 }

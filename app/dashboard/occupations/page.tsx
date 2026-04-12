@@ -668,7 +668,7 @@ function OccupationsPageContent() {
                                       <div>
                                         <p className="text-xs font-black text-slate-900">{ligne.article?.designation}</p>
                                         <p className="text-[10px] font-bold text-slate-400 uppercase flex items-center gap-2 mt-1">
-                                          {occ.type === 'COMMERCE' || occ.type === 'CHANTIER' ? (
+                                          {(occ.type === 'COMMERCE' || occ.type === 'CHANTIER' || occ.type === 'TOURNAGE' || occ.type === 'TLPE') ? (
                                             <>
                                               {(() => {
                                                 const rawMode = ligne.article?.modeTaxation?.nom || 'unité';

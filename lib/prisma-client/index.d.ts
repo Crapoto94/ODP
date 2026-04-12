@@ -108,6 +108,11 @@ export type BacklogComment = $Result.DefaultSelection<Prisma.$BacklogCommentPayl
  * 
  */
 export type VersionRelease = $Result.DefaultSelection<Prisma.$VersionReleasePayload>
+/**
+ * Model PostgresConfig
+ * 
+ */
+export type PostgresConfig = $Result.DefaultSelection<Prisma.$PostgresConfigPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -421,6 +426,16 @@ export class PrismaClient<
     * ```
     */
   get versionRelease(): Prisma.VersionReleaseDelegate<ExtArgs>;
+
+  /**
+   * `prisma.postgresConfig`: Exposes CRUD operations for the **PostgresConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PostgresConfigs
+    * const postgresConfigs = await prisma.postgresConfig.findMany()
+    * ```
+    */
+  get postgresConfig(): Prisma.PostgresConfigDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -880,7 +895,8 @@ export namespace Prisma {
     TypeDossierConfig: 'TypeDossierConfig',
     BacklogItem: 'BacklogItem',
     BacklogComment: 'BacklogComment',
-    VersionRelease: 'VersionRelease'
+    VersionRelease: 'VersionRelease',
+    PostgresConfig: 'PostgresConfig'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -896,7 +912,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2227,6 +2243,76 @@ export namespace Prisma {
           count: {
             args: Prisma.VersionReleaseCountArgs<ExtArgs>
             result: $Utils.Optional<VersionReleaseCountAggregateOutputType> | number
+          }
+        }
+      }
+      PostgresConfig: {
+        payload: Prisma.$PostgresConfigPayload<ExtArgs>
+        fields: Prisma.PostgresConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PostgresConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PostgresConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.PostgresConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PostgresConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+          }
+          findMany: {
+            args: Prisma.PostgresConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>[]
+          }
+          create: {
+            args: Prisma.PostgresConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+          }
+          createMany: {
+            args: Prisma.PostgresConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PostgresConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.PostgresConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+          }
+          update: {
+            args: Prisma.PostgresConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.PostgresConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PostgresConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.PostgresConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.PostgresConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePostgresConfig>
+          }
+          groupBy: {
+            args: Prisma.PostgresConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PostgresConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PostgresConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<PostgresConfigCountAggregateOutputType> | number
           }
         }
       }
@@ -22525,6 +22611,944 @@ export namespace Prisma {
 
 
   /**
+   * Model PostgresConfig
+   */
+
+  export type AggregatePostgresConfig = {
+    _count: PostgresConfigCountAggregateOutputType | null
+    _avg: PostgresConfigAvgAggregateOutputType | null
+    _sum: PostgresConfigSumAggregateOutputType | null
+    _min: PostgresConfigMinAggregateOutputType | null
+    _max: PostgresConfigMaxAggregateOutputType | null
+  }
+
+  export type PostgresConfigAvgAggregateOutputType = {
+    id: number | null
+    port: number | null
+  }
+
+  export type PostgresConfigSumAggregateOutputType = {
+    id: number | null
+    port: number | null
+  }
+
+  export type PostgresConfigMinAggregateOutputType = {
+    id: number | null
+    host: string | null
+    port: number | null
+    database: string | null
+    schema: string | null
+    user: string | null
+    password: string | null
+  }
+
+  export type PostgresConfigMaxAggregateOutputType = {
+    id: number | null
+    host: string | null
+    port: number | null
+    database: string | null
+    schema: string | null
+    user: string | null
+    password: string | null
+  }
+
+  export type PostgresConfigCountAggregateOutputType = {
+    id: number
+    host: number
+    port: number
+    database: number
+    schema: number
+    user: number
+    password: number
+    _all: number
+  }
+
+
+  export type PostgresConfigAvgAggregateInputType = {
+    id?: true
+    port?: true
+  }
+
+  export type PostgresConfigSumAggregateInputType = {
+    id?: true
+    port?: true
+  }
+
+  export type PostgresConfigMinAggregateInputType = {
+    id?: true
+    host?: true
+    port?: true
+    database?: true
+    schema?: true
+    user?: true
+    password?: true
+  }
+
+  export type PostgresConfigMaxAggregateInputType = {
+    id?: true
+    host?: true
+    port?: true
+    database?: true
+    schema?: true
+    user?: true
+    password?: true
+  }
+
+  export type PostgresConfigCountAggregateInputType = {
+    id?: true
+    host?: true
+    port?: true
+    database?: true
+    schema?: true
+    user?: true
+    password?: true
+    _all?: true
+  }
+
+  export type PostgresConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PostgresConfig to aggregate.
+     */
+    where?: PostgresConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PostgresConfigs to fetch.
+     */
+    orderBy?: PostgresConfigOrderByWithRelationInput | PostgresConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PostgresConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PostgresConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PostgresConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PostgresConfigs
+    **/
+    _count?: true | PostgresConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PostgresConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PostgresConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PostgresConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PostgresConfigMaxAggregateInputType
+  }
+
+  export type GetPostgresConfigAggregateType<T extends PostgresConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregatePostgresConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePostgresConfig[P]>
+      : GetScalarType<T[P], AggregatePostgresConfig[P]>
+  }
+
+
+
+
+  export type PostgresConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PostgresConfigWhereInput
+    orderBy?: PostgresConfigOrderByWithAggregationInput | PostgresConfigOrderByWithAggregationInput[]
+    by: PostgresConfigScalarFieldEnum[] | PostgresConfigScalarFieldEnum
+    having?: PostgresConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PostgresConfigCountAggregateInputType | true
+    _avg?: PostgresConfigAvgAggregateInputType
+    _sum?: PostgresConfigSumAggregateInputType
+    _min?: PostgresConfigMinAggregateInputType
+    _max?: PostgresConfigMaxAggregateInputType
+  }
+
+  export type PostgresConfigGroupByOutputType = {
+    id: number
+    host: string
+    port: number
+    database: string
+    schema: string
+    user: string
+    password: string
+    _count: PostgresConfigCountAggregateOutputType | null
+    _avg: PostgresConfigAvgAggregateOutputType | null
+    _sum: PostgresConfigSumAggregateOutputType | null
+    _min: PostgresConfigMinAggregateOutputType | null
+    _max: PostgresConfigMaxAggregateOutputType | null
+  }
+
+  type GetPostgresConfigGroupByPayload<T extends PostgresConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PostgresConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PostgresConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PostgresConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], PostgresConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PostgresConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    host?: boolean
+    port?: boolean
+    database?: boolean
+    schema?: boolean
+    user?: boolean
+    password?: boolean
+  }, ExtArgs["result"]["postgresConfig"]>
+
+  export type PostgresConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    host?: boolean
+    port?: boolean
+    database?: boolean
+    schema?: boolean
+    user?: boolean
+    password?: boolean
+  }, ExtArgs["result"]["postgresConfig"]>
+
+  export type PostgresConfigSelectScalar = {
+    id?: boolean
+    host?: boolean
+    port?: boolean
+    database?: boolean
+    schema?: boolean
+    user?: boolean
+    password?: boolean
+  }
+
+
+  export type $PostgresConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PostgresConfig"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      host: string
+      port: number
+      database: string
+      schema: string
+      user: string
+      password: string
+    }, ExtArgs["result"]["postgresConfig"]>
+    composites: {}
+  }
+
+  type PostgresConfigGetPayload<S extends boolean | null | undefined | PostgresConfigDefaultArgs> = $Result.GetResult<Prisma.$PostgresConfigPayload, S>
+
+  type PostgresConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<PostgresConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: PostgresConfigCountAggregateInputType | true
+    }
+
+  export interface PostgresConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PostgresConfig'], meta: { name: 'PostgresConfig' } }
+    /**
+     * Find zero or one PostgresConfig that matches the filter.
+     * @param {PostgresConfigFindUniqueArgs} args - Arguments to find a PostgresConfig
+     * @example
+     * // Get one PostgresConfig
+     * const postgresConfig = await prisma.postgresConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PostgresConfigFindUniqueArgs>(args: SelectSubset<T, PostgresConfigFindUniqueArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one PostgresConfig that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {PostgresConfigFindUniqueOrThrowArgs} args - Arguments to find a PostgresConfig
+     * @example
+     * // Get one PostgresConfig
+     * const postgresConfig = await prisma.postgresConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PostgresConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, PostgresConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first PostgresConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostgresConfigFindFirstArgs} args - Arguments to find a PostgresConfig
+     * @example
+     * // Get one PostgresConfig
+     * const postgresConfig = await prisma.postgresConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PostgresConfigFindFirstArgs>(args?: SelectSubset<T, PostgresConfigFindFirstArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first PostgresConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostgresConfigFindFirstOrThrowArgs} args - Arguments to find a PostgresConfig
+     * @example
+     * // Get one PostgresConfig
+     * const postgresConfig = await prisma.postgresConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PostgresConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, PostgresConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more PostgresConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostgresConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PostgresConfigs
+     * const postgresConfigs = await prisma.postgresConfig.findMany()
+     * 
+     * // Get first 10 PostgresConfigs
+     * const postgresConfigs = await prisma.postgresConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const postgresConfigWithIdOnly = await prisma.postgresConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PostgresConfigFindManyArgs>(args?: SelectSubset<T, PostgresConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a PostgresConfig.
+     * @param {PostgresConfigCreateArgs} args - Arguments to create a PostgresConfig.
+     * @example
+     * // Create one PostgresConfig
+     * const PostgresConfig = await prisma.postgresConfig.create({
+     *   data: {
+     *     // ... data to create a PostgresConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends PostgresConfigCreateArgs>(args: SelectSubset<T, PostgresConfigCreateArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many PostgresConfigs.
+     * @param {PostgresConfigCreateManyArgs} args - Arguments to create many PostgresConfigs.
+     * @example
+     * // Create many PostgresConfigs
+     * const postgresConfig = await prisma.postgresConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PostgresConfigCreateManyArgs>(args?: SelectSubset<T, PostgresConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PostgresConfigs and returns the data saved in the database.
+     * @param {PostgresConfigCreateManyAndReturnArgs} args - Arguments to create many PostgresConfigs.
+     * @example
+     * // Create many PostgresConfigs
+     * const postgresConfig = await prisma.postgresConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PostgresConfigs and only return the `id`
+     * const postgresConfigWithIdOnly = await prisma.postgresConfig.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PostgresConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, PostgresConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a PostgresConfig.
+     * @param {PostgresConfigDeleteArgs} args - Arguments to delete one PostgresConfig.
+     * @example
+     * // Delete one PostgresConfig
+     * const PostgresConfig = await prisma.postgresConfig.delete({
+     *   where: {
+     *     // ... filter to delete one PostgresConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PostgresConfigDeleteArgs>(args: SelectSubset<T, PostgresConfigDeleteArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one PostgresConfig.
+     * @param {PostgresConfigUpdateArgs} args - Arguments to update one PostgresConfig.
+     * @example
+     * // Update one PostgresConfig
+     * const postgresConfig = await prisma.postgresConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PostgresConfigUpdateArgs>(args: SelectSubset<T, PostgresConfigUpdateArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more PostgresConfigs.
+     * @param {PostgresConfigDeleteManyArgs} args - Arguments to filter PostgresConfigs to delete.
+     * @example
+     * // Delete a few PostgresConfigs
+     * const { count } = await prisma.postgresConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PostgresConfigDeleteManyArgs>(args?: SelectSubset<T, PostgresConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PostgresConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostgresConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PostgresConfigs
+     * const postgresConfig = await prisma.postgresConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PostgresConfigUpdateManyArgs>(args: SelectSubset<T, PostgresConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one PostgresConfig.
+     * @param {PostgresConfigUpsertArgs} args - Arguments to update or create a PostgresConfig.
+     * @example
+     * // Update or create a PostgresConfig
+     * const postgresConfig = await prisma.postgresConfig.upsert({
+     *   create: {
+     *     // ... data to create a PostgresConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PostgresConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PostgresConfigUpsertArgs>(args: SelectSubset<T, PostgresConfigUpsertArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of PostgresConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostgresConfigCountArgs} args - Arguments to filter PostgresConfigs to count.
+     * @example
+     * // Count the number of PostgresConfigs
+     * const count = await prisma.postgresConfig.count({
+     *   where: {
+     *     // ... the filter for the PostgresConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends PostgresConfigCountArgs>(
+      args?: Subset<T, PostgresConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PostgresConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PostgresConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostgresConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PostgresConfigAggregateArgs>(args: Subset<T, PostgresConfigAggregateArgs>): Prisma.PrismaPromise<GetPostgresConfigAggregateType<T>>
+
+    /**
+     * Group by PostgresConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PostgresConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PostgresConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PostgresConfigGroupByArgs['orderBy'] }
+        : { orderBy?: PostgresConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PostgresConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPostgresConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PostgresConfig model
+   */
+  readonly fields: PostgresConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PostgresConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PostgresConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PostgresConfig model
+   */ 
+  interface PostgresConfigFieldRefs {
+    readonly id: FieldRef<"PostgresConfig", 'Int'>
+    readonly host: FieldRef<"PostgresConfig", 'String'>
+    readonly port: FieldRef<"PostgresConfig", 'Int'>
+    readonly database: FieldRef<"PostgresConfig", 'String'>
+    readonly schema: FieldRef<"PostgresConfig", 'String'>
+    readonly user: FieldRef<"PostgresConfig", 'String'>
+    readonly password: FieldRef<"PostgresConfig", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PostgresConfig findUnique
+   */
+  export type PostgresConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which PostgresConfig to fetch.
+     */
+    where: PostgresConfigWhereUniqueInput
+  }
+
+  /**
+   * PostgresConfig findUniqueOrThrow
+   */
+  export type PostgresConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which PostgresConfig to fetch.
+     */
+    where: PostgresConfigWhereUniqueInput
+  }
+
+  /**
+   * PostgresConfig findFirst
+   */
+  export type PostgresConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which PostgresConfig to fetch.
+     */
+    where?: PostgresConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PostgresConfigs to fetch.
+     */
+    orderBy?: PostgresConfigOrderByWithRelationInput | PostgresConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PostgresConfigs.
+     */
+    cursor?: PostgresConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PostgresConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PostgresConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PostgresConfigs.
+     */
+    distinct?: PostgresConfigScalarFieldEnum | PostgresConfigScalarFieldEnum[]
+  }
+
+  /**
+   * PostgresConfig findFirstOrThrow
+   */
+  export type PostgresConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which PostgresConfig to fetch.
+     */
+    where?: PostgresConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PostgresConfigs to fetch.
+     */
+    orderBy?: PostgresConfigOrderByWithRelationInput | PostgresConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PostgresConfigs.
+     */
+    cursor?: PostgresConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PostgresConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PostgresConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PostgresConfigs.
+     */
+    distinct?: PostgresConfigScalarFieldEnum | PostgresConfigScalarFieldEnum[]
+  }
+
+  /**
+   * PostgresConfig findMany
+   */
+  export type PostgresConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which PostgresConfigs to fetch.
+     */
+    where?: PostgresConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PostgresConfigs to fetch.
+     */
+    orderBy?: PostgresConfigOrderByWithRelationInput | PostgresConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PostgresConfigs.
+     */
+    cursor?: PostgresConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PostgresConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PostgresConfigs.
+     */
+    skip?: number
+    distinct?: PostgresConfigScalarFieldEnum | PostgresConfigScalarFieldEnum[]
+  }
+
+  /**
+   * PostgresConfig create
+   */
+  export type PostgresConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to create a PostgresConfig.
+     */
+    data: XOR<PostgresConfigCreateInput, PostgresConfigUncheckedCreateInput>
+  }
+
+  /**
+   * PostgresConfig createMany
+   */
+  export type PostgresConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PostgresConfigs.
+     */
+    data: PostgresConfigCreateManyInput | PostgresConfigCreateManyInput[]
+  }
+
+  /**
+   * PostgresConfig createManyAndReturn
+   */
+  export type PostgresConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many PostgresConfigs.
+     */
+    data: PostgresConfigCreateManyInput | PostgresConfigCreateManyInput[]
+  }
+
+  /**
+   * PostgresConfig update
+   */
+  export type PostgresConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to update a PostgresConfig.
+     */
+    data: XOR<PostgresConfigUpdateInput, PostgresConfigUncheckedUpdateInput>
+    /**
+     * Choose, which PostgresConfig to update.
+     */
+    where: PostgresConfigWhereUniqueInput
+  }
+
+  /**
+   * PostgresConfig updateMany
+   */
+  export type PostgresConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PostgresConfigs.
+     */
+    data: XOR<PostgresConfigUpdateManyMutationInput, PostgresConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which PostgresConfigs to update
+     */
+    where?: PostgresConfigWhereInput
+  }
+
+  /**
+   * PostgresConfig upsert
+   */
+  export type PostgresConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+    /**
+     * The filter to search for the PostgresConfig to update in case it exists.
+     */
+    where: PostgresConfigWhereUniqueInput
+    /**
+     * In case the PostgresConfig found by the `where` argument doesn't exist, create a new PostgresConfig with this data.
+     */
+    create: XOR<PostgresConfigCreateInput, PostgresConfigUncheckedCreateInput>
+    /**
+     * In case the PostgresConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PostgresConfigUpdateInput, PostgresConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * PostgresConfig delete
+   */
+  export type PostgresConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+    /**
+     * Filter which PostgresConfig to delete.
+     */
+    where: PostgresConfigWhereUniqueInput
+  }
+
+  /**
+   * PostgresConfig deleteMany
+   */
+  export type PostgresConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PostgresConfigs to delete
+     */
+    where?: PostgresConfigWhereInput
+  }
+
+  /**
+   * PostgresConfig without action
+   */
+  export type PostgresConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PostgresConfig
+     */
+    select?: PostgresConfigSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -22850,6 +23874,19 @@ export namespace Prisma {
   };
 
   export type VersionReleaseScalarFieldEnum = (typeof VersionReleaseScalarFieldEnum)[keyof typeof VersionReleaseScalarFieldEnum]
+
+
+  export const PostgresConfigScalarFieldEnum: {
+    id: 'id',
+    host: 'host',
+    port: 'port',
+    database: 'database',
+    schema: 'schema',
+    user: 'user',
+    password: 'password'
+  };
+
+  export type PostgresConfigScalarFieldEnum = (typeof PostgresConfigScalarFieldEnum)[keyof typeof PostgresConfigScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -24551,6 +25588,70 @@ export namespace Prisma {
     notes?: StringNullableWithAggregatesFilter<"VersionRelease"> | string | null
     releasedAt?: DateTimeWithAggregatesFilter<"VersionRelease"> | Date | string
     created_at?: DateTimeWithAggregatesFilter<"VersionRelease"> | Date | string
+  }
+
+  export type PostgresConfigWhereInput = {
+    AND?: PostgresConfigWhereInput | PostgresConfigWhereInput[]
+    OR?: PostgresConfigWhereInput[]
+    NOT?: PostgresConfigWhereInput | PostgresConfigWhereInput[]
+    id?: IntFilter<"PostgresConfig"> | number
+    host?: StringFilter<"PostgresConfig"> | string
+    port?: IntFilter<"PostgresConfig"> | number
+    database?: StringFilter<"PostgresConfig"> | string
+    schema?: StringFilter<"PostgresConfig"> | string
+    user?: StringFilter<"PostgresConfig"> | string
+    password?: StringFilter<"PostgresConfig"> | string
+  }
+
+  export type PostgresConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    database?: SortOrder
+    schema?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+  }
+
+  export type PostgresConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: PostgresConfigWhereInput | PostgresConfigWhereInput[]
+    OR?: PostgresConfigWhereInput[]
+    NOT?: PostgresConfigWhereInput | PostgresConfigWhereInput[]
+    host?: StringFilter<"PostgresConfig"> | string
+    port?: IntFilter<"PostgresConfig"> | number
+    database?: StringFilter<"PostgresConfig"> | string
+    schema?: StringFilter<"PostgresConfig"> | string
+    user?: StringFilter<"PostgresConfig"> | string
+    password?: StringFilter<"PostgresConfig"> | string
+  }, "id">
+
+  export type PostgresConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    database?: SortOrder
+    schema?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+    _count?: PostgresConfigCountOrderByAggregateInput
+    _avg?: PostgresConfigAvgOrderByAggregateInput
+    _max?: PostgresConfigMaxOrderByAggregateInput
+    _min?: PostgresConfigMinOrderByAggregateInput
+    _sum?: PostgresConfigSumOrderByAggregateInput
+  }
+
+  export type PostgresConfigScalarWhereWithAggregatesInput = {
+    AND?: PostgresConfigScalarWhereWithAggregatesInput | PostgresConfigScalarWhereWithAggregatesInput[]
+    OR?: PostgresConfigScalarWhereWithAggregatesInput[]
+    NOT?: PostgresConfigScalarWhereWithAggregatesInput | PostgresConfigScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PostgresConfig"> | number
+    host?: StringWithAggregatesFilter<"PostgresConfig"> | string
+    port?: IntWithAggregatesFilter<"PostgresConfig"> | number
+    database?: StringWithAggregatesFilter<"PostgresConfig"> | string
+    schema?: StringWithAggregatesFilter<"PostgresConfig"> | string
+    user?: StringWithAggregatesFilter<"PostgresConfig"> | string
+    password?: StringWithAggregatesFilter<"PostgresConfig"> | string
   }
 
   export type TiersCreateInput = {
@@ -26358,6 +27459,73 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PostgresConfigCreateInput = {
+    host: string
+    port?: number
+    database: string
+    schema?: string
+    user: string
+    password: string
+  }
+
+  export type PostgresConfigUncheckedCreateInput = {
+    id?: number
+    host: string
+    port?: number
+    database: string
+    schema?: string
+    user: string
+    password: string
+  }
+
+  export type PostgresConfigUpdateInput = {
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    database?: StringFieldUpdateOperationsInput | string
+    schema?: StringFieldUpdateOperationsInput | string
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PostgresConfigUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    database?: StringFieldUpdateOperationsInput | string
+    schema?: StringFieldUpdateOperationsInput | string
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PostgresConfigCreateManyInput = {
+    id?: number
+    host: string
+    port?: number
+    database: string
+    schema?: string
+    user: string
+    password: string
+  }
+
+  export type PostgresConfigUpdateManyMutationInput = {
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    database?: StringFieldUpdateOperationsInput | string
+    schema?: StringFieldUpdateOperationsInput | string
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PostgresConfigUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    database?: StringFieldUpdateOperationsInput | string
+    schema?: StringFieldUpdateOperationsInput | string
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -27737,6 +28905,46 @@ export namespace Prisma {
 
   export type VersionReleaseSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+
+  export type PostgresConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    database?: SortOrder
+    schema?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+  }
+
+  export type PostgresConfigAvgOrderByAggregateInput = {
+    id?: SortOrder
+    port?: SortOrder
+  }
+
+  export type PostgresConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    database?: SortOrder
+    schema?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+  }
+
+  export type PostgresConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    database?: SortOrder
+    schema?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+  }
+
+  export type PostgresConfigSumOrderByAggregateInput = {
+    id?: SortOrder
+    port?: SortOrder
   }
 
   export type OccupationCreateNestedManyWithoutTiersInput = {
@@ -31512,6 +32720,10 @@ export namespace Prisma {
      * @deprecated Use VersionReleaseDefaultArgs instead
      */
     export type VersionReleaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = VersionReleaseDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use PostgresConfigDefaultArgs instead
+     */
+    export type PostgresConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PostgresConfigDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany
