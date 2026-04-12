@@ -39,7 +39,10 @@ export async function GET() {
           filienSens: '',
           filienStructure: '',
           filienGestionnaire: '',
-          filienUncPj: ''
+          filienUncPj: '',
+          signataireRole: "Pour le Maire d'Ivry-sur-Seine,",
+          signataireDelegation: "et par délégation,",
+          signataireNom: "Dominique Montet - Directrice Générale Adjointe"
         }
       });
     }
@@ -69,7 +72,10 @@ export async function PATCH(req: Request) {
       filienSens,
       filienStructure,
       filienGestionnaire,
-      filienUncPj
+      filienUncPj,
+      signataireRole,
+      signataireDelegation,
+      signataireNom
     } = body;
 
     // Use Raw SQL to bypass Prisma Client sync issues (due to locked files during generate)
@@ -114,6 +120,9 @@ export async function PATCH(req: Request) {
           filienStructure = ${filienStructure},
           filienGestionnaire = ${filienGestionnaire},
           filienUncPj = ${filienUncPj},
+          signataireRole = ${signataireRole},
+          signataireDelegation = ${signataireDelegation},
+          signataireNom = ${signataireNom},
           updated_at = CURRENT_TIMESTAMP
         WHERE id = 1
       `;
@@ -126,9 +135,8 @@ export async function PATCH(req: Request) {
           filienMouvement, filienType, filienLibelle, filienCalendrier,
           filienMonnaie, filienMouvementEx, filienPreBordereau,
           filienPoste, filienBordereau, filienObjet,
-          filienChapitre, filienNature, filienFonction, filienCodeInterne,
           filienTypeMouvement, filienSens, filienStructure, filienGestionnaire,
-          filienUncPj, updated_at
+          filienUncPj, signataireRole, signataireDelegation, signataireNom, updated_at
         ) VALUES (
           1, ${financeEmail}, ${appUrl}, ${apmUrl}, ${apmToken}, ${senderName}, ${senderEmail},
           ${filienOrga}, ${filienBudget}, ${parseInt(filienExercice) || new Date().getFullYear()}, ${filienAvancement},
@@ -138,7 +146,7 @@ export async function PATCH(req: Request) {
           ${filienPoste}, ${filienBordereau}, ${filienObjet},
           ${filienChapitre}, ${filienNature}, ${filienFonction}, ${filienCodeInterne},
           ${filienTypeMouvement}, ${filienSens}, ${filienStructure}, ${filienGestionnaire},
-          ${filienUncPj}, CURRENT_TIMESTAMP
+          ${filienUncPj}, ${signataireRole}, ${signataireDelegation}, ${signataireNom}, CURRENT_TIMESTAMP
         )
       `;
     }

@@ -38,15 +38,9 @@ import {
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import Link from 'next/link';
+import { getStatusConfig } from '@/lib/status-utils';
 
-const STATUS_MAP: Record<string, { label: string, color: string, bg: string }> = {
-  'EN_ATTENTE': { label: 'En attente', color: 'text-amber-500', bg: 'bg-amber-400' },
-  'EN_COURS': { label: 'En cours', color: 'text-blue-500', bg: 'bg-blue-400' },
-  'TERMINE': { label: 'Terminé', color: 'text-indigo-500', bg: 'bg-indigo-400' },
-  'VERIFIE': { label: 'Vérifié', color: 'text-emerald-500', bg: 'bg-emerald-400' },
-  'FACTURE': { label: 'Facturé', color: 'text-orange-500', bg: 'bg-orange-400' },
-  'PAYE': { label: 'Payé', color: 'text-emerald-600', bg: 'bg-emerald-500' },
-};
+// Local STATUS_MAP removed in favor of dynamic mapping from @/lib/status-utils
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<any>(null);
@@ -268,11 +262,10 @@ export default function DashboardPage() {
                <h3 className="text-xl font-black text-slate-900 tracking-tight">Activité Récente</h3>
                <Link href="/dashboard/occupations" className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">Accéder au journal complet</Link>
             </div>
-            
             <div className="space-y-4">
                {stats.recentDossiers?.map((dossier: any) => (
                  <div key={dossier.id} className="bg-white p-6 rounded-xl border border-slate-100 flex items-center justify-between border-l-8 group hover:border-blue-500 transition-all hover:translate-x-1" 
-                      style={{ borderLeftColor: STATUS_MAP[dossier.statut]?.color.includes('blue') ? '#3b82f6' : (STATUS_MAP[dossier.statut]?.color.includes('emerald') ? '#10b981' : '#f59e0b') }}>
+                      style={{ borderLeftColor: getStatusConfig(dossier.type, dossier.statut).color.includes('blue') ? '#3b82f6' : (getStatusConfig(dossier.type, dossier.statut).color.includes('emerald') ? '#10b981' : '#f59e0b') }}>
                     <div className="flex items-center gap-6">
                        <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
                           {dossier.type === 'COMMERCE' ? <Package size={20} /> : <MapPin size={20} />}
@@ -280,8 +273,8 @@ export default function DashboardPage() {
                        <div>
                           <div className="flex items-center gap-3">
                              <p className="font-black text-slate-900">{dossier.nom || `Dossier #${dossier.id}`}</p>
-                             <span className={`px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${STATUS_MAP[dossier.statut]?.bg} ${STATUS_MAP[dossier.statut]?.color} border border-black/5`}>
-                               {STATUS_MAP[dossier.statut]?.label}
+                             <span className={`px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${getStatusConfig(dossier.type, dossier.statut).bg} ${getStatusConfig(dossier.type, dossier.statut).color} border border-black/5`}>
+                               {getStatusConfig(dossier.type, dossier.statut).label}
                              </span>
                           </div>
                           <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">

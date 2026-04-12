@@ -63,7 +63,8 @@ export async function POST(
         dateFin: dateFin ? new Date(dateFin) : null,
         dateDebutConstatee: dateDebutConstatee ? new Date(dateDebutConstatee) : null,
         dateFinConstatee: dateFinConstatee ? new Date(dateFinConstatee) : null,
-        photos: photos || ''
+        photos: photos || '',
+        note: body.note || ''
       }
     });
 

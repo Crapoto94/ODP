@@ -25,7 +25,7 @@ const menuItems = [
   { icon: FileText, label: 'Dossiers', href: '/dashboard/occupations' },
   { icon: Users, label: 'Gestion des Tiers', href: '/dashboard/tiers' },
   { icon: Euro, label: 'Tarifs & Articles', href: '/dashboard/tarifs' },
-  { icon: LayoutTemplate, label: 'Gabarit Facture', href: '/dashboard/gabarit' },
+  { icon: LayoutTemplate, label: 'Gabarits', href: '/dashboard/gabarit' },
   { icon: ClipboardCheck, label: 'Facturation', href: '/dashboard/facturation' },
   { icon: CopyPlus, label: 'Report d\'année', href: '/dashboard/report' },
   { icon: MapIcon, label: 'Carte SIG', href: '/dashboard/carte' },

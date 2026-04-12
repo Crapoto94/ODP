@@ -1,43 +1,201 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Plus, Package, Clock, Hash, Pencil, Trash2, FileText } from 'lucide-react';
+import { Plus, Package, Clock, Hash, Pencil, Trash2, FileText, CheckCircle2, FileStack, Loader2, ArrowLeft, CreditCard } from 'lucide-react';
 import { Occupation, LigneArticle } from '../types';
+import PaymentModal from './PaymentModal';
 
 interface Props {
   occupation: Occupation;
   isFactured: boolean;
+  isLocked?: boolean;
   onAddArticle: () => void;
   onEditArticle: (ligne: LigneArticle) => void;
   onDeleteArticle: (id: number) => void;
+  onValidateDemand?: () => void;
+  onNextStep?: () => void;
+  onPrevStep?: () => void;
+  onRegisterPayment?: (date: string) => Promise<void>;
+  aotGabarits?: any[];
+  onSetAotGabarit?: (id: number | null) => void;
+  onDownloadAot?: () => void;
+  isGeneratingAot?: boolean;
 }
 
 export default function OccupationArticles({
   occupation,
   isFactured,
+  isLocked = false,
   onAddArticle,
   onEditArticle,
-  onDeleteArticle
+  onDeleteArticle,
+  onValidateDemand,
+  onNextStep,
+  onPrevStep,
+  onRegisterPayment,
+  aotGabarits = [],
+  onSetAotGabarit,
+  onDownloadAot,
+  isGeneratingAot
 }: Props) {
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const isInit = occupation.type === 'CHANTIER' && (occupation.statut === 'INIT' || occupation.statut === 'INITIALISATION' || occupation.statut === 'EN_ATTENTE');
+
   return (
-    <section className="space-y-8">
-      <div className="flex items-center justify-between pb-6 border-b border-slate-200">
+    <section className="space-y-8 text-left">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-6 border-b border-slate-200 gap-6">
         <div>
           <h2 className="text-3xl font-black text-slate-950 tracking-tight">Détail des Articles</h2>
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">
-            {isFactured ? 'Consultation uniquement (Facture émise)' : 'Articles taxables rattachés au dossier'}
+            {isFactured ? 'Consultation uniquement (Facture émise)' : isLocked ? 'Consultation uniquement (Dossier validé)' : isInit ? 'En attente de réception de la demande' : 'Articles taxables rattachés au dossier'}
           </p>
         </div>
-        {!isFactured && (
+
+        {occupation.statut === 'FACTURE' && onRegisterPayment && (
           <button 
-            onClick={onAddArticle}
-            className="flex items-center gap-3 bg-slate-950 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 group"
+            onClick={() => setShowPaymentModal(true)}
+            className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 active:scale-95 group"
           >
-            <Plus size={18} className="group-hover:rotate-90 transition-transform" /> 
-            Ajouter un article
+            <CreditCard size={18} className="group-hover:scale-110 transition-transform" />
+            Saisir paiement
           </button>
         )}
+
+        {isInit && onValidateDemand && (
+          <button 
+            onClick={onValidateDemand}
+            className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 active:scale-95 group"
+          >
+            <CheckCircle2 size={18} className="group-hover:scale-110 transition-transform" />
+            Demande reçue
+          </button>
+        )}
+
+        {!isLocked && !isFactured && !isInit && (
+          <div className="flex items-center gap-4">
+            {occupation.statut === 'EN_COURS' && onPrevStep && (
+              <button 
+                onClick={onPrevStep}
+                className="flex items-center gap-2 px-6 py-4 bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest active:scale-95"
+              >
+                <ArrowLeft size={16} />
+                Retour
+              </button>
+            )}
+            
+            {occupation.statut === 'EN_COURS' && onNextStep && (
+              <button 
+                onClick={onNextStep}
+                className="flex items-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20 active:scale-95 group"
+              >
+                <CheckCircle2 size={18} className="group-hover:scale-110 transition-transform" />
+                Valider le dossier
+              </button>
+            )}
+            
+            {occupation.statut === 'INST' && onPrevStep && (
+              <button 
+                onClick={onPrevStep}
+                className="flex items-center gap-2 px-6 py-4 bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest active:scale-95"
+              >
+                <ArrowLeft size={16} />
+                Retour
+              </button>
+            )}
+
+            {occupation.statut === 'INST' && onNextStep && (
+              <button 
+                onClick={onNextStep}
+                className="flex items-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20 active:scale-95 group"
+              >
+                <FileStack size={18} className="group-hover:scale-110 transition-transform" />
+                Transmettre pour AOT
+              </button>
+            )}
+            
+            <button 
+              onClick={onAddArticle}
+              className="flex items-center gap-3 bg-slate-950 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 group"
+            >
+              <Plus size={18} className="group-hover:rotate-90 transition-transform" /> 
+              Ajouter un article
+            </button>
+          </div>
+        )}
       </div>
+      
+      {/* AOT Preparation Mode Card */}
+      {occupation.type === 'CHANTIER' && (occupation.statut === 'PREP' || occupation.statut === 'PREPARATION_AOT') && (
+        <div className="bg-white border-2 border-slate-100 rounded-3xl p-8 md:p-10 text-slate-900 shadow-xl shadow-slate-200/50 relative overflow-hidden group mb-12 animate-in zoom-in-95 duration-500">
+          {/* Subtle backdrop */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 opacity-50 blur-3xl group-hover:bg-indigo-100 transition-colors"></div>
+          
+          <div className="relative z-10 flex flex-col xl:flex-row items-center justify-between gap-10">
+            <div className="space-y-6 text-center xl:text-left flex-1">
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-full">
+                <FileStack size={14} className="text-indigo-500" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">Action administrative</span>
+              </div>
+              <div>
+                <h3 className="text-3xl font-black tracking-tight text-slate-900">Préparation de l'Arrêté</h3>
+                <p className="text-slate-500 font-medium text-sm mt-2 leading-relaxed max-w-xl">
+                  Sélectionnez le gabarit réglementaire à utiliser pour générer l'AOT de ce dossier.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="w-full sm:w-auto min-w-[320px] space-y-2">
+                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Modèle de gabarit</p>
+                   <select 
+                     className="w-full bg-slate-50 border-2 border-slate-100 rounded-xl py-3.5 px-6 outline-none focus:border-indigo-400 focus:bg-white transition-all font-bold text-sm text-slate-900"
+                     value={occupation.aotGabaritId || ''}
+                     onChange={(e) => onSetAotGabarit && onSetAotGabarit(e.target.value ? parseInt(e.target.value) : null)}
+                   >
+                     <option value="" disabled className="text-slate-400">Sélectionner un gabarit...</option>
+                     {aotGabarits.map(g => (
+                       <option key={g.id} value={g.id}>{g.nom}</option>
+                     ))}
+                   </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0 w-full xl:w-auto">
+              {onPrevStep && (
+                <button 
+                  onClick={onPrevStep}
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 active:scale-95"
+                >
+                  <ArrowLeft size={16} />
+                  Dossier précédent
+                </button>
+              )}
+
+              <button 
+                onClick={onDownloadAot}
+                disabled={!occupation.aotGabaritId || isGeneratingAot}
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-40 ${
+                  !occupation.aotGabaritId 
+                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200 shadow-none' 
+                    : 'bg-white border-2 border-indigo-100 text-indigo-600 hover:bg-indigo-50 shadow-indigo-100/50'
+                }`}
+              >
+                {isGeneratingAot ? <Loader2 size={18} className="animate-spin" /> : <FileText size={18} />}
+                Générer AOT
+              </button>
+
+              <button 
+                onClick={onNextStep}
+                disabled={!occupation.aotGabaritId || isGeneratingAot}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20 active:scale-95 disabled:opacity-40"
+              >
+                <CheckCircle2 size={18} />
+                Signé et publié
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-6">
         {!occupation.lignes || occupation.lignes.length === 0 ? (
@@ -141,7 +299,7 @@ export default function OccupationArticles({
                   </p>
                 </div>
                 
-                {!isFactured && (
+                {!isLocked && !isFactured && (
                   <div className="flex gap-3">
                     <button 
                       onClick={() => onEditArticle(ligne)}
@@ -162,6 +320,13 @@ export default function OccupationArticles({
           ))
         )}
       </div>
+      {onRegisterPayment && (
+        <PaymentModal 
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          onConfirm={onRegisterPayment}
+        />
+      )}
     </section>
   );
 }

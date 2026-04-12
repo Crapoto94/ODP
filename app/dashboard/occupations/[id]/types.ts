@@ -65,13 +65,16 @@ export interface Occupation {
   dateFin: string;
   anneeTaxation?: number;
   adresse: string;
+  agissantPour?: string | null;
   latitude?: number;
   longitude?: number;
   observations?: string;
+  datePaiement?: string | Date | null;
   tiers?: Tiers;
   lignes?: LigneArticle[];
   contacts?: Contact[];
   photos?: string;
+  aotGabaritId?: number | null;
   facturePath?: string;
 }
 

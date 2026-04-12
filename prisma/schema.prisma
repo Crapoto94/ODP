@@ -46,8 +46,11 @@ model Occupation {
   created_at     DateTime          @default(now())
   updated_at     DateTime          @updatedAt
   numeroFacture  String?
+  datePaiement   DateTime?
   dossierParentId Int?
+  agissantPour   String?
   isCourtMetrage Boolean           @default(false)
+  aotGabaritId   Int?
   contacts       Contact[]
   dispositifs    Dispositif[]
   lignes         LigneOccupation[]
@@ -200,6 +203,9 @@ model AppSettings {
   filienStructure     String?  @default("")
   filienGestionnaire  String?  @default("")
   filienUncPj         String?  @default("")
+  signataireRole      String?  @default("Le Maire d'Ivry-sur-Seine,")
+  signataireDelegation String? @default("et par délégation,")
+  signataireNom       String?  @default("Dominique Montet - Directrice Générale Adjointe")
   updated_at          DateTime @updatedAt
 }
 
@@ -217,6 +223,7 @@ model LigneOccupation {
   created_at         DateTime   @default(now())
   updated_at         DateTime   @updatedAt
   photos             String?
+  note               String?
   article            Article    @relation(fields: [articleId], references: [id])
   occupation         Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
 }
@@ -303,5 +310,12 @@ model PostgresConfig {
   schema   String @default("public")
   user     String
   password String
+}
+
+model OdpConfig {
+  annee               Int     @id
+  deliberationPath    String?
+  tarifsTournagesPath String?
+  tarifsOdpPath       String?
 }
 

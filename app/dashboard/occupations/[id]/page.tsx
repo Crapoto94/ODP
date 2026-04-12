@@ -15,6 +15,8 @@ import OccupationFinancialCard from './components/OccupationFinancialCard';
 import OccupationArticles from './components/OccupationArticles';
 import OccupationSidebar from './components/OccupationSidebar';
 import OccupationNotes from './components/OccupationNotes';
+import OccupationStepper from './components/OccupationStepper';
+import UploadDocModal from './components/UploadDocModal';
 import TlpeArticles from '../../tlpe/[id]/components/TlpeArticles';
 
 // Shared Components
@@ -53,7 +55,20 @@ export default function OccupationDetailPage({ params }: Props) {
     setNewContact,
     handleAddContact,
     handleDeleteContact,
-    handlePhotoContact
+    handlePhotoContact,
+    // Dossier Upload
+    isUploadModalOpen,
+    setIsUploadModalOpen,
+    isUploading,
+    handleUploadNamedDoc,
+    handleValidateDemand,
+    handleNextStep,
+    // AOT
+    gabarits,
+    handleSetAotGabarit,
+    handleDownloadAot,
+    handlePrevStep,
+    handleRegisterPayment
   } = useOccupationLogic(paramId);
 
   if (loading) {
@@ -84,6 +99,11 @@ export default function OccupationDetailPage({ params }: Props) {
         onToggleVerifie={handleToggleVerifie}
       />
 
+      <OccupationStepper 
+        type={occ.type}
+        currentStatus={occ.statut}
+      />
+
       <div className="max-w-7xl mx-auto space-y-12">
         <div className="flex flex-col lg:flex-row items-stretch justify-between gap-12">
           <OccupationHero 
@@ -91,11 +111,13 @@ export default function OccupationDetailPage({ params }: Props) {
             statusInfo={statusInfo} 
             typeInfo={typeInfo} 
           />
-          <OccupationFinancialCard 
-            totalAmount={totalAmount}
-            generatingPdf={generatingPdf}
-            onDownloadFacture={downloadFacture}
-          />
+          {!(occ.type === 'CHANTIER' && (occ.statut === 'INIT' || occ.statut === 'INITIALISATION' || occ.statut === 'EN_ATTENTE')) && (
+            <OccupationFinancialCard 
+              totalAmount={totalAmount}
+              generatingPdf={generatingPdf}
+              onDownloadFacture={downloadFacture}
+            />
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -116,6 +138,15 @@ export default function OccupationDetailPage({ params }: Props) {
                 onAddArticle={() => { setEditingLigne(null); setIsLigneModalOpen(true); }}
                 onEditArticle={(ligne) => { setEditingLigne(ligne); setIsLigneModalOpen(true); }}
                 onDeleteArticle={handleDeleteLigne}
+                onValidateDemand={handleValidateDemand}
+                onNextStep={handleNextStep}
+                aotGabarits={gabarits}
+                onSetAotGabarit={handleSetAotGabarit}
+                onDownloadAot={handleDownloadAot}
+                isGeneratingAot={generatingPdf}
+                isLocked={isLocked}
+                onPrevStep={handlePrevStep}
+                onRegisterPayment={handleRegisterPayment}
               />
             )}
             <OccupationNotes 
@@ -129,6 +160,7 @@ export default function OccupationDetailPage({ params }: Props) {
             isFactured={isFactured}
             onOpenContactModal={() => setIsContactModalOpen(true)}
             onDeleteContact={handleDeleteContact}
+            onOpenUploadModal={() => setIsUploadModalOpen(true)}
           />
         </div>
       </div>
@@ -169,6 +201,13 @@ export default function OccupationDetailPage({ params }: Props) {
         isSubmittingContact={isSubmittingContact}
         onAddContact={handleAddContact}
         onPhotoContact={handlePhotoContact}
+      />
+
+      <UploadDocModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        isUploading={isUploading}
+        onUpload={handleUploadNamedDoc}
       />
     </div>
   );

@@ -3,16 +3,9 @@ import axios from 'axios';
 import { differenceInDays, isLeapYear } from 'date-fns';
 import { Occupation, StatusConfig, TypeConfig, Contact } from '../types';
 import { resizeImage } from '../../../../../lib/image-utils';
+import { getStatusConfig } from '../../../../../lib/status-utils';
 
-export const STATUS_MAP: Record<string, StatusConfig> = {
-  'EN_ATTENTE': { label: 'En attente', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-  'EN_COURS': { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-  'TERMINE': { label: 'Terminé', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
-  'VERIFIE': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-  'FACTURE': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-  'INVOICED': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-  'PAYE': { label: 'Payé', color: 'text-emerald-700', bg: 'bg-emerald-100', border: 'border-emerald-200' },
-};
+// Local STATUS_MAP removed in favor of dynamic mapping from @/lib/status-utils
 
 export const TYPE_MAP: Record<string, TypeConfig> = {
   'COMMERCE': { label: 'Commerce', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
@@ -41,6 +34,11 @@ export function useOccupationLogic(occupationId: string) {
     pjPath: '' 
   });
 
+  // Dossier Upload states
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [gabarits, setGabarits] = useState<any[]>([]);
+
   const fetchOccupation = async () => {
     try {
       const res = await axios.get(`/api/occupations/${occupationId}`);
@@ -50,6 +48,13 @@ export function useOccupationLogic(occupationId: string) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchGabarits = async () => {
+    try {
+      const res = await axios.get('/api/gabarits');
+      setGabarits(res.data);
+    } catch (err) {}
   };
 
   const fetchCurrentUser = async () => {
@@ -62,7 +67,39 @@ export function useOccupationLogic(occupationId: string) {
   useEffect(() => {
     fetchOccupation();
     fetchCurrentUser();
+    fetchGabarits();
   }, [occupationId]);
+
+  const handleSetAotGabarit = async (gabaritId: number | null) => {
+    if (!occ) return;
+    try {
+      await axios.patch(`/api/occupations/${occ.id}`, { aotGabaritId: gabaritId });
+      fetchOccupation();
+    } catch (err) {
+      alert("Erreur lors de la sélection du gabarit");
+    }
+  };
+
+  const handleDownloadAot = async () => {
+    if (!occ) return;
+    setGeneratingPdf(true);
+    try {
+      const res = await axios.get(`/api/aot-pdf/${occ.id}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `AOT-${occ.id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert('Erreur lors de la génération de l\'AOT');
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
 
   const handleAutoAddTierContact = async (tiers: any) => {
     try {
@@ -166,7 +203,134 @@ export function useOccupationLogic(occupationId: string) {
     }
   };
 
-  const statusInfo = occ ? STATUS_MAP[occ.statut] || { label: occ.statut, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' } : null;
+  const handleUploadNamedDoc = async (name: string, file: File) => {
+    if (!occ) return;
+    setIsUploading(true);
+    const isPdf = file.name.toLowerCase().endsWith('.pdf');
+    
+    try {
+      const fd = new FormData();
+      if (!isPdf && file.type.startsWith('image/')) {
+        const resizedBlob = await resizeImage(file);
+        fd.append('file', resizedBlob, file.name);
+      } else {
+        fd.append('file', file);
+      }
+
+      const res = await axios.post('/api/upload', fd);
+      const newUrl = res.data.url;
+      
+      const currentPhotos = occ.photos ? occ.photos.split(',') : [];
+      // Store as url|name
+      const updatedPhotos = [...currentPhotos, `${newUrl}|${name}`].join(',');
+
+      await axios.patch(`/api/occupations/${occ.id}`, { photos: updatedPhotos });
+      await fetchOccupation();
+    } catch (err) {
+      console.error('[Upload Named Doc] Error:', err);
+      alert("Erreur lors de l'envoi du document");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleValidateDemand = async () => {
+    if (!occ) return;
+    const photoList = occ.photos ? occ.photos.split(',').filter(Boolean) : [];
+    if (photoList.length === 0) {
+      alert("Veuillez joindre au moins un document (la demande) avant de valider.");
+      return;
+    }
+
+    if (!confirm("Confirmer la réception de la demande ? Le dossier passera en étape 'Instruction'.")) return;
+
+    try {
+      await axios.patch(`/api/occupations/${occ.id}`, { statut: 'INST' });
+      await fetchOccupation();
+    } catch (err) {
+      alert("Erreur lors de la validation de la demande");
+    }
+  };
+
+  const handleNextStep = async () => {
+    if (!occ) return;
+    let nextStatus = '';
+    let confirmMsg = '';
+
+    if (occ.statut === 'INST') {
+      nextStatus = 'PREP';
+      confirmMsg = "Transmettre le dossier pour préparation des AOT ?";
+    } else if (occ.statut === 'PREP') {
+      nextStatus = 'EN_COURS';
+      confirmMsg = "Passer le dossier en cours d'exécution ?";
+    } else if (occ.statut === 'EN_COURS') {
+      nextStatus = 'VERIFIE';
+      confirmMsg = "Valider la fin d'occupation ? Le dossier sera verrouillé et prêt pour facturation.";
+    }
+
+    if (!nextStatus) return;
+    if (!confirm(confirmMsg)) return;
+
+    try {
+      await axios.patch(`/api/occupations/${occ.id}`, { statut: nextStatus });
+      await fetchOccupation();
+    } catch (err) {
+      alert("Erreur lors du changement d'étape");
+    }
+  };
+
+  const handlePrevStep = async () => {
+    if (!occ) return;
+    let prevStatus = '';
+    let confirmMsg = '';
+
+    if (occ.statut === 'EN_COURS') {
+      prevStatus = 'PREP';
+      confirmMsg = "Revenir à l'étape de préparation des AOT ?";
+    } else if (occ.statut === 'PREP') {
+      prevStatus = 'INST';
+      confirmMsg = "Revenir à l'étape d'instruction du dossier ?";
+    } else if (occ.statut === 'INST') {
+      prevStatus = 'INIT';
+      confirmMsg = "Revenir à l'étape initiale (réception de demande) ?";
+    }
+
+    if (!prevStatus) return;
+    if (!confirm(confirmMsg)) return;
+
+    try {
+      await axios.patch(`/api/occupations/${occ.id}`, { statut: prevStatus });
+      await fetchOccupation();
+    } catch (err) {
+      alert("Erreur lors du retour à l'étape précédente");
+    }
+  };
+
+  const handleRegisterPayment = async (dateStr: string) => {
+    if (!occ) return;
+    
+    if (!dateStr) return;
+    
+    // Validate date format basic
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      alert("Format de date invalide. Utilisez AAAA-MM-JJ.");
+      return;
+    }
+
+    try {
+      await axios.patch(`/api/occupations/${occ.id}`, { 
+        datePaiement: dateStr,
+        statut: 'PAYE'
+      });
+      await fetchOccupation();
+      alert("Paiement enregistré. Dossier clos.");
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de l'enregistrement du paiement");
+    }
+  };
+
+  const statusInfo = occ ? getStatusConfig(occ.type, occ.statut) : null;
   const typeInfo = occ ? TYPE_MAP[occ.type] || { label: occ.type, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' } : null;
   const isLocked = occ ? ['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) : false;
   const isFactured = occ ? ['FACTURE', 'PAYE'].includes(occ.statut) : false;
@@ -194,6 +358,19 @@ export function useOccupationLogic(occupationId: string) {
     setNewContact,
     handleAddContact,
     handleDeleteContact,
-    handlePhotoContact
+    handlePhotoContact,
+    // Dossier Upload
+    isUploadModalOpen,
+    setIsUploadModalOpen,
+    isUploading,
+    handleUploadNamedDoc,
+    handleValidateDemand,
+    handleNextStep,
+    handlePrevStep,
+    handleRegisterPayment,
+    // AOT
+    gabarits,
+    handleSetAotGabarit,
+    handleDownloadAot
   };
 }

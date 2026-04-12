@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polygon } from 'react-leaflet';
 import L from 'leaflet';
 import { useRouter } from 'next/navigation';
+import { getStatusConfig } from '@/lib/status-utils';
 
 // Safe icon helper that always returns something valid if on window
 const MARKER_COLORS: Record<string, string> = {
@@ -14,15 +15,7 @@ const MARKER_COLORS: Record<string, string> = {
   TIER:      '#64748b', // Slate
 };
 
-const STATUS_MAP: Record<string, { label: string }> = {
-  'EN_ATTENTE': { label: 'En attente' },
-  'EN_COURS': { label: 'En cours' },
-  'TERMINE': { label: 'Terminé' },
-  'VERIFIE': { label: 'Vérifié' },
-  'FACTURE': { label: 'Facturé' },
-  'INVOICED': { label: 'Facturé' },
-  'PAYE': { label: 'Payé' },
-};
+// Local STATUS_MAP removed in favor of dynamic mapping from @/lib/status-utils
 
 const createCustomIcon = (type: string, count: number, isTier: boolean) => {
   const color = isTier ? MARKER_COLORS.TIER : (MARKER_COLORS[type] || '#8b5cf6');
@@ -207,9 +200,8 @@ export default function SigMap({ occupations = [], tiers = [] }: { occupations: 
                          </span>
                          {!m.isTier && (
                            <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider ${
-                             m.statut === 'VALIDE' || m.statut === 'FACTURE' || m.statut === 'INVOICED' || m.statut === 'PAYE' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
-                           } border`}>
-                             {STATUS_MAP[m.statut]?.label || m.statut}
+                             getStatusConfig(m.type, m.statut).bg} ${getStatusConfig(m.type, m.statut).color} border border-slate-200`}>
+                             {getStatusConfig(m.type, m.statut).label}
                            </span>
                          )}
                       </div>

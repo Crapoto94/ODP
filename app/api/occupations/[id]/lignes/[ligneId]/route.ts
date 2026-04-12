@@ -69,7 +69,8 @@ export async function PATCH(
         dateFin: dateFin !== undefined ? (dateFin ? new Date(dateFin) : null) : undefined,
         dateDebutConstatee: dateDebutConstatee !== undefined ? (dateDebutConstatee ? new Date(dateDebutConstatee) : null) : undefined,
         dateFinConstatee: dateFinConstatee !== undefined ? (dateFinConstatee ? new Date(dateFinConstatee) : null) : undefined,
-        photos: photos !== undefined ? photos : undefined
+        photos: photos !== undefined ? photos : undefined,
+        note: body.note !== undefined ? body.note : undefined
       }
     });
 

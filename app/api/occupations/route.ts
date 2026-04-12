@@ -66,7 +66,8 @@ export async function POST(req: Request) {
       longitude, 
       description,
       photos,
-      isCourtMetrage
+      isCourtMetrage,
+      agissantPour
     } = body;
 
     if (!tiersId || !type) {
@@ -93,7 +94,8 @@ export async function POST(req: Request) {
         longitude: longitude ? parseFloat(longitude) : null,
         description,
         photos,
-        montantCalcule: 0
+        montantCalcule: 0,
+        agissantPour
       }
     });
 

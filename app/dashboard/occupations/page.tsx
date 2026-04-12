@@ -37,6 +37,8 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import LigneArticleModal from '@/components/LigneArticleModal';
 import FilienGenerationModal from '@/components/FilienGenerationModal';
+import OdpDocsBanner from '@/components/OdpDocsBanner';
+import { getStatusConfig, getAvailableStatuses } from '@/lib/status-utils';
 
 interface Occupation {
   id: number;
@@ -67,15 +69,7 @@ interface Tiers {
   statut?: string;
 }
 
-const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
-  'EN_ATTENTE': { label: 'En attente', color: 'text-amber-500', bg: 'bg-amber-50' },
-  'EN_COURS': { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-50' },
-  'TERMINE': { label: 'Terminé', color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  'VERIFIE': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  'FACTURE': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50' },
-  'INVOICED': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50' },
-  'PAYE': { label: 'Payé', color: 'text-emerald-700', bg: 'bg-emerald-100' },
-};
+// Local STATUS_MAP removed in favor of dynamic mapping from @/lib/status-utils
 
 const TYPE_MAP: Record<string, { label: string; icon: any; color: string; bg: string }> = {
   'TLPE': { label: 'TLPE', icon: Euro, color: 'text-purple-600', bg: 'bg-purple-50' },
@@ -109,6 +103,7 @@ function OccupationsPageContent() {
   const [selectedOccForLigne, setSelectedOccForLigne] = useState<Occupation | null>(null);
   const [editingLigne, setEditingLigne] = useState<any>(null);
   const [isFilienModalOpen, setIsFilienModalOpen] = useState(false);
+  const [odpConfig, setOdpConfig] = useState<any>(null);
 
   const router = useRouter();
 
@@ -125,7 +120,8 @@ function OccupationsPageContent() {
     longitude: '',
     description: '',
     statut: 'EN_ATTENTE',
-    isCourtMetrage: false
+    isCourtMetrage: false,
+    agissantPour: ''
   });
 
   const isEditing = !!formData.id;
@@ -168,6 +164,16 @@ function OccupationsPageContent() {
     fetchTiers();
     fetchOccupations();
   }, []);
+
+  useEffect(() => {
+    if (yearFilter && yearFilter !== 'ALL') {
+      axios.get(`/api/settings/odp-docs?annee=${yearFilter}`)
+        .then(res => setOdpConfig(res.data.config))
+        .catch(() => setOdpConfig(null));
+    } else {
+      setOdpConfig(null);
+    }
+  }, [yearFilter]);
 
   useEffect(() => {
     const editId = searchParams.get('edit');
@@ -419,28 +425,37 @@ function OccupationsPageContent() {
           <h2 className="text-3xl font-black text-slate-900 tracking-tight">Dossiers</h2>
           <p className="text-slate-500 font-medium tracking-wide">Gestion des autorisations d'occupation du domaine public</p>
         </div>
-        <div className="flex gap-4">
-           <button 
-             onClick={() => { fetchTiers(); fetchOccupations(); }}
-             className="p-3.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 transition-all shadow-sm"
-             title="Actualiser"
-           >
-             <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
-           </button>
-           <button 
-             onClick={() => { resetForm(); setIsModalOpen(true); }}
-             className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95"
-           >
-             <Plus size={18} />
-             Nouveau Dossier
-           </button>
-           <button 
-             onClick={() => setIsFilienModalOpen(true)}
-             className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95"
-           >
-             <FileText size={18} />
-             GENERER FILIEN
-           </button>
+        <div className="flex items-center gap-6">
+           {yearFilter && yearFilter !== 'ALL' && (
+             <OdpDocsBanner 
+               year={parseInt(yearFilter)} 
+               config={odpConfig} 
+               variant="compact" 
+             />
+           )}
+           <div className="flex gap-4">
+              <button 
+                onClick={() => { fetchTiers(); fetchOccupations(); }}
+                className="p-3.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 transition-all shadow-sm"
+                title="Actualiser"
+              >
+                <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+              </button>
+              <button 
+                onClick={() => { resetForm(); setIsModalOpen(true); }}
+                className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95"
+              >
+                <Plus size={18} />
+                Nouveau Dossier
+              </button>
+              <button 
+                onClick={() => setIsFilienModalOpen(true)}
+                className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95"
+              >
+                <FileText size={18} />
+                GENERER FILIEN
+              </button>
+           </div>
         </div>
       </div>
 
@@ -537,7 +552,7 @@ function OccupationsPageContent() {
               onChange={e => setStatusFilter(e.target.value)}
             >
               <option value="ALL">Tous les Statuts</option>
-              {Object.entries(STATUS_MAP).map(([key, val]) => (
+              {Object.entries(getAvailableStatuses(typeFilter)).map(([key, val]) => (
                 <option key={key} value={key}>{val.label}</option>
               ))}
             </select>
@@ -627,9 +642,9 @@ function OccupationsPageContent() {
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-[10px] font-black uppercase">
                          <div className="flex items-center gap-2">
-                           <div className={`w-2.5 h-2.5 rounded-full ${STATUS_MAP[occ.statut]?.color.replace('text', 'bg') || 'bg-slate-300'} shadow-sm`}></div>
-                           <span className={STATUS_MAP[occ.statut]?.color || 'text-slate-400'}>
-                             {STATUS_MAP[occ.statut]?.label || occ.statut}
+                           <div className={`w-2.5 h-2.5 rounded-full ${getStatusConfig(occ.type, occ.statut).color.replace('text', 'bg') || 'bg-slate-300'} shadow-sm`}></div>
+                           <span className={getStatusConfig(occ.type, occ.statut).color || 'text-slate-400'}>
+                             {getStatusConfig(occ.type, occ.statut).label || occ.statut}
                            </span>
                          </div>
                          {(occ as any).facturePath && (
@@ -871,10 +886,24 @@ function OccupationsPageContent() {
                       </div>
                     )}
                   </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                      Agissant pour le compte de (Optionnel)
+                    </label>
+                    <input 
+                      type="text" 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" 
+                      placeholder="Ex: Entreprise Vinci..." 
+                      value={formData.agissantPour || ''} 
+                      onChange={e => setFormData({...formData, agissantPour: e.target.value})} 
+                    />
+                  </div>
+
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Statut du dossier</label>
                     <select className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold appearance-none cursor-pointer" value={formData.statut} onChange={e => setFormData({...formData, statut: e.target.value})}>
-                      {Object.entries(STATUS_MAP).map(([key, val]) => (
+                      {Object.entries(getAvailableStatuses(formData.type)).map(([key, val]) => (
                         <option key={key} value={key}>{val.label.toUpperCase()}</option>
                       ))}
                     </select>

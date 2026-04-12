@@ -74,7 +74,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       photos,
       numeroFacture,
       facturePath,
-      isCourtMetrage
+      datePaiement,
+      isCourtMetrage,
+      agissantPour,
+      aotGabaritId
     } = body;
 
     const updateData: any = { 
@@ -90,8 +93,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       longitude: longitude !== undefined ? (longitude ? parseFloat(longitude) : null) : undefined,
       description,
       photos,
+      agissantPour: agissantPour !== undefined ? agissantPour : undefined,
       numeroFacture: numeroFacture !== undefined ? numeroFacture : undefined,
       facturePath: facturePath !== undefined ? facturePath : undefined,
+      aotGabaritId: aotGabaritId !== undefined ? (aotGabaritId ? parseInt(aotGabaritId) : null) : undefined,
     };
 
     const occupation = await (prisma as any).occupation.update({

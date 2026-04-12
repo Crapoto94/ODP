@@ -36,7 +36,8 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
     dateDebut: defaultDates.start,
     dateFin: defaultDates.end,
     dateDebutConstatee: '',
-    dateFinConstatee: ''
+    dateFinConstatee: '',
+    note: ''
   });
   const [manualQ2, setManualQ2] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -109,7 +110,8 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
           dateDebut: initialData.dateDebut?.split('T')[0] || defaultDates.start,
           dateFin: initialData.dateFin?.split('T')[0] || defaultDates.end,
           dateDebutConstatee: initialData.dateDebutConstatee ? initialData.dateDebutConstatee.split('T')[0] : '',
-          dateFinConstatee: initialData.dateFinConstatee ? initialData.dateFinConstatee.split('T')[0] : ''
+          dateFinConstatee: initialData.dateFinConstatee ? initialData.dateFinConstatee.split('T')[0] : '',
+          note: initialData.note || ''
         });
         setPhotos(initialData.photos ? initialData.photos.split(',').filter(Boolean) : []);
         setFilterText(initialData.article?.numero ? `[${initialData.article.numero}] ${initialData.article.designation}` : initialData.article?.designation || '');
@@ -121,7 +123,8 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
           dateDebut: defaultDates.start,
           dateFin: defaultDates.end,
           dateDebutConstatee: '',
-          dateFinConstatee: ''
+          dateFinConstatee: '',
+          note: ''
         });
         setPhotos([]);
         setFilterText('');
@@ -428,6 +431,16 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
               </div>
             </div>
           )}
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Note (pour l'AOT)</label>
+            <textarea
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-xs min-h-[80px]"
+              placeholder="Ex: Emplacement spécifique, contraintes..."
+              value={formData.note}
+              onChange={e => setFormData({ ...formData, note: e.target.value })}
+            />
+          </div>
           
           <div className="space-y-4 pt-4">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Photos / Justificatifs</label>

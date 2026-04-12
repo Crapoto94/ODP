@@ -113,6 +113,11 @@ export type VersionRelease = $Result.DefaultSelection<Prisma.$VersionReleasePayl
  * 
  */
 export type PostgresConfig = $Result.DefaultSelection<Prisma.$PostgresConfigPayload>
+/**
+ * Model OdpConfig
+ * 
+ */
+export type OdpConfig = $Result.DefaultSelection<Prisma.$OdpConfigPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -436,6 +441,16 @@ export class PrismaClient<
     * ```
     */
   get postgresConfig(): Prisma.PostgresConfigDelegate<ExtArgs>;
+
+  /**
+   * `prisma.odpConfig`: Exposes CRUD operations for the **OdpConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OdpConfigs
+    * const odpConfigs = await prisma.odpConfig.findMany()
+    * ```
+    */
+  get odpConfig(): Prisma.OdpConfigDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -896,7 +911,8 @@ export namespace Prisma {
     BacklogItem: 'BacklogItem',
     BacklogComment: 'BacklogComment',
     VersionRelease: 'VersionRelease',
-    PostgresConfig: 'PostgresConfig'
+    PostgresConfig: 'PostgresConfig',
+    OdpConfig: 'OdpConfig'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -912,7 +928,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "odpConfig"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2313,6 +2329,76 @@ export namespace Prisma {
           count: {
             args: Prisma.PostgresConfigCountArgs<ExtArgs>
             result: $Utils.Optional<PostgresConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      OdpConfig: {
+        payload: Prisma.$OdpConfigPayload<ExtArgs>
+        fields: Prisma.OdpConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OdpConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OdpConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.OdpConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OdpConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload>
+          }
+          findMany: {
+            args: Prisma.OdpConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload>[]
+          }
+          create: {
+            args: Prisma.OdpConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload>
+          }
+          createMany: {
+            args: Prisma.OdpConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OdpConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.OdpConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload>
+          }
+          update: {
+            args: Prisma.OdpConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.OdpConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OdpConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.OdpConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OdpConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.OdpConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOdpConfig>
+          }
+          groupBy: {
+            args: Prisma.OdpConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OdpConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OdpConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<OdpConfigCountAggregateOutputType> | number
           }
         }
       }
@@ -3897,6 +3983,7 @@ export namespace Prisma {
     longitude: number | null
     montantCalcule: number | null
     dossierParentId: number | null
+    aotGabaritId: number | null
   }
 
   export type OccupationSumAggregateOutputType = {
@@ -3907,6 +3994,7 @@ export namespace Prisma {
     longitude: number | null
     montantCalcule: number | null
     dossierParentId: number | null
+    aotGabaritId: number | null
   }
 
   export type OccupationMinAggregateOutputType = {
@@ -3928,8 +4016,11 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     numeroFacture: string | null
+    datePaiement: Date | null
     dossierParentId: number | null
+    agissantPour: string | null
     isCourtMetrage: boolean | null
+    aotGabaritId: number | null
   }
 
   export type OccupationMaxAggregateOutputType = {
@@ -3951,8 +4042,11 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     numeroFacture: string | null
+    datePaiement: Date | null
     dossierParentId: number | null
+    agissantPour: string | null
     isCourtMetrage: boolean | null
+    aotGabaritId: number | null
   }
 
   export type OccupationCountAggregateOutputType = {
@@ -3974,8 +4068,11 @@ export namespace Prisma {
     created_at: number
     updated_at: number
     numeroFacture: number
+    datePaiement: number
     dossierParentId: number
+    agissantPour: number
     isCourtMetrage: number
+    aotGabaritId: number
     _all: number
   }
 
@@ -3988,6 +4085,7 @@ export namespace Prisma {
     longitude?: true
     montantCalcule?: true
     dossierParentId?: true
+    aotGabaritId?: true
   }
 
   export type OccupationSumAggregateInputType = {
@@ -3998,6 +4096,7 @@ export namespace Prisma {
     longitude?: true
     montantCalcule?: true
     dossierParentId?: true
+    aotGabaritId?: true
   }
 
   export type OccupationMinAggregateInputType = {
@@ -4019,8 +4118,11 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     numeroFacture?: true
+    datePaiement?: true
     dossierParentId?: true
+    agissantPour?: true
     isCourtMetrage?: true
+    aotGabaritId?: true
   }
 
   export type OccupationMaxAggregateInputType = {
@@ -4042,8 +4144,11 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     numeroFacture?: true
+    datePaiement?: true
     dossierParentId?: true
+    agissantPour?: true
     isCourtMetrage?: true
+    aotGabaritId?: true
   }
 
   export type OccupationCountAggregateInputType = {
@@ -4065,8 +4170,11 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     numeroFacture?: true
+    datePaiement?: true
     dossierParentId?: true
+    agissantPour?: true
     isCourtMetrage?: true
+    aotGabaritId?: true
     _all?: true
   }
 
@@ -4175,8 +4283,11 @@ export namespace Prisma {
     created_at: Date
     updated_at: Date
     numeroFacture: string | null
+    datePaiement: Date | null
     dossierParentId: number | null
+    agissantPour: string | null
     isCourtMetrage: boolean
+    aotGabaritId: number | null
     _count: OccupationCountAggregateOutputType | null
     _avg: OccupationAvgAggregateOutputType | null
     _sum: OccupationSumAggregateOutputType | null
@@ -4217,8 +4328,11 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     numeroFacture?: boolean
+    datePaiement?: boolean
     dossierParentId?: boolean
+    agissantPour?: boolean
     isCourtMetrage?: boolean
+    aotGabaritId?: boolean
     contacts?: boolean | Occupation$contactsArgs<ExtArgs>
     dispositifs?: boolean | Occupation$dispositifsArgs<ExtArgs>
     lignes?: boolean | Occupation$lignesArgs<ExtArgs>
@@ -4246,8 +4360,11 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     numeroFacture?: boolean
+    datePaiement?: boolean
     dossierParentId?: boolean
+    agissantPour?: boolean
     isCourtMetrage?: boolean
+    aotGabaritId?: boolean
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["occupation"]>
 
@@ -4270,8 +4387,11 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     numeroFacture?: boolean
+    datePaiement?: boolean
     dossierParentId?: boolean
+    agissantPour?: boolean
     isCourtMetrage?: boolean
+    aotGabaritId?: boolean
   }
 
   export type OccupationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4314,8 +4434,11 @@ export namespace Prisma {
       created_at: Date
       updated_at: Date
       numeroFacture: string | null
+      datePaiement: Date | null
       dossierParentId: number | null
+      agissantPour: string | null
       isCourtMetrage: boolean
+      aotGabaritId: number | null
     }, ExtArgs["result"]["occupation"]>
     composites: {}
   }
@@ -4732,8 +4855,11 @@ export namespace Prisma {
     readonly created_at: FieldRef<"Occupation", 'DateTime'>
     readonly updated_at: FieldRef<"Occupation", 'DateTime'>
     readonly numeroFacture: FieldRef<"Occupation", 'String'>
+    readonly datePaiement: FieldRef<"Occupation", 'DateTime'>
     readonly dossierParentId: FieldRef<"Occupation", 'Int'>
+    readonly agissantPour: FieldRef<"Occupation", 'String'>
     readonly isCourtMetrage: FieldRef<"Occupation", 'Boolean'>
+    readonly aotGabaritId: FieldRef<"Occupation", 'Int'>
   }
     
 
@@ -13499,6 +13625,9 @@ export namespace Prisma {
     filienStructure: string | null
     filienGestionnaire: string | null
     filienUncPj: string | null
+    signataireRole: string | null
+    signataireDelegation: string | null
+    signataireNom: string | null
     updated_at: Date | null
   }
 
@@ -13536,6 +13665,9 @@ export namespace Prisma {
     filienStructure: string | null
     filienGestionnaire: string | null
     filienUncPj: string | null
+    signataireRole: string | null
+    signataireDelegation: string | null
+    signataireNom: string | null
     updated_at: Date | null
   }
 
@@ -13573,6 +13705,9 @@ export namespace Prisma {
     filienStructure: number
     filienGestionnaire: number
     filienUncPj: number
+    signataireRole: number
+    signataireDelegation: number
+    signataireNom: number
     updated_at: number
     _all: number
   }
@@ -13622,6 +13757,9 @@ export namespace Prisma {
     filienStructure?: true
     filienGestionnaire?: true
     filienUncPj?: true
+    signataireRole?: true
+    signataireDelegation?: true
+    signataireNom?: true
     updated_at?: true
   }
 
@@ -13659,6 +13797,9 @@ export namespace Prisma {
     filienStructure?: true
     filienGestionnaire?: true
     filienUncPj?: true
+    signataireRole?: true
+    signataireDelegation?: true
+    signataireNom?: true
     updated_at?: true
   }
 
@@ -13696,6 +13837,9 @@ export namespace Prisma {
     filienStructure?: true
     filienGestionnaire?: true
     filienUncPj?: true
+    signataireRole?: true
+    signataireDelegation?: true
+    signataireNom?: true
     updated_at?: true
     _all?: true
   }
@@ -13820,6 +13964,9 @@ export namespace Prisma {
     filienStructure: string | null
     filienGestionnaire: string | null
     filienUncPj: string | null
+    signataireRole: string | null
+    signataireDelegation: string | null
+    signataireNom: string | null
     updated_at: Date
     _count: AppSettingsCountAggregateOutputType | null
     _avg: AppSettingsAvgAggregateOutputType | null
@@ -13876,6 +14023,9 @@ export namespace Prisma {
     filienStructure?: boolean
     filienGestionnaire?: boolean
     filienUncPj?: boolean
+    signataireRole?: boolean
+    signataireDelegation?: boolean
+    signataireNom?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
@@ -13913,6 +14063,9 @@ export namespace Prisma {
     filienStructure?: boolean
     filienGestionnaire?: boolean
     filienUncPj?: boolean
+    signataireRole?: boolean
+    signataireDelegation?: boolean
+    signataireNom?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
@@ -13950,6 +14103,9 @@ export namespace Prisma {
     filienStructure?: boolean
     filienGestionnaire?: boolean
     filienUncPj?: boolean
+    signataireRole?: boolean
+    signataireDelegation?: boolean
+    signataireNom?: boolean
     updated_at?: boolean
   }
 
@@ -13991,6 +14147,9 @@ export namespace Prisma {
       filienStructure: string | null
       filienGestionnaire: string | null
       filienUncPj: string | null
+      signataireRole: string | null
+      signataireDelegation: string | null
+      signataireNom: string | null
       updated_at: Date
     }, ExtArgs["result"]["appSettings"]>
     composites: {}
@@ -14418,6 +14577,9 @@ export namespace Prisma {
     readonly filienStructure: FieldRef<"AppSettings", 'String'>
     readonly filienGestionnaire: FieldRef<"AppSettings", 'String'>
     readonly filienUncPj: FieldRef<"AppSettings", 'String'>
+    readonly signataireRole: FieldRef<"AppSettings", 'String'>
+    readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
+    readonly signataireNom: FieldRef<"AppSettings", 'String'>
     readonly updated_at: FieldRef<"AppSettings", 'DateTime'>
   }
     
@@ -14749,6 +14911,7 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     photos: string | null
+    note: string | null
   }
 
   export type LigneOccupationMaxAggregateOutputType = {
@@ -14765,6 +14928,7 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     photos: string | null
+    note: string | null
   }
 
   export type LigneOccupationCountAggregateOutputType = {
@@ -14781,6 +14945,7 @@ export namespace Prisma {
     created_at: number
     updated_at: number
     photos: number
+    note: number
     _all: number
   }
 
@@ -14817,6 +14982,7 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     photos?: true
+    note?: true
   }
 
   export type LigneOccupationMaxAggregateInputType = {
@@ -14833,6 +14999,7 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     photos?: true
+    note?: true
   }
 
   export type LigneOccupationCountAggregateInputType = {
@@ -14849,6 +15016,7 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     photos?: true
+    note?: true
     _all?: true
   }
 
@@ -14952,6 +15120,7 @@ export namespace Prisma {
     created_at: Date
     updated_at: Date
     photos: string | null
+    note: string | null
     _count: LigneOccupationCountAggregateOutputType | null
     _avg: LigneOccupationAvgAggregateOutputType | null
     _sum: LigneOccupationSumAggregateOutputType | null
@@ -14987,6 +15156,7 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     photos?: boolean
+    note?: boolean
     article?: boolean | ArticleDefaultArgs<ExtArgs>
     occupation?: boolean | OccupationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ligneOccupation"]>
@@ -15005,6 +15175,7 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     photos?: boolean
+    note?: boolean
     article?: boolean | ArticleDefaultArgs<ExtArgs>
     occupation?: boolean | OccupationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ligneOccupation"]>
@@ -15023,6 +15194,7 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     photos?: boolean
+    note?: boolean
   }
 
   export type LigneOccupationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15054,6 +15226,7 @@ export namespace Prisma {
       created_at: Date
       updated_at: Date
       photos: string | null
+      note: string | null
     }, ExtArgs["result"]["ligneOccupation"]>
     composites: {}
   }
@@ -15462,6 +15635,7 @@ export namespace Prisma {
     readonly created_at: FieldRef<"LigneOccupation", 'DateTime'>
     readonly updated_at: FieldRef<"LigneOccupation", 'DateTime'>
     readonly photos: FieldRef<"LigneOccupation", 'String'>
+    readonly note: FieldRef<"LigneOccupation", 'String'>
   }
     
 
@@ -23549,6 +23723,904 @@ export namespace Prisma {
 
 
   /**
+   * Model OdpConfig
+   */
+
+  export type AggregateOdpConfig = {
+    _count: OdpConfigCountAggregateOutputType | null
+    _avg: OdpConfigAvgAggregateOutputType | null
+    _sum: OdpConfigSumAggregateOutputType | null
+    _min: OdpConfigMinAggregateOutputType | null
+    _max: OdpConfigMaxAggregateOutputType | null
+  }
+
+  export type OdpConfigAvgAggregateOutputType = {
+    annee: number | null
+  }
+
+  export type OdpConfigSumAggregateOutputType = {
+    annee: number | null
+  }
+
+  export type OdpConfigMinAggregateOutputType = {
+    annee: number | null
+    deliberationPath: string | null
+    tarifsTournagesPath: string | null
+    tarifsOdpPath: string | null
+  }
+
+  export type OdpConfigMaxAggregateOutputType = {
+    annee: number | null
+    deliberationPath: string | null
+    tarifsTournagesPath: string | null
+    tarifsOdpPath: string | null
+  }
+
+  export type OdpConfigCountAggregateOutputType = {
+    annee: number
+    deliberationPath: number
+    tarifsTournagesPath: number
+    tarifsOdpPath: number
+    _all: number
+  }
+
+
+  export type OdpConfigAvgAggregateInputType = {
+    annee?: true
+  }
+
+  export type OdpConfigSumAggregateInputType = {
+    annee?: true
+  }
+
+  export type OdpConfigMinAggregateInputType = {
+    annee?: true
+    deliberationPath?: true
+    tarifsTournagesPath?: true
+    tarifsOdpPath?: true
+  }
+
+  export type OdpConfigMaxAggregateInputType = {
+    annee?: true
+    deliberationPath?: true
+    tarifsTournagesPath?: true
+    tarifsOdpPath?: true
+  }
+
+  export type OdpConfigCountAggregateInputType = {
+    annee?: true
+    deliberationPath?: true
+    tarifsTournagesPath?: true
+    tarifsOdpPath?: true
+    _all?: true
+  }
+
+  export type OdpConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OdpConfig to aggregate.
+     */
+    where?: OdpConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OdpConfigs to fetch.
+     */
+    orderBy?: OdpConfigOrderByWithRelationInput | OdpConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OdpConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OdpConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OdpConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OdpConfigs
+    **/
+    _count?: true | OdpConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: OdpConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: OdpConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OdpConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OdpConfigMaxAggregateInputType
+  }
+
+  export type GetOdpConfigAggregateType<T extends OdpConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateOdpConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOdpConfig[P]>
+      : GetScalarType<T[P], AggregateOdpConfig[P]>
+  }
+
+
+
+
+  export type OdpConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OdpConfigWhereInput
+    orderBy?: OdpConfigOrderByWithAggregationInput | OdpConfigOrderByWithAggregationInput[]
+    by: OdpConfigScalarFieldEnum[] | OdpConfigScalarFieldEnum
+    having?: OdpConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OdpConfigCountAggregateInputType | true
+    _avg?: OdpConfigAvgAggregateInputType
+    _sum?: OdpConfigSumAggregateInputType
+    _min?: OdpConfigMinAggregateInputType
+    _max?: OdpConfigMaxAggregateInputType
+  }
+
+  export type OdpConfigGroupByOutputType = {
+    annee: number
+    deliberationPath: string | null
+    tarifsTournagesPath: string | null
+    tarifsOdpPath: string | null
+    _count: OdpConfigCountAggregateOutputType | null
+    _avg: OdpConfigAvgAggregateOutputType | null
+    _sum: OdpConfigSumAggregateOutputType | null
+    _min: OdpConfigMinAggregateOutputType | null
+    _max: OdpConfigMaxAggregateOutputType | null
+  }
+
+  type GetOdpConfigGroupByPayload<T extends OdpConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OdpConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OdpConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OdpConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], OdpConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OdpConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    annee?: boolean
+    deliberationPath?: boolean
+    tarifsTournagesPath?: boolean
+    tarifsOdpPath?: boolean
+  }, ExtArgs["result"]["odpConfig"]>
+
+  export type OdpConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    annee?: boolean
+    deliberationPath?: boolean
+    tarifsTournagesPath?: boolean
+    tarifsOdpPath?: boolean
+  }, ExtArgs["result"]["odpConfig"]>
+
+  export type OdpConfigSelectScalar = {
+    annee?: boolean
+    deliberationPath?: boolean
+    tarifsTournagesPath?: boolean
+    tarifsOdpPath?: boolean
+  }
+
+
+  export type $OdpConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OdpConfig"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      annee: number
+      deliberationPath: string | null
+      tarifsTournagesPath: string | null
+      tarifsOdpPath: string | null
+    }, ExtArgs["result"]["odpConfig"]>
+    composites: {}
+  }
+
+  type OdpConfigGetPayload<S extends boolean | null | undefined | OdpConfigDefaultArgs> = $Result.GetResult<Prisma.$OdpConfigPayload, S>
+
+  type OdpConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<OdpConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: OdpConfigCountAggregateInputType | true
+    }
+
+  export interface OdpConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OdpConfig'], meta: { name: 'OdpConfig' } }
+    /**
+     * Find zero or one OdpConfig that matches the filter.
+     * @param {OdpConfigFindUniqueArgs} args - Arguments to find a OdpConfig
+     * @example
+     * // Get one OdpConfig
+     * const odpConfig = await prisma.odpConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OdpConfigFindUniqueArgs>(args: SelectSubset<T, OdpConfigFindUniqueArgs<ExtArgs>>): Prisma__OdpConfigClient<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one OdpConfig that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {OdpConfigFindUniqueOrThrowArgs} args - Arguments to find a OdpConfig
+     * @example
+     * // Get one OdpConfig
+     * const odpConfig = await prisma.odpConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OdpConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, OdpConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OdpConfigClient<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first OdpConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OdpConfigFindFirstArgs} args - Arguments to find a OdpConfig
+     * @example
+     * // Get one OdpConfig
+     * const odpConfig = await prisma.odpConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OdpConfigFindFirstArgs>(args?: SelectSubset<T, OdpConfigFindFirstArgs<ExtArgs>>): Prisma__OdpConfigClient<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first OdpConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OdpConfigFindFirstOrThrowArgs} args - Arguments to find a OdpConfig
+     * @example
+     * // Get one OdpConfig
+     * const odpConfig = await prisma.odpConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OdpConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, OdpConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__OdpConfigClient<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more OdpConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OdpConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OdpConfigs
+     * const odpConfigs = await prisma.odpConfig.findMany()
+     * 
+     * // Get first 10 OdpConfigs
+     * const odpConfigs = await prisma.odpConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `annee`
+     * const odpConfigWithAnneeOnly = await prisma.odpConfig.findMany({ select: { annee: true } })
+     * 
+     */
+    findMany<T extends OdpConfigFindManyArgs>(args?: SelectSubset<T, OdpConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a OdpConfig.
+     * @param {OdpConfigCreateArgs} args - Arguments to create a OdpConfig.
+     * @example
+     * // Create one OdpConfig
+     * const OdpConfig = await prisma.odpConfig.create({
+     *   data: {
+     *     // ... data to create a OdpConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends OdpConfigCreateArgs>(args: SelectSubset<T, OdpConfigCreateArgs<ExtArgs>>): Prisma__OdpConfigClient<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many OdpConfigs.
+     * @param {OdpConfigCreateManyArgs} args - Arguments to create many OdpConfigs.
+     * @example
+     * // Create many OdpConfigs
+     * const odpConfig = await prisma.odpConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OdpConfigCreateManyArgs>(args?: SelectSubset<T, OdpConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OdpConfigs and returns the data saved in the database.
+     * @param {OdpConfigCreateManyAndReturnArgs} args - Arguments to create many OdpConfigs.
+     * @example
+     * // Create many OdpConfigs
+     * const odpConfig = await prisma.odpConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OdpConfigs and only return the `annee`
+     * const odpConfigWithAnneeOnly = await prisma.odpConfig.createManyAndReturn({ 
+     *   select: { annee: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OdpConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, OdpConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a OdpConfig.
+     * @param {OdpConfigDeleteArgs} args - Arguments to delete one OdpConfig.
+     * @example
+     * // Delete one OdpConfig
+     * const OdpConfig = await prisma.odpConfig.delete({
+     *   where: {
+     *     // ... filter to delete one OdpConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OdpConfigDeleteArgs>(args: SelectSubset<T, OdpConfigDeleteArgs<ExtArgs>>): Prisma__OdpConfigClient<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one OdpConfig.
+     * @param {OdpConfigUpdateArgs} args - Arguments to update one OdpConfig.
+     * @example
+     * // Update one OdpConfig
+     * const odpConfig = await prisma.odpConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OdpConfigUpdateArgs>(args: SelectSubset<T, OdpConfigUpdateArgs<ExtArgs>>): Prisma__OdpConfigClient<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more OdpConfigs.
+     * @param {OdpConfigDeleteManyArgs} args - Arguments to filter OdpConfigs to delete.
+     * @example
+     * // Delete a few OdpConfigs
+     * const { count } = await prisma.odpConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OdpConfigDeleteManyArgs>(args?: SelectSubset<T, OdpConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OdpConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OdpConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OdpConfigs
+     * const odpConfig = await prisma.odpConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OdpConfigUpdateManyArgs>(args: SelectSubset<T, OdpConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one OdpConfig.
+     * @param {OdpConfigUpsertArgs} args - Arguments to update or create a OdpConfig.
+     * @example
+     * // Update or create a OdpConfig
+     * const odpConfig = await prisma.odpConfig.upsert({
+     *   create: {
+     *     // ... data to create a OdpConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OdpConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OdpConfigUpsertArgs>(args: SelectSubset<T, OdpConfigUpsertArgs<ExtArgs>>): Prisma__OdpConfigClient<$Result.GetResult<Prisma.$OdpConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of OdpConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OdpConfigCountArgs} args - Arguments to filter OdpConfigs to count.
+     * @example
+     * // Count the number of OdpConfigs
+     * const count = await prisma.odpConfig.count({
+     *   where: {
+     *     // ... the filter for the OdpConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends OdpConfigCountArgs>(
+      args?: Subset<T, OdpConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OdpConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OdpConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OdpConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OdpConfigAggregateArgs>(args: Subset<T, OdpConfigAggregateArgs>): Prisma.PrismaPromise<GetOdpConfigAggregateType<T>>
+
+    /**
+     * Group by OdpConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OdpConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OdpConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OdpConfigGroupByArgs['orderBy'] }
+        : { orderBy?: OdpConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OdpConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOdpConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OdpConfig model
+   */
+  readonly fields: OdpConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OdpConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OdpConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OdpConfig model
+   */ 
+  interface OdpConfigFieldRefs {
+    readonly annee: FieldRef<"OdpConfig", 'Int'>
+    readonly deliberationPath: FieldRef<"OdpConfig", 'String'>
+    readonly tarifsTournagesPath: FieldRef<"OdpConfig", 'String'>
+    readonly tarifsOdpPath: FieldRef<"OdpConfig", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OdpConfig findUnique
+   */
+  export type OdpConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which OdpConfig to fetch.
+     */
+    where: OdpConfigWhereUniqueInput
+  }
+
+  /**
+   * OdpConfig findUniqueOrThrow
+   */
+  export type OdpConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which OdpConfig to fetch.
+     */
+    where: OdpConfigWhereUniqueInput
+  }
+
+  /**
+   * OdpConfig findFirst
+   */
+  export type OdpConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which OdpConfig to fetch.
+     */
+    where?: OdpConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OdpConfigs to fetch.
+     */
+    orderBy?: OdpConfigOrderByWithRelationInput | OdpConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OdpConfigs.
+     */
+    cursor?: OdpConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OdpConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OdpConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OdpConfigs.
+     */
+    distinct?: OdpConfigScalarFieldEnum | OdpConfigScalarFieldEnum[]
+  }
+
+  /**
+   * OdpConfig findFirstOrThrow
+   */
+  export type OdpConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which OdpConfig to fetch.
+     */
+    where?: OdpConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OdpConfigs to fetch.
+     */
+    orderBy?: OdpConfigOrderByWithRelationInput | OdpConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OdpConfigs.
+     */
+    cursor?: OdpConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OdpConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OdpConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OdpConfigs.
+     */
+    distinct?: OdpConfigScalarFieldEnum | OdpConfigScalarFieldEnum[]
+  }
+
+  /**
+   * OdpConfig findMany
+   */
+  export type OdpConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which OdpConfigs to fetch.
+     */
+    where?: OdpConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OdpConfigs to fetch.
+     */
+    orderBy?: OdpConfigOrderByWithRelationInput | OdpConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OdpConfigs.
+     */
+    cursor?: OdpConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OdpConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OdpConfigs.
+     */
+    skip?: number
+    distinct?: OdpConfigScalarFieldEnum | OdpConfigScalarFieldEnum[]
+  }
+
+  /**
+   * OdpConfig create
+   */
+  export type OdpConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to create a OdpConfig.
+     */
+    data: XOR<OdpConfigCreateInput, OdpConfigUncheckedCreateInput>
+  }
+
+  /**
+   * OdpConfig createMany
+   */
+  export type OdpConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OdpConfigs.
+     */
+    data: OdpConfigCreateManyInput | OdpConfigCreateManyInput[]
+  }
+
+  /**
+   * OdpConfig createManyAndReturn
+   */
+  export type OdpConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many OdpConfigs.
+     */
+    data: OdpConfigCreateManyInput | OdpConfigCreateManyInput[]
+  }
+
+  /**
+   * OdpConfig update
+   */
+  export type OdpConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to update a OdpConfig.
+     */
+    data: XOR<OdpConfigUpdateInput, OdpConfigUncheckedUpdateInput>
+    /**
+     * Choose, which OdpConfig to update.
+     */
+    where: OdpConfigWhereUniqueInput
+  }
+
+  /**
+   * OdpConfig updateMany
+   */
+  export type OdpConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OdpConfigs.
+     */
+    data: XOR<OdpConfigUpdateManyMutationInput, OdpConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which OdpConfigs to update
+     */
+    where?: OdpConfigWhereInput
+  }
+
+  /**
+   * OdpConfig upsert
+   */
+  export type OdpConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+    /**
+     * The filter to search for the OdpConfig to update in case it exists.
+     */
+    where: OdpConfigWhereUniqueInput
+    /**
+     * In case the OdpConfig found by the `where` argument doesn't exist, create a new OdpConfig with this data.
+     */
+    create: XOR<OdpConfigCreateInput, OdpConfigUncheckedCreateInput>
+    /**
+     * In case the OdpConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OdpConfigUpdateInput, OdpConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * OdpConfig delete
+   */
+  export type OdpConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+    /**
+     * Filter which OdpConfig to delete.
+     */
+    where: OdpConfigWhereUniqueInput
+  }
+
+  /**
+   * OdpConfig deleteMany
+   */
+  export type OdpConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OdpConfigs to delete
+     */
+    where?: OdpConfigWhereInput
+  }
+
+  /**
+   * OdpConfig without action
+   */
+  export type OdpConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OdpConfig
+     */
+    select?: OdpConfigSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -23597,8 +24669,11 @@ export namespace Prisma {
     created_at: 'created_at',
     updated_at: 'updated_at',
     numeroFacture: 'numeroFacture',
+    datePaiement: 'datePaiement',
     dossierParentId: 'dossierParentId',
-    isCourtMetrage: 'isCourtMetrage'
+    agissantPour: 'agissantPour',
+    isCourtMetrage: 'isCourtMetrage',
+    aotGabaritId: 'aotGabaritId'
   };
 
   export type OccupationScalarFieldEnum = (typeof OccupationScalarFieldEnum)[keyof typeof OccupationScalarFieldEnum]
@@ -23761,6 +24836,9 @@ export namespace Prisma {
     filienStructure: 'filienStructure',
     filienGestionnaire: 'filienGestionnaire',
     filienUncPj: 'filienUncPj',
+    signataireRole: 'signataireRole',
+    signataireDelegation: 'signataireDelegation',
+    signataireNom: 'signataireNom',
     updated_at: 'updated_at'
   };
 
@@ -23780,7 +24858,8 @@ export namespace Prisma {
     montant: 'montant',
     created_at: 'created_at',
     updated_at: 'updated_at',
-    photos: 'photos'
+    photos: 'photos',
+    note: 'note'
   };
 
   export type LigneOccupationScalarFieldEnum = (typeof LigneOccupationScalarFieldEnum)[keyof typeof LigneOccupationScalarFieldEnum]
@@ -23887,6 +24966,16 @@ export namespace Prisma {
   };
 
   export type PostgresConfigScalarFieldEnum = (typeof PostgresConfigScalarFieldEnum)[keyof typeof PostgresConfigScalarFieldEnum]
+
+
+  export const OdpConfigScalarFieldEnum: {
+    annee: 'annee',
+    deliberationPath: 'deliberationPath',
+    tarifsTournagesPath: 'tarifsTournagesPath',
+    tarifsOdpPath: 'tarifsOdpPath'
+  };
+
+  export type OdpConfigScalarFieldEnum = (typeof OdpConfigScalarFieldEnum)[keyof typeof OdpConfigScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -24070,8 +25159,11 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Occupation"> | Date | string
     updated_at?: DateTimeFilter<"Occupation"> | Date | string
     numeroFacture?: StringNullableFilter<"Occupation"> | string | null
+    datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
+    agissantPour?: StringNullableFilter<"Occupation"> | string | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
+    aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -24098,8 +25190,11 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrderInput | SortOrder
+    datePaiement?: SortOrderInput | SortOrder
     dossierParentId?: SortOrderInput | SortOrder
+    agissantPour?: SortOrderInput | SortOrder
     isCourtMetrage?: SortOrder
+    aotGabaritId?: SortOrderInput | SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     dispositifs?: DispositifOrderByRelationAggregateInput
     lignes?: LigneOccupationOrderByRelationAggregateInput
@@ -24129,8 +25224,11 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Occupation"> | Date | string
     updated_at?: DateTimeFilter<"Occupation"> | Date | string
     numeroFacture?: StringNullableFilter<"Occupation"> | string | null
+    datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
+    agissantPour?: StringNullableFilter<"Occupation"> | string | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
+    aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -24157,8 +25255,11 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrderInput | SortOrder
+    datePaiement?: SortOrderInput | SortOrder
     dossierParentId?: SortOrderInput | SortOrder
+    agissantPour?: SortOrderInput | SortOrder
     isCourtMetrage?: SortOrder
+    aotGabaritId?: SortOrderInput | SortOrder
     _count?: OccupationCountOrderByAggregateInput
     _avg?: OccupationAvgOrderByAggregateInput
     _max?: OccupationMaxOrderByAggregateInput
@@ -24188,8 +25289,11 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"Occupation"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Occupation"> | Date | string
     numeroFacture?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
+    datePaiement?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
     dossierParentId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
+    agissantPour?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     isCourtMetrage?: BoolWithAggregatesFilter<"Occupation"> | boolean
+    aotGabaritId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
   }
 
   export type ContactWhereInput = {
@@ -24870,6 +25974,9 @@ export namespace Prisma {
     filienStructure?: StringNullableFilter<"AppSettings"> | string | null
     filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
     filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
+    signataireRole?: StringNullableFilter<"AppSettings"> | string | null
+    signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
+    signataireNom?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
   }
 
@@ -24907,6 +26014,9 @@ export namespace Prisma {
     filienStructure?: SortOrderInput | SortOrder
     filienGestionnaire?: SortOrderInput | SortOrder
     filienUncPj?: SortOrderInput | SortOrder
+    signataireRole?: SortOrderInput | SortOrder
+    signataireDelegation?: SortOrderInput | SortOrder
+    signataireNom?: SortOrderInput | SortOrder
     updated_at?: SortOrder
   }
 
@@ -24947,6 +26057,9 @@ export namespace Prisma {
     filienStructure?: StringNullableFilter<"AppSettings"> | string | null
     filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
     filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
+    signataireRole?: StringNullableFilter<"AppSettings"> | string | null
+    signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
+    signataireNom?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
   }, "id">
 
@@ -24984,6 +26097,9 @@ export namespace Prisma {
     filienStructure?: SortOrderInput | SortOrder
     filienGestionnaire?: SortOrderInput | SortOrder
     filienUncPj?: SortOrderInput | SortOrder
+    signataireRole?: SortOrderInput | SortOrder
+    signataireDelegation?: SortOrderInput | SortOrder
+    signataireNom?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     _count?: AppSettingsCountOrderByAggregateInput
     _avg?: AppSettingsAvgOrderByAggregateInput
@@ -25029,6 +26145,9 @@ export namespace Prisma {
     filienStructure?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     filienGestionnaire?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     filienUncPj?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     updated_at?: DateTimeWithAggregatesFilter<"AppSettings"> | Date | string
   }
 
@@ -25049,6 +26168,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     photos?: StringNullableFilter<"LigneOccupation"> | string | null
+    note?: StringNullableFilter<"LigneOccupation"> | string | null
     article?: XOR<ArticleRelationFilter, ArticleWhereInput>
     occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
   }
@@ -25067,6 +26187,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     photos?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
     article?: ArticleOrderByWithRelationInput
     occupation?: OccupationOrderByWithRelationInput
   }
@@ -25088,6 +26209,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     photos?: StringNullableFilter<"LigneOccupation"> | string | null
+    note?: StringNullableFilter<"LigneOccupation"> | string | null
     article?: XOR<ArticleRelationFilter, ArticleWhereInput>
     occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
   }, "id">
@@ -25106,6 +26228,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     photos?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
     _count?: LigneOccupationCountOrderByAggregateInput
     _avg?: LigneOccupationAvgOrderByAggregateInput
     _max?: LigneOccupationMaxOrderByAggregateInput
@@ -25130,6 +26253,7 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"LigneOccupation"> | Date | string
     photos?: StringNullableWithAggregatesFilter<"LigneOccupation"> | string | null
+    note?: StringNullableWithAggregatesFilter<"LigneOccupation"> | string | null
   }
 
   export type DispositifWhereInput = {
@@ -25654,6 +26778,55 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"PostgresConfig"> | string
   }
 
+  export type OdpConfigWhereInput = {
+    AND?: OdpConfigWhereInput | OdpConfigWhereInput[]
+    OR?: OdpConfigWhereInput[]
+    NOT?: OdpConfigWhereInput | OdpConfigWhereInput[]
+    annee?: IntFilter<"OdpConfig"> | number
+    deliberationPath?: StringNullableFilter<"OdpConfig"> | string | null
+    tarifsTournagesPath?: StringNullableFilter<"OdpConfig"> | string | null
+    tarifsOdpPath?: StringNullableFilter<"OdpConfig"> | string | null
+  }
+
+  export type OdpConfigOrderByWithRelationInput = {
+    annee?: SortOrder
+    deliberationPath?: SortOrderInput | SortOrder
+    tarifsTournagesPath?: SortOrderInput | SortOrder
+    tarifsOdpPath?: SortOrderInput | SortOrder
+  }
+
+  export type OdpConfigWhereUniqueInput = Prisma.AtLeast<{
+    annee?: number
+    AND?: OdpConfigWhereInput | OdpConfigWhereInput[]
+    OR?: OdpConfigWhereInput[]
+    NOT?: OdpConfigWhereInput | OdpConfigWhereInput[]
+    deliberationPath?: StringNullableFilter<"OdpConfig"> | string | null
+    tarifsTournagesPath?: StringNullableFilter<"OdpConfig"> | string | null
+    tarifsOdpPath?: StringNullableFilter<"OdpConfig"> | string | null
+  }, "annee">
+
+  export type OdpConfigOrderByWithAggregationInput = {
+    annee?: SortOrder
+    deliberationPath?: SortOrderInput | SortOrder
+    tarifsTournagesPath?: SortOrderInput | SortOrder
+    tarifsOdpPath?: SortOrderInput | SortOrder
+    _count?: OdpConfigCountOrderByAggregateInput
+    _avg?: OdpConfigAvgOrderByAggregateInput
+    _max?: OdpConfigMaxOrderByAggregateInput
+    _min?: OdpConfigMinOrderByAggregateInput
+    _sum?: OdpConfigSumOrderByAggregateInput
+  }
+
+  export type OdpConfigScalarWhereWithAggregatesInput = {
+    AND?: OdpConfigScalarWhereWithAggregatesInput | OdpConfigScalarWhereWithAggregatesInput[]
+    OR?: OdpConfigScalarWhereWithAggregatesInput[]
+    NOT?: OdpConfigScalarWhereWithAggregatesInput | OdpConfigScalarWhereWithAggregatesInput[]
+    annee?: IntWithAggregatesFilter<"OdpConfig"> | number
+    deliberationPath?: StringNullableWithAggregatesFilter<"OdpConfig"> | string | null
+    tarifsTournagesPath?: StringNullableWithAggregatesFilter<"OdpConfig"> | string | null
+    tarifsOdpPath?: StringNullableWithAggregatesFilter<"OdpConfig"> | string | null
+  }
+
   export type TiersCreateInput = {
     nom: string
     siret?: string | null
@@ -25788,8 +26961,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -25816,8 +26992,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -25841,8 +27020,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -25869,8 +27051,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -25896,8 +27081,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
   }
 
   export type OccupationUpdateManyMutationInput = {
@@ -25917,8 +27105,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type OccupationUncheckedUpdateManyInput = {
@@ -25940,8 +27131,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ContactCreateInput = {
@@ -26662,6 +27856,9 @@ export namespace Prisma {
     filienStructure?: string | null
     filienGestionnaire?: string | null
     filienUncPj?: string | null
+    signataireRole?: string | null
+    signataireDelegation?: string | null
+    signataireNom?: string | null
     updated_at?: Date | string
   }
 
@@ -26699,6 +27896,9 @@ export namespace Prisma {
     filienStructure?: string | null
     filienGestionnaire?: string | null
     filienUncPj?: string | null
+    signataireRole?: string | null
+    signataireDelegation?: string | null
+    signataireNom?: string | null
     updated_at?: Date | string
   }
 
@@ -26735,6 +27935,9 @@ export namespace Prisma {
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26772,6 +27975,9 @@ export namespace Prisma {
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26809,6 +28015,9 @@ export namespace Prisma {
     filienStructure?: string | null
     filienGestionnaire?: string | null
     filienUncPj?: string | null
+    signataireRole?: string | null
+    signataireDelegation?: string | null
+    signataireNom?: string | null
     updated_at?: Date | string
   }
 
@@ -26845,6 +28054,9 @@ export namespace Prisma {
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26882,6 +28094,9 @@ export namespace Prisma {
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26896,6 +28111,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     photos?: string | null
+    note?: string | null
     article: ArticleCreateNestedOneWithoutLignesInput
     occupation: OccupationCreateNestedOneWithoutLignesInput
   }
@@ -26914,6 +28130,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     photos?: string | null
+    note?: string | null
   }
 
   export type LigneOccupationUpdateInput = {
@@ -26927,6 +28144,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
     article?: ArticleUpdateOneRequiredWithoutLignesNestedInput
     occupation?: OccupationUpdateOneRequiredWithoutLignesNestedInput
   }
@@ -26945,6 +28163,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type LigneOccupationCreateManyInput = {
@@ -26961,6 +28180,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     photos?: string | null
+    note?: string | null
   }
 
   export type LigneOccupationUpdateManyMutationInput = {
@@ -26974,6 +28194,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type LigneOccupationUncheckedUpdateManyInput = {
@@ -26990,6 +28211,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type DispositifCreateInput = {
@@ -27526,6 +28748,55 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
   }
 
+  export type OdpConfigCreateInput = {
+    annee: number
+    deliberationPath?: string | null
+    tarifsTournagesPath?: string | null
+    tarifsOdpPath?: string | null
+  }
+
+  export type OdpConfigUncheckedCreateInput = {
+    annee: number
+    deliberationPath?: string | null
+    tarifsTournagesPath?: string | null
+    tarifsOdpPath?: string | null
+  }
+
+  export type OdpConfigUpdateInput = {
+    annee?: IntFieldUpdateOperationsInput | number
+    deliberationPath?: NullableStringFieldUpdateOperationsInput | string | null
+    tarifsTournagesPath?: NullableStringFieldUpdateOperationsInput | string | null
+    tarifsOdpPath?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OdpConfigUncheckedUpdateInput = {
+    annee?: IntFieldUpdateOperationsInput | number
+    deliberationPath?: NullableStringFieldUpdateOperationsInput | string | null
+    tarifsTournagesPath?: NullableStringFieldUpdateOperationsInput | string | null
+    tarifsOdpPath?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OdpConfigCreateManyInput = {
+    annee: number
+    deliberationPath?: string | null
+    tarifsTournagesPath?: string | null
+    tarifsOdpPath?: string | null
+  }
+
+  export type OdpConfigUpdateManyMutationInput = {
+    annee?: IntFieldUpdateOperationsInput | number
+    deliberationPath?: NullableStringFieldUpdateOperationsInput | string | null
+    tarifsTournagesPath?: NullableStringFieldUpdateOperationsInput | string | null
+    tarifsOdpPath?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OdpConfigUncheckedUpdateManyInput = {
+    annee?: IntFieldUpdateOperationsInput | number
+    deliberationPath?: NullableStringFieldUpdateOperationsInput | string | null
+    tarifsTournagesPath?: NullableStringFieldUpdateOperationsInput | string | null
+    tarifsOdpPath?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -27844,8 +29115,11 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrder
+    datePaiement?: SortOrder
     dossierParentId?: SortOrder
+    agissantPour?: SortOrder
     isCourtMetrage?: SortOrder
+    aotGabaritId?: SortOrder
   }
 
   export type OccupationAvgOrderByAggregateInput = {
@@ -27856,6 +29130,7 @@ export namespace Prisma {
     longitude?: SortOrder
     montantCalcule?: SortOrder
     dossierParentId?: SortOrder
+    aotGabaritId?: SortOrder
   }
 
   export type OccupationMaxOrderByAggregateInput = {
@@ -27877,8 +29152,11 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrder
+    datePaiement?: SortOrder
     dossierParentId?: SortOrder
+    agissantPour?: SortOrder
     isCourtMetrage?: SortOrder
+    aotGabaritId?: SortOrder
   }
 
   export type OccupationMinOrderByAggregateInput = {
@@ -27900,8 +29178,11 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrder
+    datePaiement?: SortOrder
     dossierParentId?: SortOrder
+    agissantPour?: SortOrder
     isCourtMetrage?: SortOrder
+    aotGabaritId?: SortOrder
   }
 
   export type OccupationSumOrderByAggregateInput = {
@@ -27912,6 +29193,7 @@ export namespace Prisma {
     longitude?: SortOrder
     montantCalcule?: SortOrder
     dossierParentId?: SortOrder
+    aotGabaritId?: SortOrder
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -28440,6 +29722,9 @@ export namespace Prisma {
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
     filienUncPj?: SortOrder
+    signataireRole?: SortOrder
+    signataireDelegation?: SortOrder
+    signataireNom?: SortOrder
     updated_at?: SortOrder
   }
 
@@ -28482,6 +29767,9 @@ export namespace Prisma {
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
     filienUncPj?: SortOrder
+    signataireRole?: SortOrder
+    signataireDelegation?: SortOrder
+    signataireNom?: SortOrder
     updated_at?: SortOrder
   }
 
@@ -28519,6 +29807,9 @@ export namespace Prisma {
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
     filienUncPj?: SortOrder
+    signataireRole?: SortOrder
+    signataireDelegation?: SortOrder
+    signataireNom?: SortOrder
     updated_at?: SortOrder
   }
 
@@ -28554,6 +29845,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     photos?: SortOrder
+    note?: SortOrder
   }
 
   export type LigneOccupationAvgOrderByAggregateInput = {
@@ -28579,6 +29871,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     photos?: SortOrder
+    note?: SortOrder
   }
 
   export type LigneOccupationMinOrderByAggregateInput = {
@@ -28595,6 +29888,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     photos?: SortOrder
+    note?: SortOrder
   }
 
   export type LigneOccupationSumOrderByAggregateInput = {
@@ -28945,6 +30239,35 @@ export namespace Prisma {
   export type PostgresConfigSumOrderByAggregateInput = {
     id?: SortOrder
     port?: SortOrder
+  }
+
+  export type OdpConfigCountOrderByAggregateInput = {
+    annee?: SortOrder
+    deliberationPath?: SortOrder
+    tarifsTournagesPath?: SortOrder
+    tarifsOdpPath?: SortOrder
+  }
+
+  export type OdpConfigAvgOrderByAggregateInput = {
+    annee?: SortOrder
+  }
+
+  export type OdpConfigMaxOrderByAggregateInput = {
+    annee?: SortOrder
+    deliberationPath?: SortOrder
+    tarifsTournagesPath?: SortOrder
+    tarifsOdpPath?: SortOrder
+  }
+
+  export type OdpConfigMinOrderByAggregateInput = {
+    annee?: SortOrder
+    deliberationPath?: SortOrder
+    tarifsTournagesPath?: SortOrder
+    tarifsOdpPath?: SortOrder
+  }
+
+  export type OdpConfigSumOrderByAggregateInput = {
+    annee?: SortOrder
   }
 
   export type OccupationCreateNestedManyWithoutTiersInput = {
@@ -30008,8 +31331,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -30034,8 +31360,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -30127,8 +31456,11 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Occupation"> | Date | string
     updated_at?: DateTimeFilter<"Occupation"> | Date | string
     numeroFacture?: StringNullableFilter<"Occupation"> | string | null
+    datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
+    agissantPour?: StringNullableFilter<"Occupation"> | string | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
+    aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
   }
 
   export type ContactUpsertWithWhereUniqueWithoutTiersInput = {
@@ -30239,6 +31571,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     photos?: string | null
+    note?: string | null
     article: ArticleCreateNestedOneWithoutLignesInput
   }
 
@@ -30255,6 +31588,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     photos?: string | null
+    note?: string | null
   }
 
   export type LigneOccupationCreateOrConnectWithoutOccupationInput = {
@@ -30419,6 +31753,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     photos?: StringNullableFilter<"LigneOccupation"> | string | null
+    note?: StringNullableFilter<"LigneOccupation"> | string | null
   }
 
   export type NoteUpsertWithWhereUniqueWithoutOccupationInput = {
@@ -30517,8 +31852,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -30544,8 +31882,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -30622,8 +31963,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -30649,8 +31993,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -30717,8 +32064,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -30744,8 +32094,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -30784,8 +32137,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -30811,8 +32167,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -31124,6 +32483,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     photos?: string | null
+    note?: string | null
     occupation: OccupationCreateNestedOneWithoutLignesInput
   }
 
@@ -31140,6 +32500,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     photos?: string | null
+    note?: string | null
   }
 
   export type LigneOccupationCreateOrConnectWithoutArticleInput = {
@@ -31395,8 +32756,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -31422,8 +32786,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -31514,8 +32881,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -31541,8 +32911,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -31565,8 +32938,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -31592,8 +32968,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -31632,8 +33011,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -31659,8 +33041,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -31904,8 +33289,11 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
+    datePaiement?: Date | string | null
     dossierParentId?: number | null
+    agissantPour?: string | null
     isCourtMetrage?: boolean
+    aotGabaritId?: number | null
   }
 
   export type ContactCreateManyTiersInput = {
@@ -31940,8 +33328,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -31966,8 +33357,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -31992,8 +33386,11 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ContactUpdateWithoutTiersInput = {
@@ -32076,6 +33473,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     photos?: string | null
+    note?: string | null
   }
 
   export type NoteCreateManyOccupationInput = {
@@ -32171,6 +33569,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
     article?: ArticleUpdateOneRequiredWithoutLignesNestedInput
   }
 
@@ -32187,6 +33586,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type LigneOccupationUncheckedUpdateManyWithoutOccupationInput = {
@@ -32202,6 +33602,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type NoteUpdateWithoutOccupationInput = {
@@ -32454,6 +33855,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     photos?: string | null
+    note?: string | null
   }
 
   export type LigneOccupationUpdateWithoutArticleInput = {
@@ -32467,6 +33869,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
     occupation?: OccupationUpdateOneRequiredWithoutLignesNestedInput
   }
 
@@ -32483,6 +33886,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type LigneOccupationUncheckedUpdateManyWithoutArticleInput = {
@@ -32498,6 +33902,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     photos?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MobileLogCreateManyUserInput = {
@@ -32724,6 +34129,10 @@ export namespace Prisma {
      * @deprecated Use PostgresConfigDefaultArgs instead
      */
     export type PostgresConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PostgresConfigDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use OdpConfigDefaultArgs instead
+     */
+    export type OdpConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = OdpConfigDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

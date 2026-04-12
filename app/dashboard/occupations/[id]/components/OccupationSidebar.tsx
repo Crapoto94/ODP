@@ -18,13 +18,15 @@ interface Props {
   isFactured: boolean;
   onOpenContactModal: () => void;
   onDeleteContact: (id: number) => void;
+  onOpenUploadModal: () => void;
 }
 
 export default function OccupationSidebar({
   occupation,
   isFactured,
   onOpenContactModal,
-  onDeleteContact
+  onDeleteContact,
+  onOpenUploadModal
 }: Props) {
   const photoList = occupation.photos ? occupation.photos.split(',').filter(Boolean) : [];
   const docCount = photoList.length + (occupation.facturePath ? 1 : 0);
@@ -38,42 +40,73 @@ export default function OccupationSidebar({
           <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
             <ImageIcon size={16} className="text-blue-500" /> Documents & PJ ({docCount})
           </h3>
+          {!isFactured && (
+            <button 
+              onClick={onOpenUploadModal}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm cursor-pointer group-hover/title:scale-105 active:scale-95 group/btn"
+            >
+              <Plus size={16} className="group-hover/btn:rotate-90 transition-transform" />
+              <span className="text-[9px] font-black uppercase tracking-widest">Joindre un document</span>
+            </button>
+          )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          {photoList.map((url, i) => {
+        <div className="flex flex-col gap-3">
+          {photoList.map((item, i) => {
+            const [url, designation] = item.split('|');
             const isPdf = url.toLowerCase().endsWith('.pdf');
+            const displayName = designation || (isPdf ? 'Document PDF' : `Document joint ${i+1}`);
+
             return (
-              <a key={i} href={url} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-2xl overflow-hidden border border-slate-200 shadow-sm transition-all hover:scale-[1.02] hover:shadow-2xl bg-slate-50">
-                {isPdf ? (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
-                    <FileText size={32} className="text-rose-500 mb-2" />
-                    <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">Document PDF</span>
-                  </div>
-                ) : (
-                  <img src={url} alt={`Dossier PJ ${i+1}`} className="w-full h-full object-cover" />
-                )}
-                <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center p-4 text-center">
-                  <ExternalLink size={24} className="text-white mb-2" />
-                  <span className="text-[9px] font-black text-white uppercase tracking-widest">Voir le document</span>
+              <a 
+                key={i} 
+                href={url} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-blue-300 hover:shadow-lg hover:-translate-y-0.5"
+              >
+                <div className={`w-12 h-12 rounded-xl shrink-0 flex items-center justify-center transition-colors ${isPdf ? 'bg-rose-50 text-rose-500 group-hover:bg-rose-500 group-hover:text-white' : 'bg-blue-50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white'} border border-transparent`}>
+                  {isPdf ? <FileText size={20} /> : <ImageIcon size={20} />}
+                </div>
+                
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest truncate">{displayName}</p>
+                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-tighter mt-1">
+                    {isPdf ? 'Format PDF' : 'Fichier Image'} • Cliquez pour ouvrir
+                  </p>
+                </div>
+
+                <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-300 group-hover:text-blue-500 group-hover:bg-blue-50 transition-all">
+                  <ExternalLink size={14} />
                 </div>
               </a>
             );
           })}
 
           {occupation.facturePath && (
-            <a href={occupation.facturePath} target="_blank" rel="noreferrer" className="group relative aspect-square rounded-2xl overflow-hidden border-2 border-blue-100 bg-blue-50/50 shadow-sm transition-all hover:scale-[1.02] hover:shadow-2xl flex flex-col items-center justify-center p-6 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border border-blue-100 mb-4 group-hover:scale-110 transition-transform">
-                <FileText size={32} className="text-blue-600" />
+            <a 
+              href={occupation.facturePath} 
+              target="_blank" 
+              rel="noreferrer" 
+              className="group flex items-center gap-4 p-4 bg-blue-50/50 rounded-2xl border-2 border-blue-100 shadow-sm transition-all hover:border-blue-400 hover:shadow-lg hover:-translate-y-0.5"
+            >
+              <div className="w-12 h-12 rounded-xl shrink-0 bg-blue-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <FileText size={20} />
               </div>
-              <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest">Facture Officielle</p>
-              <p className="text-[8px] font-black text-slate-400 mt-2 uppercase">Générée par Sedit</p>
-              <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest truncate">Facture Officielle</p>
+                <p className="text-[8px] font-black text-blue-400/70 uppercase tracking-tighter mt-1">Générée par Sedit • PDF</p>
+              </div>
+
+              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-blue-300 group-hover:text-blue-600 transition-all">
+                <ExternalLink size={14} />
+              </div>
             </a>
           )}
 
           {docCount === 0 && (
-            <div className="col-span-2 py-12 bg-white rounded-2xl border border-dashed border-slate-200 text-center flex flex-col items-center">
+            <div className="py-12 bg-white rounded-2xl border border-dashed border-slate-200 text-center flex flex-col items-center">
               <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-4">
                 <FileArchive size={20} className="text-slate-300" />
               </div>

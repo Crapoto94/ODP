@@ -50,18 +50,20 @@ export default function OccupationHeader({
               <Pencil size={14} /> Modifier info
             </button>
           )}
-          <button
-            onClick={onToggleVerifie}
-            disabled={isFactured}
-            className={`px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg active:scale-95 disabled:opacity-40 ${
-              isLocked
-                ? 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/20'
-                : 'bg-white border border-emerald-200 text-emerald-600 hover:bg-emerald-50'
-            }`}
-          >
-            <CheckCircle2 size={16} />
-            {isLocked ? 'Déverrouiller' : 'Valider le dossier'}
-          </button>
+          {occupation.type !== 'CHANTIER' && (
+            <button
+              onClick={onToggleVerifie}
+              disabled={isFactured}
+              className={`px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg active:scale-95 disabled:opacity-40 ${
+                isLocked
+                  ? 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-emerald-500/20'
+                  : 'bg-white border border-emerald-200 text-emerald-600 hover:bg-emerald-50'
+              }`}
+            >
+              <CheckCircle2 size={16} />
+              {isLocked ? 'Déverrouiller' : 'Valider le dossier'}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -27,12 +27,17 @@ import {
   Box,
   Car,
   Film,
-  Wind
+  Wind,
+  PlusCircle,
+  AlertTriangle,
+  FileText
 } from 'lucide-react';
 import CategorieManagerModal from '@/components/CategorieManagerModal';
 import ImportTarifModal from '@/components/ImportTarifModal';
 import ModeTaxationModal from '@/components/ModeTaxationModal';
 import TlpeTarifsModal from '@/components/TlpeTarifsModal';
+import OdpDocsBanner from '@/components/OdpDocsBanner';
+import OdpDocsModal from '@/components/OdpDocsModal';
 
 interface Categorie {
   id: number;
@@ -82,6 +87,8 @@ export default function TarifsPage() {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isModeModalOpen, setIsModeModalOpen] = useState(false);
   const [isTlpeModalOpen, setIsTlpeModalOpen] = useState(false);
+  const [isOdpModalOpen, setIsOdpModalOpen] = useState(false);
+  const [odpConfig, setOdpConfig] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -110,22 +117,26 @@ export default function TarifsPage() {
 
   const fetchData = async () => {
     try {
-      const [artRes, catRes, modeRes, allArtRes, tlpeRes] = await Promise.all([
+      const [artRes, catRes, modeRes, allArtRes, tlpeRes, odpRes] = await Promise.all([
         axios.get(`/api/articles?annee=${selectedYear}`),
         axios.get('/api/categories'),
         axios.get('/api/modes-taxation'),
         axios.get('/api/articles'), // Fetch all to get available years
-        axios.get(`/api/articles/tlpe?annee=${selectedYear}`).catch(() => ({ data: { config: null } }))
+        axios.get(`/api/articles/tlpe?annee=${selectedYear}`).catch(() => ({ data: { config: null, configs: [] } })),
+        axios.get(`/api/settings/odp-docs?annee=${selectedYear}`).catch(() => ({ data: { config: null, configs: [] } }))
       ]);
       setArticles(artRes.data);
       setCategories(catRes.data);
       setModesTaxation(modeRes.data);
       setTlpeConfig(tlpeRes.data?.config || null);
-      
+      setOdpConfig(odpRes.data?.config || null);
+
       const years = Array.from(new Set([
         new Date().getFullYear(),
-        ...allArtRes.data.map((a: Article) => a.annee)
-      ])).sort((a, b) => b - a);
+        ...allArtRes.data.map((a: Article) => a.annee),
+        ...(tlpeRes.data?.configs || []).map((c: any) => c.annee),
+        ...(odpRes.data?.configs || []).map((c: any) => c.annee)
+      ])).filter(Boolean).sort((a: any, b: any) => b - a);
       setAvailableYears(years as number[]);
     } catch (err) {
       console.error('Failed to fetch data:', err);
@@ -325,6 +336,13 @@ export default function TarifsPage() {
             Mode de calculs
           </button>
           <button 
+            onClick={() => setIsOdpModalOpen(true)}
+            className="flex items-center gap-3 bg-white border border-slate-200 text-slate-900 hover:bg-slate-50 px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm transition-all active:scale-95"
+          >
+            <FileText size={18} className="text-blue-500" />
+            Docs ODP/Tournages
+          </button>
+          <button 
             onClick={() => { resetForm(); setIsModalOpen(true); }}
             className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95"
           >
@@ -334,45 +352,53 @@ export default function TarifsPage() {
         </div>
       </div>
 
-      {tlpeConfig && (tlpeConfig.deliberationPath || tlpeConfig.tarifsPath) && (
-        <div className="bg-purple-50 border border-purple-100 rounded-[2rem] p-6 flex flex-wrap items-center justify-between gap-6 animate-in slide-in-from-top-4 duration-500">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
-              <Info size={20} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {tlpeConfig && (tlpeConfig.deliberationPath || tlpeConfig.tarifsPath) && (
+          <div className="bg-purple-50 border border-purple-100 rounded-[2rem] p-6 flex flex-wrap items-center justify-between gap-6 animate-in slide-in-from-top-4 duration-500 h-full">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
+                <Euro size={20} />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Référentiel TLPE {selectedYear}</h4>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Documents officiels associés</p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Référentiel TLPE {selectedYear}</h4>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Documents officiels associés</p>
+            <div className="flex items-center gap-3">
+              {tlpeConfig.deliberationPath && (
+                <a 
+                  href={tlpeConfig.deliberationPath} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
+                >
+                  Délibération (PDF)
+                </a>
+              )}
+              {tlpeConfig.tarifsPath && (
+                <a 
+                  href={tlpeConfig.tarifsPath} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
+                >
+                  Fichier Tarifs (PDF)
+                </a>
+              )}
+              <div className="ml-4 pl-4 border-l border-purple-200">
+                <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-none mb-1">Seuil exonération</p>
+                <p className="text-sm font-black text-purple-700">{tlpeConfig.exoneration} m²</p>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            {tlpeConfig.deliberationPath && (
-              <a 
-                href={tlpeConfig.deliberationPath} 
-                target="_blank" 
-                rel="noreferrer"
-                className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
-              >
-                Délibération (PDF)
-              </a>
-            )}
-            {tlpeConfig.tarifsPath && (
-              <a 
-                href={tlpeConfig.tarifsPath} 
-                target="_blank" 
-                rel="noreferrer"
-                className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
-              >
-                Fichier Tarifs (PDF)
-              </a>
-            )}
-            <div className="ml-4 pl-4 border-l border-purple-200">
-              <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-none mb-1">Seuil exonération</p>
-              <p className="text-sm font-black text-purple-700">{tlpeConfig.exoneration} m²</p>
-            </div>
-          </div>
-        </div>
-      )}
+        )}
+
+        <OdpDocsBanner 
+          year={selectedYear} 
+          config={odpConfig} 
+          onEdit={() => setIsOdpModalOpen(true)}
+        />
+      </div>
 
       <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden min-h-[500px]">
         <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/10 gap-6">
@@ -793,6 +819,13 @@ export default function TarifsPage() {
         <TlpeTarifsModal 
           isOpen={isTlpeModalOpen}
           onClose={() => setIsTlpeModalOpen(false)}
+          onSuccess={fetchData}
+        />
+      )}
+      {isOdpModalOpen && (
+        <OdpDocsModal 
+          isOpen={isOdpModalOpen}
+          onClose={() => setIsOdpModalOpen(false)}
           onSuccess={fetchData}
         />
       )}
