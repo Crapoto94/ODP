@@ -5,11 +5,11 @@ import {
   Plus,
   Trash2,
   Edit2,
+  Loader2,
   ShieldCheck,
   UserCircle
 } from 'lucide-react';
 import TabHeader from './TabHeader';
-import ContentBox from './ContentBox';
 
 interface Props {
   users: any[];
@@ -34,14 +34,19 @@ export default function UsersTab({ users, loadingUsers, openUserModal, handleDel
         }}
       />
 
-      <ContentBox
-        loading={loadingUsers}
-        empty={!loadingUsers && users.length === 0}
-        emptyIcon={<UsersIcon size={48} className="text-slate-300" />}
-        emptyMessage="Aucun utilisateur enregistré"
-        minHeight="min-h-[400px]"
-      >
-        <table className="w-full text-left">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden min-h-[400px]">
+        {loadingUsers ? (
+          <div className="flex flex-col items-center justify-center h-[400px] gap-4">
+            <Loader2 className="animate-spin text-blue-600" size={32} />
+            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Chargement des comptes...</p>
+          </div>
+        ) : users.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-[400px] gap-4 opacity-30">
+            <UsersIcon size={48} className="text-slate-300" />
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Aucun utilisateur enregistré</p>
+          </div>
+        ) : (
+          <table className="w-full text-left">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
                 <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Utilisateur</th>
@@ -79,7 +84,7 @@ export default function UsersTab({ users, loadingUsers, openUserModal, handleDel
                   </td>
                   <td className="px-8 py-5 text-right">
                     <div className="flex items-center justify-end gap-2">
-                       <button onClick={() => openUserModal(user)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
+                      <button onClick={() => openUserModal(user)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
                         <Edit2 size={16} />
                       </button>
                       <button onClick={() => handleDeleteUser(user.id)} className="p-2.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all">
