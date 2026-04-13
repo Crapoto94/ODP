@@ -171,9 +171,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         variables[`{article${i}.quantite}`] = (ligne.quantite1 || 0).toString();
         variables[`{article${i}.pu}`] = (ligne.article?.montant || 0).toString();
         variables[`{article${i}.note}`] = (ligne as any).note || '';
-        const d1 = new Date(ligne.dateDebut);
-        const d2 = new Date(ligne.dateFin);
-        variables[`{article${i}.dates}`] = `${format(d1, 'dd/MM/yyyy')} - ${format(d2, 'dd/MM/yyyy')}`;
+
+        if (ligne.dateDebut && ligne.dateFin) {
+          const d1 = new Date(ligne.dateDebut);
+          const d2 = new Date(ligne.dateFin);
+          variables[`{article${i}.dates}`] = `${format(d1, 'dd/MM/yyyy')} - ${format(d2, 'dd/MM/yyyy')}`;
+        } else {
+          variables[`{article${i}.dates}`] = '';
+        }
+
         variables[`{article${i}.details}`] = `${ligne.quantite1} ${ligne.article.modeTaxation?.nom || 'unité(s)'}`;
       });
     }
