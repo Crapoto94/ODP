@@ -414,22 +414,27 @@ export default function TiersPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[500px] flex flex-col">
-        <div className="p-5 border-b border-slate-50 flex flex-col md:flex-row md:items-center justify-between bg-slate-50/10 gap-4">
-          <div className="relative w-full md:max-w-md flex-shrink-0">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              type="text"
-              placeholder="Rechercher par nom, SIRET ou code SEDIT..."
-              className="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-semibold text-sm"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
-            />
+        <div className="p-5 border-b border-slate-50 space-y-4 bg-slate-50/10">
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="text"
+                placeholder="Rechercher par nom, SIRET ou code SEDIT..."
+                className="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-semibold text-sm"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+            <div className="flex items-center gap-2 text-slate-400 text-xs font-black uppercase tracking-widest">
+              <span>{filteredTiers.length} RESULTATS</span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => {
                 setShowOnlyClosed(!showOnlyClosed);
@@ -441,16 +446,12 @@ export default function TiersPage() {
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
-              <Filter size={14} />
+              <Filter size={16} />
               {showOnlyClosed ? 'Voir Tous' : 'Voir les Fermés'}
               {closedCount > 0 && !showOnlyClosed && (
-                <span className="bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-md text-[8px] ml-1">{closedCount}</span>
+                <span className="bg-rose-100 text-rose-600 px-2 py-1 rounded-md text-[8px] font-black ml-1">{closedCount}</span>
               )}
             </button>
-            <div className="h-8 w-px bg-slate-200 mx-2"></div>
-            <div className="flex items-center gap-4 text-slate-400 text-xs font-black uppercase tracking-widest whitespace-nowrap">
-              <span>{filteredTiers.length} RESULTATS</span>
-            </div>
           </div>
         </div>
 
