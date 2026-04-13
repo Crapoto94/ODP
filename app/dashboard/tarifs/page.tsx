@@ -38,6 +38,7 @@ import ModeTaxationModal from '@/components/ModeTaxationModal';
 import TlpeTarifsModal from '@/components/TlpeTarifsModal';
 import OdpDocsBanner from '@/components/OdpDocsBanner';
 import OdpDocsModal from '@/components/OdpDocsModal';
+import { useLockedYear } from '@/app/dashboard/occupations/hooks/useLockedYear';
 
 interface Categorie {
   id: number;
@@ -76,6 +77,7 @@ interface ModeTaxation {
 }
 
 export default function TarifsPage() {
+  const { lockedYear, isHydrated } = useLockedYear();
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Categorie[]>([]);
   const [modesTaxation, setModesTaxation] = useState<ModeTaxation[]>([]);
@@ -93,6 +95,13 @@ export default function TarifsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+
+  // When locked year changes, update selected year to match
+  useEffect(() => {
+    if (isHydrated && lockedYear) {
+      setSelectedYear(parseInt(lockedYear));
+    }
+  }, [lockedYear, isHydrated]);
 
   const [formData, setFormData] = useState({
     id: null as number | null,
