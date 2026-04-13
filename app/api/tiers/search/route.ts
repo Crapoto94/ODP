@@ -35,7 +35,10 @@ export async function GET(req: Request) {
   }
 
   return NextResponse.json({
-    ...info,
+    nom: info.nom,
+    siret: info.siret,
+    email: '',
+    adresse: [info.adresse, info.code_postal, info.ville].filter(Boolean).join(' '),
     natureJuridique: info.categorie_juridique ? mapNatureJuridique(info.categorie_juridique) : ''
   });
 }
