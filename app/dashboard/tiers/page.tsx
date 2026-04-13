@@ -362,7 +362,7 @@ export default function TiersPage() {
             {geocoding ? 'Localisation...' : 'Localiser la base'}
           </button>
 
-          <button 
+          <button
             onClick={verifyBaseInseeProgressive}
             disabled={isVerifying}
             className="flex items-center gap-3 bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg group disabled:opacity-50"
@@ -371,7 +371,16 @@ export default function TiersPage() {
             {isVerifying ? 'Analyse...' : 'Vérifier la base'}
           </button>
 
-          <button 
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={importing}
+            className="flex items-center gap-3 bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg group disabled:opacity-50"
+          >
+            {importing ? <Loader2 size={18} className="animate-spin" /> : <DownloadCloud size={18} className="text-amber-600 group-hover:scale-110 transition-transform" /> }
+            {importing ? 'Import...' : 'Import SEDIT'}
+          </button>
+
+          <button
             onClick={() => {
               resetForm();
               setIsModalOpen(true);
