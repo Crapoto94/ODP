@@ -52,7 +52,7 @@ export default function TabHeader({ icon: Icon, title, subtitle, accentColor = '
                 : 'bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 shadow-sm'
           }`}
         >
-          {action.icon && <ActionIcon size={16} />}
+          <ActionIcon size={16} />
           {action.label}
         </button>
       )}

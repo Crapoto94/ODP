@@ -28,35 +28,36 @@ model Tiers {
 }
 
 model Occupation {
-  id              Int               @id @default(autoincrement())
-  nom             String?
-  tiersId         Int
-  type            String
-  statut          String
-  dateDebut       DateTime?
-  dateFin         DateTime?
-  anneeTaxation   Int?
-  adresse         String
-  latitude        Float?
-  longitude       Float?
-  description     String?
-  photos          String?
-  montantCalcule  Float             @default(0)
-  facturePath     String?
-  created_at      DateTime          @default(now())
-  updated_at      DateTime          @updatedAt
-  numeroFacture   String?
-  dossierParentId Int?
-  isCourtMetrage  Boolean           @default(false)
-  agissantPour    String?
-  aotGabaritId    Int?
-  aotFinalPath    String?
-  datePaiement    DateTime?
-  contacts        Contact[]
-  dispositifs     Dispositif[]
-  lignes          LigneOccupation[]
-  notes           Note[]
-  tiers           Tiers             @relation(fields: [tiersId], references: [id])
+  id               Int                @id @default(autoincrement())
+  nom              String?
+  tiersId          Int
+  type             String
+  statut           String
+  dateDebut        DateTime?
+  dateFin          DateTime?
+  anneeTaxation    Int?
+  adresse          String
+  latitude         Float?
+  longitude        Float?
+  description      String?
+  photos           String?
+  montantCalcule   Float              @default(0)
+  facturePath      String?
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  numeroFacture    String?
+  dossierParentId  Int?
+  isCourtMetrage   Boolean            @default(false)
+  agissantPour     String?
+  aotGabaritId     Int?
+  aotFinalPath     String?
+  datePaiement     DateTime?
+  contacts         Contact[]
+  dispositifs      Dispositif[]
+  lignes           LigneOccupation[]
+  notes            Note[]
+  signatureRequests SignatureRequest[]
+  tiers            Tiers              @relation(fields: [tiersId], references: [id])
 }
 
 model Contact {
@@ -171,46 +172,49 @@ model MobileLog {
 }
 
 model AppSettings {
-  id                   Int      @id @default(autoincrement())
-  financeEmail         String?
-  appUrl               String?
-  apmUrl               String?
-  apmToken             String?
-  senderName           String?  @default("Domaine Public")
-  senderEmail          String?  @default("dsihub@fbc.fr")
-  filienOrga           String?  @default("01")
-  filienBudget         String?  @default("BA")
-  filienExercice       Int?
-  filienAvancement     String?  @default("5")
-  filienRejetDispo     Boolean? @default(true)
-  filienRejetCA        Boolean? @default(false)
-  filienRejetMarche    Boolean? @default(false)
-  filienMouvement      String?  @default("1")
-  filienType           String?  @default("R")
-  filienLibelle        String?
-  filienCalendrier     String?  @default("01")
-  filienMonnaie        String?  @default("E")
-  filienMouvementEx    String?  @default("N")
-  filienPreBordereau   String?  @default("1235")
-  filienPoste          String?  @default("0001")
-  filienBordereau      String?  @default("0001")
-  filienObjet          String?
-  filienChapitre       String?  @default("")
-  filienNature         String?  @default("")
-  filienFonction       String?  @default("")
-  filienCodeInterne    String?  @default("")
-  filienTypeMouvement  String?  @default("")
-  filienSens           String?  @default("")
-  filienStructure      String?  @default("")
-  filienGestionnaire   String?  @default("")
-  filienUncPj          String?  @default("")
-  signataireRole       String?  @default("Le Maire d'Ivry-sur-Seine,")
-  signataireDelegation String?  @default("et par délégation,")
-  signataireNom        String?  @default("Dominique Montet - Directrice Générale Adjointe")
-  updated_at           DateTime @updatedAt
-  filienUncPass        String?  @default("")
-  filienUncUser        String?  @default("")
-  filienUncDomain      String?  @default("WORKGROUP")
+  id                        Int      @id @default(autoincrement())
+  financeEmail              String?
+  appUrl                    String?
+  apmUrl                    String?
+  apmToken                  String?
+  senderName                String?  @default("Domaine Public")
+  senderEmail               String?  @default("dsihub@fbc.fr")
+  filienOrga                String?  @default("01")
+  filienBudget              String?  @default("BA")
+  filienExercice            Int?
+  filienAvancement          String?  @default("5")
+  filienRejetDispo          Boolean? @default(true)
+  filienRejetCA             Boolean? @default(false)
+  filienRejetMarche         Boolean? @default(false)
+  filienMouvement           String?  @default("1")
+  filienType                String?  @default("R")
+  filienLibelle             String?
+  filienCalendrier          String?  @default("01")
+  filienMonnaie             String?  @default("E")
+  filienMouvementEx         String?  @default("N")
+  filienPreBordereau        String?  @default("1235")
+  filienPoste               String?  @default("0001")
+  filienBordereau           String?  @default("0001")
+  filienObjet               String?
+  filienChapitre            String?  @default("")
+  filienNature              String?  @default("")
+  filienFonction            String?  @default("")
+  filienCodeInterne         String?  @default("")
+  filienTypeMouvement       String?  @default("")
+  filienSens                String?  @default("")
+  filienStructure           String?  @default("")
+  filienGestionnaire        String?  @default("")
+  filienUncPj               String?  @default("")
+  signataireRole            String?  @default("Le Maire d'Ivry-sur-Seine,")
+  signataireDelegation      String?  @default("et par délégation,")
+  signataireNom             String?  @default("Dominique Montet - Directrice Générale Adjointe")
+  signatureImagePath        String?
+  signatureCertificatePath  String?
+  signatureCertificatePassword String?
+  updated_at                DateTime @updatedAt
+  filienUncPass             String?  @default("")
+  filienUncUser             String?  @default("")
+  filienUncDomain           String?  @default("WORKGROUP")
 }
 
 model LigneOccupation {
@@ -346,4 +350,32 @@ model BillingRunInvoice {
   total        Float
   pdfPath      String
   run          BillingRun @relation(fields: [billingRunId], references: [id], onDelete: Cascade)
+}
+
+model Signatory {
+  id                 Int                @id @default(autoincrement())
+  nom                String
+  email              String             @unique
+  role               String
+  titre              String?
+  isDefault          Boolean            @default(false)
+  statut             String             @default("ACTIF")
+  created_at         DateTime           @default(now())
+  updated_at         DateTime           @updatedAt
+  signatureRequests  SignatureRequest[]
+}
+
+model SignatureRequest {
+  id                 Int        @id @default(autoincrement())
+  occupationId       Int
+  signatoriesId      Int
+  status             String     @default("PENDING")
+  token              String     @unique
+  tokenExpiresAt     DateTime
+  rejectionComment   String?
+  signedAt           DateTime?
+  created_at         DateTime   @default(now())
+  updated_at         DateTime   @updatedAt
+  occupation         Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  signatory          Signatory  @relation(fields: [signatoriesId], references: [id])
 }

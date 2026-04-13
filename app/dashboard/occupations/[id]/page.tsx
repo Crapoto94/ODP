@@ -25,6 +25,7 @@ import ContactModal from '@/components/ContactModal';
 import LigneArticleModal from '@/components/LigneArticleModal';
 import TlpeLigneArticleModal from '@/components/TlpeLigneArticleModal';
 import AotFinalModal from './components/AotFinalModal';
+import SignatureRequestModal from './components/SignatureRequestModal';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -35,6 +36,7 @@ export default function OccupationDetailPage({ params }: Props) {
   const { id: paramId } = use(params);
   const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
   const [editingLigne, setEditingLigne] = useState<LigneArticle | null>(null);
+  const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
 
   const {
     occ,
@@ -162,6 +164,7 @@ export default function OccupationDetailPage({ params }: Props) {
                 onRegisterPayment={handleRegisterPayment}
                 onUploadAotFinal={() => setIsAotFinalModalOpen(true)}
                 onPublishAot={handlePublishAot}
+                onSendForSignature={() => setIsSignatureModalOpen(true)}
               />
             )}
             <OccupationNotes 
@@ -233,6 +236,14 @@ export default function OccupationDetailPage({ params }: Props) {
         isUploading={isUploadingAotFinal}
         onUpload={handleUploadAotFinal}
       />
+
+      {occ && (
+        <SignatureRequestModal
+          isOpen={isSignatureModalOpen}
+          onClose={() => setIsSignatureModalOpen(false)}
+          occupationId={occ.id}
+        />
+      )}
     </div>
   );
 }

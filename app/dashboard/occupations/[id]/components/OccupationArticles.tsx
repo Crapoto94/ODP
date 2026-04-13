@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Plus, Package, Clock, Hash, Pencil, Trash2, FileText, Loader2, CreditCard, FileStack, CheckCircle2 } from 'lucide-react';
+import { Plus, Package, Clock, Hash, Pencil, Trash2, FileText, Loader2, CreditCard, FileStack, CheckCircle2, Send } from 'lucide-react';
 import { Occupation, LigneArticle } from '../types';
 import PaymentModal from './PaymentModal';
 
@@ -19,6 +19,7 @@ interface Props {
   isGeneratingAot?: boolean;
   onUploadAotFinal?: () => void;
   onPublishAot?: () => void;
+  onSendForSignature?: () => void;
 }
 
 export default function OccupationArticles({
@@ -34,7 +35,8 @@ export default function OccupationArticles({
   onDownloadAot,
   isGeneratingAot,
   onUploadAotFinal,
-  onPublishAot
+  onPublishAot,
+  onSendForSignature
 }: Props) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const isInit = occupation.type === 'CHANTIER' && (occupation.statut === 'INIT' || occupation.statut === 'INITIALISATION' || occupation.statut === 'EN_ATTENTE');
@@ -128,6 +130,16 @@ export default function OccupationArticles({
                 <FileStack size={18} />
                 Ajouter AOT final
               </button>
+
+              {onSendForSignature && (
+                <button
+                  onClick={onSendForSignature}
+                  className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95 bg-white border-2 border-blue-100 text-blue-600 hover:bg-blue-50 shadow-blue-100/50"
+                >
+                  <Send size={18} />
+                  Envoyer en signature
+                </button>
+              )}
             </div>
           </div>
         </div>

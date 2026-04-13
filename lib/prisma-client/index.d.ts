@@ -128,6 +128,16 @@ export type BillingRun = $Result.DefaultSelection<Prisma.$BillingRunPayload>
  * 
  */
 export type BillingRunInvoice = $Result.DefaultSelection<Prisma.$BillingRunInvoicePayload>
+/**
+ * Model Signatory
+ * 
+ */
+export type Signatory = $Result.DefaultSelection<Prisma.$SignatoryPayload>
+/**
+ * Model SignatureRequest
+ * 
+ */
+export type SignatureRequest = $Result.DefaultSelection<Prisma.$SignatureRequestPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -481,6 +491,26 @@ export class PrismaClient<
     * ```
     */
   get billingRunInvoice(): Prisma.BillingRunInvoiceDelegate<ExtArgs>;
+
+  /**
+   * `prisma.signatory`: Exposes CRUD operations for the **Signatory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Signatories
+    * const signatories = await prisma.signatory.findMany()
+    * ```
+    */
+  get signatory(): Prisma.SignatoryDelegate<ExtArgs>;
+
+  /**
+   * `prisma.signatureRequest`: Exposes CRUD operations for the **SignatureRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SignatureRequests
+    * const signatureRequests = await prisma.signatureRequest.findMany()
+    * ```
+    */
+  get signatureRequest(): Prisma.SignatureRequestDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -944,7 +974,9 @@ export namespace Prisma {
     PostgresConfig: 'PostgresConfig',
     OdpConfig: 'OdpConfig',
     BillingRun: 'BillingRun',
-    BillingRunInvoice: 'BillingRunInvoice'
+    BillingRunInvoice: 'BillingRunInvoice',
+    Signatory: 'Signatory',
+    SignatureRequest: 'SignatureRequest'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -960,7 +992,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "odpConfig" | "billingRun" | "billingRunInvoice"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2574,6 +2606,146 @@ export namespace Prisma {
           }
         }
       }
+      Signatory: {
+        payload: Prisma.$SignatoryPayload<ExtArgs>
+        fields: Prisma.SignatoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SignatoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SignatoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload>
+          }
+          findFirst: {
+            args: Prisma.SignatoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SignatoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload>
+          }
+          findMany: {
+            args: Prisma.SignatoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload>[]
+          }
+          create: {
+            args: Prisma.SignatoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload>
+          }
+          createMany: {
+            args: Prisma.SignatoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SignatoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload>[]
+          }
+          delete: {
+            args: Prisma.SignatoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload>
+          }
+          update: {
+            args: Prisma.SignatoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.SignatoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SignatoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.SignatoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatoryPayload>
+          }
+          aggregate: {
+            args: Prisma.SignatoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSignatory>
+          }
+          groupBy: {
+            args: Prisma.SignatoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SignatoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SignatoryCountArgs<ExtArgs>
+            result: $Utils.Optional<SignatoryCountAggregateOutputType> | number
+          }
+        }
+      }
+      SignatureRequest: {
+        payload: Prisma.$SignatureRequestPayload<ExtArgs>
+        fields: Prisma.SignatureRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SignatureRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SignatureRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.SignatureRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SignatureRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload>
+          }
+          findMany: {
+            args: Prisma.SignatureRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload>[]
+          }
+          create: {
+            args: Prisma.SignatureRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload>
+          }
+          createMany: {
+            args: Prisma.SignatureRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SignatureRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.SignatureRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload>
+          }
+          update: {
+            args: Prisma.SignatureRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.SignatureRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SignatureRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.SignatureRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SignatureRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.SignatureRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSignatureRequest>
+          }
+          groupBy: {
+            args: Prisma.SignatureRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SignatureRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SignatureRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<SignatureRequestCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2779,6 +2951,7 @@ export namespace Prisma {
     dispositifs: number
     lignes: number
     notes: number
+    signatureRequests: number
   }
 
   export type OccupationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2786,6 +2959,7 @@ export namespace Prisma {
     dispositifs?: boolean | OccupationCountOutputTypeCountDispositifsArgs
     lignes?: boolean | OccupationCountOutputTypeCountLignesArgs
     notes?: boolean | OccupationCountOutputTypeCountNotesArgs
+    signatureRequests?: boolean | OccupationCountOutputTypeCountSignatureRequestsArgs
   }
 
   // Custom InputTypes
@@ -2825,6 +2999,13 @@ export namespace Prisma {
    */
   export type OccupationCountOutputTypeCountNotesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NoteWhereInput
+  }
+
+  /**
+   * OccupationCountOutputType without action
+   */
+  export type OccupationCountOutputTypeCountSignatureRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SignatureRequestWhereInput
   }
 
 
@@ -3051,6 +3232,37 @@ export namespace Prisma {
    */
   export type BillingRunCountOutputTypeCountInvoicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BillingRunInvoiceWhereInput
+  }
+
+
+  /**
+   * Count Type SignatoryCountOutputType
+   */
+
+  export type SignatoryCountOutputType = {
+    signatureRequests: number
+  }
+
+  export type SignatoryCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    signatureRequests?: boolean | SignatoryCountOutputTypeCountSignatureRequestsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SignatoryCountOutputType without action
+   */
+  export type SignatoryCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatoryCountOutputType
+     */
+    select?: SignatoryCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SignatoryCountOutputType without action
+   */
+  export type SignatoryCountOutputTypeCountSignatureRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SignatureRequestWhereInput
   }
 
 
@@ -4548,6 +4760,7 @@ export namespace Prisma {
     dispositifs?: boolean | Occupation$dispositifsArgs<ExtArgs>
     lignes?: boolean | Occupation$lignesArgs<ExtArgs>
     notes?: boolean | Occupation$notesArgs<ExtArgs>
+    signatureRequests?: boolean | Occupation$signatureRequestsArgs<ExtArgs>
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
     _count?: boolean | OccupationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["occupation"]>
@@ -4612,6 +4825,7 @@ export namespace Prisma {
     dispositifs?: boolean | Occupation$dispositifsArgs<ExtArgs>
     lignes?: boolean | Occupation$lignesArgs<ExtArgs>
     notes?: boolean | Occupation$notesArgs<ExtArgs>
+    signatureRequests?: boolean | Occupation$signatureRequestsArgs<ExtArgs>
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
     _count?: boolean | OccupationCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -4626,6 +4840,7 @@ export namespace Prisma {
       dispositifs: Prisma.$DispositifPayload<ExtArgs>[]
       lignes: Prisma.$LigneOccupationPayload<ExtArgs>[]
       notes: Prisma.$NotePayload<ExtArgs>[]
+      signatureRequests: Prisma.$SignatureRequestPayload<ExtArgs>[]
       tiers: Prisma.$TiersPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -5021,6 +5236,7 @@ export namespace Prisma {
     dispositifs<T extends Occupation$dispositifsArgs<ExtArgs> = {}>(args?: Subset<T, Occupation$dispositifsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DispositifPayload<ExtArgs>, T, "findMany"> | Null>
     lignes<T extends Occupation$lignesArgs<ExtArgs> = {}>(args?: Subset<T, Occupation$lignesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LigneOccupationPayload<ExtArgs>, T, "findMany"> | Null>
     notes<T extends Occupation$notesArgs<ExtArgs> = {}>(args?: Subset<T, Occupation$notesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany"> | Null>
+    signatureRequests<T extends Occupation$signatureRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Occupation$signatureRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "findMany"> | Null>
     tiers<T extends TiersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TiersDefaultArgs<ExtArgs>>): Prisma__TiersClient<$Result.GetResult<Prisma.$TiersPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -5468,6 +5684,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NoteScalarFieldEnum | NoteScalarFieldEnum[]
+  }
+
+  /**
+   * Occupation.signatureRequests
+   */
+  export type Occupation$signatureRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    where?: SignatureRequestWhereInput
+    orderBy?: SignatureRequestOrderByWithRelationInput | SignatureRequestOrderByWithRelationInput[]
+    cursor?: SignatureRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SignatureRequestScalarFieldEnum | SignatureRequestScalarFieldEnum[]
   }
 
   /**
@@ -13843,6 +14079,9 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
+    signatureImagePath: string | null
+    signatureCertificatePath: string | null
+    signatureCertificatePassword: string | null
     updated_at: Date | null
     filienUncPass: string | null
     filienUncUser: string | null
@@ -13886,6 +14125,9 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
+    signatureImagePath: string | null
+    signatureCertificatePath: string | null
+    signatureCertificatePassword: string | null
     updated_at: Date | null
     filienUncPass: string | null
     filienUncUser: string | null
@@ -13929,6 +14171,9 @@ export namespace Prisma {
     signataireRole: number
     signataireDelegation: number
     signataireNom: number
+    signatureImagePath: number
+    signatureCertificatePath: number
+    signatureCertificatePassword: number
     updated_at: number
     filienUncPass: number
     filienUncUser: number
@@ -13984,6 +14229,9 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
+    signatureImagePath?: true
+    signatureCertificatePath?: true
+    signatureCertificatePassword?: true
     updated_at?: true
     filienUncPass?: true
     filienUncUser?: true
@@ -14027,6 +14275,9 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
+    signatureImagePath?: true
+    signatureCertificatePath?: true
+    signatureCertificatePassword?: true
     updated_at?: true
     filienUncPass?: true
     filienUncUser?: true
@@ -14070,6 +14321,9 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
+    signatureImagePath?: true
+    signatureCertificatePath?: true
+    signatureCertificatePassword?: true
     updated_at?: true
     filienUncPass?: true
     filienUncUser?: true
@@ -14200,6 +14454,9 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
+    signatureImagePath: string | null
+    signatureCertificatePath: string | null
+    signatureCertificatePassword: string | null
     updated_at: Date
     filienUncPass: string | null
     filienUncUser: string | null
@@ -14262,6 +14519,9 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
+    signatureImagePath?: boolean
+    signatureCertificatePath?: boolean
+    signatureCertificatePassword?: boolean
     updated_at?: boolean
     filienUncPass?: boolean
     filienUncUser?: boolean
@@ -14305,6 +14565,9 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
+    signatureImagePath?: boolean
+    signatureCertificatePath?: boolean
+    signatureCertificatePassword?: boolean
     updated_at?: boolean
     filienUncPass?: boolean
     filienUncUser?: boolean
@@ -14348,6 +14611,9 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
+    signatureImagePath?: boolean
+    signatureCertificatePath?: boolean
+    signatureCertificatePassword?: boolean
     updated_at?: boolean
     filienUncPass?: boolean
     filienUncUser?: boolean
@@ -14395,6 +14661,9 @@ export namespace Prisma {
       signataireRole: string | null
       signataireDelegation: string | null
       signataireNom: string | null
+      signatureImagePath: string | null
+      signatureCertificatePath: string | null
+      signatureCertificatePassword: string | null
       updated_at: Date
       filienUncPass: string | null
       filienUncUser: string | null
@@ -14828,6 +15097,9 @@ export namespace Prisma {
     readonly signataireRole: FieldRef<"AppSettings", 'String'>
     readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
     readonly signataireNom: FieldRef<"AppSettings", 'String'>
+    readonly signatureImagePath: FieldRef<"AppSettings", 'String'>
+    readonly signatureCertificatePath: FieldRef<"AppSettings", 'String'>
+    readonly signatureCertificatePassword: FieldRef<"AppSettings", 'String'>
     readonly updated_at: FieldRef<"AppSettings", 'DateTime'>
     readonly filienUncPass: FieldRef<"AppSettings", 'String'>
     readonly filienUncUser: FieldRef<"AppSettings", 'String'>
@@ -26913,6 +27185,2073 @@ export namespace Prisma {
 
 
   /**
+   * Model Signatory
+   */
+
+  export type AggregateSignatory = {
+    _count: SignatoryCountAggregateOutputType | null
+    _avg: SignatoryAvgAggregateOutputType | null
+    _sum: SignatorySumAggregateOutputType | null
+    _min: SignatoryMinAggregateOutputType | null
+    _max: SignatoryMaxAggregateOutputType | null
+  }
+
+  export type SignatoryAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type SignatorySumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type SignatoryMinAggregateOutputType = {
+    id: number | null
+    nom: string | null
+    email: string | null
+    role: string | null
+    titre: string | null
+    isDefault: boolean | null
+    statut: string | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type SignatoryMaxAggregateOutputType = {
+    id: number | null
+    nom: string | null
+    email: string | null
+    role: string | null
+    titre: string | null
+    isDefault: boolean | null
+    statut: string | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type SignatoryCountAggregateOutputType = {
+    id: number
+    nom: number
+    email: number
+    role: number
+    titre: number
+    isDefault: number
+    statut: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type SignatoryAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type SignatorySumAggregateInputType = {
+    id?: true
+  }
+
+  export type SignatoryMinAggregateInputType = {
+    id?: true
+    nom?: true
+    email?: true
+    role?: true
+    titre?: true
+    isDefault?: true
+    statut?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type SignatoryMaxAggregateInputType = {
+    id?: true
+    nom?: true
+    email?: true
+    role?: true
+    titre?: true
+    isDefault?: true
+    statut?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type SignatoryCountAggregateInputType = {
+    id?: true
+    nom?: true
+    email?: true
+    role?: true
+    titre?: true
+    isDefault?: true
+    statut?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type SignatoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Signatory to aggregate.
+     */
+    where?: SignatoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Signatories to fetch.
+     */
+    orderBy?: SignatoryOrderByWithRelationInput | SignatoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SignatoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Signatories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Signatories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Signatories
+    **/
+    _count?: true | SignatoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SignatoryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SignatorySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SignatoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SignatoryMaxAggregateInputType
+  }
+
+  export type GetSignatoryAggregateType<T extends SignatoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateSignatory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSignatory[P]>
+      : GetScalarType<T[P], AggregateSignatory[P]>
+  }
+
+
+
+
+  export type SignatoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SignatoryWhereInput
+    orderBy?: SignatoryOrderByWithAggregationInput | SignatoryOrderByWithAggregationInput[]
+    by: SignatoryScalarFieldEnum[] | SignatoryScalarFieldEnum
+    having?: SignatoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SignatoryCountAggregateInputType | true
+    _avg?: SignatoryAvgAggregateInputType
+    _sum?: SignatorySumAggregateInputType
+    _min?: SignatoryMinAggregateInputType
+    _max?: SignatoryMaxAggregateInputType
+  }
+
+  export type SignatoryGroupByOutputType = {
+    id: number
+    nom: string
+    email: string
+    role: string
+    titre: string | null
+    isDefault: boolean
+    statut: string
+    created_at: Date
+    updated_at: Date
+    _count: SignatoryCountAggregateOutputType | null
+    _avg: SignatoryAvgAggregateOutputType | null
+    _sum: SignatorySumAggregateOutputType | null
+    _min: SignatoryMinAggregateOutputType | null
+    _max: SignatoryMaxAggregateOutputType | null
+  }
+
+  type GetSignatoryGroupByPayload<T extends SignatoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SignatoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SignatoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SignatoryGroupByOutputType[P]>
+            : GetScalarType<T[P], SignatoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SignatorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nom?: boolean
+    email?: boolean
+    role?: boolean
+    titre?: boolean
+    isDefault?: boolean
+    statut?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    signatureRequests?: boolean | Signatory$signatureRequestsArgs<ExtArgs>
+    _count?: boolean | SignatoryCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["signatory"]>
+
+  export type SignatorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nom?: boolean
+    email?: boolean
+    role?: boolean
+    titre?: boolean
+    isDefault?: boolean
+    statut?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["signatory"]>
+
+  export type SignatorySelectScalar = {
+    id?: boolean
+    nom?: boolean
+    email?: boolean
+    role?: boolean
+    titre?: boolean
+    isDefault?: boolean
+    statut?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type SignatoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    signatureRequests?: boolean | Signatory$signatureRequestsArgs<ExtArgs>
+    _count?: boolean | SignatoryCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SignatoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $SignatoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Signatory"
+    objects: {
+      signatureRequests: Prisma.$SignatureRequestPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      nom: string
+      email: string
+      role: string
+      titre: string | null
+      isDefault: boolean
+      statut: string
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["signatory"]>
+    composites: {}
+  }
+
+  type SignatoryGetPayload<S extends boolean | null | undefined | SignatoryDefaultArgs> = $Result.GetResult<Prisma.$SignatoryPayload, S>
+
+  type SignatoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<SignatoryFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: SignatoryCountAggregateInputType | true
+    }
+
+  export interface SignatoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Signatory'], meta: { name: 'Signatory' } }
+    /**
+     * Find zero or one Signatory that matches the filter.
+     * @param {SignatoryFindUniqueArgs} args - Arguments to find a Signatory
+     * @example
+     * // Get one Signatory
+     * const signatory = await prisma.signatory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SignatoryFindUniqueArgs>(args: SelectSubset<T, SignatoryFindUniqueArgs<ExtArgs>>): Prisma__SignatoryClient<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Signatory that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {SignatoryFindUniqueOrThrowArgs} args - Arguments to find a Signatory
+     * @example
+     * // Get one Signatory
+     * const signatory = await prisma.signatory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SignatoryFindUniqueOrThrowArgs>(args: SelectSubset<T, SignatoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SignatoryClient<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Signatory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatoryFindFirstArgs} args - Arguments to find a Signatory
+     * @example
+     * // Get one Signatory
+     * const signatory = await prisma.signatory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SignatoryFindFirstArgs>(args?: SelectSubset<T, SignatoryFindFirstArgs<ExtArgs>>): Prisma__SignatoryClient<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Signatory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatoryFindFirstOrThrowArgs} args - Arguments to find a Signatory
+     * @example
+     * // Get one Signatory
+     * const signatory = await prisma.signatory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SignatoryFindFirstOrThrowArgs>(args?: SelectSubset<T, SignatoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__SignatoryClient<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Signatories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Signatories
+     * const signatories = await prisma.signatory.findMany()
+     * 
+     * // Get first 10 Signatories
+     * const signatories = await prisma.signatory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const signatoryWithIdOnly = await prisma.signatory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SignatoryFindManyArgs>(args?: SelectSubset<T, SignatoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Signatory.
+     * @param {SignatoryCreateArgs} args - Arguments to create a Signatory.
+     * @example
+     * // Create one Signatory
+     * const Signatory = await prisma.signatory.create({
+     *   data: {
+     *     // ... data to create a Signatory
+     *   }
+     * })
+     * 
+     */
+    create<T extends SignatoryCreateArgs>(args: SelectSubset<T, SignatoryCreateArgs<ExtArgs>>): Prisma__SignatoryClient<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Signatories.
+     * @param {SignatoryCreateManyArgs} args - Arguments to create many Signatories.
+     * @example
+     * // Create many Signatories
+     * const signatory = await prisma.signatory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SignatoryCreateManyArgs>(args?: SelectSubset<T, SignatoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Signatories and returns the data saved in the database.
+     * @param {SignatoryCreateManyAndReturnArgs} args - Arguments to create many Signatories.
+     * @example
+     * // Create many Signatories
+     * const signatory = await prisma.signatory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Signatories and only return the `id`
+     * const signatoryWithIdOnly = await prisma.signatory.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SignatoryCreateManyAndReturnArgs>(args?: SelectSubset<T, SignatoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Signatory.
+     * @param {SignatoryDeleteArgs} args - Arguments to delete one Signatory.
+     * @example
+     * // Delete one Signatory
+     * const Signatory = await prisma.signatory.delete({
+     *   where: {
+     *     // ... filter to delete one Signatory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SignatoryDeleteArgs>(args: SelectSubset<T, SignatoryDeleteArgs<ExtArgs>>): Prisma__SignatoryClient<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Signatory.
+     * @param {SignatoryUpdateArgs} args - Arguments to update one Signatory.
+     * @example
+     * // Update one Signatory
+     * const signatory = await prisma.signatory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SignatoryUpdateArgs>(args: SelectSubset<T, SignatoryUpdateArgs<ExtArgs>>): Prisma__SignatoryClient<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Signatories.
+     * @param {SignatoryDeleteManyArgs} args - Arguments to filter Signatories to delete.
+     * @example
+     * // Delete a few Signatories
+     * const { count } = await prisma.signatory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SignatoryDeleteManyArgs>(args?: SelectSubset<T, SignatoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Signatories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Signatories
+     * const signatory = await prisma.signatory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SignatoryUpdateManyArgs>(args: SelectSubset<T, SignatoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Signatory.
+     * @param {SignatoryUpsertArgs} args - Arguments to update or create a Signatory.
+     * @example
+     * // Update or create a Signatory
+     * const signatory = await prisma.signatory.upsert({
+     *   create: {
+     *     // ... data to create a Signatory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Signatory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SignatoryUpsertArgs>(args: SelectSubset<T, SignatoryUpsertArgs<ExtArgs>>): Prisma__SignatoryClient<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Signatories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatoryCountArgs} args - Arguments to filter Signatories to count.
+     * @example
+     * // Count the number of Signatories
+     * const count = await prisma.signatory.count({
+     *   where: {
+     *     // ... the filter for the Signatories we want to count
+     *   }
+     * })
+    **/
+    count<T extends SignatoryCountArgs>(
+      args?: Subset<T, SignatoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SignatoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Signatory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SignatoryAggregateArgs>(args: Subset<T, SignatoryAggregateArgs>): Prisma.PrismaPromise<GetSignatoryAggregateType<T>>
+
+    /**
+     * Group by Signatory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SignatoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SignatoryGroupByArgs['orderBy'] }
+        : { orderBy?: SignatoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SignatoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSignatoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Signatory model
+   */
+  readonly fields: SignatoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Signatory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SignatoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    signatureRequests<T extends Signatory$signatureRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Signatory$signatureRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Signatory model
+   */ 
+  interface SignatoryFieldRefs {
+    readonly id: FieldRef<"Signatory", 'Int'>
+    readonly nom: FieldRef<"Signatory", 'String'>
+    readonly email: FieldRef<"Signatory", 'String'>
+    readonly role: FieldRef<"Signatory", 'String'>
+    readonly titre: FieldRef<"Signatory", 'String'>
+    readonly isDefault: FieldRef<"Signatory", 'Boolean'>
+    readonly statut: FieldRef<"Signatory", 'String'>
+    readonly created_at: FieldRef<"Signatory", 'DateTime'>
+    readonly updated_at: FieldRef<"Signatory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Signatory findUnique
+   */
+  export type SignatoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+    /**
+     * Filter, which Signatory to fetch.
+     */
+    where: SignatoryWhereUniqueInput
+  }
+
+  /**
+   * Signatory findUniqueOrThrow
+   */
+  export type SignatoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+    /**
+     * Filter, which Signatory to fetch.
+     */
+    where: SignatoryWhereUniqueInput
+  }
+
+  /**
+   * Signatory findFirst
+   */
+  export type SignatoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+    /**
+     * Filter, which Signatory to fetch.
+     */
+    where?: SignatoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Signatories to fetch.
+     */
+    orderBy?: SignatoryOrderByWithRelationInput | SignatoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Signatories.
+     */
+    cursor?: SignatoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Signatories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Signatories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Signatories.
+     */
+    distinct?: SignatoryScalarFieldEnum | SignatoryScalarFieldEnum[]
+  }
+
+  /**
+   * Signatory findFirstOrThrow
+   */
+  export type SignatoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+    /**
+     * Filter, which Signatory to fetch.
+     */
+    where?: SignatoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Signatories to fetch.
+     */
+    orderBy?: SignatoryOrderByWithRelationInput | SignatoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Signatories.
+     */
+    cursor?: SignatoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Signatories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Signatories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Signatories.
+     */
+    distinct?: SignatoryScalarFieldEnum | SignatoryScalarFieldEnum[]
+  }
+
+  /**
+   * Signatory findMany
+   */
+  export type SignatoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+    /**
+     * Filter, which Signatories to fetch.
+     */
+    where?: SignatoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Signatories to fetch.
+     */
+    orderBy?: SignatoryOrderByWithRelationInput | SignatoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Signatories.
+     */
+    cursor?: SignatoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Signatories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Signatories.
+     */
+    skip?: number
+    distinct?: SignatoryScalarFieldEnum | SignatoryScalarFieldEnum[]
+  }
+
+  /**
+   * Signatory create
+   */
+  export type SignatoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Signatory.
+     */
+    data: XOR<SignatoryCreateInput, SignatoryUncheckedCreateInput>
+  }
+
+  /**
+   * Signatory createMany
+   */
+  export type SignatoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Signatories.
+     */
+    data: SignatoryCreateManyInput | SignatoryCreateManyInput[]
+  }
+
+  /**
+   * Signatory createManyAndReturn
+   */
+  export type SignatoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Signatories.
+     */
+    data: SignatoryCreateManyInput | SignatoryCreateManyInput[]
+  }
+
+  /**
+   * Signatory update
+   */
+  export type SignatoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Signatory.
+     */
+    data: XOR<SignatoryUpdateInput, SignatoryUncheckedUpdateInput>
+    /**
+     * Choose, which Signatory to update.
+     */
+    where: SignatoryWhereUniqueInput
+  }
+
+  /**
+   * Signatory updateMany
+   */
+  export type SignatoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Signatories.
+     */
+    data: XOR<SignatoryUpdateManyMutationInput, SignatoryUncheckedUpdateManyInput>
+    /**
+     * Filter which Signatories to update
+     */
+    where?: SignatoryWhereInput
+  }
+
+  /**
+   * Signatory upsert
+   */
+  export type SignatoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Signatory to update in case it exists.
+     */
+    where: SignatoryWhereUniqueInput
+    /**
+     * In case the Signatory found by the `where` argument doesn't exist, create a new Signatory with this data.
+     */
+    create: XOR<SignatoryCreateInput, SignatoryUncheckedCreateInput>
+    /**
+     * In case the Signatory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SignatoryUpdateInput, SignatoryUncheckedUpdateInput>
+  }
+
+  /**
+   * Signatory delete
+   */
+  export type SignatoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+    /**
+     * Filter which Signatory to delete.
+     */
+    where: SignatoryWhereUniqueInput
+  }
+
+  /**
+   * Signatory deleteMany
+   */
+  export type SignatoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Signatories to delete
+     */
+    where?: SignatoryWhereInput
+  }
+
+  /**
+   * Signatory.signatureRequests
+   */
+  export type Signatory$signatureRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    where?: SignatureRequestWhereInput
+    orderBy?: SignatureRequestOrderByWithRelationInput | SignatureRequestOrderByWithRelationInput[]
+    cursor?: SignatureRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SignatureRequestScalarFieldEnum | SignatureRequestScalarFieldEnum[]
+  }
+
+  /**
+   * Signatory without action
+   */
+  export type SignatoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Signatory
+     */
+    select?: SignatorySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatoryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SignatureRequest
+   */
+
+  export type AggregateSignatureRequest = {
+    _count: SignatureRequestCountAggregateOutputType | null
+    _avg: SignatureRequestAvgAggregateOutputType | null
+    _sum: SignatureRequestSumAggregateOutputType | null
+    _min: SignatureRequestMinAggregateOutputType | null
+    _max: SignatureRequestMaxAggregateOutputType | null
+  }
+
+  export type SignatureRequestAvgAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+    signatoriesId: number | null
+  }
+
+  export type SignatureRequestSumAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+    signatoriesId: number | null
+  }
+
+  export type SignatureRequestMinAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+    signatoriesId: number | null
+    status: string | null
+    token: string | null
+    tokenExpiresAt: Date | null
+    rejectionComment: string | null
+    signedAt: Date | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type SignatureRequestMaxAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+    signatoriesId: number | null
+    status: string | null
+    token: string | null
+    tokenExpiresAt: Date | null
+    rejectionComment: string | null
+    signedAt: Date | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type SignatureRequestCountAggregateOutputType = {
+    id: number
+    occupationId: number
+    signatoriesId: number
+    status: number
+    token: number
+    tokenExpiresAt: number
+    rejectionComment: number
+    signedAt: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type SignatureRequestAvgAggregateInputType = {
+    id?: true
+    occupationId?: true
+    signatoriesId?: true
+  }
+
+  export type SignatureRequestSumAggregateInputType = {
+    id?: true
+    occupationId?: true
+    signatoriesId?: true
+  }
+
+  export type SignatureRequestMinAggregateInputType = {
+    id?: true
+    occupationId?: true
+    signatoriesId?: true
+    status?: true
+    token?: true
+    tokenExpiresAt?: true
+    rejectionComment?: true
+    signedAt?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type SignatureRequestMaxAggregateInputType = {
+    id?: true
+    occupationId?: true
+    signatoriesId?: true
+    status?: true
+    token?: true
+    tokenExpiresAt?: true
+    rejectionComment?: true
+    signedAt?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type SignatureRequestCountAggregateInputType = {
+    id?: true
+    occupationId?: true
+    signatoriesId?: true
+    status?: true
+    token?: true
+    tokenExpiresAt?: true
+    rejectionComment?: true
+    signedAt?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type SignatureRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SignatureRequest to aggregate.
+     */
+    where?: SignatureRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SignatureRequests to fetch.
+     */
+    orderBy?: SignatureRequestOrderByWithRelationInput | SignatureRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SignatureRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SignatureRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SignatureRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SignatureRequests
+    **/
+    _count?: true | SignatureRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SignatureRequestAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SignatureRequestSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SignatureRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SignatureRequestMaxAggregateInputType
+  }
+
+  export type GetSignatureRequestAggregateType<T extends SignatureRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateSignatureRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSignatureRequest[P]>
+      : GetScalarType<T[P], AggregateSignatureRequest[P]>
+  }
+
+
+
+
+  export type SignatureRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SignatureRequestWhereInput
+    orderBy?: SignatureRequestOrderByWithAggregationInput | SignatureRequestOrderByWithAggregationInput[]
+    by: SignatureRequestScalarFieldEnum[] | SignatureRequestScalarFieldEnum
+    having?: SignatureRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SignatureRequestCountAggregateInputType | true
+    _avg?: SignatureRequestAvgAggregateInputType
+    _sum?: SignatureRequestSumAggregateInputType
+    _min?: SignatureRequestMinAggregateInputType
+    _max?: SignatureRequestMaxAggregateInputType
+  }
+
+  export type SignatureRequestGroupByOutputType = {
+    id: number
+    occupationId: number
+    signatoriesId: number
+    status: string
+    token: string
+    tokenExpiresAt: Date
+    rejectionComment: string | null
+    signedAt: Date | null
+    created_at: Date
+    updated_at: Date
+    _count: SignatureRequestCountAggregateOutputType | null
+    _avg: SignatureRequestAvgAggregateOutputType | null
+    _sum: SignatureRequestSumAggregateOutputType | null
+    _min: SignatureRequestMinAggregateOutputType | null
+    _max: SignatureRequestMaxAggregateOutputType | null
+  }
+
+  type GetSignatureRequestGroupByPayload<T extends SignatureRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SignatureRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SignatureRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SignatureRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], SignatureRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SignatureRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    occupationId?: boolean
+    signatoriesId?: boolean
+    status?: boolean
+    token?: boolean
+    tokenExpiresAt?: boolean
+    rejectionComment?: boolean
+    signedAt?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    signatory?: boolean | SignatoryDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["signatureRequest"]>
+
+  export type SignatureRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    occupationId?: boolean
+    signatoriesId?: boolean
+    status?: boolean
+    token?: boolean
+    tokenExpiresAt?: boolean
+    rejectionComment?: boolean
+    signedAt?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    signatory?: boolean | SignatoryDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["signatureRequest"]>
+
+  export type SignatureRequestSelectScalar = {
+    id?: boolean
+    occupationId?: boolean
+    signatoriesId?: boolean
+    status?: boolean
+    token?: boolean
+    tokenExpiresAt?: boolean
+    rejectionComment?: boolean
+    signedAt?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type SignatureRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    signatory?: boolean | SignatoryDefaultArgs<ExtArgs>
+  }
+  export type SignatureRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    signatory?: boolean | SignatoryDefaultArgs<ExtArgs>
+  }
+
+  export type $SignatureRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SignatureRequest"
+    objects: {
+      occupation: Prisma.$OccupationPayload<ExtArgs>
+      signatory: Prisma.$SignatoryPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      occupationId: number
+      signatoriesId: number
+      status: string
+      token: string
+      tokenExpiresAt: Date
+      rejectionComment: string | null
+      signedAt: Date | null
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["signatureRequest"]>
+    composites: {}
+  }
+
+  type SignatureRequestGetPayload<S extends boolean | null | undefined | SignatureRequestDefaultArgs> = $Result.GetResult<Prisma.$SignatureRequestPayload, S>
+
+  type SignatureRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<SignatureRequestFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: SignatureRequestCountAggregateInputType | true
+    }
+
+  export interface SignatureRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SignatureRequest'], meta: { name: 'SignatureRequest' } }
+    /**
+     * Find zero or one SignatureRequest that matches the filter.
+     * @param {SignatureRequestFindUniqueArgs} args - Arguments to find a SignatureRequest
+     * @example
+     * // Get one SignatureRequest
+     * const signatureRequest = await prisma.signatureRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SignatureRequestFindUniqueArgs>(args: SelectSubset<T, SignatureRequestFindUniqueArgs<ExtArgs>>): Prisma__SignatureRequestClient<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one SignatureRequest that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {SignatureRequestFindUniqueOrThrowArgs} args - Arguments to find a SignatureRequest
+     * @example
+     * // Get one SignatureRequest
+     * const signatureRequest = await prisma.signatureRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SignatureRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, SignatureRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SignatureRequestClient<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first SignatureRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatureRequestFindFirstArgs} args - Arguments to find a SignatureRequest
+     * @example
+     * // Get one SignatureRequest
+     * const signatureRequest = await prisma.signatureRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SignatureRequestFindFirstArgs>(args?: SelectSubset<T, SignatureRequestFindFirstArgs<ExtArgs>>): Prisma__SignatureRequestClient<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first SignatureRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatureRequestFindFirstOrThrowArgs} args - Arguments to find a SignatureRequest
+     * @example
+     * // Get one SignatureRequest
+     * const signatureRequest = await prisma.signatureRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SignatureRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, SignatureRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__SignatureRequestClient<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more SignatureRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatureRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SignatureRequests
+     * const signatureRequests = await prisma.signatureRequest.findMany()
+     * 
+     * // Get first 10 SignatureRequests
+     * const signatureRequests = await prisma.signatureRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const signatureRequestWithIdOnly = await prisma.signatureRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SignatureRequestFindManyArgs>(args?: SelectSubset<T, SignatureRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a SignatureRequest.
+     * @param {SignatureRequestCreateArgs} args - Arguments to create a SignatureRequest.
+     * @example
+     * // Create one SignatureRequest
+     * const SignatureRequest = await prisma.signatureRequest.create({
+     *   data: {
+     *     // ... data to create a SignatureRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends SignatureRequestCreateArgs>(args: SelectSubset<T, SignatureRequestCreateArgs<ExtArgs>>): Prisma__SignatureRequestClient<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many SignatureRequests.
+     * @param {SignatureRequestCreateManyArgs} args - Arguments to create many SignatureRequests.
+     * @example
+     * // Create many SignatureRequests
+     * const signatureRequest = await prisma.signatureRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SignatureRequestCreateManyArgs>(args?: SelectSubset<T, SignatureRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SignatureRequests and returns the data saved in the database.
+     * @param {SignatureRequestCreateManyAndReturnArgs} args - Arguments to create many SignatureRequests.
+     * @example
+     * // Create many SignatureRequests
+     * const signatureRequest = await prisma.signatureRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SignatureRequests and only return the `id`
+     * const signatureRequestWithIdOnly = await prisma.signatureRequest.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SignatureRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, SignatureRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a SignatureRequest.
+     * @param {SignatureRequestDeleteArgs} args - Arguments to delete one SignatureRequest.
+     * @example
+     * // Delete one SignatureRequest
+     * const SignatureRequest = await prisma.signatureRequest.delete({
+     *   where: {
+     *     // ... filter to delete one SignatureRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SignatureRequestDeleteArgs>(args: SelectSubset<T, SignatureRequestDeleteArgs<ExtArgs>>): Prisma__SignatureRequestClient<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one SignatureRequest.
+     * @param {SignatureRequestUpdateArgs} args - Arguments to update one SignatureRequest.
+     * @example
+     * // Update one SignatureRequest
+     * const signatureRequest = await prisma.signatureRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SignatureRequestUpdateArgs>(args: SelectSubset<T, SignatureRequestUpdateArgs<ExtArgs>>): Prisma__SignatureRequestClient<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more SignatureRequests.
+     * @param {SignatureRequestDeleteManyArgs} args - Arguments to filter SignatureRequests to delete.
+     * @example
+     * // Delete a few SignatureRequests
+     * const { count } = await prisma.signatureRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SignatureRequestDeleteManyArgs>(args?: SelectSubset<T, SignatureRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SignatureRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatureRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SignatureRequests
+     * const signatureRequest = await prisma.signatureRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SignatureRequestUpdateManyArgs>(args: SelectSubset<T, SignatureRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one SignatureRequest.
+     * @param {SignatureRequestUpsertArgs} args - Arguments to update or create a SignatureRequest.
+     * @example
+     * // Update or create a SignatureRequest
+     * const signatureRequest = await prisma.signatureRequest.upsert({
+     *   create: {
+     *     // ... data to create a SignatureRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SignatureRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SignatureRequestUpsertArgs>(args: SelectSubset<T, SignatureRequestUpsertArgs<ExtArgs>>): Prisma__SignatureRequestClient<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of SignatureRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatureRequestCountArgs} args - Arguments to filter SignatureRequests to count.
+     * @example
+     * // Count the number of SignatureRequests
+     * const count = await prisma.signatureRequest.count({
+     *   where: {
+     *     // ... the filter for the SignatureRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends SignatureRequestCountArgs>(
+      args?: Subset<T, SignatureRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SignatureRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SignatureRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatureRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SignatureRequestAggregateArgs>(args: Subset<T, SignatureRequestAggregateArgs>): Prisma.PrismaPromise<GetSignatureRequestAggregateType<T>>
+
+    /**
+     * Group by SignatureRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SignatureRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SignatureRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SignatureRequestGroupByArgs['orderBy'] }
+        : { orderBy?: SignatureRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SignatureRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSignatureRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SignatureRequest model
+   */
+  readonly fields: SignatureRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SignatureRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SignatureRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    occupation<T extends OccupationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OccupationDefaultArgs<ExtArgs>>): Prisma__OccupationClient<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    signatory<T extends SignatoryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SignatoryDefaultArgs<ExtArgs>>): Prisma__SignatoryClient<$Result.GetResult<Prisma.$SignatoryPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SignatureRequest model
+   */ 
+  interface SignatureRequestFieldRefs {
+    readonly id: FieldRef<"SignatureRequest", 'Int'>
+    readonly occupationId: FieldRef<"SignatureRequest", 'Int'>
+    readonly signatoriesId: FieldRef<"SignatureRequest", 'Int'>
+    readonly status: FieldRef<"SignatureRequest", 'String'>
+    readonly token: FieldRef<"SignatureRequest", 'String'>
+    readonly tokenExpiresAt: FieldRef<"SignatureRequest", 'DateTime'>
+    readonly rejectionComment: FieldRef<"SignatureRequest", 'String'>
+    readonly signedAt: FieldRef<"SignatureRequest", 'DateTime'>
+    readonly created_at: FieldRef<"SignatureRequest", 'DateTime'>
+    readonly updated_at: FieldRef<"SignatureRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SignatureRequest findUnique
+   */
+  export type SignatureRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which SignatureRequest to fetch.
+     */
+    where: SignatureRequestWhereUniqueInput
+  }
+
+  /**
+   * SignatureRequest findUniqueOrThrow
+   */
+  export type SignatureRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which SignatureRequest to fetch.
+     */
+    where: SignatureRequestWhereUniqueInput
+  }
+
+  /**
+   * SignatureRequest findFirst
+   */
+  export type SignatureRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which SignatureRequest to fetch.
+     */
+    where?: SignatureRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SignatureRequests to fetch.
+     */
+    orderBy?: SignatureRequestOrderByWithRelationInput | SignatureRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SignatureRequests.
+     */
+    cursor?: SignatureRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SignatureRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SignatureRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SignatureRequests.
+     */
+    distinct?: SignatureRequestScalarFieldEnum | SignatureRequestScalarFieldEnum[]
+  }
+
+  /**
+   * SignatureRequest findFirstOrThrow
+   */
+  export type SignatureRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which SignatureRequest to fetch.
+     */
+    where?: SignatureRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SignatureRequests to fetch.
+     */
+    orderBy?: SignatureRequestOrderByWithRelationInput | SignatureRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SignatureRequests.
+     */
+    cursor?: SignatureRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SignatureRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SignatureRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SignatureRequests.
+     */
+    distinct?: SignatureRequestScalarFieldEnum | SignatureRequestScalarFieldEnum[]
+  }
+
+  /**
+   * SignatureRequest findMany
+   */
+  export type SignatureRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which SignatureRequests to fetch.
+     */
+    where?: SignatureRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SignatureRequests to fetch.
+     */
+    orderBy?: SignatureRequestOrderByWithRelationInput | SignatureRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SignatureRequests.
+     */
+    cursor?: SignatureRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SignatureRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SignatureRequests.
+     */
+    skip?: number
+    distinct?: SignatureRequestScalarFieldEnum | SignatureRequestScalarFieldEnum[]
+  }
+
+  /**
+   * SignatureRequest create
+   */
+  export type SignatureRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SignatureRequest.
+     */
+    data: XOR<SignatureRequestCreateInput, SignatureRequestUncheckedCreateInput>
+  }
+
+  /**
+   * SignatureRequest createMany
+   */
+  export type SignatureRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SignatureRequests.
+     */
+    data: SignatureRequestCreateManyInput | SignatureRequestCreateManyInput[]
+  }
+
+  /**
+   * SignatureRequest createManyAndReturn
+   */
+  export type SignatureRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many SignatureRequests.
+     */
+    data: SignatureRequestCreateManyInput | SignatureRequestCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SignatureRequest update
+   */
+  export type SignatureRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SignatureRequest.
+     */
+    data: XOR<SignatureRequestUpdateInput, SignatureRequestUncheckedUpdateInput>
+    /**
+     * Choose, which SignatureRequest to update.
+     */
+    where: SignatureRequestWhereUniqueInput
+  }
+
+  /**
+   * SignatureRequest updateMany
+   */
+  export type SignatureRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SignatureRequests.
+     */
+    data: XOR<SignatureRequestUpdateManyMutationInput, SignatureRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which SignatureRequests to update
+     */
+    where?: SignatureRequestWhereInput
+  }
+
+  /**
+   * SignatureRequest upsert
+   */
+  export type SignatureRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SignatureRequest to update in case it exists.
+     */
+    where: SignatureRequestWhereUniqueInput
+    /**
+     * In case the SignatureRequest found by the `where` argument doesn't exist, create a new SignatureRequest with this data.
+     */
+    create: XOR<SignatureRequestCreateInput, SignatureRequestUncheckedCreateInput>
+    /**
+     * In case the SignatureRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SignatureRequestUpdateInput, SignatureRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * SignatureRequest delete
+   */
+  export type SignatureRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+    /**
+     * Filter which SignatureRequest to delete.
+     */
+    where: SignatureRequestWhereUniqueInput
+  }
+
+  /**
+   * SignatureRequest deleteMany
+   */
+  export type SignatureRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SignatureRequests to delete
+     */
+    where?: SignatureRequestWhereInput
+  }
+
+  /**
+   * SignatureRequest without action
+   */
+  export type SignatureRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SignatureRequest
+     */
+    select?: SignatureRequestSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SignatureRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -27132,6 +29471,9 @@ export namespace Prisma {
     signataireRole: 'signataireRole',
     signataireDelegation: 'signataireDelegation',
     signataireNom: 'signataireNom',
+    signatureImagePath: 'signatureImagePath',
+    signatureCertificatePath: 'signatureCertificatePath',
+    signatureCertificatePassword: 'signatureCertificatePassword',
     updated_at: 'updated_at',
     filienUncPass: 'filienUncPass',
     filienUncUser: 'filienUncUser',
@@ -27301,6 +29643,37 @@ export namespace Prisma {
   };
 
   export type BillingRunInvoiceScalarFieldEnum = (typeof BillingRunInvoiceScalarFieldEnum)[keyof typeof BillingRunInvoiceScalarFieldEnum]
+
+
+  export const SignatoryScalarFieldEnum: {
+    id: 'id',
+    nom: 'nom',
+    email: 'email',
+    role: 'role',
+    titre: 'titre',
+    isDefault: 'isDefault',
+    statut: 'statut',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type SignatoryScalarFieldEnum = (typeof SignatoryScalarFieldEnum)[keyof typeof SignatoryScalarFieldEnum]
+
+
+  export const SignatureRequestScalarFieldEnum: {
+    id: 'id',
+    occupationId: 'occupationId',
+    signatoriesId: 'signatoriesId',
+    status: 'status',
+    token: 'token',
+    tokenExpiresAt: 'tokenExpiresAt',
+    rejectionComment: 'rejectionComment',
+    signedAt: 'signedAt',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type SignatureRequestScalarFieldEnum = (typeof SignatureRequestScalarFieldEnum)[keyof typeof SignatureRequestScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -27494,6 +29867,7 @@ export namespace Prisma {
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
     notes?: NoteListRelationFilter
+    signatureRequests?: SignatureRequestListRelationFilter
     tiers?: XOR<TiersRelationFilter, TiersWhereInput>
   }
 
@@ -27526,6 +29900,7 @@ export namespace Prisma {
     dispositifs?: DispositifOrderByRelationAggregateInput
     lignes?: LigneOccupationOrderByRelationAggregateInput
     notes?: NoteOrderByRelationAggregateInput
+    signatureRequests?: SignatureRequestOrderByRelationAggregateInput
     tiers?: TiersOrderByWithRelationInput
   }
 
@@ -27561,6 +29936,7 @@ export namespace Prisma {
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
     notes?: NoteListRelationFilter
+    signatureRequests?: SignatureRequestListRelationFilter
     tiers?: XOR<TiersRelationFilter, TiersWhereInput>
   }, "id">
 
@@ -28307,6 +30683,9 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    signatureImagePath?: StringNullableFilter<"AppSettings"> | string | null
+    signatureCertificatePath?: StringNullableFilter<"AppSettings"> | string | null
+    signatureCertificatePassword?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
     filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
@@ -28350,6 +30729,9 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
+    signatureImagePath?: SortOrderInput | SortOrder
+    signatureCertificatePath?: SortOrderInput | SortOrder
+    signatureCertificatePassword?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrderInput | SortOrder
     filienUncUser?: SortOrderInput | SortOrder
@@ -28396,6 +30778,9 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    signatureImagePath?: StringNullableFilter<"AppSettings"> | string | null
+    signatureCertificatePath?: StringNullableFilter<"AppSettings"> | string | null
+    signatureCertificatePassword?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
     filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
@@ -28439,6 +30824,9 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
+    signatureImagePath?: SortOrderInput | SortOrder
+    signatureCertificatePath?: SortOrderInput | SortOrder
+    signatureCertificatePassword?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrderInput | SortOrder
     filienUncUser?: SortOrderInput | SortOrder
@@ -28490,6 +30878,9 @@ export namespace Prisma {
     signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signatureImagePath?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signatureCertificatePath?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signatureCertificatePassword?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     updated_at?: DateTimeWithAggregatesFilter<"AppSettings"> | Date | string
     filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
@@ -29321,6 +31712,168 @@ export namespace Prisma {
     pdfPath?: StringWithAggregatesFilter<"BillingRunInvoice"> | string
   }
 
+  export type SignatoryWhereInput = {
+    AND?: SignatoryWhereInput | SignatoryWhereInput[]
+    OR?: SignatoryWhereInput[]
+    NOT?: SignatoryWhereInput | SignatoryWhereInput[]
+    id?: IntFilter<"Signatory"> | number
+    nom?: StringFilter<"Signatory"> | string
+    email?: StringFilter<"Signatory"> | string
+    role?: StringFilter<"Signatory"> | string
+    titre?: StringNullableFilter<"Signatory"> | string | null
+    isDefault?: BoolFilter<"Signatory"> | boolean
+    statut?: StringFilter<"Signatory"> | string
+    created_at?: DateTimeFilter<"Signatory"> | Date | string
+    updated_at?: DateTimeFilter<"Signatory"> | Date | string
+    signatureRequests?: SignatureRequestListRelationFilter
+  }
+
+  export type SignatoryOrderByWithRelationInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    titre?: SortOrderInput | SortOrder
+    isDefault?: SortOrder
+    statut?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    signatureRequests?: SignatureRequestOrderByRelationAggregateInput
+  }
+
+  export type SignatoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    email?: string
+    AND?: SignatoryWhereInput | SignatoryWhereInput[]
+    OR?: SignatoryWhereInput[]
+    NOT?: SignatoryWhereInput | SignatoryWhereInput[]
+    nom?: StringFilter<"Signatory"> | string
+    role?: StringFilter<"Signatory"> | string
+    titre?: StringNullableFilter<"Signatory"> | string | null
+    isDefault?: BoolFilter<"Signatory"> | boolean
+    statut?: StringFilter<"Signatory"> | string
+    created_at?: DateTimeFilter<"Signatory"> | Date | string
+    updated_at?: DateTimeFilter<"Signatory"> | Date | string
+    signatureRequests?: SignatureRequestListRelationFilter
+  }, "id" | "email">
+
+  export type SignatoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    titre?: SortOrderInput | SortOrder
+    isDefault?: SortOrder
+    statut?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: SignatoryCountOrderByAggregateInput
+    _avg?: SignatoryAvgOrderByAggregateInput
+    _max?: SignatoryMaxOrderByAggregateInput
+    _min?: SignatoryMinOrderByAggregateInput
+    _sum?: SignatorySumOrderByAggregateInput
+  }
+
+  export type SignatoryScalarWhereWithAggregatesInput = {
+    AND?: SignatoryScalarWhereWithAggregatesInput | SignatoryScalarWhereWithAggregatesInput[]
+    OR?: SignatoryScalarWhereWithAggregatesInput[]
+    NOT?: SignatoryScalarWhereWithAggregatesInput | SignatoryScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Signatory"> | number
+    nom?: StringWithAggregatesFilter<"Signatory"> | string
+    email?: StringWithAggregatesFilter<"Signatory"> | string
+    role?: StringWithAggregatesFilter<"Signatory"> | string
+    titre?: StringNullableWithAggregatesFilter<"Signatory"> | string | null
+    isDefault?: BoolWithAggregatesFilter<"Signatory"> | boolean
+    statut?: StringWithAggregatesFilter<"Signatory"> | string
+    created_at?: DateTimeWithAggregatesFilter<"Signatory"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"Signatory"> | Date | string
+  }
+
+  export type SignatureRequestWhereInput = {
+    AND?: SignatureRequestWhereInput | SignatureRequestWhereInput[]
+    OR?: SignatureRequestWhereInput[]
+    NOT?: SignatureRequestWhereInput | SignatureRequestWhereInput[]
+    id?: IntFilter<"SignatureRequest"> | number
+    occupationId?: IntFilter<"SignatureRequest"> | number
+    signatoriesId?: IntFilter<"SignatureRequest"> | number
+    status?: StringFilter<"SignatureRequest"> | string
+    token?: StringFilter<"SignatureRequest"> | string
+    tokenExpiresAt?: DateTimeFilter<"SignatureRequest"> | Date | string
+    rejectionComment?: StringNullableFilter<"SignatureRequest"> | string | null
+    signedAt?: DateTimeNullableFilter<"SignatureRequest"> | Date | string | null
+    created_at?: DateTimeFilter<"SignatureRequest"> | Date | string
+    updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
+    occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
+    signatory?: XOR<SignatoryRelationFilter, SignatoryWhereInput>
+  }
+
+  export type SignatureRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    signatoriesId?: SortOrder
+    status?: SortOrder
+    token?: SortOrder
+    tokenExpiresAt?: SortOrder
+    rejectionComment?: SortOrderInput | SortOrder
+    signedAt?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    occupation?: OccupationOrderByWithRelationInput
+    signatory?: SignatoryOrderByWithRelationInput
+  }
+
+  export type SignatureRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    token?: string
+    AND?: SignatureRequestWhereInput | SignatureRequestWhereInput[]
+    OR?: SignatureRequestWhereInput[]
+    NOT?: SignatureRequestWhereInput | SignatureRequestWhereInput[]
+    occupationId?: IntFilter<"SignatureRequest"> | number
+    signatoriesId?: IntFilter<"SignatureRequest"> | number
+    status?: StringFilter<"SignatureRequest"> | string
+    tokenExpiresAt?: DateTimeFilter<"SignatureRequest"> | Date | string
+    rejectionComment?: StringNullableFilter<"SignatureRequest"> | string | null
+    signedAt?: DateTimeNullableFilter<"SignatureRequest"> | Date | string | null
+    created_at?: DateTimeFilter<"SignatureRequest"> | Date | string
+    updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
+    occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
+    signatory?: XOR<SignatoryRelationFilter, SignatoryWhereInput>
+  }, "id" | "token">
+
+  export type SignatureRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    signatoriesId?: SortOrder
+    status?: SortOrder
+    token?: SortOrder
+    tokenExpiresAt?: SortOrder
+    rejectionComment?: SortOrderInput | SortOrder
+    signedAt?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: SignatureRequestCountOrderByAggregateInput
+    _avg?: SignatureRequestAvgOrderByAggregateInput
+    _max?: SignatureRequestMaxOrderByAggregateInput
+    _min?: SignatureRequestMinOrderByAggregateInput
+    _sum?: SignatureRequestSumOrderByAggregateInput
+  }
+
+  export type SignatureRequestScalarWhereWithAggregatesInput = {
+    AND?: SignatureRequestScalarWhereWithAggregatesInput | SignatureRequestScalarWhereWithAggregatesInput[]
+    OR?: SignatureRequestScalarWhereWithAggregatesInput[]
+    NOT?: SignatureRequestScalarWhereWithAggregatesInput | SignatureRequestScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"SignatureRequest"> | number
+    occupationId?: IntWithAggregatesFilter<"SignatureRequest"> | number
+    signatoriesId?: IntWithAggregatesFilter<"SignatureRequest"> | number
+    status?: StringWithAggregatesFilter<"SignatureRequest"> | string
+    token?: StringWithAggregatesFilter<"SignatureRequest"> | string
+    tokenExpiresAt?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
+    rejectionComment?: StringNullableWithAggregatesFilter<"SignatureRequest"> | string | null
+    signedAt?: DateTimeNullableWithAggregatesFilter<"SignatureRequest"> | Date | string | null
+    created_at?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
+  }
+
   export type TiersCreateInput = {
     nom: string
     siret?: string | null
@@ -29465,6 +32018,7 @@ export namespace Prisma {
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -29497,6 +32051,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationUpdateInput = {
@@ -29526,6 +32081,7 @@ export namespace Prisma {
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -29558,6 +32114,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationCreateManyInput = {
@@ -30360,6 +32917,9 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
+    signatureImagePath?: string | null
+    signatureCertificatePath?: string | null
+    signatureCertificatePassword?: string | null
     updated_at?: Date | string
     filienUncPass?: string | null
     filienUncUser?: string | null
@@ -30403,6 +32963,9 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
+    signatureImagePath?: string | null
+    signatureCertificatePath?: string | null
+    signatureCertificatePassword?: string | null
     updated_at?: Date | string
     filienUncPass?: string | null
     filienUncUser?: string | null
@@ -30445,6 +33008,9 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30488,6 +33054,9 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30531,6 +33100,9 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
+    signatureImagePath?: string | null
+    signatureCertificatePath?: string | null
+    signatureCertificatePassword?: string | null
     updated_at?: Date | string
     filienUncPass?: string | null
     filienUncUser?: string | null
@@ -30573,6 +33145,9 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30616,6 +33191,9 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31477,6 +34055,177 @@ export namespace Prisma {
     pdfPath?: StringFieldUpdateOperationsInput | string
   }
 
+  export type SignatoryCreateInput = {
+    nom: string
+    email: string
+    role: string
+    titre?: string | null
+    isDefault?: boolean
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    signatureRequests?: SignatureRequestCreateNestedManyWithoutSignatoryInput
+  }
+
+  export type SignatoryUncheckedCreateInput = {
+    id?: number
+    nom: string
+    email: string
+    role: string
+    titre?: string | null
+    isDefault?: boolean
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutSignatoryInput
+  }
+
+  export type SignatoryUpdateInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    titre?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    signatureRequests?: SignatureRequestUpdateManyWithoutSignatoryNestedInput
+  }
+
+  export type SignatoryUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    titre?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutSignatoryNestedInput
+  }
+
+  export type SignatoryCreateManyInput = {
+    id?: number
+    nom: string
+    email: string
+    role: string
+    titre?: string | null
+    isDefault?: boolean
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type SignatoryUpdateManyMutationInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    titre?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SignatoryUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    titre?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SignatureRequestCreateInput = {
+    status?: string
+    token: string
+    tokenExpiresAt: Date | string
+    rejectionComment?: string | null
+    signedAt?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    occupation: OccupationCreateNestedOneWithoutSignatureRequestsInput
+    signatory: SignatoryCreateNestedOneWithoutSignatureRequestsInput
+  }
+
+  export type SignatureRequestUncheckedCreateInput = {
+    id?: number
+    occupationId: number
+    signatoriesId: number
+    status?: string
+    token: string
+    tokenExpiresAt: Date | string
+    rejectionComment?: string | null
+    signedAt?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type SignatureRequestUpdateInput = {
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    occupation?: OccupationUpdateOneRequiredWithoutSignatureRequestsNestedInput
+    signatory?: SignatoryUpdateOneRequiredWithoutSignatureRequestsNestedInput
+  }
+
+  export type SignatureRequestUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: IntFieldUpdateOperationsInput | number
+    signatoriesId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SignatureRequestCreateManyInput = {
+    id?: number
+    occupationId: number
+    signatoriesId: number
+    status?: string
+    token: string
+    tokenExpiresAt: Date | string
+    rejectionComment?: string | null
+    signedAt?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type SignatureRequestUpdateManyMutationInput = {
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SignatureRequestUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: IntFieldUpdateOperationsInput | number
+    signatoriesId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -31759,6 +34508,12 @@ export namespace Prisma {
     none?: NoteWhereInput
   }
 
+  export type SignatureRequestListRelationFilter = {
+    every?: SignatureRequestWhereInput
+    some?: SignatureRequestWhereInput
+    none?: SignatureRequestWhereInput
+  }
+
   export type TiersRelationFilter = {
     is?: TiersWhereInput
     isNot?: TiersWhereInput
@@ -31773,6 +34528,10 @@ export namespace Prisma {
   }
 
   export type NoteOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SignatureRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -32408,6 +35167,9 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
+    signatureImagePath?: SortOrder
+    signatureCertificatePath?: SortOrder
+    signatureCertificatePassword?: SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
@@ -32456,6 +35218,9 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
+    signatureImagePath?: SortOrder
+    signatureCertificatePath?: SortOrder
+    signatureCertificatePassword?: SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
@@ -32499,6 +35264,9 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
+    signatureImagePath?: SortOrder
+    signatureCertificatePath?: SortOrder
+    signatureCertificatePassword?: SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
@@ -33068,6 +35836,106 @@ export namespace Prisma {
     total?: SortOrder
   }
 
+  export type SignatoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    titre?: SortOrder
+    isDefault?: SortOrder
+    statut?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type SignatoryAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type SignatoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    titre?: SortOrder
+    isDefault?: SortOrder
+    statut?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type SignatoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    email?: SortOrder
+    role?: SortOrder
+    titre?: SortOrder
+    isDefault?: SortOrder
+    statut?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type SignatorySumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type SignatoryRelationFilter = {
+    is?: SignatoryWhereInput
+    isNot?: SignatoryWhereInput
+  }
+
+  export type SignatureRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    signatoriesId?: SortOrder
+    status?: SortOrder
+    token?: SortOrder
+    tokenExpiresAt?: SortOrder
+    rejectionComment?: SortOrder
+    signedAt?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type SignatureRequestAvgOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    signatoriesId?: SortOrder
+  }
+
+  export type SignatureRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    signatoriesId?: SortOrder
+    status?: SortOrder
+    token?: SortOrder
+    tokenExpiresAt?: SortOrder
+    rejectionComment?: SortOrder
+    signedAt?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type SignatureRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    signatoriesId?: SortOrder
+    status?: SortOrder
+    token?: SortOrder
+    tokenExpiresAt?: SortOrder
+    rejectionComment?: SortOrder
+    signedAt?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type SignatureRequestSumOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    signatoriesId?: SortOrder
+  }
+
   export type ContactCreateNestedManyWithoutTiersInput = {
     create?: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput> | ContactCreateWithoutTiersInput[] | ContactUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutTiersInput | ContactCreateOrConnectWithoutTiersInput[]
@@ -33208,6 +36076,13 @@ export namespace Prisma {
     connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
   }
 
+  export type SignatureRequestCreateNestedManyWithoutOccupationInput = {
+    create?: XOR<SignatureRequestCreateWithoutOccupationInput, SignatureRequestUncheckedCreateWithoutOccupationInput> | SignatureRequestCreateWithoutOccupationInput[] | SignatureRequestUncheckedCreateWithoutOccupationInput[]
+    connectOrCreate?: SignatureRequestCreateOrConnectWithoutOccupationInput | SignatureRequestCreateOrConnectWithoutOccupationInput[]
+    createMany?: SignatureRequestCreateManyOccupationInputEnvelope
+    connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+  }
+
   export type TiersCreateNestedOneWithoutOccupationsInput = {
     create?: XOR<TiersCreateWithoutOccupationsInput, TiersUncheckedCreateWithoutOccupationsInput>
     connectOrCreate?: TiersCreateOrConnectWithoutOccupationsInput
@@ -33240,6 +36115,13 @@ export namespace Prisma {
     connectOrCreate?: NoteCreateOrConnectWithoutOccupationInput | NoteCreateOrConnectWithoutOccupationInput[]
     createMany?: NoteCreateManyOccupationInputEnvelope
     connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+  }
+
+  export type SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput = {
+    create?: XOR<SignatureRequestCreateWithoutOccupationInput, SignatureRequestUncheckedCreateWithoutOccupationInput> | SignatureRequestCreateWithoutOccupationInput[] | SignatureRequestUncheckedCreateWithoutOccupationInput[]
+    connectOrCreate?: SignatureRequestCreateOrConnectWithoutOccupationInput | SignatureRequestCreateOrConnectWithoutOccupationInput[]
+    createMany?: SignatureRequestCreateManyOccupationInputEnvelope
+    connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -33322,6 +36204,20 @@ export namespace Prisma {
     deleteMany?: NoteScalarWhereInput | NoteScalarWhereInput[]
   }
 
+  export type SignatureRequestUpdateManyWithoutOccupationNestedInput = {
+    create?: XOR<SignatureRequestCreateWithoutOccupationInput, SignatureRequestUncheckedCreateWithoutOccupationInput> | SignatureRequestCreateWithoutOccupationInput[] | SignatureRequestUncheckedCreateWithoutOccupationInput[]
+    connectOrCreate?: SignatureRequestCreateOrConnectWithoutOccupationInput | SignatureRequestCreateOrConnectWithoutOccupationInput[]
+    upsert?: SignatureRequestUpsertWithWhereUniqueWithoutOccupationInput | SignatureRequestUpsertWithWhereUniqueWithoutOccupationInput[]
+    createMany?: SignatureRequestCreateManyOccupationInputEnvelope
+    set?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    disconnect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    delete?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    update?: SignatureRequestUpdateWithWhereUniqueWithoutOccupationInput | SignatureRequestUpdateWithWhereUniqueWithoutOccupationInput[]
+    updateMany?: SignatureRequestUpdateManyWithWhereWithoutOccupationInput | SignatureRequestUpdateManyWithWhereWithoutOccupationInput[]
+    deleteMany?: SignatureRequestScalarWhereInput | SignatureRequestScalarWhereInput[]
+  }
+
   export type TiersUpdateOneRequiredWithoutOccupationsNestedInput = {
     create?: XOR<TiersCreateWithoutOccupationsInput, TiersUncheckedCreateWithoutOccupationsInput>
     connectOrCreate?: TiersCreateOrConnectWithoutOccupationsInput
@@ -33384,6 +36280,20 @@ export namespace Prisma {
     update?: NoteUpdateWithWhereUniqueWithoutOccupationInput | NoteUpdateWithWhereUniqueWithoutOccupationInput[]
     updateMany?: NoteUpdateManyWithWhereWithoutOccupationInput | NoteUpdateManyWithWhereWithoutOccupationInput[]
     deleteMany?: NoteScalarWhereInput | NoteScalarWhereInput[]
+  }
+
+  export type SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput = {
+    create?: XOR<SignatureRequestCreateWithoutOccupationInput, SignatureRequestUncheckedCreateWithoutOccupationInput> | SignatureRequestCreateWithoutOccupationInput[] | SignatureRequestUncheckedCreateWithoutOccupationInput[]
+    connectOrCreate?: SignatureRequestCreateOrConnectWithoutOccupationInput | SignatureRequestCreateOrConnectWithoutOccupationInput[]
+    upsert?: SignatureRequestUpsertWithWhereUniqueWithoutOccupationInput | SignatureRequestUpsertWithWhereUniqueWithoutOccupationInput[]
+    createMany?: SignatureRequestCreateManyOccupationInputEnvelope
+    set?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    disconnect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    delete?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    update?: SignatureRequestUpdateWithWhereUniqueWithoutOccupationInput | SignatureRequestUpdateWithWhereUniqueWithoutOccupationInput[]
+    updateMany?: SignatureRequestUpdateManyWithWhereWithoutOccupationInput | SignatureRequestUpdateManyWithWhereWithoutOccupationInput[]
+    deleteMany?: SignatureRequestScalarWhereInput | SignatureRequestScalarWhereInput[]
   }
 
   export type TiersCreateNestedOneWithoutContactsInput = {
@@ -33922,6 +36832,76 @@ export namespace Prisma {
     update?: XOR<XOR<BillingRunUpdateToOneWithWhereWithoutInvoicesInput, BillingRunUpdateWithoutInvoicesInput>, BillingRunUncheckedUpdateWithoutInvoicesInput>
   }
 
+  export type SignatureRequestCreateNestedManyWithoutSignatoryInput = {
+    create?: XOR<SignatureRequestCreateWithoutSignatoryInput, SignatureRequestUncheckedCreateWithoutSignatoryInput> | SignatureRequestCreateWithoutSignatoryInput[] | SignatureRequestUncheckedCreateWithoutSignatoryInput[]
+    connectOrCreate?: SignatureRequestCreateOrConnectWithoutSignatoryInput | SignatureRequestCreateOrConnectWithoutSignatoryInput[]
+    createMany?: SignatureRequestCreateManySignatoryInputEnvelope
+    connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+  }
+
+  export type SignatureRequestUncheckedCreateNestedManyWithoutSignatoryInput = {
+    create?: XOR<SignatureRequestCreateWithoutSignatoryInput, SignatureRequestUncheckedCreateWithoutSignatoryInput> | SignatureRequestCreateWithoutSignatoryInput[] | SignatureRequestUncheckedCreateWithoutSignatoryInput[]
+    connectOrCreate?: SignatureRequestCreateOrConnectWithoutSignatoryInput | SignatureRequestCreateOrConnectWithoutSignatoryInput[]
+    createMany?: SignatureRequestCreateManySignatoryInputEnvelope
+    connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+  }
+
+  export type SignatureRequestUpdateManyWithoutSignatoryNestedInput = {
+    create?: XOR<SignatureRequestCreateWithoutSignatoryInput, SignatureRequestUncheckedCreateWithoutSignatoryInput> | SignatureRequestCreateWithoutSignatoryInput[] | SignatureRequestUncheckedCreateWithoutSignatoryInput[]
+    connectOrCreate?: SignatureRequestCreateOrConnectWithoutSignatoryInput | SignatureRequestCreateOrConnectWithoutSignatoryInput[]
+    upsert?: SignatureRequestUpsertWithWhereUniqueWithoutSignatoryInput | SignatureRequestUpsertWithWhereUniqueWithoutSignatoryInput[]
+    createMany?: SignatureRequestCreateManySignatoryInputEnvelope
+    set?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    disconnect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    delete?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    update?: SignatureRequestUpdateWithWhereUniqueWithoutSignatoryInput | SignatureRequestUpdateWithWhereUniqueWithoutSignatoryInput[]
+    updateMany?: SignatureRequestUpdateManyWithWhereWithoutSignatoryInput | SignatureRequestUpdateManyWithWhereWithoutSignatoryInput[]
+    deleteMany?: SignatureRequestScalarWhereInput | SignatureRequestScalarWhereInput[]
+  }
+
+  export type SignatureRequestUncheckedUpdateManyWithoutSignatoryNestedInput = {
+    create?: XOR<SignatureRequestCreateWithoutSignatoryInput, SignatureRequestUncheckedCreateWithoutSignatoryInput> | SignatureRequestCreateWithoutSignatoryInput[] | SignatureRequestUncheckedCreateWithoutSignatoryInput[]
+    connectOrCreate?: SignatureRequestCreateOrConnectWithoutSignatoryInput | SignatureRequestCreateOrConnectWithoutSignatoryInput[]
+    upsert?: SignatureRequestUpsertWithWhereUniqueWithoutSignatoryInput | SignatureRequestUpsertWithWhereUniqueWithoutSignatoryInput[]
+    createMany?: SignatureRequestCreateManySignatoryInputEnvelope
+    set?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    disconnect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    delete?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+    update?: SignatureRequestUpdateWithWhereUniqueWithoutSignatoryInput | SignatureRequestUpdateWithWhereUniqueWithoutSignatoryInput[]
+    updateMany?: SignatureRequestUpdateManyWithWhereWithoutSignatoryInput | SignatureRequestUpdateManyWithWhereWithoutSignatoryInput[]
+    deleteMany?: SignatureRequestScalarWhereInput | SignatureRequestScalarWhereInput[]
+  }
+
+  export type OccupationCreateNestedOneWithoutSignatureRequestsInput = {
+    create?: XOR<OccupationCreateWithoutSignatureRequestsInput, OccupationUncheckedCreateWithoutSignatureRequestsInput>
+    connectOrCreate?: OccupationCreateOrConnectWithoutSignatureRequestsInput
+    connect?: OccupationWhereUniqueInput
+  }
+
+  export type SignatoryCreateNestedOneWithoutSignatureRequestsInput = {
+    create?: XOR<SignatoryCreateWithoutSignatureRequestsInput, SignatoryUncheckedCreateWithoutSignatureRequestsInput>
+    connectOrCreate?: SignatoryCreateOrConnectWithoutSignatureRequestsInput
+    connect?: SignatoryWhereUniqueInput
+  }
+
+  export type OccupationUpdateOneRequiredWithoutSignatureRequestsNestedInput = {
+    create?: XOR<OccupationCreateWithoutSignatureRequestsInput, OccupationUncheckedCreateWithoutSignatureRequestsInput>
+    connectOrCreate?: OccupationCreateOrConnectWithoutSignatureRequestsInput
+    upsert?: OccupationUpsertWithoutSignatureRequestsInput
+    connect?: OccupationWhereUniqueInput
+    update?: XOR<XOR<OccupationUpdateToOneWithWhereWithoutSignatureRequestsInput, OccupationUpdateWithoutSignatureRequestsInput>, OccupationUncheckedUpdateWithoutSignatureRequestsInput>
+  }
+
+  export type SignatoryUpdateOneRequiredWithoutSignatureRequestsNestedInput = {
+    create?: XOR<SignatoryCreateWithoutSignatureRequestsInput, SignatoryUncheckedCreateWithoutSignatureRequestsInput>
+    connectOrCreate?: SignatoryCreateOrConnectWithoutSignatureRequestsInput
+    upsert?: SignatoryUpsertWithoutSignatureRequestsInput
+    connect?: SignatoryWhereUniqueInput
+    update?: XOR<XOR<SignatoryUpdateToOneWithWhereWithoutSignatureRequestsInput, SignatoryUpdateWithoutSignatureRequestsInput>, SignatoryUncheckedUpdateWithoutSignatureRequestsInput>
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -34233,6 +37213,7 @@ export namespace Prisma {
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationUncheckedCreateWithoutTiersInput = {
@@ -34263,6 +37244,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutTiersInput = {
@@ -34495,6 +37477,38 @@ export namespace Prisma {
     data: NoteCreateManyOccupationInput | NoteCreateManyOccupationInput[]
   }
 
+  export type SignatureRequestCreateWithoutOccupationInput = {
+    status?: string
+    token: string
+    tokenExpiresAt: Date | string
+    rejectionComment?: string | null
+    signedAt?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    signatory: SignatoryCreateNestedOneWithoutSignatureRequestsInput
+  }
+
+  export type SignatureRequestUncheckedCreateWithoutOccupationInput = {
+    id?: number
+    signatoriesId: number
+    status?: string
+    token: string
+    tokenExpiresAt: Date | string
+    rejectionComment?: string | null
+    signedAt?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type SignatureRequestCreateOrConnectWithoutOccupationInput = {
+    where: SignatureRequestWhereUniqueInput
+    create: XOR<SignatureRequestCreateWithoutOccupationInput, SignatureRequestUncheckedCreateWithoutOccupationInput>
+  }
+
+  export type SignatureRequestCreateManyOccupationInputEnvelope = {
+    data: SignatureRequestCreateManyOccupationInput | SignatureRequestCreateManyOccupationInput[]
+  }
+
   export type TiersCreateWithoutOccupationsInput = {
     nom: string
     siret?: string | null
@@ -34648,6 +37662,38 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Note"> | Date | string
   }
 
+  export type SignatureRequestUpsertWithWhereUniqueWithoutOccupationInput = {
+    where: SignatureRequestWhereUniqueInput
+    update: XOR<SignatureRequestUpdateWithoutOccupationInput, SignatureRequestUncheckedUpdateWithoutOccupationInput>
+    create: XOR<SignatureRequestCreateWithoutOccupationInput, SignatureRequestUncheckedCreateWithoutOccupationInput>
+  }
+
+  export type SignatureRequestUpdateWithWhereUniqueWithoutOccupationInput = {
+    where: SignatureRequestWhereUniqueInput
+    data: XOR<SignatureRequestUpdateWithoutOccupationInput, SignatureRequestUncheckedUpdateWithoutOccupationInput>
+  }
+
+  export type SignatureRequestUpdateManyWithWhereWithoutOccupationInput = {
+    where: SignatureRequestScalarWhereInput
+    data: XOR<SignatureRequestUpdateManyMutationInput, SignatureRequestUncheckedUpdateManyWithoutOccupationInput>
+  }
+
+  export type SignatureRequestScalarWhereInput = {
+    AND?: SignatureRequestScalarWhereInput | SignatureRequestScalarWhereInput[]
+    OR?: SignatureRequestScalarWhereInput[]
+    NOT?: SignatureRequestScalarWhereInput | SignatureRequestScalarWhereInput[]
+    id?: IntFilter<"SignatureRequest"> | number
+    occupationId?: IntFilter<"SignatureRequest"> | number
+    signatoriesId?: IntFilter<"SignatureRequest"> | number
+    status?: StringFilter<"SignatureRequest"> | string
+    token?: StringFilter<"SignatureRequest"> | string
+    tokenExpiresAt?: DateTimeFilter<"SignatureRequest"> | Date | string
+    rejectionComment?: StringNullableFilter<"SignatureRequest"> | string | null
+    signedAt?: DateTimeNullableFilter<"SignatureRequest"> | Date | string | null
+    created_at?: DateTimeFilter<"SignatureRequest"> | Date | string
+    updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
+  }
+
   export type TiersUpsertWithoutOccupationsInput = {
     update: XOR<TiersUpdateWithoutOccupationsInput, TiersUncheckedUpdateWithoutOccupationsInput>
     create: XOR<TiersCreateWithoutOccupationsInput, TiersUncheckedCreateWithoutOccupationsInput>
@@ -34756,6 +37802,7 @@ export namespace Prisma {
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -34787,6 +37834,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutContactsInput = {
@@ -34875,6 +37923,7 @@ export namespace Prisma {
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -34906,6 +37955,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationCreateWithoutNotesInput = {
@@ -34934,6 +37984,7 @@ export namespace Prisma {
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -34965,6 +38016,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutNotesInput = {
@@ -35009,6 +38061,7 @@ export namespace Prisma {
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -35040,6 +38093,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type ArticleCreateWithoutCategorieInput = {
@@ -35630,6 +38684,7 @@ export namespace Prisma {
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -35661,6 +38716,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutLignesInput = {
@@ -35757,6 +38813,7 @@ export namespace Prisma {
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -35788,6 +38845,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationCreateWithoutDispositifsInput = {
@@ -35816,6 +38874,7 @@ export namespace Prisma {
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -35847,6 +38906,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutDispositifsInput = {
@@ -35891,6 +38951,7 @@ export namespace Prisma {
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -35922,6 +38983,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type BacklogCommentCreateWithoutBacklogItemInput = {
@@ -36259,6 +39321,254 @@ export namespace Prisma {
     filienPath?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type SignatureRequestCreateWithoutSignatoryInput = {
+    status?: string
+    token: string
+    tokenExpiresAt: Date | string
+    rejectionComment?: string | null
+    signedAt?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    occupation: OccupationCreateNestedOneWithoutSignatureRequestsInput
+  }
+
+  export type SignatureRequestUncheckedCreateWithoutSignatoryInput = {
+    id?: number
+    occupationId: number
+    status?: string
+    token: string
+    tokenExpiresAt: Date | string
+    rejectionComment?: string | null
+    signedAt?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type SignatureRequestCreateOrConnectWithoutSignatoryInput = {
+    where: SignatureRequestWhereUniqueInput
+    create: XOR<SignatureRequestCreateWithoutSignatoryInput, SignatureRequestUncheckedCreateWithoutSignatoryInput>
+  }
+
+  export type SignatureRequestCreateManySignatoryInputEnvelope = {
+    data: SignatureRequestCreateManySignatoryInput | SignatureRequestCreateManySignatoryInput[]
+  }
+
+  export type SignatureRequestUpsertWithWhereUniqueWithoutSignatoryInput = {
+    where: SignatureRequestWhereUniqueInput
+    update: XOR<SignatureRequestUpdateWithoutSignatoryInput, SignatureRequestUncheckedUpdateWithoutSignatoryInput>
+    create: XOR<SignatureRequestCreateWithoutSignatoryInput, SignatureRequestUncheckedCreateWithoutSignatoryInput>
+  }
+
+  export type SignatureRequestUpdateWithWhereUniqueWithoutSignatoryInput = {
+    where: SignatureRequestWhereUniqueInput
+    data: XOR<SignatureRequestUpdateWithoutSignatoryInput, SignatureRequestUncheckedUpdateWithoutSignatoryInput>
+  }
+
+  export type SignatureRequestUpdateManyWithWhereWithoutSignatoryInput = {
+    where: SignatureRequestScalarWhereInput
+    data: XOR<SignatureRequestUpdateManyMutationInput, SignatureRequestUncheckedUpdateManyWithoutSignatoryInput>
+  }
+
+  export type OccupationCreateWithoutSignatureRequestsInput = {
+    nom?: string | null
+    type: string
+    statut: string
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    anneeTaxation?: number | null
+    adresse: string
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    photos?: string | null
+    montantCalcule?: number
+    facturePath?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    numeroFacture?: string | null
+    dossierParentId?: number | null
+    isCourtMetrage?: boolean
+    agissantPour?: string | null
+    aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
+    contacts?: ContactCreateNestedManyWithoutOccupationInput
+    dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
+    lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
+    notes?: NoteCreateNestedManyWithoutOccupationInput
+    tiers: TiersCreateNestedOneWithoutOccupationsInput
+  }
+
+  export type OccupationUncheckedCreateWithoutSignatureRequestsInput = {
+    id?: number
+    nom?: string | null
+    tiersId: number
+    type: string
+    statut: string
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    anneeTaxation?: number | null
+    adresse: string
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    photos?: string | null
+    montantCalcule?: number
+    facturePath?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    numeroFacture?: string | null
+    dossierParentId?: number | null
+    isCourtMetrage?: boolean
+    agissantPour?: string | null
+    aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
+    contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
+    dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
+    lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
+    notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+  }
+
+  export type OccupationCreateOrConnectWithoutSignatureRequestsInput = {
+    where: OccupationWhereUniqueInput
+    create: XOR<OccupationCreateWithoutSignatureRequestsInput, OccupationUncheckedCreateWithoutSignatureRequestsInput>
+  }
+
+  export type SignatoryCreateWithoutSignatureRequestsInput = {
+    nom: string
+    email: string
+    role: string
+    titre?: string | null
+    isDefault?: boolean
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type SignatoryUncheckedCreateWithoutSignatureRequestsInput = {
+    id?: number
+    nom: string
+    email: string
+    role: string
+    titre?: string | null
+    isDefault?: boolean
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type SignatoryCreateOrConnectWithoutSignatureRequestsInput = {
+    where: SignatoryWhereUniqueInput
+    create: XOR<SignatoryCreateWithoutSignatureRequestsInput, SignatoryUncheckedCreateWithoutSignatureRequestsInput>
+  }
+
+  export type OccupationUpsertWithoutSignatureRequestsInput = {
+    update: XOR<OccupationUpdateWithoutSignatureRequestsInput, OccupationUncheckedUpdateWithoutSignatureRequestsInput>
+    create: XOR<OccupationCreateWithoutSignatureRequestsInput, OccupationUncheckedCreateWithoutSignatureRequestsInput>
+    where?: OccupationWhereInput
+  }
+
+  export type OccupationUpdateToOneWithWhereWithoutSignatureRequestsInput = {
+    where?: OccupationWhereInput
+    data: XOR<OccupationUpdateWithoutSignatureRequestsInput, OccupationUncheckedUpdateWithoutSignatureRequestsInput>
+  }
+
+  export type OccupationUpdateWithoutSignatureRequestsInput = {
+    nom?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
+    adresse?: StringFieldUpdateOperationsInput | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    photos?: NullableStringFieldUpdateOperationsInput | string | null
+    montantCalcule?: FloatFieldUpdateOperationsInput | number
+    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contacts?: ContactUpdateManyWithoutOccupationNestedInput
+    dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
+    lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
+    notes?: NoteUpdateManyWithoutOccupationNestedInput
+    tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
+  }
+
+  export type OccupationUncheckedUpdateWithoutSignatureRequestsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: NullableStringFieldUpdateOperationsInput | string | null
+    tiersId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
+    adresse?: StringFieldUpdateOperationsInput | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    photos?: NullableStringFieldUpdateOperationsInput | string | null
+    montantCalcule?: FloatFieldUpdateOperationsInput | number
+    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
+    dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
+    lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+  }
+
+  export type SignatoryUpsertWithoutSignatureRequestsInput = {
+    update: XOR<SignatoryUpdateWithoutSignatureRequestsInput, SignatoryUncheckedUpdateWithoutSignatureRequestsInput>
+    create: XOR<SignatoryCreateWithoutSignatureRequestsInput, SignatoryUncheckedCreateWithoutSignatureRequestsInput>
+    where?: SignatoryWhereInput
+  }
+
+  export type SignatoryUpdateToOneWithWhereWithoutSignatureRequestsInput = {
+    where?: SignatoryWhereInput
+    data: XOR<SignatoryUpdateWithoutSignatureRequestsInput, SignatoryUncheckedUpdateWithoutSignatureRequestsInput>
+  }
+
+  export type SignatoryUpdateWithoutSignatureRequestsInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    titre?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SignatoryUncheckedUpdateWithoutSignatureRequestsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    titre?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ContactCreateManyTiersInput = {
     id?: number
     nom?: string | null
@@ -36371,6 +39681,7 @@ export namespace Prisma {
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationUncheckedUpdateWithoutTiersInput = {
@@ -36401,6 +39712,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationUncheckedUpdateManyWithoutTiersInput = {
@@ -36481,6 +39793,18 @@ export namespace Prisma {
     toEmail?: string | null
     origin?: string | null
     created_at?: Date | string
+  }
+
+  export type SignatureRequestCreateManyOccupationInput = {
+    id?: number
+    signatoriesId: number
+    status?: string
+    token: string
+    tokenExpiresAt: Date | string
+    rejectionComment?: string | null
+    signedAt?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
   export type ContactUpdateWithoutOccupationInput = {
@@ -36639,6 +39963,41 @@ export namespace Prisma {
     toEmail?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SignatureRequestUpdateWithoutOccupationInput = {
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    signatory?: SignatoryUpdateOneRequiredWithoutSignatureRequestsNestedInput
+  }
+
+  export type SignatureRequestUncheckedUpdateWithoutOccupationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    signatoriesId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SignatureRequestUncheckedUpdateManyWithoutOccupationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    signatoriesId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ArticleCreateManyCategorieInput = {
@@ -37039,6 +40398,53 @@ export namespace Prisma {
     pdfPath?: StringFieldUpdateOperationsInput | string
   }
 
+  export type SignatureRequestCreateManySignatoryInput = {
+    id?: number
+    occupationId: number
+    status?: string
+    token: string
+    tokenExpiresAt: Date | string
+    rejectionComment?: string | null
+    signedAt?: Date | string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type SignatureRequestUpdateWithoutSignatoryInput = {
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    occupation?: OccupationUpdateOneRequiredWithoutSignatureRequestsNestedInput
+  }
+
+  export type SignatureRequestUncheckedUpdateWithoutSignatoryInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SignatureRequestUncheckedUpdateManyWithoutSignatoryInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
 
 
   /**
@@ -37080,6 +40486,10 @@ export namespace Prisma {
      * @deprecated Use BillingRunCountOutputTypeDefaultArgs instead
      */
     export type BillingRunCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = BillingRunCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use SignatoryCountOutputTypeDefaultArgs instead
+     */
+    export type SignatoryCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SignatoryCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use TiersDefaultArgs instead
      */
@@ -37172,6 +40582,14 @@ export namespace Prisma {
      * @deprecated Use BillingRunInvoiceDefaultArgs instead
      */
     export type BillingRunInvoiceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = BillingRunInvoiceDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use SignatoryDefaultArgs instead
+     */
+    export type SignatoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SignatoryDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use SignatureRequestDefaultArgs instead
+     */
+    export type SignatureRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SignatureRequestDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany
