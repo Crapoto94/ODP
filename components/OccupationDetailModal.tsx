@@ -2,16 +2,16 @@
 
 import React from 'react';
 import axios from 'axios';
-import { 
-  X, 
-  MapPin, 
-  Calendar, 
-  Euro, 
-  Clock, 
-  User, 
-  FileText, 
-  Package, 
-  CheckCircle2, 
+import {
+  X,
+  MapPin,
+  Calendar,
+  Euro,
+  Clock,
+  User,
+  FileText,
+  Package,
+  CheckCircle2,
   ArrowRight,
   Pencil,
   Trash2,
@@ -19,7 +19,8 @@ import {
   Download,
   ImageIcon,
   Plus,
-  Hash
+  Hash,
+  AlertTriangle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -102,13 +103,21 @@ export default function OccupationDetailModal({
             </h2>
             
             <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-slate-500">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <div className="flex items-start gap-2">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
                   <User size={16} />
                 </div>
-                <div>
+                <div className="flex-1">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Demandeur</p>
-                  <p className="text-sm font-bold text-slate-900 leading-none">{occ.tiers?.nom || 'Non spécifié'}</p>
+                  <div className="flex items-start gap-2">
+                    <p className="text-sm font-bold text-slate-900 leading-none">{occ.tiers?.nom || 'Non spécifié'}</p>
+                    {occ.tiers?.etatAdministratif === 'Cessée' && (
+                      <div className="flex items-center gap-1.5 bg-rose-50 text-rose-600 px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest whitespace-nowrap border border-rose-100">
+                        <AlertTriangle size={10} />
+                        Fermé
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               
@@ -156,6 +165,21 @@ export default function OccupationDetailModal({
              </button>
           </div>
         </div>
+
+        {/* Warning Banner for Closed Tiers */}
+        {occ.tiers?.etatAdministratif === 'Cessée' && (
+          <div className="bg-rose-50 border-b-2 border-rose-300 p-6 flex items-start gap-4">
+            <div className="w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+              <AlertTriangle size={16} />
+            </div>
+            <div>
+              <p className="font-black text-rose-900 text-sm uppercase tracking-widest mb-1">⚠ Tiers Fermé</p>
+              <p className="text-rose-700 text-sm font-medium">
+                Le tiers <span className="font-bold">"{occ.tiers?.nom}"</span> a été fermé. Vérifiez avant de valider ce dossier.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Content Section */}
         <div className="flex-1 overflow-y-auto p-8 md:p-12 space-y-16">

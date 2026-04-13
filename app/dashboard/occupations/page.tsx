@@ -3,15 +3,15 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
-import { 
-  FileText, 
-  Plus, 
-  Search, 
-  MapPin, 
-  Calendar, 
-  Euro, 
-  ChevronRight, 
-  Filter, 
+import {
+  FileText,
+  Plus,
+  Search,
+  MapPin,
+  Calendar,
+  Euro,
+  ChevronRight,
+  Filter,
   Loader2,
   X,
   CheckCircle2,
@@ -31,7 +31,8 @@ import {
   MessageSquare,
   Download,
   Users,
-  Unlock
+  Unlock,
+  AlertTriangle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -44,7 +45,7 @@ interface Occupation {
   id: number;
   nom: string | null;
   tiersId: number;
-  tiers: { nom: string; code_sedit: string | null };
+  tiers: { nom: string; code_sedit: string | null; etatAdministratif?: string };
   type: string;
   statut: string;
   dateDebut: string | null;
@@ -606,7 +607,15 @@ function OccupationsPageContent() {
                         </div>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 font-bold text-blue-600 uppercase text-[11px]">
-                         {occ.tiers?.nom || 'Inconnu'}
+                         <div className="flex items-center gap-2">
+                           <span>{occ.tiers?.nom || 'Inconnu'}</span>
+                           {occ.tiers?.etatAdministratif === 'Cessée' && (
+                             <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200 whitespace-nowrap">
+                               <AlertTriangle size={10} />
+                               Fermé
+                             </div>
+                           )}
+                         </div>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
                         <p className="text-xs font-black text-slate-400 uppercase flex items-center gap-1">
@@ -845,8 +854,16 @@ function OccupationsPageContent() {
                                     setIsTiersDropdownOpen(false);
                                   }}
                                 >
-                                  <div>
-                                     <p className="font-bold text-slate-900 group-hover:text-blue-600 uppercase text-xs">{t.nom}</p>
+                                  <div className="flex-1">
+                                     <div className="flex items-center gap-2 mb-1">
+                                       <p className="font-bold text-slate-900 group-hover:text-blue-600 uppercase text-xs">{t.nom}</p>
+                                       {(t as any).etatAdministratif === 'Cessée' && (
+                                         <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest border border-rose-200">
+                                           <AlertTriangle size={8} />
+                                           Fermé
+                                         </div>
+                                       )}
+                                     </div>
                                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                                         {(t as any).code_sedit || 'SANS CODE SEDIT'}
                                         {t.statut === 'PROVISOIRE' && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
@@ -867,10 +884,18 @@ function OccupationsPageContent() {
                           <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
                             <Users size={18} />
                           </div>
-                          <div>
-                            <p className="font-black text-blue-900 uppercase text-xs">
-                              {tiers.find(t => t.id === Number(formData.tiersId))?.nom}
-                            </p>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="font-black text-blue-900 uppercase text-xs">
+                                {tiers.find(t => t.id === Number(formData.tiersId))?.nom}
+                              </p>
+                              {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.etatAdministratif === 'Cessée' && (
+                                <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
+                                  <AlertTriangle size={10} />
+                                  Fermé
+                                </div>
+                              )}
+                            </div>
                             <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest">
                               ID #{formData.tiersId} — {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.code_sedit || 'SANS CODE'}
                             </p>
