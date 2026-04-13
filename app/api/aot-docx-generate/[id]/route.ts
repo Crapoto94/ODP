@@ -197,7 +197,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       }, { status: 500 });
     }
 
-    return new Response(modifiedDocxBuffer, {
+    return new Response(modifiedDocxBuffer as any, {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'Content-Disposition': `attachment; filename="AOT-${occ.id}.docx"`,
