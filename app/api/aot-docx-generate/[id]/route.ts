@@ -22,7 +22,7 @@ const replaceVariablesInDocx = async (docxBuffer: Buffer, variables: Record<stri
   // STEP 1: Clean up fragmented variables in Word XML
   // Word fragments variables like {demandeurComplet} with <w:proofErr> tags between them
   // Remove all XML tags that are inside curly braces
-  documentXml = documentXml.replace(/\{[^}]*?\}/g, (match) => {
+  documentXml = documentXml.replace(/\{[^}]*?\}/g, (match: string) => {
     // Remove all XML tags within the variable
     return match.replace(/<[^>]+>/g, '');
   });
