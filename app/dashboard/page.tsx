@@ -370,10 +370,10 @@ function StatCard({ title, value, subtitle, icon: Icon, color, trend, percentage
         <div className="text-right">
           <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-tight">
             {typeof value === 'number' ? value.toLocaleString('fr-FR') : value}
+            {(title.includes('Recettes') || title.includes('Annuel')) && (
+              <span className="text-xl font-bold text-slate-400 ml-1">€</span>
+            )}
           </h3>
-          {(title.includes('Recettes') || title.includes('Annuel')) && (
-            <span className="text-lg font-black text-slate-400 ml-1">€</span>
-          )}
         </div>
       </div>
 

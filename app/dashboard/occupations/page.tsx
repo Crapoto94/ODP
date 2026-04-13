@@ -32,6 +32,8 @@ import {
   Download,
   Users,
   Unlock,
+  Lock,
+  LockOpen,
   AlertTriangle
 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -94,6 +96,7 @@ function OccupationsPageContent() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [yearFilter, setYearFilter] = useState('ALL'); // Default to ALL years to show all dossiers
+  const [lockedYear, setLockedYear] = useState<string | null>(null); // Year locked for the session
   const [tiersFilter, setTiersFilter] = useState<string | null>(null);
   const [tiersSearchQuery, setTiersSearchQuery] = useState('');
   const [isTiersDropdownOpen, setIsTiersDropdownOpen] = useState(false);
@@ -310,11 +313,11 @@ function OccupationsPageContent() {
   const resetForm = () => {
     setFormData({
       id: null, 
-      nom: '', 
-      tiersId: '', 
-      type: 'COMMERCE', 
-      anneeTaxation: yearFilter !== 'ALL' ? yearFilter : new Date().getFullYear().toString(), 
-      dateDebut: '', 
+      nom: '',
+      tiersId: '',
+      type: 'COMMERCE',
+      anneeTaxation: lockedYear || (yearFilter !== 'ALL' ? yearFilter : new Date().getFullYear().toString()),
+      dateDebut: '',
       dateFin: '',
       adresse: '', 
       latitude: '', 
@@ -503,33 +506,35 @@ function OccupationsPageContent() {
             key={cat.type}
             onClick={() => setTypeFilter(typeFilter === cat.type ? 'ALL' : cat.type)}
             className={`p-6 rounded-2xl border transition-all text-left group ${
-              typeFilter === cat.type 
-                ? 'bg-white border-blue-500 shadow-xl shadow-blue-500/10' 
+              typeFilter === cat.type
+                ? 'bg-white border-blue-500 shadow-xl shadow-blue-500/10'
                 : 'bg-white border-slate-200 hover:border-blue-200 shadow-sm shadow-slate-200/50'
             }`}
           >
-            <div className="flex items-center justify-between mb-4">
+            {/* Header: Icon left, Total amount right */}
+            <div className="flex items-start justify-between mb-3">
               <div className={`p-3 rounded-xl ${cat.bg} ${cat.color}`}>
                 <cat.icon size={20} />
               </div>
-              {typeFilter === cat.type && <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Actif</span>}
+              <div className="text-right">
+                <p className="text-2xl font-black text-slate-900 group-hover:text-blue-600 transition-colors leading-tight">
+                  {(totalsByType[cat.type]?.total || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-base font-bold text-slate-400">€</span>
+                </p>
+              </div>
             </div>
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{cat.label}</h3>
-            <p className="text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors mb-4">
-              {(totalsByType[cat.type]?.total || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-xs text-slate-400">€</span>
-            </p>
-            <div className="space-y-1 border-t border-slate-50 pt-3">
-              <div className="flex justify-between items-center text-[9px] font-bold">
-                <span className="text-slate-400">EN COURS</span>
-                <span className="text-slate-900">{(totalsByType[cat.type]?.enCours || 0).toLocaleString('fr-FR')}€</span>
+            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">{cat.label}</h3>
+            <div className="space-y-1.5 border-t border-slate-100 pt-3">
+              <div className="flex justify-between items-center">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">EN COURS</span>
+                <span className="text-sm font-black text-slate-900">{(totalsByType[cat.type]?.enCours || 0).toLocaleString('fr-FR')}€</span>
               </div>
-              <div className="flex justify-between items-center text-[9px] font-bold">
-                <span className="text-emerald-500">À FACTURER</span>
-                <span className="text-emerald-600">{(totalsByType[cat.type]?.aFacturer || 0).toLocaleString('fr-FR')}€</span>
+              <div className="flex justify-between items-center">
+                <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">À FACTURER</span>
+                <span className="text-sm font-black text-emerald-600">{(totalsByType[cat.type]?.aFacturer || 0).toLocaleString('fr-FR')}€</span>
               </div>
-              <div className="flex justify-between items-center text-[9px] font-bold">
-                <span className="text-amber-500">FACTURÉ</span>
-                <span className="text-amber-600">{(totalsByType[cat.type]?.facture || 0).toLocaleString('fr-FR')}€</span>
+              <div className="flex justify-between items-center">
+                <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest">FACTURÉ</span>
+                <span className="text-sm font-black text-amber-600">{(totalsByType[cat.type]?.facture || 0).toLocaleString('fr-FR')}€</span>
               </div>
             </div>
           </button>
@@ -568,17 +573,44 @@ function OccupationsPageContent() {
             )}
           </div>
           
-          <div className="flex items-center gap-4">
-            <select 
-              className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-500 outline-none focus:border-blue-500 transition-all"
-              value={yearFilter}
-              onChange={e => setYearFilter(e.target.value)}
-            >
-              <option value="ALL">Toutes les années</option>
-              {availableYears.map(year => (
-                <option key={year} value={year?.toString()}>{year}</option>
-              ))}
-            </select>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl overflow-hidden">
+              <select
+                className="bg-transparent px-4 py-2.5 text-xs font-bold text-slate-500 outline-none focus:border-none transition-all"
+                value={lockedYear || yearFilter}
+                onChange={e => {
+                  if (!lockedYear) {
+                    setYearFilter(e.target.value);
+                  }
+                }}
+                disabled={!!lockedYear}
+              >
+                <option value="ALL">Toutes les années</option>
+                {availableYears.map(year => (
+                  <option key={year} value={year?.toString()}>{year}</option>
+                ))}
+              </select>
+              <button
+                onClick={() => {
+                  if (lockedYear) {
+                    setLockedYear(null);
+                  } else if (yearFilter !== 'ALL') {
+                    setLockedYear(yearFilter);
+                  }
+                }}
+                disabled={yearFilter === 'ALL' && !lockedYear}
+                className={`px-3 py-2.5 border-l border-slate-200 transition-all ${
+                  lockedYear
+                    ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                    : yearFilter !== 'ALL'
+                    ? 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    : 'bg-slate-50 text-slate-300 cursor-not-allowed'
+                }`}
+                title={lockedYear ? `Déverrouiller l'année ${lockedYear}` : 'Verrouiller cette année'}
+              >
+                {lockedYear ? <Lock size={16} /> : <LockOpen size={16} />}
+              </button>
+            </div>
             <select 
               className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-500 outline-none focus:border-blue-500 transition-all"
               value={statusFilter}
