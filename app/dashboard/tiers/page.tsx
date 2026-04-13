@@ -346,14 +346,33 @@ export default function TiersPage() {
           <p className="text-slate-500 font-medium tracking-wide">Référentiel des bénéficiaires et entreprises</p>
         </div>
         <div className="flex items-center gap-4">
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            className="hidden" 
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
             accept=".xls,.xlsx"
             onChange={onFileChange}
           />
-          <button 
+          <button
+            onClick={() => {
+              setShowOnlyClosed(!showOnlyClosed);
+              setCurrentPage(1);
+            }}
+            className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg group ${
+              showOnlyClosed
+                ? 'bg-rose-600 text-white shadow-rose-200 hover:bg-rose-700'
+                : 'bg-white hover:bg-slate-50 text-slate-900 border border-slate-200'
+            }`}
+            title={showOnlyClosed ? `Afficher tous les tiers` : `Afficher uniquement les ${closedCount} tiers fermés`}
+          >
+            <Filter size={16} className={showOnlyClosed ? '' : 'text-slate-600'} />
+            {showOnlyClosed ? 'Tous les Tiers' : 'Fermés'}
+            {closedCount > 0 && !showOnlyClosed && (
+              <span className="bg-rose-100 text-rose-600 px-2 py-0.5 rounded-md text-[10px] font-black ml-1">{closedCount}</span>
+            )}
+          </button>
+
+          <button
             onClick={handleGeocodeTiers}
             disabled={geocoding}
             className="flex items-center gap-3 bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg group disabled:opacity-50"
@@ -414,44 +433,22 @@ export default function TiersPage() {
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[500px] flex flex-col">
-        <div className="p-5 border-b border-slate-50 space-y-4 bg-slate-50/10">
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input
-                type="text"
-                placeholder="Rechercher par nom, SIRET ou code SEDIT..."
-                className="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-semibold text-sm"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
-            </div>
-            <div className="flex items-center gap-2 text-slate-400 text-xs font-black uppercase tracking-widest">
-              <span>{filteredTiers.length} RESULTATS</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                setShowOnlyClosed(!showOnlyClosed);
+        <div className="p-5 border-b border-slate-50 flex items-center gap-4 bg-slate-50/10">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input
+              type="text"
+              placeholder="Rechercher par nom, SIRET ou code SEDIT..."
+              className="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-semibold text-sm"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className={`flex items-center gap-2 px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all whitespace-nowrap ${
-                showOnlyClosed
-                  ? 'bg-rose-600 text-white shadow-lg shadow-rose-200'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              <Filter size={16} />
-              {showOnlyClosed ? 'Voir Tous' : 'Voir les Fermés'}
-              {closedCount > 0 && !showOnlyClosed && (
-                <span className="bg-rose-100 text-rose-600 px-2 py-1 rounded-md text-[8px] font-black ml-1">{closedCount}</span>
-              )}
-            </button>
+            />
+          </div>
+          <div className="flex items-center gap-2 text-slate-400 text-xs font-black uppercase tracking-widest whitespace-nowrap">
+            <span>{filteredTiers.length} RESULTATS</span>
           </div>
         </div>
 
