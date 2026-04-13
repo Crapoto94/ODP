@@ -23,8 +23,8 @@ model Tiers {
   updated_at        DateTime     @updatedAt
   natureJuridique   String?
   etatAdministratif String?
-  occupations       Occupation[]
   contacts          Contact[]
+  occupations       Occupation[]
 }
 
 model Occupation {
@@ -46,11 +46,12 @@ model Occupation {
   created_at      DateTime          @default(now())
   updated_at      DateTime          @updatedAt
   numeroFacture   String?
-  datePaiement    DateTime?
   dossierParentId Int?
-  agissantPour    String?
   isCourtMetrage  Boolean           @default(false)
+  agissantPour    String?
   aotGabaritId    Int?
+  aotFinalPath    String?
+  datePaiement    DateTime?
   contacts        Contact[]
   dispositifs     Dispositif[]
   lignes          LigneOccupation[]
@@ -66,14 +67,14 @@ model Contact {
   telephone    String?
   titre        String?
   role         String      @default("CONTACT_DIRECT")
-  occupationId Int? // Optional link to a dossier
-  tiersId      Int? // Optional link to a tiers
+  occupationId Int?
+  tiersId      Int?
   pjPath       String?
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
   entreprise   String?
-  occupation   Occupation? @relation(fields: [occupationId], references: [id], onDelete: Cascade)
   tiers        Tiers?      @relation(fields: [tiersId], references: [id], onDelete: Cascade)
+  occupation   Occupation? @relation(fields: [occupationId], references: [id], onDelete: Cascade)
 }
 
 model Note {
@@ -206,10 +207,10 @@ model AppSettings {
   signataireRole       String?  @default("Le Maire d'Ivry-sur-Seine,")
   signataireDelegation String?  @default("et par délégation,")
   signataireNom        String?  @default("Dominique Montet - Directrice Générale Adjointe")
-  filienUncUser        String?  @default("")
-  filienUncPass        String?  @default("")
-  filienUncDomain      String?  @default("WORKGROUP")
   updated_at           DateTime @updatedAt
+  filienUncPass        String?  @default("")
+  filienUncUser        String?  @default("")
+  filienUncDomain      String?  @default("WORKGROUP")
 }
 
 model LigneOccupation {
@@ -242,12 +243,14 @@ model Dispositif {
 }
 
 model Gabarit {
-  id         Int      @id @default(autoincrement())
-  nom        String
-  contenu    String
-  isDefault  Boolean  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  nom         String
+  type        String   @default("PDF") // PDF or DOCX
+  contenu     String? // For PDF: JSON layout, for DOCX: null
+  fichierPath String? // For DOCX: path to .docx file
+  isDefault   Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 }
 
 model TlpeConfig {
@@ -277,14 +280,14 @@ model BacklogItem {
   id          Int              @id @default(autoincrement())
   title       String
   description String?
-  type        String           @default("FEATURE") // BUG, FEATURE, IMPROVEMENT
-  priority    String           @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
-  status      String           @default("OPEN") // OPEN, DONE, REJECTED
-  versionId   Int? // Link to the version where it was released
+  type        String           @default("FEATURE")
+  priority    String           @default("MEDIUM")
+  status      String           @default("OPEN")
+  versionId   Int?
   created_at  DateTime         @default(now())
   updated_at  DateTime         @updatedAt
-  version     VersionRelease?  @relation(fields: [versionId], references: [id])
   comments    BacklogComment[]
+  version     VersionRelease?  @relation(fields: [versionId], references: [id])
 }
 
 model BacklogComment {
@@ -316,7 +319,7 @@ model PostgresConfig {
 }
 
 model OdpConfig {
-  annee               Int     @id
+  annee               Int     @id @default(autoincrement())
   deliberationPath    String?
   tarifsTournagesPath String?
   tarifsOdpPath       String?

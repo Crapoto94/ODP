@@ -17,15 +17,25 @@ const replaceVariablesInDocx = async (docxBuffer: Buffer, variables: Record<stri
   await zip.loadAsync(docxBuffer);
 
   // Get the document.xml file
-  const documentXml = await zip.file('word/document.xml').async('text');
+  let documentXml = await zip.file('word/document.xml').async('text');
 
-  // Replace variables in the XML
-  let modifiedXml = documentXml;
-  Object.entries(variables).forEach(([key, value]) => {
-    // Create regex that matches the variable, handling cases where it might be split across XML tags
-    const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-    modifiedXml = modifiedXml.replace(regex, escapeXml(value));
+  // STEP 1: Clean up fragmented variables in Word XML
+  // Word fragments variables like {demandeurComplet} with <w:proofErr> tags between them
+  // Remove all XML tags that are inside curly braces
+  documentXml = documentXml.replace(/\{[^}]*?\}/g, (match) => {
+    // Remove all XML tags within the variable
+    return match.replace(/<[^>]+>/g, '');
   });
+
+  // STEP 2: Replace variables in the cleaned XML
+  let modifiedXml = documentXml;
+  Object.entries(variables)
+    .sort((a, b) => b[0].length - a[0].length)  // Replace longer variables first to avoid partial matches
+    .forEach(([key, value]) => {
+      // Create regex that matches the variable
+      const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+      modifiedXml = modifiedXml.replace(regex, escapeXml(value));
+    });
 
   // Update the document.xml in the zip
   zip.file('word/document.xml', modifiedXml);
