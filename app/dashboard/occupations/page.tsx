@@ -42,6 +42,7 @@ import LigneArticleModal from '@/components/LigneArticleModal';
 import FilienGenerationModal from '@/components/FilienGenerationModal';
 import OdpDocsBanner from '@/components/OdpDocsBanner';
 import { getStatusConfig, getAvailableStatuses } from '@/lib/status-utils';
+import { useLockedYear } from './hooks/useLockedYear';
 
 interface Occupation {
   id: number;
@@ -96,7 +97,7 @@ function OccupationsPageContent() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [yearFilter, setYearFilter] = useState('ALL'); // Default to ALL years to show all dossiers
-  const [lockedYear, setLockedYear] = useState<string | null>(null); // Year locked for the session
+  const { lockedYear, setLockedYear, isHydrated } = useLockedYear(); // Year locked for the session (persists across pages)
   const [tiersFilter, setTiersFilter] = useState<string | null>(null);
   const [tiersSearchQuery, setTiersSearchQuery] = useState('');
   const [isTiersDropdownOpen, setIsTiersDropdownOpen] = useState(false);
