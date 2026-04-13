@@ -11,7 +11,7 @@ export async function GET(req: Request) {
       where,
       orderBy: { isDefault: 'desc' },
     });
-    return NextResponse.json({ gabarits });
+    return NextResponse.json(gabarits);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
