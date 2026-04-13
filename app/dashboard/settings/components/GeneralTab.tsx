@@ -1,16 +1,18 @@
 "use client";
 import React from 'react';
-import { 
-  Mail, 
-  Globe, 
-  Key, 
-  Settings as SettingsIcon, 
-  Loader2, 
-  Save, 
-  CheckCircle2, 
+import {
+  Mail,
+  Globe,
+  Key,
+  Settings as SettingsIcon,
+  Loader2,
+  Save,
+  CheckCircle2,
   AlertCircle,
   FileText
 } from 'lucide-react';
+import TabHeader from './TabHeader';
+import FormSection from './FormSection';
 
 interface Props {
   settings: any;
@@ -33,30 +35,27 @@ export default function GeneralTab({
 }: Props) {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-end">
-        <button 
-          onClick={handleTestMail}
-          disabled={saving}
-          className="flex items-center gap-3 bg-white hover:bg-slate-50 text-slate-900 px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 shadow-xl shadow-slate-200 border border-slate-100 ring-offset-2 focus:ring-2 ring-blue-500"
-        >
-          {saving ? <Loader2 size={18} className="animate-spin" /> : <Mail size={18} className="text-blue-600" />}
-          Tester l'envoi de mail
-        </button>
-      </div>
+      <TabHeader
+        icon={SettingsIcon}
+        title="Paramètres Généraux"
+        subtitle="Configuration globale de l'application ODP"
+        accentColor="blue"
+        action={{
+          label: 'Tester l\'envoi de mail',
+          icon: Mail,
+          onClick: handleTestMail,
+          disabled: saving,
+          variant: 'outline'
+        }}
+      />
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-100/50 overflow-hidden max-w-3xl mx-auto">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <form onSubmit={handleSubmit} className="p-10 space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Notifications & Finance */}
             <div className="space-y-6">
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-                <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                  <Mail size={12} />
-                </div>
-                Flux Financiers
-              </h3>
-              
-              <div className="space-y-2">
+              <FormSection icon={Mail} title="Flux Financiers" accentColor="blue">
+                <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Email des Finances</label>
                 <div className="relative group">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
@@ -70,7 +69,7 @@ export default function GeneralTab({
                 </div>
               </div>
 
-              <div className="space-y-2 pt-4 border-t border-slate-50">
+              <div className="space-y-2 pt-6 border-t border-slate-50">
                 <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">URL de l'application</label>
                 <div className="relative group">
                   <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
@@ -83,14 +82,9 @@ export default function GeneralTab({
                   />
                 </div>
               </div>
+            </FormSection>
 
-              <div className="pt-6 border-t border-slate-50 space-y-4">
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-                   <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                    <SettingsIcon size={12} />
-                  </div>
-                  Identité Expéditeur
-                </h3>
+            <FormSection icon={SettingsIcon} title="Identité Expéditeur" accentColor="blue" className="pt-6 border-t border-slate-50">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Nom affiché</label>
                   <input 
@@ -111,18 +105,19 @@ export default function GeneralTab({
                     onChange={e => setSettings({...settings, senderEmail: e.target.value})}
                   />
                 </div>
-              </div>
-            </div>
+            </FormSection>
 
             {/* APM Config */}
             <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-                     <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                      <Globe size={12} />
-                    </div>
-                    Proxy API (APM)
-                  </h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <Globe size={16} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Proxy API (APM)</h3>
+                  </div>
+                </div>
                   <div className="flex items-center gap-2 px-2 py-1 bg-slate-50 rounded-lg border border-slate-100">
                     <div className={`w-1.5 h-1.5 rounded-full ${
                       apmStatus === 'online' ? 'bg-emerald-500' : 
@@ -166,13 +161,7 @@ export default function GeneralTab({
           </div>
 
           {/* Signature Arrêtés */}
-          <div className="pt-6 border-t border-slate-50 space-y-6">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-              <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                <FileText size={12} />
-              </div>
-              Signature des Arrêtés
-            </h3>
+          <FormSection icon={FileText} title="Signature des Arrêtés" accentColor="blue" className="pt-8 border-t border-slate-50">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Rôle principal</label>
@@ -204,8 +193,7 @@ export default function GeneralTab({
                   onChange={e => setSettings({...settings, signataireNom: e.target.value})}
                 />
               </div>
-            </div>
-          </div>
+          </FormSection>
 
           {message && (
             <div className={`p-4 rounded-xl flex items-center gap-3 animate-in zoom-in-95 duration-300 ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
