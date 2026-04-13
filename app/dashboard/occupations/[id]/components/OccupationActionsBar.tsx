@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pencil, AlertCircle, FileStack, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Pencil, AlertCircle, FileStack, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
 
 interface Props {
   occupation: any;

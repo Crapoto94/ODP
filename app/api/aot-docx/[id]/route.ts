@@ -14,7 +14,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       prisma.occupation.findUnique({
         where: { id },
         include: {
-          tiers: true,
+          tiers: { include: { contacts: true } },
+          contacts: true,
           lignes: { include: { article: { include: { modeTaxation: true } } } }
         }
       }),
@@ -197,7 +198,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
                   size: ((style.fontSize || 12) * 2) as any,
                   color: hexToRgb(style.color || '#000000'),
                   bold: style.fontWeight === 'bold',
-                  italic: style.fontStyle === 'italic',
+                  italics: style.fontStyle === 'italic',
                   underline: style.textDecoration === 'underline' ? { type: UnderlineType.SINGLE } : undefined,
                   font: style.fontFamily ? (style.fontFamily.includes('serif') ? 'Times New Roman' : 'Calibri') : 'Calibri',
                 })
@@ -222,8 +223,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         } else if (el.type === 'IMAGE' && el.value) {
           paragraphs.push(
             new Paragraph({
-              text: `[Image: ${el.value}]`,
-              italics: true,
+              children: [
+                new TextRun({
+                  text: `[Image: ${el.value}]`,
+                  italics: true,
+                })
+              ],
               alignment: AlignmentType.CENTER,
             })
           );
@@ -235,11 +240,15 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const doc = new Document({
       sections: [
         {
-          margins: {
-            top: convertInchesToTwip(0.5),
-            bottom: convertInchesToTwip(0.5),
-            left: convertInchesToTwip(0.75),
-            right: convertInchesToTwip(0.75),
+          properties: {
+            page: {
+              margin: {
+                top: convertInchesToTwip(0.5),
+                bottom: convertInchesToTwip(0.5),
+                left: convertInchesToTwip(0.75),
+                right: convertInchesToTwip(0.75),
+              },
+            },
           },
           children: paragraphs.length > 0 ? paragraphs : [new Paragraph('Aucun contenu')],
         },
@@ -248,7 +257,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     const buffer = await Packer.toBuffer(doc);
 
-    return new Response(buffer, {
+    return new Response(buffer as any, {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'Content-Disposition': `attachment; filename="AOT-${occ.id}.docx"`,

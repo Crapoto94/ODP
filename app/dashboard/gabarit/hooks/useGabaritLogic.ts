@@ -36,7 +36,7 @@ export function useGabaritLogic() {
       
       // Auto-load default on first mount
       if (isFirstLoad.current && data.length > 0) {
-        const def = data.find(g => g.isDefault);
+        const def = data.find((g: any) => g.isDefault);
         if (def) {
           try {
             setGabaritId(def.id);
