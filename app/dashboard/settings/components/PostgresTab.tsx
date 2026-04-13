@@ -1,19 +1,20 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  Database, 
-  Server, 
-  Link, 
-  Lock, 
-  User, 
-  Save, 
-  Loader2, 
-  CheckCircle2, 
+import {
+  Database,
+  Server,
+  Link,
+  Lock,
+  User,
+  Save,
+  Loader2,
+  CheckCircle2,
   AlertCircle,
   Table,
   Zap
 } from 'lucide-react';
+import TabHeader from './TabHeader';
 
 export default function PostgresTab() {
   const [config, setConfig] = useState({
@@ -82,7 +83,7 @@ export default function PostgresTab() {
 
   if (loading) {
     return (
-      <div className="py-20 flex flex-col items-center justify-center gap-4">
+      <div className="py-20 flex flex-col items-center justify-center gap-4 animate-in fade-in duration-500">
         <Loader2 className="animate-spin text-blue-600" size={32} />
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Chargement de la configuration...</p>
       </div>
@@ -90,7 +91,14 @@ export default function PostgresTab() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <TabHeader
+        icon={Database}
+        title="Base de Données PostgreSQL"
+        subtitle="Configuration de la connexion et exploration du schéma"
+        accentColor="blue"
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Formulaire de Configuration */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden">

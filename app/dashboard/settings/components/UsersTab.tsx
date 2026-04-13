@@ -1,14 +1,15 @@
 "use client";
 import React from 'react';
-import { 
-  Users as UsersIcon, 
-  Plus, 
-  Trash2, 
-  Edit2, 
-  Loader2, 
-  ShieldCheck, 
-  UserCircle 
+import {
+  Users as UsersIcon,
+  Plus,
+  Trash2,
+  Edit2,
+  ShieldCheck,
+  UserCircle
 } from 'lucide-react';
+import TabHeader from './TabHeader';
+import ContentBox from './ContentBox';
 
 interface Props {
   users: any[];
@@ -19,36 +20,28 @@ interface Props {
 
 export default function UsersTab({ users, loadingUsers, openUserModal, handleDeleteUser }: Props) {
   return (
-    <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
-      <div className="flex justify-between items-center bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-        <div>
-          <h3 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-             <UsersIcon className="text-blue-600" size={24} />
-             Comptes Utilisateurs
-          </h3>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Gestion des accès et des rôles</p>
-        </div>
-        <button 
-          onClick={() => openUserModal()}
-          className="flex items-center gap-2 bg-slate-950 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl transition-all active:scale-95"
-        >
-          <Plus size={16} /> Ajouter un Utilisateur
-        </button>
-      </div>
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <TabHeader
+        icon={UsersIcon}
+        title="Comptes Utilisateurs"
+        subtitle="Gestion des accès et des rôles"
+        accentColor="blue"
+        action={{
+          label: 'Ajouter un Utilisateur',
+          icon: Plus,
+          onClick: () => openUserModal(),
+          variant: 'primary'
+        }}
+      />
 
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden min-h-[400px]">
-        {loadingUsers ? (
-          <div className="flex flex-col items-center justify-center h-[400px] gap-4">
-            <Loader2 className="animate-spin text-blue-600" size={32} />
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Chargement des comptes...</p>
-          </div>
-        ) : users.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-[400px] gap-4 opacity-30">
-            <UsersIcon size={48} className="text-slate-300" />
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Aucun utilisateur enregistré</p>
-          </div>
-        ) : (
-          <table className="w-full text-left">
+      <ContentBox
+        loading={loadingUsers}
+        empty={!loadingUsers && users.length === 0}
+        emptyIcon={<UsersIcon size={48} className="text-slate-300" />}
+        emptyMessage="Aucun utilisateur enregistré"
+        minHeight="min-h-[400px]"
+      >
+        <table className="w-full text-left">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
                 <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Utilisateur</th>
