@@ -361,25 +361,28 @@ function StatCard({ title, value, subtitle, icon: Icon, color, trend, percentage
 
   return (
     <div className="bg-white p-8 rounded-xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-      <div className="flex items-center justify-between relative z-10">
-        <div className={`w-14 h-14 rounded-xl flex items-center justify-center group-hover:text-white transition-all duration-500 shadow-lg ${colorMap[color]}`}>
-          <Icon size={28} className="group-hover:scale-110 transition-transform duration-500" />
+      {/* Header: Icon left, Amount right */}
+      <div className="flex items-start justify-between relative z-10 mb-8">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center group-hover:text-white transition-all duration-500 shadow-lg ${colorMap[color]}`}>
+          <Icon size={24} className="group-hover:scale-110 transition-transform duration-500" />
         </div>
-        {trend && (
-          <div className={`px-2.5 py-1 rounded-full text-[10px] font-black border flex items-center gap-1 ${trend.includes('+') ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-500 border-slate-100'}`}>
-            {trend.includes('+') ? <ArrowUpRight size={12} /> : null}
-            {trend}
-          </div>
-        )}
+        {/* Amount in top right - larger */}
+        <div className="text-right">
+          <h3 className="text-4xl font-black text-slate-900 tracking-tighter leading-tight">
+            {typeof value === 'number' ? value.toLocaleString('fr-FR') : value}
+          </h3>
+          {(title.includes('Recettes') || title.includes('Annuel')) && (
+            <span className="text-lg font-black text-slate-400 ml-1">€</span>
+          )}
+        </div>
       </div>
-      <div className="mt-8 relative z-10">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{title}</p>
-        <h3 className="text-3xl font-black text-slate-900 tracking-tighter">
-          {typeof value === 'number' ? value.toLocaleString('fr-FR') : value}
-          {title.includes('Recettes') || title.includes('Annuel') ? ' €' : ''}
-        </h3>
+
+      {/* Content below */}
+      <div className="relative z-10">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">{title}</p>
+
         {percentage !== undefined ? (
-          <div className="mt-4 space-y-1.5">
+          <div className="space-y-1.5">
              <div className="flex items-center justify-between text-[8px] font-black text-slate-400 uppercase tracking-widest">
                 <span>Avancement</span>
                 <span>{percentage}%</span>
@@ -389,7 +392,15 @@ function StatCard({ title, value, subtitle, icon: Icon, color, trend, percentage
              </div>
           </div>
         ) : (
-          <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-wide">{subtitle}</p>
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{subtitle}</p>
+            {trend && (
+              <div className={`px-2.5 py-1 rounded-full text-[10px] font-black border flex items-center gap-1 ${trend.includes('+') ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-slate-50 text-slate-500 border-slate-100'}`}>
+                {trend.includes('+') ? <ArrowUpRight size={12} /> : null}
+                {trend}
+              </div>
+            )}
+          </div>
         )}
       </div>
       <div className="absolute -bottom-6 -right-6 opacity-[0.03] rotate-12 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
