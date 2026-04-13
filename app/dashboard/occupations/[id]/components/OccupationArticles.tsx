@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Plus, Package, Clock, Hash, Pencil, Trash2, FileText, CheckCircle2, FileStack, Loader2, ArrowLeft, CreditCard } from 'lucide-react';
+import { Plus, Package, Clock, Hash, Pencil, Trash2, FileText, Loader2, CreditCard, FileStack, CheckCircle2 } from 'lucide-react';
 import { Occupation, LigneArticle } from '../types';
 import PaymentModal from './PaymentModal';
 
@@ -12,14 +12,13 @@ interface Props {
   onAddArticle: () => void;
   onEditArticle: (ligne: LigneArticle) => void;
   onDeleteArticle: (id: number) => void;
-  onValidateDemand?: () => void;
-  onNextStep?: () => void;
-  onPrevStep?: () => void;
   onRegisterPayment?: (date: string) => Promise<void>;
   aotGabarits?: any[];
   onSetAotGabarit?: (id: number | null) => void;
   onDownloadAot?: () => void;
   isGeneratingAot?: boolean;
+  onUploadAotFinal?: () => void;
+  onPublishAot?: () => void;
 }
 
 export default function OccupationArticles({
@@ -29,17 +28,17 @@ export default function OccupationArticles({
   onAddArticle,
   onEditArticle,
   onDeleteArticle,
-  onValidateDemand,
-  onNextStep,
-  onPrevStep,
   onRegisterPayment,
   aotGabarits = [],
   onSetAotGabarit,
   onDownloadAot,
-  isGeneratingAot
+  isGeneratingAot,
+  onUploadAotFinal,
+  onPublishAot
 }: Props) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const isInit = occupation.type === 'CHANTIER' && (occupation.statut === 'INIT' || occupation.statut === 'INITIALISATION' || occupation.statut === 'EN_ATTENTE');
+  const hasAotFinal = !!occupation.aotFinalPath;
 
   return (
     <section className="space-y-8 text-left">
@@ -52,7 +51,7 @@ export default function OccupationArticles({
         </div>
 
         {occupation.statut === 'FACTURE' && onRegisterPayment && (
-          <button 
+          <button
             onClick={() => setShowPaymentModal(true)}
             className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 active:scale-95 group"
           >
@@ -61,66 +60,14 @@ export default function OccupationArticles({
           </button>
         )}
 
-        {isInit && onValidateDemand && (
-          <button 
-            onClick={onValidateDemand}
-            className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 active:scale-95 group"
-          >
-            <CheckCircle2 size={18} className="group-hover:scale-110 transition-transform" />
-            Demande reçue
-          </button>
-        )}
-
         {!isLocked && !isFactured && !isInit && (
-          <div className="flex items-center gap-4">
-            {occupation.statut === 'EN_COURS' && onPrevStep && (
-              <button 
-                onClick={onPrevStep}
-                className="flex items-center gap-2 px-6 py-4 bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest active:scale-95"
-              >
-                <ArrowLeft size={16} />
-                Retour
-              </button>
-            )}
-            
-            {occupation.statut === 'EN_COURS' && onNextStep && (
-              <button 
-                onClick={onNextStep}
-                className="flex items-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20 active:scale-95 group"
-              >
-                <CheckCircle2 size={18} className="group-hover:scale-110 transition-transform" />
-                Valider le dossier
-              </button>
-            )}
-            
-            {occupation.statut === 'INST' && onPrevStep && (
-              <button 
-                onClick={onPrevStep}
-                className="flex items-center gap-2 px-6 py-4 bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest active:scale-95"
-              >
-                <ArrowLeft size={16} />
-                Retour
-              </button>
-            )}
-
-            {occupation.statut === 'INST' && onNextStep && (
-              <button 
-                onClick={onNextStep}
-                className="flex items-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20 active:scale-95 group"
-              >
-                <FileStack size={18} className="group-hover:scale-110 transition-transform" />
-                Transmettre pour AOT
-              </button>
-            )}
-            
-            <button 
-              onClick={onAddArticle}
-              className="flex items-center gap-3 bg-slate-950 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 group"
-            >
-              <Plus size={18} className="group-hover:rotate-90 transition-transform" /> 
-              Ajouter un article
-            </button>
-          </div>
+          <button
+            onClick={onAddArticle}
+            className="flex items-center gap-3 bg-slate-950 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 group"
+          >
+            <Plus size={18} className="group-hover:rotate-90 transition-transform" />
+            Ajouter un article
+          </button>
         )}
       </div>
       
@@ -160,23 +107,13 @@ export default function OccupationArticles({
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0 w-full xl:w-auto">
-              {onPrevStep && (
-                <button 
-                  onClick={onPrevStep}
-                  className="flex-1 sm:flex-initial flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 active:scale-95"
-                >
-                  <ArrowLeft size={16} />
-                  Dossier précédent
-                </button>
-              )}
-
-              <button 
+            <div className="flex flex-col items-center gap-3 shrink-0 w-full xl:w-auto">
+              <button
                 onClick={onDownloadAot}
                 disabled={!occupation.aotGabaritId || isGeneratingAot}
-                className={`flex-1 sm:flex-initial flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-40 ${
-                  !occupation.aotGabaritId 
-                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200 shadow-none' 
+                className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95 disabled:opacity-40 ${
+                  !occupation.aotGabaritId
+                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200 shadow-none'
                     : 'bg-white border-2 border-indigo-100 text-indigo-600 hover:bg-indigo-50 shadow-indigo-100/50'
                 }`}
               >
@@ -184,13 +121,12 @@ export default function OccupationArticles({
                 Générer AOT
               </button>
 
-              <button 
-                onClick={onNextStep}
-                disabled={!occupation.aotGabaritId || isGeneratingAot}
-                className="flex-1 sm:flex-initial flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20 active:scale-95 disabled:opacity-40"
+              <button
+                onClick={onUploadAotFinal}
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95 bg-white border-2 border-amber-100 text-amber-600 hover:bg-amber-50 shadow-amber-100/50"
               >
-                <CheckCircle2 size={18} />
-                Signé et publié
+                <FileStack size={18} />
+                Ajouter AOT final
               </button>
             </div>
           </div>

@@ -59,17 +59,17 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const { id: paramId } = await params;
     const id = parseInt(paramId);
     const body = await req.json();
-    const { 
+    const {
       nom,
-      tiersId, 
-      type, 
+      tiersId,
+      type,
       statut,
-      dateDebut, 
+      dateDebut,
       dateFin,
-      anneeTaxation, 
-      adresse, 
-      latitude, 
-      longitude, 
+      anneeTaxation,
+      adresse,
+      latitude,
+      longitude,
       description,
       photos,
       numeroFacture,
@@ -77,10 +77,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       datePaiement,
       isCourtMetrage,
       agissantPour,
-      aotGabaritId
+      aotGabaritId,
+      aotFinalPath
     } = body;
 
-    const updateData: any = { 
+    const updateData: any = {
       nom,
       tiersId: tiersId ? parseInt(tiersId) : undefined,
       type,
@@ -97,6 +98,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       numeroFacture: numeroFacture !== undefined ? numeroFacture : undefined,
       facturePath: facturePath !== undefined ? facturePath : undefined,
       aotGabaritId: aotGabaritId !== undefined ? (aotGabaritId ? parseInt(aotGabaritId) : null) : undefined,
+      aotFinalPath: aotFinalPath !== undefined ? aotFinalPath : undefined,
     };
 
     const occupation = await (prisma as any).occupation.update({

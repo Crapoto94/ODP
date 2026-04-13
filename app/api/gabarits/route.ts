@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get('type');
+
+    const where = type ? { type } : {};
     const gabarits = await (prisma as any).gabarit.findMany({
-      orderBy: { created_at: 'desc' },
+      where,
+      orderBy: { isDefault: 'desc' },
     });
-    return NextResponse.json(gabarits);
+    return NextResponse.json({ gabarits });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -15,7 +20,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { nom, contenu, isDefault } = body;
+    const { nom, contenu, isDefault, type = 'PDF' } = body;
 
     if (!nom || !contenu) {
       return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
@@ -32,6 +37,7 @@ export async function POST(req: Request) {
     const gabarit = await (prisma as any).gabarit.create({
       data: {
         nom,
+        type,
         contenu: typeof contenu === 'string' ? contenu : JSON.stringify(contenu),
         isDefault: !!isDefault
       }

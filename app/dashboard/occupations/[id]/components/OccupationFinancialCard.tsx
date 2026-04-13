@@ -7,10 +7,10 @@ interface Props {
   onDownloadFacture: () => void;
 }
 
-export default function OccupationFinancialCard({ 
-  totalAmount, 
-  generatingPdf, 
-  onDownloadFacture 
+export default function OccupationFinancialCard({
+  totalAmount,
+  generatingPdf,
+  onDownloadFacture
 }: Props) {
   return (
     <div className="w-full lg:w-[260px] shrink-0">
@@ -28,8 +28,8 @@ export default function OccupationFinancialCard({
               <span className="text-sm font-black text-blue-400">€</span>
             </div>
           </div>
-          
-          <button 
+
+          <button
             onClick={onDownloadFacture}
             disabled={generatingPdf}
             className="w-full bg-white text-slate-950 hover:bg-blue-50 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"

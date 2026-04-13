@@ -75,6 +75,7 @@ export interface Occupation {
   contacts?: Contact[];
   photos?: string;
   aotGabaritId?: number | null;
+  aotFinalPath?: string;
   facturePath?: string;
 }
 

@@ -10,70 +10,71 @@ datasource db {
 }
 
 model Tiers {
-  id              Int          @id @default(autoincrement())
-  nom             String
-  siret           String?      @unique
-  email           String?
-  adresse         String?
-  latitude        Float?
-  longitude       Float?
-  code_sedit      String?      @unique
-  statut          String       @default("PROVISOIRE")
-  created_at      DateTime     @default(now())
-  updated_at      DateTime     @updatedAt
+  id                Int          @id @default(autoincrement())
+  nom               String
+  siret             String?      @unique
+  email             String?
+  adresse           String?
+  latitude          Float?
+  longitude         Float?
+  code_sedit        String?      @unique
+  statut            String       @default("PROVISOIRE")
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @updatedAt
   natureJuridique   String?
   etatAdministratif String?
+  contacts          Contact[]
   occupations       Occupation[]
-  contacts        Contact[]
 }
 
 model Occupation {
-  id             Int               @id @default(autoincrement())
-  nom            String?
-  tiersId        Int
-  type           String
-  statut         String
-  dateDebut      DateTime?
-  dateFin        DateTime?
-  anneeTaxation  Int?
-  adresse        String
-  latitude       Float?
-  longitude      Float?
-  description    String?
-  photos         String?
-  montantCalcule Float             @default(0)
-  facturePath    String?
-  created_at     DateTime          @default(now())
-  updated_at     DateTime          @updatedAt
-  numeroFacture  String?
-  datePaiement   DateTime?
+  id              Int               @id @default(autoincrement())
+  nom             String?
+  tiersId         Int
+  type            String
+  statut          String
+  dateDebut       DateTime?
+  dateFin         DateTime?
+  anneeTaxation   Int?
+  adresse         String
+  latitude        Float?
+  longitude       Float?
+  description     String?
+  photos          String?
+  montantCalcule  Float             @default(0)
+  facturePath     String?
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  numeroFacture   String?
   dossierParentId Int?
-  agissantPour   String?
-  isCourtMetrage Boolean           @default(false)
-  aotGabaritId   Int?
-  contacts       Contact[]
-  dispositifs    Dispositif[]
-  lignes         LigneOccupation[]
-  notes          Note[]
-  tiers          Tiers             @relation(fields: [tiersId], references: [id])
+  isCourtMetrage  Boolean           @default(false)
+  agissantPour    String?
+  aotGabaritId    Int?
+  aotFinalPath    String?
+  datePaiement    DateTime?
+  contacts        Contact[]
+  dispositifs     Dispositif[]
+  lignes          LigneOccupation[]
+  notes           Note[]
+  tiers           Tiers             @relation(fields: [tiersId], references: [id])
 }
 
 model Contact {
-  id           Int        @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   nom          String?
   prenom       String?
   email        String?
   telephone    String?
   titre        String?
-  role         String     @default("CONTACT_DIRECT")
-  occupationId Int?       // Optional link to a dossier
-  tiersId      Int?       // Optional link to a tiers
+  role         String      @default("CONTACT_DIRECT")
+  occupationId Int?
+  tiersId      Int?
   pjPath       String?
-  created_at   DateTime   @default(now())
-  updated_at   DateTime   @updatedAt
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
   entreprise   String?
-  occupation   Occupation? @relation(fields: [occupationId], references: [id], onDelete: Cascade)
   tiers        Tiers?      @relation(fields: [tiersId], references: [id], onDelete: Cascade)
+  occupation   Occupation? @relation(fields: [occupationId], references: [id], onDelete: Cascade)
 }
 
 model Note {
@@ -170,46 +171,46 @@ model MobileLog {
 }
 
 model AppSettings {
-  id                  Int      @id @default(autoincrement())
-  financeEmail        String?
-  appUrl              String?
-  apmUrl              String?
-  apmToken            String?
-  senderName          String?  @default("Domaine Public")
-  senderEmail         String?  @default("dsihub@fbc.fr")
-  filienOrga          String?  @default("01")
-  filienBudget        String?  @default("BA")
-  filienExercice      Int?
-  filienAvancement    String?  @default("5")
-  filienRejetDispo    Boolean? @default(true)
-  filienRejetCA       Boolean? @default(false)
-  filienRejetMarche   Boolean? @default(false)
-  filienMouvement     String?  @default("1")
-  filienType          String?  @default("R")
-  filienLibelle       String?
-  filienCalendrier    String?  @default("01")
-  filienMonnaie       String?  @default("E")
-  filienMouvementEx   String?  @default("N")
-  filienPreBordereau  String?  @default("1235")
-  filienPoste         String?  @default("0001")
-  filienBordereau     String?  @default("0001")
-  filienObjet         String?
-  filienChapitre      String?  @default("")
-  filienNature        String?  @default("")
-  filienFonction      String?  @default("")
-  filienCodeInterne   String?  @default("")
-  filienTypeMouvement String?  @default("")
-  filienSens          String?  @default("")
-  filienStructure     String?  @default("")
-  filienGestionnaire  String?  @default("")
-  filienUncPj         String?  @default("")
-  signataireRole      String?  @default("Le Maire d'Ivry-sur-Seine,")
-  signataireDelegation String? @default("et par délégation,")
-  signataireNom       String?  @default("Dominique Montet - Directrice Générale Adjointe")
-  filienUncUser     String?  @default("")
-  filienUncPass     String?  @default("")
-  filienUncDomain   String?  @default("WORKGROUP")
-  updated_at          DateTime @updatedAt
+  id                   Int      @id @default(autoincrement())
+  financeEmail         String?
+  appUrl               String?
+  apmUrl               String?
+  apmToken             String?
+  senderName           String?  @default("Domaine Public")
+  senderEmail          String?  @default("dsihub@fbc.fr")
+  filienOrga           String?  @default("01")
+  filienBudget         String?  @default("BA")
+  filienExercice       Int?
+  filienAvancement     String?  @default("5")
+  filienRejetDispo     Boolean? @default(true)
+  filienRejetCA        Boolean? @default(false)
+  filienRejetMarche    Boolean? @default(false)
+  filienMouvement      String?  @default("1")
+  filienType           String?  @default("R")
+  filienLibelle        String?
+  filienCalendrier     String?  @default("01")
+  filienMonnaie        String?  @default("E")
+  filienMouvementEx    String?  @default("N")
+  filienPreBordereau   String?  @default("1235")
+  filienPoste          String?  @default("0001")
+  filienBordereau      String?  @default("0001")
+  filienObjet          String?
+  filienChapitre       String?  @default("")
+  filienNature         String?  @default("")
+  filienFonction       String?  @default("")
+  filienCodeInterne    String?  @default("")
+  filienTypeMouvement  String?  @default("")
+  filienSens           String?  @default("")
+  filienStructure      String?  @default("")
+  filienGestionnaire   String?  @default("")
+  filienUncPj          String?  @default("")
+  signataireRole       String?  @default("Le Maire d'Ivry-sur-Seine,")
+  signataireDelegation String?  @default("et par délégation,")
+  signataireNom        String?  @default("Dominique Montet - Directrice Générale Adjointe")
+  updated_at           DateTime @updatedAt
+  filienUncPass        String?  @default("")
+  filienUncUser        String?  @default("")
+  filienUncDomain      String?  @default("WORKGROUP")
 }
 
 model LigneOccupation {
@@ -244,7 +245,9 @@ model Dispositif {
 model Gabarit {
   id         Int      @id @default(autoincrement())
   nom        String
-  contenu    String
+  type       String   @default("PDF") // PDF or DOCX
+  contenu    String?  // For PDF: JSON layout, for DOCX: null
+  fichierPath String? // For DOCX: path to .docx file
   isDefault  Boolean  @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -274,17 +277,17 @@ model TypeDossierConfig {
 }
 
 model BacklogItem {
-  id          Int      @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   title       String
   description String?
-  type        String   @default("FEATURE") // BUG, FEATURE, IMPROVEMENT
-  priority    String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
-  status      String   @default("OPEN")   // OPEN, DONE, REJECTED
-  versionId   Int?     // Link to the version where it was released
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  version     VersionRelease? @relation(fields: [versionId], references: [id])
+  type        String           @default("FEATURE")
+  priority    String           @default("MEDIUM")
+  status      String           @default("OPEN")
+  versionId   Int?
+  created_at  DateTime         @default(now())
+  updated_at  DateTime         @updatedAt
   comments    BacklogComment[]
+  version     VersionRelease?  @relation(fields: [versionId], references: [id])
 }
 
 model BacklogComment {
@@ -297,12 +300,12 @@ model BacklogComment {
 }
 
 model VersionRelease {
-  id             Int           @id @default(autoincrement())
-  versionNumber  String        @unique
-  notes          String?
-  releasedAt     DateTime      @default(now())
-  created_at     DateTime      @default(now())
-  backlogItems   BacklogItem[]
+  id            Int           @id @default(autoincrement())
+  versionNumber String        @unique
+  notes         String?
+  releasedAt    DateTime      @default(now())
+  created_at    DateTime      @default(now())
+  backlogItems  BacklogItem[]
 }
 
 model PostgresConfig {
@@ -316,23 +319,22 @@ model PostgresConfig {
 }
 
 model OdpConfig {
-  annee               Int     @id
+  annee               Int     @id @default(autoincrement())
   deliberationPath    String?
   tarifsTournagesPath String?
   tarifsOdpPath       String?
 }
 
-
 model BillingRun {
-  id          String   @id
-  type        String
-  date        DateTime @default(now())
-  count       Int
-  total       Float
-  agent       String?
-  recapPath   String?
-  filienPath  String?
-  invoices    BillingRunInvoice[]
+  id         String              @id
+  type       String
+  date       DateTime            @default(now())
+  count      Int
+  total      Float
+  agent      String?
+  recapPath  String?
+  filienPath String?
+  invoices   BillingRunInvoice[]
 }
 
 model BillingRunInvoice {

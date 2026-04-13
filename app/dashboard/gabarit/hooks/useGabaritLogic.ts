@@ -29,8 +29,9 @@ export function useGabaritLogic() {
 
   const fetchGabarits = useCallback(async () => {
     try {
-      const res = await axios.get('/api/gabarits');
-      const data = Array.isArray(res.data) ? res.data : [];
+      const res = await axios.get('/api/gabarits?type=PDF');
+      const allData = Array.isArray(res.data) ? res.data : res.data.gabarits || [];
+      const data = allData.filter((g: any) => g.type === 'PDF' || !g.type);
       setAllGabarits(data);
       
       // Auto-load default on first mount

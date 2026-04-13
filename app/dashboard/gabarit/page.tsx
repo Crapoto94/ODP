@@ -1,17 +1,20 @@
 "use client";
 
 import * as React from 'react';
-import { useRef } from 'react';
-import { Loader2, Maximize } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Loader2, Maximize, FileText, Layers, HelpCircle } from 'lucide-react';
+import Link from 'next/link';
 import { useGabaritLogic } from './hooks/useGabaritLogic';
 import EditorToolbar from './components/EditorToolbar';
 import EditorSidebar from './components/EditorSidebar';
 import EditorCanvas from './components/EditorCanvas';
 import PropertiesPanel from './components/PropertiesPanel';
+import DocxUploader from './components/DocxUploader';
 
 export default function GabaritPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
+  const [activeTab, setActiveTab] = useState<'pdf' | 'docx'>('pdf');
 
   const {
     elements, setElements,
@@ -78,30 +81,68 @@ export default function GabaritPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 flex flex-col h-[calc(100vh-140px)]">
-      <EditorToolbar
-        gabaritId={gabaritId}
-        gabaritNom={gabaritNom}
-        setGabaritNom={setGabaritNom}
-        isDefault={isDefault}
-        setIsDefault={setIsDefault}
-        isListOpen={isListOpen}
-        setIsListOpen={setIsListOpen}
-        allGabarits={allGabarits}
-        loadGabarit={loadGabarit}
-        handleDeleteGabarit={handleDeleteGabarit}
-        createNewGabarit={createNewGabarit}
-        handleDuplicate={handleDuplicate}
-        handleSave={handleSave}
-        handleExportTemplate={handleExportTemplate}
-        importInputRef={importInputRef}
-        saving={saving}
-        isPreview={isPreview}
-        setIsPreview={setIsPreview}
-        selectedIds={selectedIds}
-        alignElements={alignElements}
-      />
+      {/* Tabs Navigation */}
+      <div className="flex items-center justify-between px-6 border-b border-slate-200">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setActiveTab('pdf')}
+            className={`flex items-center gap-2 px-6 py-4 font-black text-[10px] uppercase tracking-widest border-b-2 transition-all ${
+              activeTab === 'pdf'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Layers size={14} />
+            Templates PDF (Factures)
+          </button>
+          <button
+            onClick={() => setActiveTab('docx')}
+            className={`flex items-center gap-2 px-6 py-4 font-black text-[10px] uppercase tracking-widest border-b-2 transition-all ${
+              activeTab === 'docx'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <FileText size={14} />
+            Templates DOCX (AOT)
+          </button>
+        </div>
+        <Link
+          href="/dashboard/gabarit/variables"
+          className="flex items-center gap-2 px-4 py-4 text-slate-500 hover:text-blue-600 transition-colors text-[10px] font-black uppercase tracking-widest"
+          title="Documentation des variables AOT"
+        >
+          <HelpCircle size={14} />
+          <span className="hidden sm:inline">Variables AOT</span>
+        </Link>
+      </div>
 
-      <div className="flex-1 flex gap-6 min-h-0">
+      {activeTab === 'pdf' ? (
+        <>
+          <EditorToolbar
+            gabaritId={gabaritId}
+            gabaritNom={gabaritNom}
+            setGabaritNom={setGabaritNom}
+            isDefault={isDefault}
+            setIsDefault={setIsDefault}
+            isListOpen={isListOpen}
+            setIsListOpen={setIsListOpen}
+            allGabarits={allGabarits}
+            loadGabarit={loadGabarit}
+            handleDeleteGabarit={handleDeleteGabarit}
+            createNewGabarit={createNewGabarit}
+            handleDuplicate={handleDuplicate}
+            handleSave={handleSave}
+            handleExportTemplate={handleExportTemplate}
+            importInputRef={importInputRef}
+            saving={saving}
+            isPreview={isPreview}
+            setIsPreview={setIsPreview}
+            selectedIds={selectedIds}
+            alignElements={alignElements}
+          />
+
+          <div className="flex-1 flex gap-6 min-h-0">
         <EditorSidebar
           elements={elements}
           selectedIds={selectedIds}
@@ -161,6 +202,12 @@ export default function GabaritPage() {
           fileInputRef={fileInputRef}
         />
       </div>
+      </>
+      ) : (
+        <div className="flex-1 overflow-auto px-6 pb-6">
+          <DocxUploader />
+        </div>
+      )}
 
       <input
         ref={fileInputRef}

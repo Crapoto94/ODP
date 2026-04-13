@@ -3,6 +3,7 @@
 import React, { use, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // Hooks & Types
 import { useOccupationLogic } from './hooks/useOccupationLogic';
@@ -23,12 +24,14 @@ import TlpeArticles from '../../tlpe/[id]/components/TlpeArticles';
 import ContactModal from '@/components/ContactModal';
 import LigneArticleModal from '@/components/LigneArticleModal';
 import TlpeLigneArticleModal from '@/components/TlpeLigneArticleModal';
+import AotFinalModal from './components/AotFinalModal';
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
 export default function OccupationDetailPage({ params }: Props) {
+  const router = useRouter();
   const { id: paramId } = use(params);
   const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
   const [editingLigne, setEditingLigne] = useState<LigneArticle | null>(null);
@@ -61,14 +64,24 @@ export default function OccupationDetailPage({ params }: Props) {
     setIsUploadModalOpen,
     isUploading,
     handleUploadNamedDoc,
+    handleDeletePhoto,
     handleValidateDemand,
     handleNextStep,
     // AOT
     gabarits,
+    aotGabarits,
     handleSetAotGabarit,
     handleDownloadAot,
     handlePrevStep,
-    handleRegisterPayment
+    handleRegisterPayment,
+    // AOT Final
+    isAotFinalModalOpen,
+    setIsAotFinalModalOpen,
+    isUploadingAotFinal,
+    handleUploadAotFinal,
+    handlePublishAot,
+    isPublishingAot,
+    handleDeleteAotFinal
   } = useOccupationLogic(paramId);
 
   if (loading) {
@@ -90,13 +103,16 @@ export default function OccupationDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen pb-20 space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
+    <div className="min-h-screen space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700">
       
-      <OccupationHeader 
+      <OccupationHeader
         occupation={occ}
         isFactured={isFactured}
         isLocked={isLocked}
         onToggleVerifie={handleToggleVerifie}
+        onNextStep={handleNextStep}
+        onPrevStep={handlePrevStep}
+        onValidateDemand={handleValidateDemand}
       />
 
       <OccupationStepper 
@@ -112,7 +128,7 @@ export default function OccupationDetailPage({ params }: Props) {
             typeInfo={typeInfo} 
           />
           {!(occ.type === 'CHANTIER' && (occ.statut === 'INIT' || occ.statut === 'INITIALISATION' || occ.statut === 'EN_ATTENTE')) && (
-            <OccupationFinancialCard 
+            <OccupationFinancialCard
               totalAmount={totalAmount}
               generatingPdf={generatingPdf}
               onDownloadFacture={downloadFacture}
@@ -132,21 +148,20 @@ export default function OccupationDetailPage({ params }: Props) {
                 onDeleteArticle={handleDeleteLigne}
               />
             ) : (
-              <OccupationArticles 
+              <OccupationArticles
                 occupation={occ}
                 isFactured={isFactured}
                 onAddArticle={() => { setEditingLigne(null); setIsLigneModalOpen(true); }}
                 onEditArticle={(ligne) => { setEditingLigne(ligne); setIsLigneModalOpen(true); }}
                 onDeleteArticle={handleDeleteLigne}
-                onValidateDemand={handleValidateDemand}
-                onNextStep={handleNextStep}
-                aotGabarits={gabarits}
+                aotGabarits={aotGabarits}
                 onSetAotGabarit={handleSetAotGabarit}
                 onDownloadAot={handleDownloadAot}
                 isGeneratingAot={generatingPdf}
                 isLocked={isLocked}
-                onPrevStep={handlePrevStep}
                 onRegisterPayment={handleRegisterPayment}
+                onUploadAotFinal={() => setIsAotFinalModalOpen(true)}
+                onPublishAot={handlePublishAot}
               />
             )}
             <OccupationNotes 
@@ -155,12 +170,14 @@ export default function OccupationDetailPage({ params }: Props) {
             />
           </div>
 
-          <OccupationSidebar 
+          <OccupationSidebar
             occupation={occ}
             isFactured={isFactured}
             onOpenContactModal={() => setIsContactModalOpen(true)}
             onDeleteContact={handleDeleteContact}
             onOpenUploadModal={() => setIsUploadModalOpen(true)}
+            onDeletePhoto={handleDeletePhoto}
+            onDeleteAotFinal={handleDeleteAotFinal}
           />
         </div>
       </div>
@@ -208,6 +225,13 @@ export default function OccupationDetailPage({ params }: Props) {
         onClose={() => setIsUploadModalOpen(false)}
         isUploading={isUploading}
         onUpload={handleUploadNamedDoc}
+      />
+
+      <AotFinalModal
+        isOpen={isAotFinalModalOpen}
+        onClose={() => setIsAotFinalModalOpen(false)}
+        isUploading={isUploadingAotFinal}
+        onUpload={handleUploadAotFinal}
       />
     </div>
   );

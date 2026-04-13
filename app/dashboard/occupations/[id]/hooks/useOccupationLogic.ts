@@ -37,14 +37,23 @@ export function useOccupationLogic(occupationId: string) {
   // Dossier Upload states
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [gabarits, setGabarits] = useState<any[]>([]);
+  const [gabarits, setGabarits] = useState<any[]>([]); // PDF gabarits for invoices
+  const [aotGabarits, setAotGabarits] = useState<any[]>([]); // DOCX gabarits for AOT
+
+  // AOT Final states
+  const [isAotFinalModalOpen, setIsAotFinalModalOpen] = useState(false);
+  const [isUploadingAotFinal, setIsUploadingAotFinal] = useState(false);
+  const [isPublishingAot, setIsPublishingAot] = useState(false);
 
   const fetchOccupation = async () => {
     try {
+      console.log('[Fetch Occupation] Fetching occupation:', occupationId);
       const res = await axios.get(`/api/occupations/${occupationId}`);
+      console.log('[Fetch Occupation] Data received:', res.data);
+      console.log('[Fetch Occupation] aotFinalPath:', res.data.aotFinalPath);
       setOcc(res.data);
     } catch (err) {
-      console.error(err);
+      console.error('[Fetch Occupation] Error:', err);
     } finally {
       setLoading(false);
     }
@@ -52,9 +61,29 @@ export function useOccupationLogic(occupationId: string) {
 
   const fetchGabarits = async () => {
     try {
+      // First, ensure defaults are initialized
+      try {
+        await axios.post('/api/gabarits/init-defaults');
+      } catch (err) {
+        console.warn('Error initializing default gabarits:', err);
+        // Continue anyway
+      }
+
+      // Load all gabarits
       const res = await axios.get('/api/gabarits');
-      setGabarits(res.data);
-    } catch (err) {}
+      const allGabarits = Array.isArray(res.data) ? res.data : res.data.gabarits || [];
+
+      // Separate by type: PDF for invoices, DOCX + old templates (no type) for AOT
+      const pdfGabarits = allGabarits.filter((g: any) => g.type === 'PDF');
+      const aotGabaritsList = allGabarits.filter((g: any) => g.type === 'DOCX' || !g.type);
+
+      setGabarits(pdfGabarits);
+      setAotGabarits(aotGabaritsList);
+    } catch (err) {
+      console.error('Error fetching gabarits:', err);
+      setGabarits([]);
+      setAotGabarits([]);
+    }
   };
 
   const fetchCurrentUser = async () => {
@@ -84,11 +113,11 @@ export function useOccupationLogic(occupationId: string) {
     if (!occ) return;
     setGeneratingPdf(true);
     try {
-      const res = await axios.get(`/api/aot-pdf/${occ.id}`, { responseType: 'blob' });
+      const res = await axios.get(`/api/aot-docx-generate/${occ.id}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `AOT-${occ.id}.pdf`);
+      link.setAttribute('download', `AOT-${occ.id}.docx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -207,7 +236,7 @@ export function useOccupationLogic(occupationId: string) {
     if (!occ) return;
     setIsUploading(true);
     const isPdf = file.name.toLowerCase().endsWith('.pdf');
-    
+
     try {
       const fd = new FormData();
       if (!isPdf && file.type.startsWith('image/')) {
@@ -219,7 +248,7 @@ export function useOccupationLogic(occupationId: string) {
 
       const res = await axios.post('/api/upload', fd);
       const newUrl = res.data.url;
-      
+
       const currentPhotos = occ.photos ? occ.photos.split(',') : [];
       // Store as url|name
       const updatedPhotos = [...currentPhotos, `${newUrl}|${name}`].join(',');
@@ -231,6 +260,34 @@ export function useOccupationLogic(occupationId: string) {
       alert("Erreur lors de l'envoi du document");
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleDeletePhoto = async (index: number) => {
+    if (!occ) return;
+    if (!confirm('Supprimer ce document ?')) return;
+
+    try {
+      const currentPhotos = occ.photos ? occ.photos.split(',').filter(Boolean) : [];
+      const updatedPhotos = currentPhotos.filter((_, i) => i !== index).join(',');
+
+      await axios.patch(`/api/occupations/${occ.id}`, { photos: updatedPhotos });
+      await fetchOccupation();
+      alert('Document supprimé');
+    } catch (err) {
+      console.error('[Delete Photo] Error:', err);
+      alert('Erreur lors de la suppression');
+    }
+  };
+
+  const handleDeleteAotFinal = async () => {
+    if (!occ || !confirm('Supprimer l\'AOT final ?')) return;
+    try {
+      await axios.patch(`/api/occupations/${occ.id}`, { aotFinalPath: null });
+      await fetchOccupation();
+    } catch (err) {
+      console.error('[Delete AOT Final] Error:', err);
+      alert('Erreur lors de la suppression');
     }
   };
 
@@ -330,6 +387,39 @@ export function useOccupationLogic(occupationId: string) {
     }
   };
 
+  const handleUploadAotFinal = async (file: File) => {
+    if (!occ) return;
+    setIsUploadingAotFinal(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await axios.post('/api/upload', fd);
+      const aotUrl = res.data.url;
+
+      // Update occupation with aotFinalPath
+      await axios.patch(`/api/occupations/${occ.id}`, { aotFinalPath: aotUrl });
+      await fetchOccupation();
+      setIsAotFinalModalOpen(false);
+    } catch (err) {
+      console.error('[Upload AOT Final] Error:', err);
+      alert("Erreur lors de l'envoi de l'AOT final");
+    } finally {
+      setIsUploadingAotFinal(false);
+    }
+  };
+
+  const handlePublishAot = async () => {
+    if (!occ || !occ.aotFinalPath) return;
+    if (!confirm('Confirmer la publication de l\'AOT ?')) return;
+    try {
+      // Currently just confirms publishing - can be extended to send notifications, change status, etc.
+      alert('AOT publié avec succès');
+    } catch (err) {
+      console.error('[Publish AOT] Error:', err);
+      alert('Erreur lors de la publication');
+    }
+  };
+
   const statusInfo = occ ? getStatusConfig(occ.type, occ.statut) : null;
   const typeInfo = occ ? TYPE_MAP[occ.type] || { label: occ.type, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' } : null;
   const isLocked = occ ? ['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) : false;
@@ -364,13 +454,23 @@ export function useOccupationLogic(occupationId: string) {
     setIsUploadModalOpen,
     isUploading,
     handleUploadNamedDoc,
+    handleDeletePhoto,
     handleValidateDemand,
     handleNextStep,
     handlePrevStep,
     handleRegisterPayment,
     // AOT
     gabarits,
+    aotGabarits,
     handleSetAotGabarit,
-    handleDownloadAot
+    handleDownloadAot,
+    // AOT Final
+    isAotFinalModalOpen,
+    setIsAotFinalModalOpen,
+    isUploadingAotFinal,
+    handleUploadAotFinal,
+    handlePublishAot,
+    isPublishingAot,
+    handleDeleteAotFinal
   };
 }

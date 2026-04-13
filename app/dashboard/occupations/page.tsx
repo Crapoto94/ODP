@@ -93,7 +93,7 @@ function OccupationsPageContent() {
 
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
-  const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
+  const [yearFilter, setYearFilter] = useState('ALL'); // Default to ALL years to show all dossiers
   const [tiersFilter, setTiersFilter] = useState<string | null>(null);
   const [tiersSearchQuery, setTiersSearchQuery] = useState('');
   const [isTiersDropdownOpen, setIsTiersDropdownOpen] = useState(false);
@@ -143,10 +143,20 @@ function OccupationsPageContent() {
   const fetchOccupations = async () => {
     setLoading(true);
     try {
+      console.log('[Occupations] 🔄 Fetching from /api/occupations...');
       const res = await axios.get('/api/occupations');
-      setOccupations(res.data);
-    } catch (err) {
-      console.error('Failed to fetch occupations:', err);
+      console.log('[Occupations] ✅ Success! Received data:', res.data);
+      console.log('[Occupations] ✅ Count:', Array.isArray(res.data) ? res.data.length : 'Not an array');
+
+      const data = Array.isArray(res.data) ? res.data : [];
+      console.log('[Occupations] ✅ Setting', data.length, 'occupations to state');
+      setOccupations(data);
+    } catch (err: any) {
+      console.error('[Occupations] ❌ Failed to fetch occupations');
+      console.error('[Occupations] ❌ Error:', err.message);
+      console.error('[Occupations] ❌ Response status:', err.response?.status);
+      console.error('[Occupations] ❌ Response data:', err.response?.data);
+      setOccupations([]);
     } finally {
       setLoading(false);
     }
@@ -163,6 +173,7 @@ function OccupationsPageContent() {
   }, [searchParams]);
 
   useEffect(() => {
+    console.log('[Occupations] 🚀 Component mounted, loading data...');
     fetchTiers();
     fetchOccupations();
   }, []);
@@ -357,13 +368,31 @@ function OccupationsPageContent() {
   const handleUnlock = async (id: number) => {
     if (!confirm('Déverrouiller ce dossier ? Cela supprimera le numéro de facture associé et remettra le dossier en statut "Vérifié" pour permettre des modifications.')) return;
     try {
-      await axios.patch(`/api/occupations/${id}`, { 
+      await axios.patch(`/api/occupations/${id}`, {
         statut: 'VERIFIE',
         numeroFacture: null,
         facturePath: null
       });
       fetchOccupations();
     } catch (err) { alert('Erreur lors du déverrouillage'); }
+  };
+
+  const handleNextStep = async (id: number, currentStatut: string) => {
+    // Définir les étapes suivantes selon le type et le statut
+    const nextStatusMap: Record<string, string> = {
+      'INIT': 'INST',
+      'INST': 'PREP',
+      'PREP': 'EN_COURS',
+      'EN_COURS': 'VALIDE',
+    };
+
+    const nextStatus = nextStatusMap[currentStatut];
+    if (!nextStatus) return;
+
+    try {
+      await axios.patch(`/api/occupations/${id}`, { statut: nextStatus });
+      fetchOccupations();
+    } catch (err) { alert('Erreur lors du passage à l\'étape suivante'); }
   };
 
   const toggleRow = (id: number) => {
@@ -669,6 +698,7 @@ function OccupationsPageContent() {
                         <div className="flex items-center justify-end gap-1">
                           <button onClick={() => { setSelectedOccForLigne(occ); setEditingLigne(null); setIsLigneModalOpen(true); }} className="p-2.5 text-blue-500 hover:bg-blue-50 rounded-xl transition-all" title="Ajouter Article"><Package size={18} /></button>
                           {['EN_ATTENTE', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleApprove(occ.id)} className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approuver"><CheckCircle2 size={18} /></button>}
+                          {['INIT', 'INST', 'PREP', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleNextStep(occ.id, occ.statut)} className="p-2.5 text-purple-600 hover:bg-purple-50 rounded-xl transition-all" title="Étape suivante"><ArrowRight size={18} /></button>}
                           {['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => downloadFacture(occ.id)} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Télécharger Facture"><FileText size={18} /></button>}
                           {['FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => handleUnlock(occ.id)} className="p-2.5 text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Déverrouiller Dossier"><Unlock size={18} /></button>}
                           <button onClick={() => handleEdit(occ)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Modifier"><Pencil size={18} /></button>

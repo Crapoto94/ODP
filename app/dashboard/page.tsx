@@ -43,7 +43,16 @@ import { getStatusConfig } from '@/lib/status-utils';
 // Local STATUS_MAP removed in favor of dynamic mapping from @/lib/status-utils
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<any>({
+    totalRevenue: 0,
+    potentialRevenue: 0,
+    tiersCount: 0,
+    activeDossiers: 0,
+    pendingDossiers: 0,
+    monthlyStats: [],
+    recentDossiers: [],
+    typeStats: []
+  });
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -53,10 +62,14 @@ export default function DashboardPage() {
       axios.get('/api/auth/me')
     ])
     .then(([statsRes, userRes]) => {
-      setStats(statsRes.data);
+      console.log('[Dashboard] Stats received:', statsRes.data);
+      setStats(statsRes.data || stats);
       setUser(userRes.data);
     })
-    .catch(console.error)
+    .catch((error) => {
+      console.error('[Dashboard] Error loading stats:', error);
+      // Stats already have default values
+    })
     .finally(() => setLoading(false));
   }, []);
 
@@ -125,13 +138,13 @@ export default function DashboardPage() {
           color="indigo"
           trend="Stable"
         />
-        <StatCard 
-          title="Potentiel Annuel" 
-          value={stats.potentialRevenue} 
+        <StatCard
+          title="Potentiel Annuel"
+          value={stats.potentialRevenue}
           subtitle="Toutes catégories confondues"
-          icon={TrendingUp} 
+          icon={TrendingUp}
           color="emerald"
-          percentage={Math.round((stats.totalRevenue/stats.potentialRevenue)*100)}
+          percentage={stats.potentialRevenue > 0 ? Math.round((stats.totalRevenue/stats.potentialRevenue)*100) : 0}
         />
       </div>
 

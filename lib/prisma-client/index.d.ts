@@ -2735,13 +2735,13 @@ export namespace Prisma {
    */
 
   export type TiersCountOutputType = {
-    occupations: number
     contacts: number
+    occupations: number
   }
 
   export type TiersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    occupations?: boolean | TiersCountOutputTypeCountOccupationsArgs
     contacts?: boolean | TiersCountOutputTypeCountContactsArgs
+    occupations?: boolean | TiersCountOutputTypeCountOccupationsArgs
   }
 
   // Custom InputTypes
@@ -2758,15 +2758,15 @@ export namespace Prisma {
   /**
    * TiersCountOutputType without action
    */
-  export type TiersCountOutputTypeCountOccupationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: OccupationWhereInput
+  export type TiersCountOutputTypeCountContactsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContactWhereInput
   }
 
   /**
    * TiersCountOutputType without action
    */
-  export type TiersCountOutputTypeCountContactsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ContactWhereInput
+  export type TiersCountOutputTypeCountOccupationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OccupationWhereInput
   }
 
 
@@ -3328,8 +3328,8 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
-    occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
+    occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
     _count?: boolean | TiersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tiers"]>
 
@@ -3366,8 +3366,8 @@ export namespace Prisma {
   }
 
   export type TiersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
+    occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
     _count?: boolean | TiersCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TiersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3375,8 +3375,8 @@ export namespace Prisma {
   export type $TiersPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Tiers"
     objects: {
-      occupations: Prisma.$OccupationPayload<ExtArgs>[]
       contacts: Prisma.$ContactPayload<ExtArgs>[]
+      occupations: Prisma.$OccupationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -3756,8 +3756,8 @@ export namespace Prisma {
    */
   export interface Prisma__TiersClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    occupations<T extends Tiers$occupationsArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$occupationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findMany"> | Null>
     contacts<T extends Tiers$contactsArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$contactsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findMany"> | Null>
+    occupations<T extends Tiers$occupationsArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$occupationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4112,26 +4112,6 @@ export namespace Prisma {
   }
 
   /**
-   * Tiers.occupations
-   */
-  export type Tiers$occupationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Occupation
-     */
-    select?: OccupationSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: OccupationInclude<ExtArgs> | null
-    where?: OccupationWhereInput
-    orderBy?: OccupationOrderByWithRelationInput | OccupationOrderByWithRelationInput[]
-    cursor?: OccupationWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: OccupationScalarFieldEnum | OccupationScalarFieldEnum[]
-  }
-
-  /**
    * Tiers.contacts
    */
   export type Tiers$contactsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4149,6 +4129,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ContactScalarFieldEnum | ContactScalarFieldEnum[]
+  }
+
+  /**
+   * Tiers.occupations
+   */
+  export type Tiers$occupationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Occupation
+     */
+    select?: OccupationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OccupationInclude<ExtArgs> | null
+    where?: OccupationWhereInput
+    orderBy?: OccupationOrderByWithRelationInput | OccupationOrderByWithRelationInput[]
+    cursor?: OccupationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OccupationScalarFieldEnum | OccupationScalarFieldEnum[]
   }
 
   /**
@@ -4219,11 +4219,12 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     numeroFacture: string | null
-    datePaiement: Date | null
     dossierParentId: number | null
-    agissantPour: string | null
     isCourtMetrage: boolean | null
+    agissantPour: string | null
     aotGabaritId: number | null
+    aotFinalPath: string | null
+    datePaiement: Date | null
   }
 
   export type OccupationMaxAggregateOutputType = {
@@ -4245,11 +4246,12 @@ export namespace Prisma {
     created_at: Date | null
     updated_at: Date | null
     numeroFacture: string | null
-    datePaiement: Date | null
     dossierParentId: number | null
-    agissantPour: string | null
     isCourtMetrage: boolean | null
+    agissantPour: string | null
     aotGabaritId: number | null
+    aotFinalPath: string | null
+    datePaiement: Date | null
   }
 
   export type OccupationCountAggregateOutputType = {
@@ -4271,11 +4273,12 @@ export namespace Prisma {
     created_at: number
     updated_at: number
     numeroFacture: number
-    datePaiement: number
     dossierParentId: number
-    agissantPour: number
     isCourtMetrage: number
+    agissantPour: number
     aotGabaritId: number
+    aotFinalPath: number
+    datePaiement: number
     _all: number
   }
 
@@ -4321,11 +4324,12 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     numeroFacture?: true
-    datePaiement?: true
     dossierParentId?: true
-    agissantPour?: true
     isCourtMetrage?: true
+    agissantPour?: true
     aotGabaritId?: true
+    aotFinalPath?: true
+    datePaiement?: true
   }
 
   export type OccupationMaxAggregateInputType = {
@@ -4347,11 +4351,12 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     numeroFacture?: true
-    datePaiement?: true
     dossierParentId?: true
-    agissantPour?: true
     isCourtMetrage?: true
+    agissantPour?: true
     aotGabaritId?: true
+    aotFinalPath?: true
+    datePaiement?: true
   }
 
   export type OccupationCountAggregateInputType = {
@@ -4373,11 +4378,12 @@ export namespace Prisma {
     created_at?: true
     updated_at?: true
     numeroFacture?: true
-    datePaiement?: true
     dossierParentId?: true
-    agissantPour?: true
     isCourtMetrage?: true
+    agissantPour?: true
     aotGabaritId?: true
+    aotFinalPath?: true
+    datePaiement?: true
     _all?: true
   }
 
@@ -4486,11 +4492,12 @@ export namespace Prisma {
     created_at: Date
     updated_at: Date
     numeroFacture: string | null
-    datePaiement: Date | null
     dossierParentId: number | null
-    agissantPour: string | null
     isCourtMetrage: boolean
+    agissantPour: string | null
     aotGabaritId: number | null
+    aotFinalPath: string | null
+    datePaiement: Date | null
     _count: OccupationCountAggregateOutputType | null
     _avg: OccupationAvgAggregateOutputType | null
     _sum: OccupationSumAggregateOutputType | null
@@ -4531,11 +4538,12 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     numeroFacture?: boolean
-    datePaiement?: boolean
     dossierParentId?: boolean
-    agissantPour?: boolean
     isCourtMetrage?: boolean
+    agissantPour?: boolean
     aotGabaritId?: boolean
+    aotFinalPath?: boolean
+    datePaiement?: boolean
     contacts?: boolean | Occupation$contactsArgs<ExtArgs>
     dispositifs?: boolean | Occupation$dispositifsArgs<ExtArgs>
     lignes?: boolean | Occupation$lignesArgs<ExtArgs>
@@ -4563,11 +4571,12 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     numeroFacture?: boolean
-    datePaiement?: boolean
     dossierParentId?: boolean
-    agissantPour?: boolean
     isCourtMetrage?: boolean
+    agissantPour?: boolean
     aotGabaritId?: boolean
+    aotFinalPath?: boolean
+    datePaiement?: boolean
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["occupation"]>
 
@@ -4590,11 +4599,12 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     numeroFacture?: boolean
-    datePaiement?: boolean
     dossierParentId?: boolean
-    agissantPour?: boolean
     isCourtMetrage?: boolean
+    agissantPour?: boolean
     aotGabaritId?: boolean
+    aotFinalPath?: boolean
+    datePaiement?: boolean
   }
 
   export type OccupationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4637,11 +4647,12 @@ export namespace Prisma {
       created_at: Date
       updated_at: Date
       numeroFacture: string | null
-      datePaiement: Date | null
       dossierParentId: number | null
-      agissantPour: string | null
       isCourtMetrage: boolean
+      agissantPour: string | null
       aotGabaritId: number | null
+      aotFinalPath: string | null
+      datePaiement: Date | null
     }, ExtArgs["result"]["occupation"]>
     composites: {}
   }
@@ -5058,11 +5069,12 @@ export namespace Prisma {
     readonly created_at: FieldRef<"Occupation", 'DateTime'>
     readonly updated_at: FieldRef<"Occupation", 'DateTime'>
     readonly numeroFacture: FieldRef<"Occupation", 'String'>
-    readonly datePaiement: FieldRef<"Occupation", 'DateTime'>
     readonly dossierParentId: FieldRef<"Occupation", 'Int'>
-    readonly agissantPour: FieldRef<"Occupation", 'String'>
     readonly isCourtMetrage: FieldRef<"Occupation", 'Boolean'>
+    readonly agissantPour: FieldRef<"Occupation", 'String'>
     readonly aotGabaritId: FieldRef<"Occupation", 'Int'>
+    readonly aotFinalPath: FieldRef<"Occupation", 'String'>
+    readonly datePaiement: FieldRef<"Occupation", 'DateTime'>
   }
     
 
@@ -5743,8 +5755,8 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     entreprise?: boolean
-    occupation?: boolean | Contact$occupationArgs<ExtArgs>
     tiers?: boolean | Contact$tiersArgs<ExtArgs>
+    occupation?: boolean | Contact$occupationArgs<ExtArgs>
   }, ExtArgs["result"]["contact"]>
 
   export type ContactSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5761,8 +5773,8 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     entreprise?: boolean
-    occupation?: boolean | Contact$occupationArgs<ExtArgs>
     tiers?: boolean | Contact$tiersArgs<ExtArgs>
+    occupation?: boolean | Contact$occupationArgs<ExtArgs>
   }, ExtArgs["result"]["contact"]>
 
   export type ContactSelectScalar = {
@@ -5782,19 +5794,19 @@ export namespace Prisma {
   }
 
   export type ContactInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    occupation?: boolean | Contact$occupationArgs<ExtArgs>
     tiers?: boolean | Contact$tiersArgs<ExtArgs>
+    occupation?: boolean | Contact$occupationArgs<ExtArgs>
   }
   export type ContactIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    occupation?: boolean | Contact$occupationArgs<ExtArgs>
     tiers?: boolean | Contact$tiersArgs<ExtArgs>
+    occupation?: boolean | Contact$occupationArgs<ExtArgs>
   }
 
   export type $ContactPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Contact"
     objects: {
-      occupation: Prisma.$OccupationPayload<ExtArgs> | null
       tiers: Prisma.$TiersPayload<ExtArgs> | null
+      occupation: Prisma.$OccupationPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -6174,8 +6186,8 @@ export namespace Prisma {
    */
   export interface Prisma__ContactClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    occupation<T extends Contact$occupationArgs<ExtArgs> = {}>(args?: Subset<T, Contact$occupationArgs<ExtArgs>>): Prisma__OccupationClient<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     tiers<T extends Contact$tiersArgs<ExtArgs> = {}>(args?: Subset<T, Contact$tiersArgs<ExtArgs>>): Prisma__TiersClient<$Result.GetResult<Prisma.$TiersPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    occupation<T extends Contact$occupationArgs<ExtArgs> = {}>(args?: Subset<T, Contact$occupationArgs<ExtArgs>>): Prisma__OccupationClient<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6534,21 +6546,6 @@ export namespace Prisma {
   }
 
   /**
-   * Contact.occupation
-   */
-  export type Contact$occupationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Occupation
-     */
-    select?: OccupationSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: OccupationInclude<ExtArgs> | null
-    where?: OccupationWhereInput
-  }
-
-  /**
    * Contact.tiers
    */
   export type Contact$tiersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6561,6 +6558,21 @@ export namespace Prisma {
      */
     include?: TiersInclude<ExtArgs> | null
     where?: TiersWhereInput
+  }
+
+  /**
+   * Contact.occupation
+   */
+  export type Contact$occupationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Occupation
+     */
+    select?: OccupationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OccupationInclude<ExtArgs> | null
+    where?: OccupationWhereInput
   }
 
   /**
@@ -13831,10 +13843,10 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
-    filienUncUser: string | null
-    filienUncPass: string | null
-    filienUncDomain: string | null
     updated_at: Date | null
+    filienUncPass: string | null
+    filienUncUser: string | null
+    filienUncDomain: string | null
   }
 
   export type AppSettingsMaxAggregateOutputType = {
@@ -13874,10 +13886,10 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
-    filienUncUser: string | null
-    filienUncPass: string | null
-    filienUncDomain: string | null
     updated_at: Date | null
+    filienUncPass: string | null
+    filienUncUser: string | null
+    filienUncDomain: string | null
   }
 
   export type AppSettingsCountAggregateOutputType = {
@@ -13917,10 +13929,10 @@ export namespace Prisma {
     signataireRole: number
     signataireDelegation: number
     signataireNom: number
-    filienUncUser: number
-    filienUncPass: number
-    filienUncDomain: number
     updated_at: number
+    filienUncPass: number
+    filienUncUser: number
+    filienUncDomain: number
     _all: number
   }
 
@@ -13972,10 +13984,10 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
-    filienUncUser?: true
-    filienUncPass?: true
-    filienUncDomain?: true
     updated_at?: true
+    filienUncPass?: true
+    filienUncUser?: true
+    filienUncDomain?: true
   }
 
   export type AppSettingsMaxAggregateInputType = {
@@ -14015,10 +14027,10 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
-    filienUncUser?: true
-    filienUncPass?: true
-    filienUncDomain?: true
     updated_at?: true
+    filienUncPass?: true
+    filienUncUser?: true
+    filienUncDomain?: true
   }
 
   export type AppSettingsCountAggregateInputType = {
@@ -14058,10 +14070,10 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
-    filienUncUser?: true
-    filienUncPass?: true
-    filienUncDomain?: true
     updated_at?: true
+    filienUncPass?: true
+    filienUncUser?: true
+    filienUncDomain?: true
     _all?: true
   }
 
@@ -14188,10 +14200,10 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
-    filienUncUser: string | null
-    filienUncPass: string | null
-    filienUncDomain: string | null
     updated_at: Date
+    filienUncPass: string | null
+    filienUncUser: string | null
+    filienUncDomain: string | null
     _count: AppSettingsCountAggregateOutputType | null
     _avg: AppSettingsAvgAggregateOutputType | null
     _sum: AppSettingsSumAggregateOutputType | null
@@ -14250,10 +14262,10 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
-    filienUncUser?: boolean
-    filienUncPass?: boolean
-    filienUncDomain?: boolean
     updated_at?: boolean
+    filienUncPass?: boolean
+    filienUncUser?: boolean
+    filienUncDomain?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
   export type AppSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14293,10 +14305,10 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
-    filienUncUser?: boolean
-    filienUncPass?: boolean
-    filienUncDomain?: boolean
     updated_at?: boolean
+    filienUncPass?: boolean
+    filienUncUser?: boolean
+    filienUncDomain?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
   export type AppSettingsSelectScalar = {
@@ -14336,10 +14348,10 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
-    filienUncUser?: boolean
-    filienUncPass?: boolean
-    filienUncDomain?: boolean
     updated_at?: boolean
+    filienUncPass?: boolean
+    filienUncUser?: boolean
+    filienUncDomain?: boolean
   }
 
 
@@ -14383,10 +14395,10 @@ export namespace Prisma {
       signataireRole: string | null
       signataireDelegation: string | null
       signataireNom: string | null
-      filienUncUser: string | null
-      filienUncPass: string | null
-      filienUncDomain: string | null
       updated_at: Date
+      filienUncPass: string | null
+      filienUncUser: string | null
+      filienUncDomain: string | null
     }, ExtArgs["result"]["appSettings"]>
     composites: {}
   }
@@ -14816,10 +14828,10 @@ export namespace Prisma {
     readonly signataireRole: FieldRef<"AppSettings", 'String'>
     readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
     readonly signataireNom: FieldRef<"AppSettings", 'String'>
-    readonly filienUncUser: FieldRef<"AppSettings", 'String'>
-    readonly filienUncPass: FieldRef<"AppSettings", 'String'>
-    readonly filienUncDomain: FieldRef<"AppSettings", 'String'>
     readonly updated_at: FieldRef<"AppSettings", 'DateTime'>
+    readonly filienUncPass: FieldRef<"AppSettings", 'String'>
+    readonly filienUncUser: FieldRef<"AppSettings", 'String'>
+    readonly filienUncDomain: FieldRef<"AppSettings", 'String'>
   }
     
 
@@ -17209,7 +17221,9 @@ export namespace Prisma {
   export type GabaritMinAggregateOutputType = {
     id: number | null
     nom: string | null
+    type: string | null
     contenu: string | null
+    fichierPath: string | null
     isDefault: boolean | null
     created_at: Date | null
     updated_at: Date | null
@@ -17218,7 +17232,9 @@ export namespace Prisma {
   export type GabaritMaxAggregateOutputType = {
     id: number | null
     nom: string | null
+    type: string | null
     contenu: string | null
+    fichierPath: string | null
     isDefault: boolean | null
     created_at: Date | null
     updated_at: Date | null
@@ -17227,7 +17243,9 @@ export namespace Prisma {
   export type GabaritCountAggregateOutputType = {
     id: number
     nom: number
+    type: number
     contenu: number
+    fichierPath: number
     isDefault: number
     created_at: number
     updated_at: number
@@ -17246,7 +17264,9 @@ export namespace Prisma {
   export type GabaritMinAggregateInputType = {
     id?: true
     nom?: true
+    type?: true
     contenu?: true
+    fichierPath?: true
     isDefault?: true
     created_at?: true
     updated_at?: true
@@ -17255,7 +17275,9 @@ export namespace Prisma {
   export type GabaritMaxAggregateInputType = {
     id?: true
     nom?: true
+    type?: true
     contenu?: true
+    fichierPath?: true
     isDefault?: true
     created_at?: true
     updated_at?: true
@@ -17264,7 +17286,9 @@ export namespace Prisma {
   export type GabaritCountAggregateInputType = {
     id?: true
     nom?: true
+    type?: true
     contenu?: true
+    fichierPath?: true
     isDefault?: true
     created_at?: true
     updated_at?: true
@@ -17360,7 +17384,9 @@ export namespace Prisma {
   export type GabaritGroupByOutputType = {
     id: number
     nom: string
-    contenu: string
+    type: string
+    contenu: string | null
+    fichierPath: string | null
     isDefault: boolean
     created_at: Date
     updated_at: Date
@@ -17388,7 +17414,9 @@ export namespace Prisma {
   export type GabaritSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nom?: boolean
+    type?: boolean
     contenu?: boolean
+    fichierPath?: boolean
     isDefault?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -17397,7 +17425,9 @@ export namespace Prisma {
   export type GabaritSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     nom?: boolean
+    type?: boolean
     contenu?: boolean
+    fichierPath?: boolean
     isDefault?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -17406,7 +17436,9 @@ export namespace Prisma {
   export type GabaritSelectScalar = {
     id?: boolean
     nom?: boolean
+    type?: boolean
     contenu?: boolean
+    fichierPath?: boolean
     isDefault?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -17419,7 +17451,9 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       nom: string
-      contenu: string
+      type: string
+      contenu: string | null
+      fichierPath: string | null
       isDefault: boolean
       created_at: Date
       updated_at: Date
@@ -17818,7 +17852,9 @@ export namespace Prisma {
   interface GabaritFieldRefs {
     readonly id: FieldRef<"Gabarit", 'Int'>
     readonly nom: FieldRef<"Gabarit", 'String'>
+    readonly type: FieldRef<"Gabarit", 'String'>
     readonly contenu: FieldRef<"Gabarit", 'String'>
+    readonly fichierPath: FieldRef<"Gabarit", 'String'>
     readonly isDefault: FieldRef<"Gabarit", 'Boolean'>
     readonly created_at: FieldRef<"Gabarit", 'DateTime'>
     readonly updated_at: FieldRef<"Gabarit", 'DateTime'>
@@ -20250,8 +20286,8 @@ export namespace Prisma {
     versionId?: boolean
     created_at?: boolean
     updated_at?: boolean
-    version?: boolean | BacklogItem$versionArgs<ExtArgs>
     comments?: boolean | BacklogItem$commentsArgs<ExtArgs>
+    version?: boolean | BacklogItem$versionArgs<ExtArgs>
     _count?: boolean | BacklogItemCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["backlogItem"]>
 
@@ -20281,8 +20317,8 @@ export namespace Prisma {
   }
 
   export type BacklogItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    version?: boolean | BacklogItem$versionArgs<ExtArgs>
     comments?: boolean | BacklogItem$commentsArgs<ExtArgs>
+    version?: boolean | BacklogItem$versionArgs<ExtArgs>
     _count?: boolean | BacklogItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BacklogItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -20292,8 +20328,8 @@ export namespace Prisma {
   export type $BacklogItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "BacklogItem"
     objects: {
-      version: Prisma.$VersionReleasePayload<ExtArgs> | null
       comments: Prisma.$BacklogCommentPayload<ExtArgs>[]
+      version: Prisma.$VersionReleasePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -20669,8 +20705,8 @@ export namespace Prisma {
    */
   export interface Prisma__BacklogItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    version<T extends BacklogItem$versionArgs<ExtArgs> = {}>(args?: Subset<T, BacklogItem$versionArgs<ExtArgs>>): Prisma__VersionReleaseClient<$Result.GetResult<Prisma.$VersionReleasePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     comments<T extends BacklogItem$commentsArgs<ExtArgs> = {}>(args?: Subset<T, BacklogItem$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BacklogCommentPayload<ExtArgs>, T, "findMany"> | Null>
+    version<T extends BacklogItem$versionArgs<ExtArgs> = {}>(args?: Subset<T, BacklogItem$versionArgs<ExtArgs>>): Prisma__VersionReleaseClient<$Result.GetResult<Prisma.$VersionReleasePayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -21025,21 +21061,6 @@ export namespace Prisma {
   }
 
   /**
-   * BacklogItem.version
-   */
-  export type BacklogItem$versionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the VersionRelease
-     */
-    select?: VersionReleaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: VersionReleaseInclude<ExtArgs> | null
-    where?: VersionReleaseWhereInput
-  }
-
-  /**
    * BacklogItem.comments
    */
   export type BacklogItem$commentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -21057,6 +21078,21 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: BacklogCommentScalarFieldEnum | BacklogCommentScalarFieldEnum[]
+  }
+
+  /**
+   * BacklogItem.version
+   */
+  export type BacklogItem$versionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionRelease
+     */
+    select?: VersionReleaseSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionReleaseInclude<ExtArgs> | null
+    where?: VersionReleaseWhereInput
   }
 
   /**
@@ -24743,7 +24779,7 @@ export namespace Prisma {
     /**
      * The data needed to create a OdpConfig.
      */
-    data: XOR<OdpConfigCreateInput, OdpConfigUncheckedCreateInput>
+    data?: XOR<OdpConfigCreateInput, OdpConfigUncheckedCreateInput>
   }
 
   /**
@@ -26925,11 +26961,12 @@ export namespace Prisma {
     created_at: 'created_at',
     updated_at: 'updated_at',
     numeroFacture: 'numeroFacture',
-    datePaiement: 'datePaiement',
     dossierParentId: 'dossierParentId',
-    agissantPour: 'agissantPour',
     isCourtMetrage: 'isCourtMetrage',
-    aotGabaritId: 'aotGabaritId'
+    agissantPour: 'agissantPour',
+    aotGabaritId: 'aotGabaritId',
+    aotFinalPath: 'aotFinalPath',
+    datePaiement: 'datePaiement'
   };
 
   export type OccupationScalarFieldEnum = (typeof OccupationScalarFieldEnum)[keyof typeof OccupationScalarFieldEnum]
@@ -27095,10 +27132,10 @@ export namespace Prisma {
     signataireRole: 'signataireRole',
     signataireDelegation: 'signataireDelegation',
     signataireNom: 'signataireNom',
-    filienUncUser: 'filienUncUser',
+    updated_at: 'updated_at',
     filienUncPass: 'filienUncPass',
-    filienUncDomain: 'filienUncDomain',
-    updated_at: 'updated_at'
+    filienUncUser: 'filienUncUser',
+    filienUncDomain: 'filienUncDomain'
   };
 
   export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
@@ -27139,7 +27176,9 @@ export namespace Prisma {
   export const GabaritScalarFieldEnum: {
     id: 'id',
     nom: 'nom',
+    type: 'type',
     contenu: 'contenu',
+    fichierPath: 'fichierPath',
     isDefault: 'isDefault',
     created_at: 'created_at',
     updated_at: 'updated_at'
@@ -27340,8 +27379,8 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
-    occupations?: OccupationListRelationFilter
     contacts?: ContactListRelationFilter
+    occupations?: OccupationListRelationFilter
   }
 
   export type TiersOrderByWithRelationInput = {
@@ -27358,8 +27397,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrderInput | SortOrder
     etatAdministratif?: SortOrderInput | SortOrder
-    occupations?: OccupationOrderByRelationAggregateInput
     contacts?: ContactOrderByRelationAggregateInput
+    occupations?: OccupationOrderByRelationAggregateInput
   }
 
   export type TiersWhereUniqueInput = Prisma.AtLeast<{
@@ -27379,8 +27418,8 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
-    occupations?: OccupationListRelationFilter
     contacts?: ContactListRelationFilter
+    occupations?: OccupationListRelationFilter
   }, "id" | "siret" | "code_sedit">
 
   export type TiersOrderByWithAggregationInput = {
@@ -27445,11 +27484,12 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Occupation"> | Date | string
     updated_at?: DateTimeFilter<"Occupation"> | Date | string
     numeroFacture?: StringNullableFilter<"Occupation"> | string | null
-    datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
-    agissantPour?: StringNullableFilter<"Occupation"> | string | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
+    agissantPour?: StringNullableFilter<"Occupation"> | string | null
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
+    aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
+    datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -27476,11 +27516,12 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrderInput | SortOrder
-    datePaiement?: SortOrderInput | SortOrder
     dossierParentId?: SortOrderInput | SortOrder
-    agissantPour?: SortOrderInput | SortOrder
     isCourtMetrage?: SortOrder
+    agissantPour?: SortOrderInput | SortOrder
     aotGabaritId?: SortOrderInput | SortOrder
+    aotFinalPath?: SortOrderInput | SortOrder
+    datePaiement?: SortOrderInput | SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     dispositifs?: DispositifOrderByRelationAggregateInput
     lignes?: LigneOccupationOrderByRelationAggregateInput
@@ -27510,11 +27551,12 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Occupation"> | Date | string
     updated_at?: DateTimeFilter<"Occupation"> | Date | string
     numeroFacture?: StringNullableFilter<"Occupation"> | string | null
-    datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
-    agissantPour?: StringNullableFilter<"Occupation"> | string | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
+    agissantPour?: StringNullableFilter<"Occupation"> | string | null
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
+    aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
+    datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -27541,11 +27583,12 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrderInput | SortOrder
-    datePaiement?: SortOrderInput | SortOrder
     dossierParentId?: SortOrderInput | SortOrder
-    agissantPour?: SortOrderInput | SortOrder
     isCourtMetrage?: SortOrder
+    agissantPour?: SortOrderInput | SortOrder
     aotGabaritId?: SortOrderInput | SortOrder
+    aotFinalPath?: SortOrderInput | SortOrder
+    datePaiement?: SortOrderInput | SortOrder
     _count?: OccupationCountOrderByAggregateInput
     _avg?: OccupationAvgOrderByAggregateInput
     _max?: OccupationMaxOrderByAggregateInput
@@ -27575,11 +27618,12 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"Occupation"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Occupation"> | Date | string
     numeroFacture?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
-    datePaiement?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
     dossierParentId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
-    agissantPour?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     isCourtMetrage?: BoolWithAggregatesFilter<"Occupation"> | boolean
+    agissantPour?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     aotGabaritId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
+    aotFinalPath?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
+    datePaiement?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
   }
 
   export type ContactWhereInput = {
@@ -27599,8 +27643,8 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Contact"> | Date | string
     updated_at?: DateTimeFilter<"Contact"> | Date | string
     entreprise?: StringNullableFilter<"Contact"> | string | null
-    occupation?: XOR<OccupationNullableRelationFilter, OccupationWhereInput> | null
     tiers?: XOR<TiersNullableRelationFilter, TiersWhereInput> | null
+    occupation?: XOR<OccupationNullableRelationFilter, OccupationWhereInput> | null
   }
 
   export type ContactOrderByWithRelationInput = {
@@ -27617,8 +27661,8 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     entreprise?: SortOrderInput | SortOrder
-    occupation?: OccupationOrderByWithRelationInput
     tiers?: TiersOrderByWithRelationInput
+    occupation?: OccupationOrderByWithRelationInput
   }
 
   export type ContactWhereUniqueInput = Prisma.AtLeast<{
@@ -27638,8 +27682,8 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Contact"> | Date | string
     updated_at?: DateTimeFilter<"Contact"> | Date | string
     entreprise?: StringNullableFilter<"Contact"> | string | null
-    occupation?: XOR<OccupationNullableRelationFilter, OccupationWhereInput> | null
     tiers?: XOR<TiersNullableRelationFilter, TiersWhereInput> | null
+    occupation?: XOR<OccupationNullableRelationFilter, OccupationWhereInput> | null
   }, "id">
 
   export type ContactOrderByWithAggregationInput = {
@@ -28263,10 +28307,10 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
+    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
   }
 
   export type AppSettingsOrderByWithRelationInput = {
@@ -28306,10 +28350,10 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
-    filienUncUser?: SortOrderInput | SortOrder
-    filienUncPass?: SortOrderInput | SortOrder
-    filienUncDomain?: SortOrderInput | SortOrder
     updated_at?: SortOrder
+    filienUncPass?: SortOrderInput | SortOrder
+    filienUncUser?: SortOrderInput | SortOrder
+    filienUncDomain?: SortOrderInput | SortOrder
   }
 
   export type AppSettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -28352,10 +28396,10 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
+    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
   }, "id">
 
   export type AppSettingsOrderByWithAggregationInput = {
@@ -28395,10 +28439,10 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
-    filienUncUser?: SortOrderInput | SortOrder
-    filienUncPass?: SortOrderInput | SortOrder
-    filienUncDomain?: SortOrderInput | SortOrder
     updated_at?: SortOrder
+    filienUncPass?: SortOrderInput | SortOrder
+    filienUncUser?: SortOrderInput | SortOrder
+    filienUncDomain?: SortOrderInput | SortOrder
     _count?: AppSettingsCountOrderByAggregateInput
     _avg?: AppSettingsAvgOrderByAggregateInput
     _max?: AppSettingsMaxOrderByAggregateInput
@@ -28446,10 +28490,10 @@ export namespace Prisma {
     signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienUncDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     updated_at?: DateTimeWithAggregatesFilter<"AppSettings"> | Date | string
+    filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
   }
 
   export type LigneOccupationWhereInput = {
@@ -28625,7 +28669,9 @@ export namespace Prisma {
     NOT?: GabaritWhereInput | GabaritWhereInput[]
     id?: IntFilter<"Gabarit"> | number
     nom?: StringFilter<"Gabarit"> | string
-    contenu?: StringFilter<"Gabarit"> | string
+    type?: StringFilter<"Gabarit"> | string
+    contenu?: StringNullableFilter<"Gabarit"> | string | null
+    fichierPath?: StringNullableFilter<"Gabarit"> | string | null
     isDefault?: BoolFilter<"Gabarit"> | boolean
     created_at?: DateTimeFilter<"Gabarit"> | Date | string
     updated_at?: DateTimeFilter<"Gabarit"> | Date | string
@@ -28634,7 +28680,9 @@ export namespace Prisma {
   export type GabaritOrderByWithRelationInput = {
     id?: SortOrder
     nom?: SortOrder
-    contenu?: SortOrder
+    type?: SortOrder
+    contenu?: SortOrderInput | SortOrder
+    fichierPath?: SortOrderInput | SortOrder
     isDefault?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -28646,7 +28694,9 @@ export namespace Prisma {
     OR?: GabaritWhereInput[]
     NOT?: GabaritWhereInput | GabaritWhereInput[]
     nom?: StringFilter<"Gabarit"> | string
-    contenu?: StringFilter<"Gabarit"> | string
+    type?: StringFilter<"Gabarit"> | string
+    contenu?: StringNullableFilter<"Gabarit"> | string | null
+    fichierPath?: StringNullableFilter<"Gabarit"> | string | null
     isDefault?: BoolFilter<"Gabarit"> | boolean
     created_at?: DateTimeFilter<"Gabarit"> | Date | string
     updated_at?: DateTimeFilter<"Gabarit"> | Date | string
@@ -28655,7 +28705,9 @@ export namespace Prisma {
   export type GabaritOrderByWithAggregationInput = {
     id?: SortOrder
     nom?: SortOrder
-    contenu?: SortOrder
+    type?: SortOrder
+    contenu?: SortOrderInput | SortOrder
+    fichierPath?: SortOrderInput | SortOrder
     isDefault?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -28672,7 +28724,9 @@ export namespace Prisma {
     NOT?: GabaritScalarWhereWithAggregatesInput | GabaritScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Gabarit"> | number
     nom?: StringWithAggregatesFilter<"Gabarit"> | string
-    contenu?: StringWithAggregatesFilter<"Gabarit"> | string
+    type?: StringWithAggregatesFilter<"Gabarit"> | string
+    contenu?: StringNullableWithAggregatesFilter<"Gabarit"> | string | null
+    fichierPath?: StringNullableWithAggregatesFilter<"Gabarit"> | string | null
     isDefault?: BoolWithAggregatesFilter<"Gabarit"> | boolean
     created_at?: DateTimeWithAggregatesFilter<"Gabarit"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Gabarit"> | Date | string
@@ -28834,8 +28888,8 @@ export namespace Prisma {
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
-    version?: XOR<VersionReleaseNullableRelationFilter, VersionReleaseWhereInput> | null
     comments?: BacklogCommentListRelationFilter
+    version?: XOR<VersionReleaseNullableRelationFilter, VersionReleaseWhereInput> | null
   }
 
   export type BacklogItemOrderByWithRelationInput = {
@@ -28848,8 +28902,8 @@ export namespace Prisma {
     versionId?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
-    version?: VersionReleaseOrderByWithRelationInput
     comments?: BacklogCommentOrderByRelationAggregateInput
+    version?: VersionReleaseOrderByWithRelationInput
   }
 
   export type BacklogItemWhereUniqueInput = Prisma.AtLeast<{
@@ -28865,8 +28919,8 @@ export namespace Prisma {
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
-    version?: XOR<VersionReleaseNullableRelationFilter, VersionReleaseWhereInput> | null
     comments?: BacklogCommentListRelationFilter
+    version?: XOR<VersionReleaseNullableRelationFilter, VersionReleaseWhereInput> | null
   }, "id">
 
   export type BacklogItemOrderByWithAggregationInput = {
@@ -29280,8 +29334,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
-    occupations?: OccupationCreateNestedManyWithoutTiersInput
     contacts?: ContactCreateNestedManyWithoutTiersInput
+    occupations?: OccupationCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateInput = {
@@ -29298,8 +29352,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
-    occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
+    occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUpdateInput = {
@@ -29315,8 +29369,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
-    occupations?: OccupationUpdateManyWithoutTiersNestedInput
     contacts?: ContactUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateInput = {
@@ -29333,8 +29387,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
-    occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersCreateManyInput = {
@@ -29401,11 +29455,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -29432,11 +29487,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -29460,11 +29516,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -29491,11 +29548,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -29521,11 +29579,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
   }
 
   export type OccupationUpdateManyMutationInput = {
@@ -29545,11 +29604,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type OccupationUncheckedUpdateManyInput = {
@@ -29571,11 +29631,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ContactCreateInput = {
@@ -29589,8 +29650,8 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     entreprise?: string | null
-    occupation?: OccupationCreateNestedOneWithoutContactsInput
     tiers?: TiersCreateNestedOneWithoutContactsInput
+    occupation?: OccupationCreateNestedOneWithoutContactsInput
   }
 
   export type ContactUncheckedCreateInput = {
@@ -29620,8 +29681,8 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     entreprise?: NullableStringFieldUpdateOperationsInput | string | null
-    occupation?: OccupationUpdateOneWithoutContactsNestedInput
     tiers?: TiersUpdateOneWithoutContactsNestedInput
+    occupation?: OccupationUpdateOneWithoutContactsNestedInput
   }
 
   export type ContactUncheckedUpdateInput = {
@@ -30299,10 +30360,10 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
-    filienUncUser?: string | null
-    filienUncPass?: string | null
-    filienUncDomain?: string | null
     updated_at?: Date | string
+    filienUncPass?: string | null
+    filienUncUser?: string | null
+    filienUncDomain?: string | null
   }
 
   export type AppSettingsUncheckedCreateInput = {
@@ -30342,10 +30403,10 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
-    filienUncUser?: string | null
-    filienUncPass?: string | null
-    filienUncDomain?: string | null
     updated_at?: Date | string
+    filienUncPass?: string | null
+    filienUncUser?: string | null
+    filienUncDomain?: string | null
   }
 
   export type AppSettingsUpdateInput = {
@@ -30384,10 +30445,10 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppSettingsUncheckedUpdateInput = {
@@ -30427,10 +30488,10 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppSettingsCreateManyInput = {
@@ -30470,10 +30531,10 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
-    filienUncUser?: string | null
-    filienUncPass?: string | null
-    filienUncDomain?: string | null
     updated_at?: Date | string
+    filienUncPass?: string | null
+    filienUncUser?: string | null
+    filienUncDomain?: string | null
   }
 
   export type AppSettingsUpdateManyMutationInput = {
@@ -30512,10 +30573,10 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppSettingsUncheckedUpdateManyInput = {
@@ -30555,10 +30616,10 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type LigneOccupationCreateInput = {
@@ -30736,7 +30797,9 @@ export namespace Prisma {
 
   export type GabaritCreateInput = {
     nom: string
-    contenu: string
+    type?: string
+    contenu?: string | null
+    fichierPath?: string | null
     isDefault?: boolean
     created_at?: Date | string
     updated_at?: Date | string
@@ -30745,7 +30808,9 @@ export namespace Prisma {
   export type GabaritUncheckedCreateInput = {
     id?: number
     nom: string
-    contenu: string
+    type?: string
+    contenu?: string | null
+    fichierPath?: string | null
     isDefault?: boolean
     created_at?: Date | string
     updated_at?: Date | string
@@ -30753,7 +30818,9 @@ export namespace Prisma {
 
   export type GabaritUpdateInput = {
     nom?: StringFieldUpdateOperationsInput | string
-    contenu?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contenu?: NullableStringFieldUpdateOperationsInput | string | null
+    fichierPath?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30762,7 +30829,9 @@ export namespace Prisma {
   export type GabaritUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     nom?: StringFieldUpdateOperationsInput | string
-    contenu?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contenu?: NullableStringFieldUpdateOperationsInput | string | null
+    fichierPath?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30771,7 +30840,9 @@ export namespace Prisma {
   export type GabaritCreateManyInput = {
     id?: number
     nom: string
-    contenu: string
+    type?: string
+    contenu?: string | null
+    fichierPath?: string | null
     isDefault?: boolean
     created_at?: Date | string
     updated_at?: Date | string
@@ -30779,7 +30850,9 @@ export namespace Prisma {
 
   export type GabaritUpdateManyMutationInput = {
     nom?: StringFieldUpdateOperationsInput | string
-    contenu?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contenu?: NullableStringFieldUpdateOperationsInput | string | null
+    fichierPath?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30788,7 +30861,9 @@ export namespace Prisma {
   export type GabaritUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     nom?: StringFieldUpdateOperationsInput | string
-    contenu?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    contenu?: NullableStringFieldUpdateOperationsInput | string | null
+    fichierPath?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30957,8 +31032,8 @@ export namespace Prisma {
     status?: string
     created_at?: Date | string
     updated_at?: Date | string
-    version?: VersionReleaseCreateNestedOneWithoutBacklogItemsInput
     comments?: BacklogCommentCreateNestedManyWithoutBacklogItemInput
+    version?: VersionReleaseCreateNestedOneWithoutBacklogItemsInput
   }
 
   export type BacklogItemUncheckedCreateInput = {
@@ -30982,8 +31057,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    version?: VersionReleaseUpdateOneWithoutBacklogItemsNestedInput
     comments?: BacklogCommentUpdateManyWithoutBacklogItemNestedInput
+    version?: VersionReleaseUpdateOneWithoutBacklogItemsNestedInput
   }
 
   export type BacklogItemUncheckedUpdateInput = {
@@ -31210,21 +31285,19 @@ export namespace Prisma {
   }
 
   export type OdpConfigCreateInput = {
-    annee: number
     deliberationPath?: string | null
     tarifsTournagesPath?: string | null
     tarifsOdpPath?: string | null
   }
 
   export type OdpConfigUncheckedCreateInput = {
-    annee: number
+    annee?: number
     deliberationPath?: string | null
     tarifsTournagesPath?: string | null
     tarifsOdpPath?: string | null
   }
 
   export type OdpConfigUpdateInput = {
-    annee?: IntFieldUpdateOperationsInput | number
     deliberationPath?: NullableStringFieldUpdateOperationsInput | string | null
     tarifsTournagesPath?: NullableStringFieldUpdateOperationsInput | string | null
     tarifsOdpPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31238,14 +31311,13 @@ export namespace Prisma {
   }
 
   export type OdpConfigCreateManyInput = {
-    annee: number
+    annee?: number
     deliberationPath?: string | null
     tarifsTournagesPath?: string | null
     tarifsOdpPath?: string | null
   }
 
   export type OdpConfigUpdateManyMutationInput = {
-    annee?: IntFieldUpdateOperationsInput | number
     deliberationPath?: NullableStringFieldUpdateOperationsInput | string | null
     tarifsTournagesPath?: NullableStringFieldUpdateOperationsInput | string | null
     tarifsOdpPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -31466,16 +31538,16 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type OccupationListRelationFilter = {
-    every?: OccupationWhereInput
-    some?: OccupationWhereInput
-    none?: OccupationWhereInput
-  }
-
   export type ContactListRelationFilter = {
     every?: ContactWhereInput
     some?: ContactWhereInput
     none?: ContactWhereInput
+  }
+
+  export type OccupationListRelationFilter = {
+    every?: OccupationWhereInput
+    some?: OccupationWhereInput
+    none?: OccupationWhereInput
   }
 
   export type SortOrderInput = {
@@ -31483,11 +31555,11 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type OccupationOrderByRelationAggregateInput = {
+  export type ContactOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type ContactOrderByRelationAggregateInput = {
+  export type OccupationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -31723,11 +31795,12 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrder
-    datePaiement?: SortOrder
     dossierParentId?: SortOrder
-    agissantPour?: SortOrder
     isCourtMetrage?: SortOrder
+    agissantPour?: SortOrder
     aotGabaritId?: SortOrder
+    aotFinalPath?: SortOrder
+    datePaiement?: SortOrder
   }
 
   export type OccupationAvgOrderByAggregateInput = {
@@ -31760,11 +31833,12 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrder
-    datePaiement?: SortOrder
     dossierParentId?: SortOrder
-    agissantPour?: SortOrder
     isCourtMetrage?: SortOrder
+    agissantPour?: SortOrder
     aotGabaritId?: SortOrder
+    aotFinalPath?: SortOrder
+    datePaiement?: SortOrder
   }
 
   export type OccupationMinOrderByAggregateInput = {
@@ -31786,11 +31860,12 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     numeroFacture?: SortOrder
-    datePaiement?: SortOrder
     dossierParentId?: SortOrder
-    agissantPour?: SortOrder
     isCourtMetrage?: SortOrder
+    agissantPour?: SortOrder
     aotGabaritId?: SortOrder
+    aotFinalPath?: SortOrder
+    datePaiement?: SortOrder
   }
 
   export type OccupationSumOrderByAggregateInput = {
@@ -31858,14 +31933,14 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
-  export type OccupationNullableRelationFilter = {
-    is?: OccupationWhereInput | null
-    isNot?: OccupationWhereInput | null
-  }
-
   export type TiersNullableRelationFilter = {
     is?: TiersWhereInput | null
     isNot?: TiersWhereInput | null
+  }
+
+  export type OccupationNullableRelationFilter = {
+    is?: OccupationWhereInput | null
+    isNot?: OccupationWhereInput | null
   }
 
   export type ContactCountOrderByAggregateInput = {
@@ -32333,10 +32408,10 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
-    filienUncUser?: SortOrder
-    filienUncPass?: SortOrder
-    filienUncDomain?: SortOrder
     updated_at?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncDomain?: SortOrder
   }
 
   export type AppSettingsAvgOrderByAggregateInput = {
@@ -32381,10 +32456,10 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
-    filienUncUser?: SortOrder
-    filienUncPass?: SortOrder
-    filienUncDomain?: SortOrder
     updated_at?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncDomain?: SortOrder
   }
 
   export type AppSettingsMinOrderByAggregateInput = {
@@ -32424,10 +32499,10 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
-    filienUncUser?: SortOrder
-    filienUncPass?: SortOrder
-    filienUncDomain?: SortOrder
     updated_at?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncDomain?: SortOrder
   }
 
   export type AppSettingsSumOrderByAggregateInput = {
@@ -32557,7 +32632,9 @@ export namespace Prisma {
   export type GabaritCountOrderByAggregateInput = {
     id?: SortOrder
     nom?: SortOrder
+    type?: SortOrder
     contenu?: SortOrder
+    fichierPath?: SortOrder
     isDefault?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -32570,7 +32647,9 @@ export namespace Prisma {
   export type GabaritMaxOrderByAggregateInput = {
     id?: SortOrder
     nom?: SortOrder
+    type?: SortOrder
     contenu?: SortOrder
+    fichierPath?: SortOrder
     isDefault?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -32579,7 +32658,9 @@ export namespace Prisma {
   export type GabaritMinOrderByAggregateInput = {
     id?: SortOrder
     nom?: SortOrder
+    type?: SortOrder
     contenu?: SortOrder
+    fichierPath?: SortOrder
     isDefault?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -32676,15 +32757,15 @@ export namespace Prisma {
     id?: SortOrder
   }
 
-  export type VersionReleaseNullableRelationFilter = {
-    is?: VersionReleaseWhereInput | null
-    isNot?: VersionReleaseWhereInput | null
-  }
-
   export type BacklogCommentListRelationFilter = {
     every?: BacklogCommentWhereInput
     some?: BacklogCommentWhereInput
     none?: BacklogCommentWhereInput
+  }
+
+  export type VersionReleaseNullableRelationFilter = {
+    is?: VersionReleaseWhereInput | null
+    isNot?: VersionReleaseWhereInput | null
   }
 
   export type BacklogCommentOrderByRelationAggregateInput = {
@@ -32987,13 +33068,6 @@ export namespace Prisma {
     total?: SortOrder
   }
 
-  export type OccupationCreateNestedManyWithoutTiersInput = {
-    create?: XOR<OccupationCreateWithoutTiersInput, OccupationUncheckedCreateWithoutTiersInput> | OccupationCreateWithoutTiersInput[] | OccupationUncheckedCreateWithoutTiersInput[]
-    connectOrCreate?: OccupationCreateOrConnectWithoutTiersInput | OccupationCreateOrConnectWithoutTiersInput[]
-    createMany?: OccupationCreateManyTiersInputEnvelope
-    connect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
-  }
-
   export type ContactCreateNestedManyWithoutTiersInput = {
     create?: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput> | ContactCreateWithoutTiersInput[] | ContactUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutTiersInput | ContactCreateOrConnectWithoutTiersInput[]
@@ -33001,7 +33075,7 @@ export namespace Prisma {
     connect?: ContactWhereUniqueInput | ContactWhereUniqueInput[]
   }
 
-  export type OccupationUncheckedCreateNestedManyWithoutTiersInput = {
+  export type OccupationCreateNestedManyWithoutTiersInput = {
     create?: XOR<OccupationCreateWithoutTiersInput, OccupationUncheckedCreateWithoutTiersInput> | OccupationCreateWithoutTiersInput[] | OccupationUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: OccupationCreateOrConnectWithoutTiersInput | OccupationCreateOrConnectWithoutTiersInput[]
     createMany?: OccupationCreateManyTiersInputEnvelope
@@ -33013,6 +33087,13 @@ export namespace Prisma {
     connectOrCreate?: ContactCreateOrConnectWithoutTiersInput | ContactCreateOrConnectWithoutTiersInput[]
     createMany?: ContactCreateManyTiersInputEnvelope
     connect?: ContactWhereUniqueInput | ContactWhereUniqueInput[]
+  }
+
+  export type OccupationUncheckedCreateNestedManyWithoutTiersInput = {
+    create?: XOR<OccupationCreateWithoutTiersInput, OccupationUncheckedCreateWithoutTiersInput> | OccupationCreateWithoutTiersInput[] | OccupationUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: OccupationCreateOrConnectWithoutTiersInput | OccupationCreateOrConnectWithoutTiersInput[]
+    createMany?: OccupationCreateManyTiersInputEnvelope
+    connect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -33035,20 +33116,6 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type OccupationUpdateManyWithoutTiersNestedInput = {
-    create?: XOR<OccupationCreateWithoutTiersInput, OccupationUncheckedCreateWithoutTiersInput> | OccupationCreateWithoutTiersInput[] | OccupationUncheckedCreateWithoutTiersInput[]
-    connectOrCreate?: OccupationCreateOrConnectWithoutTiersInput | OccupationCreateOrConnectWithoutTiersInput[]
-    upsert?: OccupationUpsertWithWhereUniqueWithoutTiersInput | OccupationUpsertWithWhereUniqueWithoutTiersInput[]
-    createMany?: OccupationCreateManyTiersInputEnvelope
-    set?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
-    disconnect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
-    delete?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
-    connect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
-    update?: OccupationUpdateWithWhereUniqueWithoutTiersInput | OccupationUpdateWithWhereUniqueWithoutTiersInput[]
-    updateMany?: OccupationUpdateManyWithWhereWithoutTiersInput | OccupationUpdateManyWithWhereWithoutTiersInput[]
-    deleteMany?: OccupationScalarWhereInput | OccupationScalarWhereInput[]
-  }
-
   export type ContactUpdateManyWithoutTiersNestedInput = {
     create?: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput> | ContactCreateWithoutTiersInput[] | ContactUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutTiersInput | ContactCreateOrConnectWithoutTiersInput[]
@@ -33063,15 +33130,7 @@ export namespace Prisma {
     deleteMany?: ContactScalarWhereInput | ContactScalarWhereInput[]
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type OccupationUncheckedUpdateManyWithoutTiersNestedInput = {
+  export type OccupationUpdateManyWithoutTiersNestedInput = {
     create?: XOR<OccupationCreateWithoutTiersInput, OccupationUncheckedCreateWithoutTiersInput> | OccupationCreateWithoutTiersInput[] | OccupationUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: OccupationCreateOrConnectWithoutTiersInput | OccupationCreateOrConnectWithoutTiersInput[]
     upsert?: OccupationUpsertWithWhereUniqueWithoutTiersInput | OccupationUpsertWithWhereUniqueWithoutTiersInput[]
@@ -33083,6 +33142,14 @@ export namespace Prisma {
     update?: OccupationUpdateWithWhereUniqueWithoutTiersInput | OccupationUpdateWithWhereUniqueWithoutTiersInput[]
     updateMany?: OccupationUpdateManyWithWhereWithoutTiersInput | OccupationUpdateManyWithWhereWithoutTiersInput[]
     deleteMany?: OccupationScalarWhereInput | OccupationScalarWhereInput[]
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type ContactUncheckedUpdateManyWithoutTiersNestedInput = {
@@ -33097,6 +33164,20 @@ export namespace Prisma {
     update?: ContactUpdateWithWhereUniqueWithoutTiersInput | ContactUpdateWithWhereUniqueWithoutTiersInput[]
     updateMany?: ContactUpdateManyWithWhereWithoutTiersInput | ContactUpdateManyWithWhereWithoutTiersInput[]
     deleteMany?: ContactScalarWhereInput | ContactScalarWhereInput[]
+  }
+
+  export type OccupationUncheckedUpdateManyWithoutTiersNestedInput = {
+    create?: XOR<OccupationCreateWithoutTiersInput, OccupationUncheckedCreateWithoutTiersInput> | OccupationCreateWithoutTiersInput[] | OccupationUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: OccupationCreateOrConnectWithoutTiersInput | OccupationCreateOrConnectWithoutTiersInput[]
+    upsert?: OccupationUpsertWithWhereUniqueWithoutTiersInput | OccupationUpsertWithWhereUniqueWithoutTiersInput[]
+    createMany?: OccupationCreateManyTiersInputEnvelope
+    set?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
+    disconnect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
+    delete?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
+    connect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
+    update?: OccupationUpdateWithWhereUniqueWithoutTiersInput | OccupationUpdateWithWhereUniqueWithoutTiersInput[]
+    updateMany?: OccupationUpdateManyWithWhereWithoutTiersInput | OccupationUpdateManyWithWhereWithoutTiersInput[]
+    deleteMany?: OccupationScalarWhereInput | OccupationScalarWhereInput[]
   }
 
   export type ContactCreateNestedManyWithoutOccupationInput = {
@@ -33305,26 +33386,16 @@ export namespace Prisma {
     deleteMany?: NoteScalarWhereInput | NoteScalarWhereInput[]
   }
 
-  export type OccupationCreateNestedOneWithoutContactsInput = {
-    create?: XOR<OccupationCreateWithoutContactsInput, OccupationUncheckedCreateWithoutContactsInput>
-    connectOrCreate?: OccupationCreateOrConnectWithoutContactsInput
-    connect?: OccupationWhereUniqueInput
-  }
-
   export type TiersCreateNestedOneWithoutContactsInput = {
     create?: XOR<TiersCreateWithoutContactsInput, TiersUncheckedCreateWithoutContactsInput>
     connectOrCreate?: TiersCreateOrConnectWithoutContactsInput
     connect?: TiersWhereUniqueInput
   }
 
-  export type OccupationUpdateOneWithoutContactsNestedInput = {
+  export type OccupationCreateNestedOneWithoutContactsInput = {
     create?: XOR<OccupationCreateWithoutContactsInput, OccupationUncheckedCreateWithoutContactsInput>
     connectOrCreate?: OccupationCreateOrConnectWithoutContactsInput
-    upsert?: OccupationUpsertWithoutContactsInput
-    disconnect?: OccupationWhereInput | boolean
-    delete?: OccupationWhereInput | boolean
     connect?: OccupationWhereUniqueInput
-    update?: XOR<XOR<OccupationUpdateToOneWithWhereWithoutContactsInput, OccupationUpdateWithoutContactsInput>, OccupationUncheckedUpdateWithoutContactsInput>
   }
 
   export type TiersUpdateOneWithoutContactsNestedInput = {
@@ -33335,6 +33406,16 @@ export namespace Prisma {
     delete?: TiersWhereInput | boolean
     connect?: TiersWhereUniqueInput
     update?: XOR<XOR<TiersUpdateToOneWithWhereWithoutContactsInput, TiersUpdateWithoutContactsInput>, TiersUncheckedUpdateWithoutContactsInput>
+  }
+
+  export type OccupationUpdateOneWithoutContactsNestedInput = {
+    create?: XOR<OccupationCreateWithoutContactsInput, OccupationUncheckedCreateWithoutContactsInput>
+    connectOrCreate?: OccupationCreateOrConnectWithoutContactsInput
+    upsert?: OccupationUpsertWithoutContactsInput
+    disconnect?: OccupationWhereInput | boolean
+    delete?: OccupationWhereInput | boolean
+    connect?: OccupationWhereUniqueInput
+    update?: XOR<XOR<OccupationUpdateToOneWithWhereWithoutContactsInput, OccupationUpdateWithoutContactsInput>, OccupationUncheckedUpdateWithoutContactsInput>
   }
 
   export type OccupationCreateNestedOneWithoutNotesInput = {
@@ -33671,12 +33752,6 @@ export namespace Prisma {
     update?: XOR<XOR<OccupationUpdateToOneWithWhereWithoutDispositifsInput, OccupationUpdateWithoutDispositifsInput>, OccupationUncheckedUpdateWithoutDispositifsInput>
   }
 
-  export type VersionReleaseCreateNestedOneWithoutBacklogItemsInput = {
-    create?: XOR<VersionReleaseCreateWithoutBacklogItemsInput, VersionReleaseUncheckedCreateWithoutBacklogItemsInput>
-    connectOrCreate?: VersionReleaseCreateOrConnectWithoutBacklogItemsInput
-    connect?: VersionReleaseWhereUniqueInput
-  }
-
   export type BacklogCommentCreateNestedManyWithoutBacklogItemInput = {
     create?: XOR<BacklogCommentCreateWithoutBacklogItemInput, BacklogCommentUncheckedCreateWithoutBacklogItemInput> | BacklogCommentCreateWithoutBacklogItemInput[] | BacklogCommentUncheckedCreateWithoutBacklogItemInput[]
     connectOrCreate?: BacklogCommentCreateOrConnectWithoutBacklogItemInput | BacklogCommentCreateOrConnectWithoutBacklogItemInput[]
@@ -33684,21 +33759,17 @@ export namespace Prisma {
     connect?: BacklogCommentWhereUniqueInput | BacklogCommentWhereUniqueInput[]
   }
 
+  export type VersionReleaseCreateNestedOneWithoutBacklogItemsInput = {
+    create?: XOR<VersionReleaseCreateWithoutBacklogItemsInput, VersionReleaseUncheckedCreateWithoutBacklogItemsInput>
+    connectOrCreate?: VersionReleaseCreateOrConnectWithoutBacklogItemsInput
+    connect?: VersionReleaseWhereUniqueInput
+  }
+
   export type BacklogCommentUncheckedCreateNestedManyWithoutBacklogItemInput = {
     create?: XOR<BacklogCommentCreateWithoutBacklogItemInput, BacklogCommentUncheckedCreateWithoutBacklogItemInput> | BacklogCommentCreateWithoutBacklogItemInput[] | BacklogCommentUncheckedCreateWithoutBacklogItemInput[]
     connectOrCreate?: BacklogCommentCreateOrConnectWithoutBacklogItemInput | BacklogCommentCreateOrConnectWithoutBacklogItemInput[]
     createMany?: BacklogCommentCreateManyBacklogItemInputEnvelope
     connect?: BacklogCommentWhereUniqueInput | BacklogCommentWhereUniqueInput[]
-  }
-
-  export type VersionReleaseUpdateOneWithoutBacklogItemsNestedInput = {
-    create?: XOR<VersionReleaseCreateWithoutBacklogItemsInput, VersionReleaseUncheckedCreateWithoutBacklogItemsInput>
-    connectOrCreate?: VersionReleaseCreateOrConnectWithoutBacklogItemsInput
-    upsert?: VersionReleaseUpsertWithoutBacklogItemsInput
-    disconnect?: VersionReleaseWhereInput | boolean
-    delete?: VersionReleaseWhereInput | boolean
-    connect?: VersionReleaseWhereUniqueInput
-    update?: XOR<XOR<VersionReleaseUpdateToOneWithWhereWithoutBacklogItemsInput, VersionReleaseUpdateWithoutBacklogItemsInput>, VersionReleaseUncheckedUpdateWithoutBacklogItemsInput>
   }
 
   export type BacklogCommentUpdateManyWithoutBacklogItemNestedInput = {
@@ -33713,6 +33784,16 @@ export namespace Prisma {
     update?: BacklogCommentUpdateWithWhereUniqueWithoutBacklogItemInput | BacklogCommentUpdateWithWhereUniqueWithoutBacklogItemInput[]
     updateMany?: BacklogCommentUpdateManyWithWhereWithoutBacklogItemInput | BacklogCommentUpdateManyWithWhereWithoutBacklogItemInput[]
     deleteMany?: BacklogCommentScalarWhereInput | BacklogCommentScalarWhereInput[]
+  }
+
+  export type VersionReleaseUpdateOneWithoutBacklogItemsNestedInput = {
+    create?: XOR<VersionReleaseCreateWithoutBacklogItemsInput, VersionReleaseUncheckedCreateWithoutBacklogItemsInput>
+    connectOrCreate?: VersionReleaseCreateOrConnectWithoutBacklogItemsInput
+    upsert?: VersionReleaseUpsertWithoutBacklogItemsInput
+    disconnect?: VersionReleaseWhereInput | boolean
+    delete?: VersionReleaseWhereInput | boolean
+    connect?: VersionReleaseWhereUniqueInput
+    update?: XOR<XOR<VersionReleaseUpdateToOneWithWhereWithoutBacklogItemsInput, VersionReleaseUpdateWithoutBacklogItemsInput>, VersionReleaseUncheckedUpdateWithoutBacklogItemsInput>
   }
 
   export type BacklogCommentUncheckedUpdateManyWithoutBacklogItemNestedInput = {
@@ -34087,72 +34168,6 @@ export namespace Prisma {
     _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
-  export type OccupationCreateWithoutTiersInput = {
-    nom?: string | null
-    type: string
-    statut: string
-    dateDebut?: Date | string | null
-    dateFin?: Date | string | null
-    anneeTaxation?: number | null
-    adresse: string
-    latitude?: number | null
-    longitude?: number | null
-    description?: string | null
-    photos?: string | null
-    montantCalcule?: number
-    facturePath?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    numeroFacture?: string | null
-    datePaiement?: Date | string | null
-    dossierParentId?: number | null
-    agissantPour?: string | null
-    isCourtMetrage?: boolean
-    aotGabaritId?: number | null
-    contacts?: ContactCreateNestedManyWithoutOccupationInput
-    dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
-    lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
-    notes?: NoteCreateNestedManyWithoutOccupationInput
-  }
-
-  export type OccupationUncheckedCreateWithoutTiersInput = {
-    id?: number
-    nom?: string | null
-    type: string
-    statut: string
-    dateDebut?: Date | string | null
-    dateFin?: Date | string | null
-    anneeTaxation?: number | null
-    adresse: string
-    latitude?: number | null
-    longitude?: number | null
-    description?: string | null
-    photos?: string | null
-    montantCalcule?: number
-    facturePath?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    numeroFacture?: string | null
-    datePaiement?: Date | string | null
-    dossierParentId?: number | null
-    agissantPour?: string | null
-    isCourtMetrage?: boolean
-    aotGabaritId?: number | null
-    contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
-    dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
-    lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
-    notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
-  }
-
-  export type OccupationCreateOrConnectWithoutTiersInput = {
-    where: OccupationWhereUniqueInput
-    create: XOR<OccupationCreateWithoutTiersInput, OccupationUncheckedCreateWithoutTiersInput>
-  }
-
-  export type OccupationCreateManyTiersInputEnvelope = {
-    data: OccupationCreateManyTiersInput | OccupationCreateManyTiersInput[]
-  }
-
   export type ContactCreateWithoutTiersInput = {
     nom?: string | null
     prenom?: string | null
@@ -34189,6 +34204,109 @@ export namespace Prisma {
 
   export type ContactCreateManyTiersInputEnvelope = {
     data: ContactCreateManyTiersInput | ContactCreateManyTiersInput[]
+  }
+
+  export type OccupationCreateWithoutTiersInput = {
+    nom?: string | null
+    type: string
+    statut: string
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    anneeTaxation?: number | null
+    adresse: string
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    photos?: string | null
+    montantCalcule?: number
+    facturePath?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    numeroFacture?: string | null
+    dossierParentId?: number | null
+    isCourtMetrage?: boolean
+    agissantPour?: string | null
+    aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
+    contacts?: ContactCreateNestedManyWithoutOccupationInput
+    dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
+    lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
+    notes?: NoteCreateNestedManyWithoutOccupationInput
+  }
+
+  export type OccupationUncheckedCreateWithoutTiersInput = {
+    id?: number
+    nom?: string | null
+    type: string
+    statut: string
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    anneeTaxation?: number | null
+    adresse: string
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    photos?: string | null
+    montantCalcule?: number
+    facturePath?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    numeroFacture?: string | null
+    dossierParentId?: number | null
+    isCourtMetrage?: boolean
+    agissantPour?: string | null
+    aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
+    contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
+    dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
+    lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
+    notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+  }
+
+  export type OccupationCreateOrConnectWithoutTiersInput = {
+    where: OccupationWhereUniqueInput
+    create: XOR<OccupationCreateWithoutTiersInput, OccupationUncheckedCreateWithoutTiersInput>
+  }
+
+  export type OccupationCreateManyTiersInputEnvelope = {
+    data: OccupationCreateManyTiersInput | OccupationCreateManyTiersInput[]
+  }
+
+  export type ContactUpsertWithWhereUniqueWithoutTiersInput = {
+    where: ContactWhereUniqueInput
+    update: XOR<ContactUpdateWithoutTiersInput, ContactUncheckedUpdateWithoutTiersInput>
+    create: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput>
+  }
+
+  export type ContactUpdateWithWhereUniqueWithoutTiersInput = {
+    where: ContactWhereUniqueInput
+    data: XOR<ContactUpdateWithoutTiersInput, ContactUncheckedUpdateWithoutTiersInput>
+  }
+
+  export type ContactUpdateManyWithWhereWithoutTiersInput = {
+    where: ContactScalarWhereInput
+    data: XOR<ContactUpdateManyMutationInput, ContactUncheckedUpdateManyWithoutTiersInput>
+  }
+
+  export type ContactScalarWhereInput = {
+    AND?: ContactScalarWhereInput | ContactScalarWhereInput[]
+    OR?: ContactScalarWhereInput[]
+    NOT?: ContactScalarWhereInput | ContactScalarWhereInput[]
+    id?: IntFilter<"Contact"> | number
+    nom?: StringNullableFilter<"Contact"> | string | null
+    prenom?: StringNullableFilter<"Contact"> | string | null
+    email?: StringNullableFilter<"Contact"> | string | null
+    telephone?: StringNullableFilter<"Contact"> | string | null
+    titre?: StringNullableFilter<"Contact"> | string | null
+    role?: StringFilter<"Contact"> | string
+    occupationId?: IntNullableFilter<"Contact"> | number | null
+    tiersId?: IntNullableFilter<"Contact"> | number | null
+    pjPath?: StringNullableFilter<"Contact"> | string | null
+    created_at?: DateTimeFilter<"Contact"> | Date | string
+    updated_at?: DateTimeFilter<"Contact"> | Date | string
+    entreprise?: StringNullableFilter<"Contact"> | string | null
   }
 
   export type OccupationUpsertWithWhereUniqueWithoutTiersInput = {
@@ -34229,46 +34347,12 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Occupation"> | Date | string
     updated_at?: DateTimeFilter<"Occupation"> | Date | string
     numeroFacture?: StringNullableFilter<"Occupation"> | string | null
-    datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
-    agissantPour?: StringNullableFilter<"Occupation"> | string | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
+    agissantPour?: StringNullableFilter<"Occupation"> | string | null
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
-  }
-
-  export type ContactUpsertWithWhereUniqueWithoutTiersInput = {
-    where: ContactWhereUniqueInput
-    update: XOR<ContactUpdateWithoutTiersInput, ContactUncheckedUpdateWithoutTiersInput>
-    create: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput>
-  }
-
-  export type ContactUpdateWithWhereUniqueWithoutTiersInput = {
-    where: ContactWhereUniqueInput
-    data: XOR<ContactUpdateWithoutTiersInput, ContactUncheckedUpdateWithoutTiersInput>
-  }
-
-  export type ContactUpdateManyWithWhereWithoutTiersInput = {
-    where: ContactScalarWhereInput
-    data: XOR<ContactUpdateManyMutationInput, ContactUncheckedUpdateManyWithoutTiersInput>
-  }
-
-  export type ContactScalarWhereInput = {
-    AND?: ContactScalarWhereInput | ContactScalarWhereInput[]
-    OR?: ContactScalarWhereInput[]
-    NOT?: ContactScalarWhereInput | ContactScalarWhereInput[]
-    id?: IntFilter<"Contact"> | number
-    nom?: StringNullableFilter<"Contact"> | string | null
-    prenom?: StringNullableFilter<"Contact"> | string | null
-    email?: StringNullableFilter<"Contact"> | string | null
-    telephone?: StringNullableFilter<"Contact"> | string | null
-    titre?: StringNullableFilter<"Contact"> | string | null
-    role?: StringFilter<"Contact"> | string
-    occupationId?: IntNullableFilter<"Contact"> | number | null
-    tiersId?: IntNullableFilter<"Contact"> | number | null
-    pjPath?: StringNullableFilter<"Contact"> | string | null
-    created_at?: DateTimeFilter<"Contact"> | Date | string
-    updated_at?: DateTimeFilter<"Contact"> | Date | string
-    entreprise?: StringNullableFilter<"Contact"> | string | null
+    aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
+    datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
   }
 
   export type ContactCreateWithoutOccupationInput = {
@@ -34608,68 +34692,6 @@ export namespace Prisma {
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
   }
 
-  export type OccupationCreateWithoutContactsInput = {
-    nom?: string | null
-    type: string
-    statut: string
-    dateDebut?: Date | string | null
-    dateFin?: Date | string | null
-    anneeTaxation?: number | null
-    adresse: string
-    latitude?: number | null
-    longitude?: number | null
-    description?: string | null
-    photos?: string | null
-    montantCalcule?: number
-    facturePath?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    numeroFacture?: string | null
-    datePaiement?: Date | string | null
-    dossierParentId?: number | null
-    agissantPour?: string | null
-    isCourtMetrage?: boolean
-    aotGabaritId?: number | null
-    dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
-    lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
-    notes?: NoteCreateNestedManyWithoutOccupationInput
-    tiers: TiersCreateNestedOneWithoutOccupationsInput
-  }
-
-  export type OccupationUncheckedCreateWithoutContactsInput = {
-    id?: number
-    nom?: string | null
-    tiersId: number
-    type: string
-    statut: string
-    dateDebut?: Date | string | null
-    dateFin?: Date | string | null
-    anneeTaxation?: number | null
-    adresse: string
-    latitude?: number | null
-    longitude?: number | null
-    description?: string | null
-    photos?: string | null
-    montantCalcule?: number
-    facturePath?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    numeroFacture?: string | null
-    datePaiement?: Date | string | null
-    dossierParentId?: number | null
-    agissantPour?: string | null
-    isCourtMetrage?: boolean
-    aotGabaritId?: number | null
-    dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
-    lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
-    notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
-  }
-
-  export type OccupationCreateOrConnectWithoutContactsInput = {
-    where: OccupationWhereUniqueInput
-    create: XOR<OccupationCreateWithoutContactsInput, OccupationUncheckedCreateWithoutContactsInput>
-  }
-
   export type TiersCreateWithoutContactsInput = {
     nom: string
     siret?: string | null
@@ -34708,72 +34730,68 @@ export namespace Prisma {
     create: XOR<TiersCreateWithoutContactsInput, TiersUncheckedCreateWithoutContactsInput>
   }
 
-  export type OccupationUpsertWithoutContactsInput = {
-    update: XOR<OccupationUpdateWithoutContactsInput, OccupationUncheckedUpdateWithoutContactsInput>
+  export type OccupationCreateWithoutContactsInput = {
+    nom?: string | null
+    type: string
+    statut: string
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    anneeTaxation?: number | null
+    adresse: string
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    photos?: string | null
+    montantCalcule?: number
+    facturePath?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    numeroFacture?: string | null
+    dossierParentId?: number | null
+    isCourtMetrage?: boolean
+    agissantPour?: string | null
+    aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
+    dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
+    lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
+    notes?: NoteCreateNestedManyWithoutOccupationInput
+    tiers: TiersCreateNestedOneWithoutOccupationsInput
+  }
+
+  export type OccupationUncheckedCreateWithoutContactsInput = {
+    id?: number
+    nom?: string | null
+    tiersId: number
+    type: string
+    statut: string
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    anneeTaxation?: number | null
+    adresse: string
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    photos?: string | null
+    montantCalcule?: number
+    facturePath?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    numeroFacture?: string | null
+    dossierParentId?: number | null
+    isCourtMetrage?: boolean
+    agissantPour?: string | null
+    aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
+    dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
+    lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
+    notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+  }
+
+  export type OccupationCreateOrConnectWithoutContactsInput = {
+    where: OccupationWhereUniqueInput
     create: XOR<OccupationCreateWithoutContactsInput, OccupationUncheckedCreateWithoutContactsInput>
-    where?: OccupationWhereInput
-  }
-
-  export type OccupationUpdateToOneWithWhereWithoutContactsInput = {
-    where?: OccupationWhereInput
-    data: XOR<OccupationUpdateWithoutContactsInput, OccupationUncheckedUpdateWithoutContactsInput>
-  }
-
-  export type OccupationUpdateWithoutContactsInput = {
-    nom?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    statut?: StringFieldUpdateOperationsInput | string
-    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
-    adresse?: StringFieldUpdateOperationsInput | string
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    photos?: NullableStringFieldUpdateOperationsInput | string | null
-    montantCalcule?: FloatFieldUpdateOperationsInput | number
-    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
-    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
-    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
-    dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
-    lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
-    notes?: NoteUpdateManyWithoutOccupationNestedInput
-    tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
-  }
-
-  export type OccupationUncheckedUpdateWithoutContactsInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    nom?: NullableStringFieldUpdateOperationsInput | string | null
-    tiersId?: IntFieldUpdateOperationsInput | number
-    type?: StringFieldUpdateOperationsInput | string
-    statut?: StringFieldUpdateOperationsInput | string
-    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
-    adresse?: StringFieldUpdateOperationsInput | string
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    photos?: NullableStringFieldUpdateOperationsInput | string | null
-    montantCalcule?: FloatFieldUpdateOperationsInput | number
-    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
-    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
-    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
-    dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
-    lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
-    notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type TiersUpsertWithoutContactsInput = {
@@ -34820,6 +34838,76 @@ export namespace Prisma {
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
   }
 
+  export type OccupationUpsertWithoutContactsInput = {
+    update: XOR<OccupationUpdateWithoutContactsInput, OccupationUncheckedUpdateWithoutContactsInput>
+    create: XOR<OccupationCreateWithoutContactsInput, OccupationUncheckedCreateWithoutContactsInput>
+    where?: OccupationWhereInput
+  }
+
+  export type OccupationUpdateToOneWithWhereWithoutContactsInput = {
+    where?: OccupationWhereInput
+    data: XOR<OccupationUpdateWithoutContactsInput, OccupationUncheckedUpdateWithoutContactsInput>
+  }
+
+  export type OccupationUpdateWithoutContactsInput = {
+    nom?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
+    adresse?: StringFieldUpdateOperationsInput | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    photos?: NullableStringFieldUpdateOperationsInput | string | null
+    montantCalcule?: FloatFieldUpdateOperationsInput | number
+    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
+    lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
+    notes?: NoteUpdateManyWithoutOccupationNestedInput
+    tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
+  }
+
+  export type OccupationUncheckedUpdateWithoutContactsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: NullableStringFieldUpdateOperationsInput | string | null
+    tiersId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
+    adresse?: StringFieldUpdateOperationsInput | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    photos?: NullableStringFieldUpdateOperationsInput | string | null
+    montantCalcule?: FloatFieldUpdateOperationsInput | number
+    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
+    lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+  }
+
   export type OccupationCreateWithoutNotesInput = {
     nom?: string | null
     type: string
@@ -34837,11 +34925,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -34867,11 +34956,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -34910,11 +35000,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -34940,11 +35031,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -35529,11 +35621,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -35559,11 +35652,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -35654,11 +35748,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -35684,11 +35779,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -35711,11 +35807,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -35741,11 +35838,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -35784,11 +35882,12 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -35814,34 +35913,15 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
-  }
-
-  export type VersionReleaseCreateWithoutBacklogItemsInput = {
-    versionNumber: string
-    notes?: string | null
-    releasedAt?: Date | string
-    created_at?: Date | string
-  }
-
-  export type VersionReleaseUncheckedCreateWithoutBacklogItemsInput = {
-    id?: number
-    versionNumber: string
-    notes?: string | null
-    releasedAt?: Date | string
-    created_at?: Date | string
-  }
-
-  export type VersionReleaseCreateOrConnectWithoutBacklogItemsInput = {
-    where: VersionReleaseWhereUniqueInput
-    create: XOR<VersionReleaseCreateWithoutBacklogItemsInput, VersionReleaseUncheckedCreateWithoutBacklogItemsInput>
   }
 
   export type BacklogCommentCreateWithoutBacklogItemInput = {
@@ -35866,30 +35946,24 @@ export namespace Prisma {
     data: BacklogCommentCreateManyBacklogItemInput | BacklogCommentCreateManyBacklogItemInput[]
   }
 
-  export type VersionReleaseUpsertWithoutBacklogItemsInput = {
-    update: XOR<VersionReleaseUpdateWithoutBacklogItemsInput, VersionReleaseUncheckedUpdateWithoutBacklogItemsInput>
+  export type VersionReleaseCreateWithoutBacklogItemsInput = {
+    versionNumber: string
+    notes?: string | null
+    releasedAt?: Date | string
+    created_at?: Date | string
+  }
+
+  export type VersionReleaseUncheckedCreateWithoutBacklogItemsInput = {
+    id?: number
+    versionNumber: string
+    notes?: string | null
+    releasedAt?: Date | string
+    created_at?: Date | string
+  }
+
+  export type VersionReleaseCreateOrConnectWithoutBacklogItemsInput = {
+    where: VersionReleaseWhereUniqueInput
     create: XOR<VersionReleaseCreateWithoutBacklogItemsInput, VersionReleaseUncheckedCreateWithoutBacklogItemsInput>
-    where?: VersionReleaseWhereInput
-  }
-
-  export type VersionReleaseUpdateToOneWithWhereWithoutBacklogItemsInput = {
-    where?: VersionReleaseWhereInput
-    data: XOR<VersionReleaseUpdateWithoutBacklogItemsInput, VersionReleaseUncheckedUpdateWithoutBacklogItemsInput>
-  }
-
-  export type VersionReleaseUpdateWithoutBacklogItemsInput = {
-    versionNumber?: StringFieldUpdateOperationsInput | string
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    releasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type VersionReleaseUncheckedUpdateWithoutBacklogItemsInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    versionNumber?: StringFieldUpdateOperationsInput | string
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    releasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BacklogCommentUpsertWithWhereUniqueWithoutBacklogItemInput = {
@@ -35917,6 +35991,32 @@ export namespace Prisma {
     content?: StringFilter<"BacklogComment"> | string
     author?: StringNullableFilter<"BacklogComment"> | string | null
     created_at?: DateTimeFilter<"BacklogComment"> | Date | string
+  }
+
+  export type VersionReleaseUpsertWithoutBacklogItemsInput = {
+    update: XOR<VersionReleaseUpdateWithoutBacklogItemsInput, VersionReleaseUncheckedUpdateWithoutBacklogItemsInput>
+    create: XOR<VersionReleaseCreateWithoutBacklogItemsInput, VersionReleaseUncheckedCreateWithoutBacklogItemsInput>
+    where?: VersionReleaseWhereInput
+  }
+
+  export type VersionReleaseUpdateToOneWithWhereWithoutBacklogItemsInput = {
+    where?: VersionReleaseWhereInput
+    data: XOR<VersionReleaseUpdateWithoutBacklogItemsInput, VersionReleaseUncheckedUpdateWithoutBacklogItemsInput>
+  }
+
+  export type VersionReleaseUpdateWithoutBacklogItemsInput = {
+    versionNumber?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    releasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VersionReleaseUncheckedUpdateWithoutBacklogItemsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    versionNumber?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    releasedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BacklogItemCreateWithoutCommentsInput = {
@@ -36159,6 +36259,21 @@ export namespace Prisma {
     filienPath?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type ContactCreateManyTiersInput = {
+    id?: number
+    nom?: string | null
+    prenom?: string | null
+    email?: string | null
+    telephone?: string | null
+    titre?: string | null
+    role?: string
+    occupationId?: number | null
+    pjPath?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    entreprise?: string | null
+  }
+
   export type OccupationCreateManyTiersInput = {
     id?: number
     nom?: string | null
@@ -36177,108 +36292,12 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     numeroFacture?: string | null
-    datePaiement?: Date | string | null
     dossierParentId?: number | null
-    agissantPour?: string | null
     isCourtMetrage?: boolean
+    agissantPour?: string | null
     aotGabaritId?: number | null
-  }
-
-  export type ContactCreateManyTiersInput = {
-    id?: number
-    nom?: string | null
-    prenom?: string | null
-    email?: string | null
-    telephone?: string | null
-    titre?: string | null
-    role?: string
-    occupationId?: number | null
-    pjPath?: string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    entreprise?: string | null
-  }
-
-  export type OccupationUpdateWithoutTiersInput = {
-    nom?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    statut?: StringFieldUpdateOperationsInput | string
-    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
-    adresse?: StringFieldUpdateOperationsInput | string
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    photos?: NullableStringFieldUpdateOperationsInput | string | null
-    montantCalcule?: FloatFieldUpdateOperationsInput | number
-    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
-    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
-    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
-    contacts?: ContactUpdateManyWithoutOccupationNestedInput
-    dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
-    lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
-    notes?: NoteUpdateManyWithoutOccupationNestedInput
-  }
-
-  export type OccupationUncheckedUpdateWithoutTiersInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    nom?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    statut?: StringFieldUpdateOperationsInput | string
-    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
-    adresse?: StringFieldUpdateOperationsInput | string
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    photos?: NullableStringFieldUpdateOperationsInput | string | null
-    montantCalcule?: FloatFieldUpdateOperationsInput | number
-    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
-    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
-    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
-    contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
-    dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
-    lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
-    notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
-  }
-
-  export type OccupationUncheckedUpdateManyWithoutTiersInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    nom?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    statut?: StringFieldUpdateOperationsInput | string
-    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
-    adresse?: StringFieldUpdateOperationsInput | string
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    photos?: NullableStringFieldUpdateOperationsInput | string | null
-    montantCalcule?: FloatFieldUpdateOperationsInput | number
-    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
-    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
-    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
-    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
-    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: string | null
+    datePaiement?: Date | string | null
   }
 
   export type ContactUpdateWithoutTiersInput = {
@@ -36323,6 +36342,91 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     entreprise?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OccupationUpdateWithoutTiersInput = {
+    nom?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
+    adresse?: StringFieldUpdateOperationsInput | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    photos?: NullableStringFieldUpdateOperationsInput | string | null
+    montantCalcule?: FloatFieldUpdateOperationsInput | number
+    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contacts?: ContactUpdateManyWithoutOccupationNestedInput
+    dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
+    lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
+    notes?: NoteUpdateManyWithoutOccupationNestedInput
+  }
+
+  export type OccupationUncheckedUpdateWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
+    adresse?: StringFieldUpdateOperationsInput | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    photos?: NullableStringFieldUpdateOperationsInput | string | null
+    montantCalcule?: FloatFieldUpdateOperationsInput | number
+    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
+    dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
+    lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+  }
+
+  export type OccupationUncheckedUpdateManyWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
+    adresse?: StringFieldUpdateOperationsInput | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    photos?: NullableStringFieldUpdateOperationsInput | string | null
+    montantCalcule?: FloatFieldUpdateOperationsInput | number
+    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ContactCreateManyOccupationInput = {

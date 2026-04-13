@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(req: Request) {
   try {
+    console.log('[GET Occupations] Starting fetch');
+
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
     const type = searchParams.get('type');
@@ -13,62 +15,89 @@ export async function GET(req: Request) {
     if (type) where.type = type;
     if (anneeTaxation) where.anneeTaxation = parseInt(anneeTaxation);
 
+    console.log('[GET Occupations] Filter:', where);
+
+    // Fetch occupations with minimal includes
+    console.log('[GET Occupations] Fetching occupations with tiers only...');
     const occupations = await (prisma as any).occupation.findMany({
       where,
-      include: { 
-        tiers: true,
-        lignes: {
-          include: { article: { include: { modeTaxation: true } } }
-        },
-        _count: {
-          select: { notes: true, lignes: true }
+      include: {
+        tiers: {
+          select: {
+            id: true,
+            nom: true,
+            code_sedit: true,
+            etatAdministratif: true
+          }
         }
       },
       orderBy: { created_at: 'desc' },
+      take: 1000 // Limit to prevent huge responses
     });
 
-    // Background geocoding
-    const missing = occupations.filter((o: any) => !o.latitude || !o.longitude);
-    if (missing.length > 0) {
-      Promise.all(missing.slice(0, 5).map(async (o: any) => {
-        try {
-          const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(o.adresse)}&limit=1`);
-          const data = await res.json();
-          if (data.features?.length > 0) {
-            const [lng, lat] = data.features[0].geometry.coordinates;
-            await (prisma as any).occupation.update({
-              where: { id: o.id },
-              data: { latitude: lat, longitude: lng }
-            });
-          }
-        } catch (e) {}
-      })).catch(() => {});
+    console.log('[GET Occupations] ✅ Success! Found:', occupations.length, 'occupations');
+    if (occupations.length > 0) {
+      console.log('[GET Occupations] First occupation sample:', JSON.stringify(occupations[0], null, 2).substring(0, 200));
     }
+
+    // Background geocoding (non-blocking, fire and forget)
+    setTimeout(() => {
+      const missing = occupations.filter((o: any) => !o.latitude || !o.longitude).slice(0, 5);
+      if (missing.length > 0) {
+        console.log('[GET Occupations] Starting background geocoding for', missing.length, 'items');
+        missing.forEach(async (o: any) => {
+          try {
+            const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(o.adresse)}&limit=1`);
+            if (!res.ok) throw new Error('Geocoding API error');
+            const data = await res.json();
+            if (data.features?.length > 0) {
+              const [lng, lat] = data.features[0].geometry.coordinates;
+              await (prisma as any).occupation.update({
+                where: { id: o.id },
+                data: { latitude: lat, longitude: lng }
+              });
+              console.log('[GET Occupations] Geocoded:', o.adresse);
+            }
+          } catch (e) {
+            console.warn('[GET Occupations] Geocoding error for', o.adresse);
+          }
+        });
+      }
+    }, 100);
 
     return NextResponse.json(occupations);
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('[GET Occupations] Error:', error.message);
+    console.error('[GET Occupations] Stack:', error.stack);
+    return NextResponse.json(
+      { error: error.message || 'Internal server error', data: [] },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req: Request) {
   try {
+    console.log('[POST Occupations] Starting creation');
+
     const body = await req.json();
-    const { 
+    const {
       nom,
-      tiersId, 
-      type, 
-      dateDebut, 
+      tiersId,
+      type,
+      dateDebut,
       dateFin,
-      anneeTaxation, 
-      adresse, 
-      latitude, 
-      longitude, 
+      anneeTaxation,
+      adresse,
+      latitude,
+      longitude,
       description,
       photos,
       isCourtMetrage,
       agissantPour
     } = body;
+
+    console.log('[POST Occupations] Body:', { tiersId, type, adresse });
 
     if (!tiersId || !type) {
       return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
@@ -99,12 +128,16 @@ export async function POST(req: Request) {
       }
     });
 
+    console.log('[POST Occupations] Created occupation:', occupation.id);
+
     if (isCourtMetrage !== undefined) {
       await (prisma as any).$executeRaw`UPDATE Occupation SET isCourtMetrage = ${!!isCourtMetrage} WHERE id = ${occupation.id}`;
     }
 
     return NextResponse.json(occupation);
   } catch (error: any) {
+    console.error('[POST Occupations] Error:', error);
+    console.error('[POST Occupations] Stack:', error.stack);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

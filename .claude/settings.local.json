@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(node -e ':*)",
+      "Bash(npm run:*)",
+      "Bash(node)",
+      "Bash(sqlite3 dev.db \".schema Occupation\")",
+      "Bash(find \"C:\\\\dev\\\\ODP\\\\app\\\\dashboard\\\\occupations\" -name \"*.tsx\" -type f -exec grep -l \"Signé et publié\" {} \\\\;)"
+    ]
+  }
+}

@@ -35,18 +35,20 @@ interface Props {
   onAddLigne: (occ: any) => void;
   onDeleteLigne: (occId: number, ligneId: number) => void;
   onEditLigne: (occ: any, ligne: any) => void;
+  onNextStep?: (id: number, statut: string) => void;
 }
 
-export default function OccupationDetailModal({ 
-  isOpen, 
-  onClose, 
-  occupation: occ, 
-  onEdit, 
-  onApprove, 
+export default function OccupationDetailModal({
+  isOpen,
+  onClose,
+  occupation: occ,
+  onEdit,
+  onApprove,
   onDownload,
   onAddLigne,
   onDeleteLigne,
-  onEditLigne
+  onEditLigne,
+  onNextStep
 }: Props) {
   if (!isOpen || !occ) return null;
 
@@ -238,17 +240,26 @@ export default function OccupationDetailModal({
                      </div>
                    </div>
 
-                   <div className="pt-8">
+                   <div className="pt-8 space-y-3">
                      {(occ.statut === 'EN_ATTENTE' || !occ.statut) && (
-                       <button 
+                       <button
                          onClick={() => onApprove(occ.id)}
                          className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-blue-500/20 active:scale-95"
                        >
                          Approuver le Dossier
                        </button>
                      )}
+                     {['INIT', 'INST', 'PREP', 'EN_COURS'].includes(occ.statut) && onNextStep && (
+                       <button
+                         onClick={() => onNextStep(occ.id, occ.statut)}
+                         className="w-full bg-purple-600 hover:bg-purple-500 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-purple-500/20 active:scale-95 flex items-center justify-center gap-2"
+                       >
+                         <ArrowRight size={16} />
+                         Étape Suivante
+                       </button>
+                     )}
                      {occ.statut === 'VALIDE' && (
-                       <button 
+                       <button
                          onClick={() => onDownload(occ.id)}
                          className="w-full bg-white/10 hover:bg-white/20 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all backdrop-blur-sm border border-white/10 flex items-center justify-center gap-3 active:scale-95"
                        >

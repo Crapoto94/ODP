@@ -1,15 +1,15 @@
 import React from 'react';
-import { 
-  ImageIcon, 
-  ExternalLink, 
-  FileText, 
-  FileArchive, 
-  User, 
-  Plus, 
-  Mail, 
-  Smartphone, 
-  Trash2, 
-  Clock 
+import {
+  ImageIcon,
+  ExternalLink,
+  FileText,
+  FileArchive,
+  User,
+  Plus,
+  Mail,
+  Smartphone,
+  Trash2,
+  Clock
 } from 'lucide-react';
 import { Occupation } from '../types';
 
@@ -19,6 +19,8 @@ interface Props {
   onOpenContactModal: () => void;
   onDeleteContact: (id: number) => void;
   onOpenUploadModal: () => void;
+  onDeletePhoto?: (index: number) => void;
+  onDeleteAotFinal?: () => void;
 }
 
 export default function OccupationSidebar({
@@ -26,10 +28,19 @@ export default function OccupationSidebar({
   isFactured,
   onOpenContactModal,
   onDeleteContact,
-  onOpenUploadModal
+  onOpenUploadModal,
+  onDeletePhoto,
+  onDeleteAotFinal
 }: Props) {
   const photoList = occupation.photos ? occupation.photos.split(',').filter(Boolean) : [];
-  const docCount = photoList.length + (occupation.facturePath ? 1 : 0);
+  const docCount = photoList.length + (occupation.facturePath ? 1 : 0) + (occupation.aotFinalPath ? 1 : 0);
+
+  React.useEffect(() => {
+    console.log('[OccupationSidebar] Rendering with:');
+    console.log('  - photoList.length:', photoList.length);
+    console.log('  - facturePath:', occupation.facturePath);
+    console.log('  - docCount:', docCount);
+  }, [occupation, photoList.length, docCount]);
 
   return (
     <aside className="lg:col-span-4 space-y-12">
@@ -58,42 +69,56 @@ export default function OccupationSidebar({
             const displayName = designation || (isPdf ? 'Document PDF' : `Document joint ${i+1}`);
 
             return (
-              <a 
-                key={i} 
-                href={url} 
-                target="_blank" 
-                rel="noreferrer" 
+              <div
+                key={i}
                 className="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-blue-300 hover:shadow-lg hover:-translate-y-0.5"
               >
-                <div className={`w-12 h-12 rounded-xl shrink-0 flex items-center justify-center transition-colors ${isPdf ? 'bg-rose-50 text-rose-500 group-hover:bg-rose-500 group-hover:text-white' : 'bg-blue-50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white'} border border-transparent`}>
-                  {isPdf ? <FileText size={20} /> : <ImageIcon size={20} />}
-                </div>
-                
-                <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest truncate">{displayName}</p>
-                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-tighter mt-1">
-                    {isPdf ? 'Format PDF' : 'Fichier Image'} • Cliquez pour ouvrir
-                  </p>
-                </div>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-4 flex-1 min-w-0"
+                >
+                  <div className={`w-12 h-12 rounded-xl shrink-0 flex items-center justify-center transition-colors ${isPdf ? 'bg-rose-50 text-rose-500 group-hover:bg-rose-500 group-hover:text-white' : 'bg-blue-50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white'} border border-transparent`}>
+                    {isPdf ? <FileText size={20} /> : <ImageIcon size={20} />}
+                  </div>
 
-                <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-300 group-hover:text-blue-500 group-hover:bg-blue-50 transition-all">
-                  <ExternalLink size={14} />
-                </div>
-              </a>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest truncate">{displayName}</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-tighter mt-1">
+                      {isPdf ? 'Format PDF' : 'Fichier Image'} • Cliquez pour ouvrir
+                    </p>
+                  </div>
+
+                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-300 group-hover:text-blue-500 group-hover:bg-blue-50 transition-all">
+                    <ExternalLink size={14} />
+                  </div>
+                </a>
+
+                {!isFactured && onDeletePhoto && (
+                  <button
+                    onClick={() => onDeletePhoto(i)}
+                    className="opacity-0 group-hover:opacity-100 w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:text-rose-600 hover:bg-rose-50 transition-all"
+                    title="Supprimer ce document"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
             );
           })}
 
           {occupation.facturePath && (
-            <a 
-              href={occupation.facturePath} 
-              target="_blank" 
-              rel="noreferrer" 
+            <a
+              href={occupation.facturePath}
+              target="_blank"
+              rel="noreferrer"
               className="group flex items-center gap-4 p-4 bg-blue-50/50 rounded-2xl border-2 border-blue-100 shadow-sm transition-all hover:border-blue-400 hover:shadow-lg hover:-translate-y-0.5"
             >
               <div className="w-12 h-12 rounded-xl shrink-0 bg-blue-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                 <FileText size={20} />
               </div>
-              
+
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest truncate">Facture Officielle</p>
                 <p className="text-[8px] font-black text-blue-400/70 uppercase tracking-tighter mt-1">Générée par Sedit • PDF</p>
@@ -104,6 +129,29 @@ export default function OccupationSidebar({
               </div>
             </a>
           )}
+
+          {occupation.aotFinalPath && (
+            <a
+              href={occupation.aotFinalPath}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-center gap-4 p-4 bg-emerald-50/50 rounded-2xl border-2 border-emerald-100 shadow-sm transition-all hover:border-emerald-400 hover:shadow-lg hover:-translate-y-0.5"
+            >
+              <div className="w-12 h-12 rounded-xl shrink-0 bg-emerald-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <FileText size={20} />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest truncate">AOT Final - Signé et Publié</p>
+                <p className="text-[8px] font-black text-emerald-400/70 uppercase tracking-tighter mt-1">Document Finalisé</p>
+              </div>
+
+              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-emerald-300 group-hover:text-emerald-600 transition-all">
+                <ExternalLink size={14} />
+              </div>
+            </a>
+          )}
+
 
           {docCount === 0 && (
             <div className="py-12 bg-white rounded-2xl border border-dashed border-slate-200 text-center flex flex-col items-center">
