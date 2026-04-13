@@ -182,6 +182,13 @@ function OccupationsPageContent() {
     fetchOccupations();
   }, []);
 
+  // When locked year changes, update yearFilter to match
+  useEffect(() => {
+    if (isHydrated && lockedYear && lockedYear !== 'ALL') {
+      setYearFilter(lockedYear);
+    }
+  }, [lockedYear, isHydrated]);
+
   useEffect(() => {
     if (yearFilter && yearFilter !== 'ALL') {
       axios.get(`/api/settings/odp-docs?annee=${yearFilter}`)
