@@ -206,6 +206,9 @@ model AppSettings {
   signataireRole      String?  @default("Le Maire d'Ivry-sur-Seine,")
   signataireDelegation String? @default("et par délégation,")
   signataireNom       String?  @default("Dominique Montet - Directrice Générale Adjointe")
+  filienUncUser     String?  @default("")
+  filienUncPass     String?  @default("")
+  filienUncDomain   String?  @default("WORKGROUP")
   updated_at          DateTime @updatedAt
 }
 
@@ -319,3 +322,26 @@ model OdpConfig {
   tarifsOdpPath       String?
 }
 
+
+model BillingRun {
+  id          String   @id
+  type        String
+  date        DateTime @default(now())
+  count       Int
+  total       Float
+  agent       String?
+  recapPath   String?
+  filienPath  String?
+  invoices    BillingRunInvoice[]
+}
+
+model BillingRunInvoice {
+  id           Int        @id @default(autoincrement())
+  billingRunId String
+  dossierId    Int
+  numero       String
+  tiers        String
+  total        Float
+  pdfPath      String
+  run          BillingRun @relation(fields: [billingRunId], references: [id], onDelete: Cascade)
+}

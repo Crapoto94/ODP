@@ -180,6 +180,42 @@ export default function FilienTab({ settings, setSettings, handleSubmit, saving,
                   />
                 </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Utilisateur SMB (Share)</label>
+                  <input 
+                    type="text" 
+                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                    placeholder="Username"
+                    value={settings.filienUncUser || ''}
+                    onChange={e => setSettings({...settings, filienUncUser: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Mot de passe SMB</label>
+                  <input 
+                    type="password" 
+                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                    placeholder="••••••••"
+                    value={settings.filienUncPass || ''}
+                    onChange={e => setSettings({...settings, filienUncPass: e.target.value})}
+                  />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Domaine SMB</label>
+                  <input 
+                    type="text" 
+                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                    placeholder="WORKGROUP"
+                    value={settings.filienUncDomain || ''}
+                    onChange={e => setSettings({...settings, filienUncDomain: e.target.value})}
+                  />
+                </div>
+            </div>
           </div>
 
           <div className="pt-10 border-t border-slate-50 space-y-6">

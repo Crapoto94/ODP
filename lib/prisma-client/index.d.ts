@@ -118,6 +118,16 @@ export type PostgresConfig = $Result.DefaultSelection<Prisma.$PostgresConfigPayl
  * 
  */
 export type OdpConfig = $Result.DefaultSelection<Prisma.$OdpConfigPayload>
+/**
+ * Model BillingRun
+ * 
+ */
+export type BillingRun = $Result.DefaultSelection<Prisma.$BillingRunPayload>
+/**
+ * Model BillingRunInvoice
+ * 
+ */
+export type BillingRunInvoice = $Result.DefaultSelection<Prisma.$BillingRunInvoicePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -451,6 +461,26 @@ export class PrismaClient<
     * ```
     */
   get odpConfig(): Prisma.OdpConfigDelegate<ExtArgs>;
+
+  /**
+   * `prisma.billingRun`: Exposes CRUD operations for the **BillingRun** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BillingRuns
+    * const billingRuns = await prisma.billingRun.findMany()
+    * ```
+    */
+  get billingRun(): Prisma.BillingRunDelegate<ExtArgs>;
+
+  /**
+   * `prisma.billingRunInvoice`: Exposes CRUD operations for the **BillingRunInvoice** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BillingRunInvoices
+    * const billingRunInvoices = await prisma.billingRunInvoice.findMany()
+    * ```
+    */
+  get billingRunInvoice(): Prisma.BillingRunInvoiceDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -912,7 +942,9 @@ export namespace Prisma {
     BacklogComment: 'BacklogComment',
     VersionRelease: 'VersionRelease',
     PostgresConfig: 'PostgresConfig',
-    OdpConfig: 'OdpConfig'
+    OdpConfig: 'OdpConfig',
+    BillingRun: 'BillingRun',
+    BillingRunInvoice: 'BillingRunInvoice'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -928,7 +960,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "odpConfig"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "odpConfig" | "billingRun" | "billingRunInvoice"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2402,6 +2434,146 @@ export namespace Prisma {
           }
         }
       }
+      BillingRun: {
+        payload: Prisma.$BillingRunPayload<ExtArgs>
+        fields: Prisma.BillingRunFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BillingRunFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BillingRunFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload>
+          }
+          findFirst: {
+            args: Prisma.BillingRunFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BillingRunFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload>
+          }
+          findMany: {
+            args: Prisma.BillingRunFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload>[]
+          }
+          create: {
+            args: Prisma.BillingRunCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload>
+          }
+          createMany: {
+            args: Prisma.BillingRunCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BillingRunCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload>[]
+          }
+          delete: {
+            args: Prisma.BillingRunDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload>
+          }
+          update: {
+            args: Prisma.BillingRunUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload>
+          }
+          deleteMany: {
+            args: Prisma.BillingRunDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BillingRunUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.BillingRunUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunPayload>
+          }
+          aggregate: {
+            args: Prisma.BillingRunAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBillingRun>
+          }
+          groupBy: {
+            args: Prisma.BillingRunGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BillingRunGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BillingRunCountArgs<ExtArgs>
+            result: $Utils.Optional<BillingRunCountAggregateOutputType> | number
+          }
+        }
+      }
+      BillingRunInvoice: {
+        payload: Prisma.$BillingRunInvoicePayload<ExtArgs>
+        fields: Prisma.BillingRunInvoiceFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BillingRunInvoiceFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BillingRunInvoiceFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload>
+          }
+          findFirst: {
+            args: Prisma.BillingRunInvoiceFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BillingRunInvoiceFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload>
+          }
+          findMany: {
+            args: Prisma.BillingRunInvoiceFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload>[]
+          }
+          create: {
+            args: Prisma.BillingRunInvoiceCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload>
+          }
+          createMany: {
+            args: Prisma.BillingRunInvoiceCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BillingRunInvoiceCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload>[]
+          }
+          delete: {
+            args: Prisma.BillingRunInvoiceDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload>
+          }
+          update: {
+            args: Prisma.BillingRunInvoiceUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload>
+          }
+          deleteMany: {
+            args: Prisma.BillingRunInvoiceDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BillingRunInvoiceUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.BillingRunInvoiceUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BillingRunInvoicePayload>
+          }
+          aggregate: {
+            args: Prisma.BillingRunInvoiceAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBillingRunInvoice>
+          }
+          groupBy: {
+            args: Prisma.BillingRunInvoiceGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BillingRunInvoiceGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BillingRunInvoiceCountArgs<ExtArgs>
+            result: $Utils.Optional<BillingRunInvoiceCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2848,6 +3020,37 @@ export namespace Prisma {
    */
   export type VersionReleaseCountOutputTypeCountBacklogItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BacklogItemWhereInput
+  }
+
+
+  /**
+   * Count Type BillingRunCountOutputType
+   */
+
+  export type BillingRunCountOutputType = {
+    invoices: number
+  }
+
+  export type BillingRunCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    invoices?: boolean | BillingRunCountOutputTypeCountInvoicesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * BillingRunCountOutputType without action
+   */
+  export type BillingRunCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunCountOutputType
+     */
+    select?: BillingRunCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * BillingRunCountOutputType without action
+   */
+  export type BillingRunCountOutputTypeCountInvoicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BillingRunInvoiceWhereInput
   }
 
 
@@ -13628,6 +13831,9 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
+    filienUncUser: string | null
+    filienUncPass: string | null
+    filienUncDomain: string | null
     updated_at: Date | null
   }
 
@@ -13668,6 +13874,9 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
+    filienUncUser: string | null
+    filienUncPass: string | null
+    filienUncDomain: string | null
     updated_at: Date | null
   }
 
@@ -13708,6 +13917,9 @@ export namespace Prisma {
     signataireRole: number
     signataireDelegation: number
     signataireNom: number
+    filienUncUser: number
+    filienUncPass: number
+    filienUncDomain: number
     updated_at: number
     _all: number
   }
@@ -13760,6 +13972,9 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
+    filienUncUser?: true
+    filienUncPass?: true
+    filienUncDomain?: true
     updated_at?: true
   }
 
@@ -13800,6 +14015,9 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
+    filienUncUser?: true
+    filienUncPass?: true
+    filienUncDomain?: true
     updated_at?: true
   }
 
@@ -13840,6 +14058,9 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
+    filienUncUser?: true
+    filienUncPass?: true
+    filienUncDomain?: true
     updated_at?: true
     _all?: true
   }
@@ -13967,6 +14188,9 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
+    filienUncUser: string | null
+    filienUncPass: string | null
+    filienUncDomain: string | null
     updated_at: Date
     _count: AppSettingsCountAggregateOutputType | null
     _avg: AppSettingsAvgAggregateOutputType | null
@@ -14026,6 +14250,9 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
+    filienUncUser?: boolean
+    filienUncPass?: boolean
+    filienUncDomain?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
@@ -14066,6 +14293,9 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
+    filienUncUser?: boolean
+    filienUncPass?: boolean
+    filienUncDomain?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
@@ -14106,6 +14336,9 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
+    filienUncUser?: boolean
+    filienUncPass?: boolean
+    filienUncDomain?: boolean
     updated_at?: boolean
   }
 
@@ -14150,6 +14383,9 @@ export namespace Prisma {
       signataireRole: string | null
       signataireDelegation: string | null
       signataireNom: string | null
+      filienUncUser: string | null
+      filienUncPass: string | null
+      filienUncDomain: string | null
       updated_at: Date
     }, ExtArgs["result"]["appSettings"]>
     composites: {}
@@ -14580,6 +14816,9 @@ export namespace Prisma {
     readonly signataireRole: FieldRef<"AppSettings", 'String'>
     readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
     readonly signataireNom: FieldRef<"AppSettings", 'String'>
+    readonly filienUncUser: FieldRef<"AppSettings", 'String'>
+    readonly filienUncPass: FieldRef<"AppSettings", 'String'>
+    readonly filienUncDomain: FieldRef<"AppSettings", 'String'>
     readonly updated_at: FieldRef<"AppSettings", 'DateTime'>
   }
     
@@ -24621,6 +24860,2023 @@ export namespace Prisma {
 
 
   /**
+   * Model BillingRun
+   */
+
+  export type AggregateBillingRun = {
+    _count: BillingRunCountAggregateOutputType | null
+    _avg: BillingRunAvgAggregateOutputType | null
+    _sum: BillingRunSumAggregateOutputType | null
+    _min: BillingRunMinAggregateOutputType | null
+    _max: BillingRunMaxAggregateOutputType | null
+  }
+
+  export type BillingRunAvgAggregateOutputType = {
+    count: number | null
+    total: number | null
+  }
+
+  export type BillingRunSumAggregateOutputType = {
+    count: number | null
+    total: number | null
+  }
+
+  export type BillingRunMinAggregateOutputType = {
+    id: string | null
+    type: string | null
+    date: Date | null
+    count: number | null
+    total: number | null
+    agent: string | null
+    recapPath: string | null
+    filienPath: string | null
+  }
+
+  export type BillingRunMaxAggregateOutputType = {
+    id: string | null
+    type: string | null
+    date: Date | null
+    count: number | null
+    total: number | null
+    agent: string | null
+    recapPath: string | null
+    filienPath: string | null
+  }
+
+  export type BillingRunCountAggregateOutputType = {
+    id: number
+    type: number
+    date: number
+    count: number
+    total: number
+    agent: number
+    recapPath: number
+    filienPath: number
+    _all: number
+  }
+
+
+  export type BillingRunAvgAggregateInputType = {
+    count?: true
+    total?: true
+  }
+
+  export type BillingRunSumAggregateInputType = {
+    count?: true
+    total?: true
+  }
+
+  export type BillingRunMinAggregateInputType = {
+    id?: true
+    type?: true
+    date?: true
+    count?: true
+    total?: true
+    agent?: true
+    recapPath?: true
+    filienPath?: true
+  }
+
+  export type BillingRunMaxAggregateInputType = {
+    id?: true
+    type?: true
+    date?: true
+    count?: true
+    total?: true
+    agent?: true
+    recapPath?: true
+    filienPath?: true
+  }
+
+  export type BillingRunCountAggregateInputType = {
+    id?: true
+    type?: true
+    date?: true
+    count?: true
+    total?: true
+    agent?: true
+    recapPath?: true
+    filienPath?: true
+    _all?: true
+  }
+
+  export type BillingRunAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BillingRun to aggregate.
+     */
+    where?: BillingRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BillingRuns to fetch.
+     */
+    orderBy?: BillingRunOrderByWithRelationInput | BillingRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BillingRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BillingRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BillingRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BillingRuns
+    **/
+    _count?: true | BillingRunCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BillingRunAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BillingRunSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BillingRunMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BillingRunMaxAggregateInputType
+  }
+
+  export type GetBillingRunAggregateType<T extends BillingRunAggregateArgs> = {
+        [P in keyof T & keyof AggregateBillingRun]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBillingRun[P]>
+      : GetScalarType<T[P], AggregateBillingRun[P]>
+  }
+
+
+
+
+  export type BillingRunGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BillingRunWhereInput
+    orderBy?: BillingRunOrderByWithAggregationInput | BillingRunOrderByWithAggregationInput[]
+    by: BillingRunScalarFieldEnum[] | BillingRunScalarFieldEnum
+    having?: BillingRunScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BillingRunCountAggregateInputType | true
+    _avg?: BillingRunAvgAggregateInputType
+    _sum?: BillingRunSumAggregateInputType
+    _min?: BillingRunMinAggregateInputType
+    _max?: BillingRunMaxAggregateInputType
+  }
+
+  export type BillingRunGroupByOutputType = {
+    id: string
+    type: string
+    date: Date
+    count: number
+    total: number
+    agent: string | null
+    recapPath: string | null
+    filienPath: string | null
+    _count: BillingRunCountAggregateOutputType | null
+    _avg: BillingRunAvgAggregateOutputType | null
+    _sum: BillingRunSumAggregateOutputType | null
+    _min: BillingRunMinAggregateOutputType | null
+    _max: BillingRunMaxAggregateOutputType | null
+  }
+
+  type GetBillingRunGroupByPayload<T extends BillingRunGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BillingRunGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BillingRunGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BillingRunGroupByOutputType[P]>
+            : GetScalarType<T[P], BillingRunGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BillingRunSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    date?: boolean
+    count?: boolean
+    total?: boolean
+    agent?: boolean
+    recapPath?: boolean
+    filienPath?: boolean
+    invoices?: boolean | BillingRun$invoicesArgs<ExtArgs>
+    _count?: boolean | BillingRunCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["billingRun"]>
+
+  export type BillingRunSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    date?: boolean
+    count?: boolean
+    total?: boolean
+    agent?: boolean
+    recapPath?: boolean
+    filienPath?: boolean
+  }, ExtArgs["result"]["billingRun"]>
+
+  export type BillingRunSelectScalar = {
+    id?: boolean
+    type?: boolean
+    date?: boolean
+    count?: boolean
+    total?: boolean
+    agent?: boolean
+    recapPath?: boolean
+    filienPath?: boolean
+  }
+
+  export type BillingRunInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    invoices?: boolean | BillingRun$invoicesArgs<ExtArgs>
+    _count?: boolean | BillingRunCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type BillingRunIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $BillingRunPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BillingRun"
+    objects: {
+      invoices: Prisma.$BillingRunInvoicePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: string
+      date: Date
+      count: number
+      total: number
+      agent: string | null
+      recapPath: string | null
+      filienPath: string | null
+    }, ExtArgs["result"]["billingRun"]>
+    composites: {}
+  }
+
+  type BillingRunGetPayload<S extends boolean | null | undefined | BillingRunDefaultArgs> = $Result.GetResult<Prisma.$BillingRunPayload, S>
+
+  type BillingRunCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<BillingRunFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: BillingRunCountAggregateInputType | true
+    }
+
+  export interface BillingRunDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BillingRun'], meta: { name: 'BillingRun' } }
+    /**
+     * Find zero or one BillingRun that matches the filter.
+     * @param {BillingRunFindUniqueArgs} args - Arguments to find a BillingRun
+     * @example
+     * // Get one BillingRun
+     * const billingRun = await prisma.billingRun.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BillingRunFindUniqueArgs>(args: SelectSubset<T, BillingRunFindUniqueArgs<ExtArgs>>): Prisma__BillingRunClient<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one BillingRun that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {BillingRunFindUniqueOrThrowArgs} args - Arguments to find a BillingRun
+     * @example
+     * // Get one BillingRun
+     * const billingRun = await prisma.billingRun.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BillingRunFindUniqueOrThrowArgs>(args: SelectSubset<T, BillingRunFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BillingRunClient<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first BillingRun that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunFindFirstArgs} args - Arguments to find a BillingRun
+     * @example
+     * // Get one BillingRun
+     * const billingRun = await prisma.billingRun.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BillingRunFindFirstArgs>(args?: SelectSubset<T, BillingRunFindFirstArgs<ExtArgs>>): Prisma__BillingRunClient<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first BillingRun that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunFindFirstOrThrowArgs} args - Arguments to find a BillingRun
+     * @example
+     * // Get one BillingRun
+     * const billingRun = await prisma.billingRun.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BillingRunFindFirstOrThrowArgs>(args?: SelectSubset<T, BillingRunFindFirstOrThrowArgs<ExtArgs>>): Prisma__BillingRunClient<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more BillingRuns that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BillingRuns
+     * const billingRuns = await prisma.billingRun.findMany()
+     * 
+     * // Get first 10 BillingRuns
+     * const billingRuns = await prisma.billingRun.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const billingRunWithIdOnly = await prisma.billingRun.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BillingRunFindManyArgs>(args?: SelectSubset<T, BillingRunFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a BillingRun.
+     * @param {BillingRunCreateArgs} args - Arguments to create a BillingRun.
+     * @example
+     * // Create one BillingRun
+     * const BillingRun = await prisma.billingRun.create({
+     *   data: {
+     *     // ... data to create a BillingRun
+     *   }
+     * })
+     * 
+     */
+    create<T extends BillingRunCreateArgs>(args: SelectSubset<T, BillingRunCreateArgs<ExtArgs>>): Prisma__BillingRunClient<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many BillingRuns.
+     * @param {BillingRunCreateManyArgs} args - Arguments to create many BillingRuns.
+     * @example
+     * // Create many BillingRuns
+     * const billingRun = await prisma.billingRun.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BillingRunCreateManyArgs>(args?: SelectSubset<T, BillingRunCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BillingRuns and returns the data saved in the database.
+     * @param {BillingRunCreateManyAndReturnArgs} args - Arguments to create many BillingRuns.
+     * @example
+     * // Create many BillingRuns
+     * const billingRun = await prisma.billingRun.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BillingRuns and only return the `id`
+     * const billingRunWithIdOnly = await prisma.billingRun.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BillingRunCreateManyAndReturnArgs>(args?: SelectSubset<T, BillingRunCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a BillingRun.
+     * @param {BillingRunDeleteArgs} args - Arguments to delete one BillingRun.
+     * @example
+     * // Delete one BillingRun
+     * const BillingRun = await prisma.billingRun.delete({
+     *   where: {
+     *     // ... filter to delete one BillingRun
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BillingRunDeleteArgs>(args: SelectSubset<T, BillingRunDeleteArgs<ExtArgs>>): Prisma__BillingRunClient<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one BillingRun.
+     * @param {BillingRunUpdateArgs} args - Arguments to update one BillingRun.
+     * @example
+     * // Update one BillingRun
+     * const billingRun = await prisma.billingRun.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BillingRunUpdateArgs>(args: SelectSubset<T, BillingRunUpdateArgs<ExtArgs>>): Prisma__BillingRunClient<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more BillingRuns.
+     * @param {BillingRunDeleteManyArgs} args - Arguments to filter BillingRuns to delete.
+     * @example
+     * // Delete a few BillingRuns
+     * const { count } = await prisma.billingRun.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BillingRunDeleteManyArgs>(args?: SelectSubset<T, BillingRunDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BillingRuns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BillingRuns
+     * const billingRun = await prisma.billingRun.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BillingRunUpdateManyArgs>(args: SelectSubset<T, BillingRunUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one BillingRun.
+     * @param {BillingRunUpsertArgs} args - Arguments to update or create a BillingRun.
+     * @example
+     * // Update or create a BillingRun
+     * const billingRun = await prisma.billingRun.upsert({
+     *   create: {
+     *     // ... data to create a BillingRun
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BillingRun we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BillingRunUpsertArgs>(args: SelectSubset<T, BillingRunUpsertArgs<ExtArgs>>): Prisma__BillingRunClient<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of BillingRuns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunCountArgs} args - Arguments to filter BillingRuns to count.
+     * @example
+     * // Count the number of BillingRuns
+     * const count = await prisma.billingRun.count({
+     *   where: {
+     *     // ... the filter for the BillingRuns we want to count
+     *   }
+     * })
+    **/
+    count<T extends BillingRunCountArgs>(
+      args?: Subset<T, BillingRunCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BillingRunCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BillingRun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BillingRunAggregateArgs>(args: Subset<T, BillingRunAggregateArgs>): Prisma.PrismaPromise<GetBillingRunAggregateType<T>>
+
+    /**
+     * Group by BillingRun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BillingRunGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BillingRunGroupByArgs['orderBy'] }
+        : { orderBy?: BillingRunGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BillingRunGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBillingRunGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BillingRun model
+   */
+  readonly fields: BillingRunFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BillingRun.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BillingRunClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    invoices<T extends BillingRun$invoicesArgs<ExtArgs> = {}>(args?: Subset<T, BillingRun$invoicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BillingRun model
+   */ 
+  interface BillingRunFieldRefs {
+    readonly id: FieldRef<"BillingRun", 'String'>
+    readonly type: FieldRef<"BillingRun", 'String'>
+    readonly date: FieldRef<"BillingRun", 'DateTime'>
+    readonly count: FieldRef<"BillingRun", 'Int'>
+    readonly total: FieldRef<"BillingRun", 'Float'>
+    readonly agent: FieldRef<"BillingRun", 'String'>
+    readonly recapPath: FieldRef<"BillingRun", 'String'>
+    readonly filienPath: FieldRef<"BillingRun", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BillingRun findUnique
+   */
+  export type BillingRunFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRun to fetch.
+     */
+    where: BillingRunWhereUniqueInput
+  }
+
+  /**
+   * BillingRun findUniqueOrThrow
+   */
+  export type BillingRunFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRun to fetch.
+     */
+    where: BillingRunWhereUniqueInput
+  }
+
+  /**
+   * BillingRun findFirst
+   */
+  export type BillingRunFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRun to fetch.
+     */
+    where?: BillingRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BillingRuns to fetch.
+     */
+    orderBy?: BillingRunOrderByWithRelationInput | BillingRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BillingRuns.
+     */
+    cursor?: BillingRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BillingRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BillingRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BillingRuns.
+     */
+    distinct?: BillingRunScalarFieldEnum | BillingRunScalarFieldEnum[]
+  }
+
+  /**
+   * BillingRun findFirstOrThrow
+   */
+  export type BillingRunFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRun to fetch.
+     */
+    where?: BillingRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BillingRuns to fetch.
+     */
+    orderBy?: BillingRunOrderByWithRelationInput | BillingRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BillingRuns.
+     */
+    cursor?: BillingRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BillingRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BillingRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BillingRuns.
+     */
+    distinct?: BillingRunScalarFieldEnum | BillingRunScalarFieldEnum[]
+  }
+
+  /**
+   * BillingRun findMany
+   */
+  export type BillingRunFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRuns to fetch.
+     */
+    where?: BillingRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BillingRuns to fetch.
+     */
+    orderBy?: BillingRunOrderByWithRelationInput | BillingRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BillingRuns.
+     */
+    cursor?: BillingRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BillingRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BillingRuns.
+     */
+    skip?: number
+    distinct?: BillingRunScalarFieldEnum | BillingRunScalarFieldEnum[]
+  }
+
+  /**
+   * BillingRun create
+   */
+  export type BillingRunCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BillingRun.
+     */
+    data: XOR<BillingRunCreateInput, BillingRunUncheckedCreateInput>
+  }
+
+  /**
+   * BillingRun createMany
+   */
+  export type BillingRunCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BillingRuns.
+     */
+    data: BillingRunCreateManyInput | BillingRunCreateManyInput[]
+  }
+
+  /**
+   * BillingRun createManyAndReturn
+   */
+  export type BillingRunCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many BillingRuns.
+     */
+    data: BillingRunCreateManyInput | BillingRunCreateManyInput[]
+  }
+
+  /**
+   * BillingRun update
+   */
+  export type BillingRunUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BillingRun.
+     */
+    data: XOR<BillingRunUpdateInput, BillingRunUncheckedUpdateInput>
+    /**
+     * Choose, which BillingRun to update.
+     */
+    where: BillingRunWhereUniqueInput
+  }
+
+  /**
+   * BillingRun updateMany
+   */
+  export type BillingRunUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BillingRuns.
+     */
+    data: XOR<BillingRunUpdateManyMutationInput, BillingRunUncheckedUpdateManyInput>
+    /**
+     * Filter which BillingRuns to update
+     */
+    where?: BillingRunWhereInput
+  }
+
+  /**
+   * BillingRun upsert
+   */
+  export type BillingRunUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BillingRun to update in case it exists.
+     */
+    where: BillingRunWhereUniqueInput
+    /**
+     * In case the BillingRun found by the `where` argument doesn't exist, create a new BillingRun with this data.
+     */
+    create: XOR<BillingRunCreateInput, BillingRunUncheckedCreateInput>
+    /**
+     * In case the BillingRun was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BillingRunUpdateInput, BillingRunUncheckedUpdateInput>
+  }
+
+  /**
+   * BillingRun delete
+   */
+  export type BillingRunDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+    /**
+     * Filter which BillingRun to delete.
+     */
+    where: BillingRunWhereUniqueInput
+  }
+
+  /**
+   * BillingRun deleteMany
+   */
+  export type BillingRunDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BillingRuns to delete
+     */
+    where?: BillingRunWhereInput
+  }
+
+  /**
+   * BillingRun.invoices
+   */
+  export type BillingRun$invoicesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    where?: BillingRunInvoiceWhereInput
+    orderBy?: BillingRunInvoiceOrderByWithRelationInput | BillingRunInvoiceOrderByWithRelationInput[]
+    cursor?: BillingRunInvoiceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BillingRunInvoiceScalarFieldEnum | BillingRunInvoiceScalarFieldEnum[]
+  }
+
+  /**
+   * BillingRun without action
+   */
+  export type BillingRunDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRun
+     */
+    select?: BillingRunSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model BillingRunInvoice
+   */
+
+  export type AggregateBillingRunInvoice = {
+    _count: BillingRunInvoiceCountAggregateOutputType | null
+    _avg: BillingRunInvoiceAvgAggregateOutputType | null
+    _sum: BillingRunInvoiceSumAggregateOutputType | null
+    _min: BillingRunInvoiceMinAggregateOutputType | null
+    _max: BillingRunInvoiceMaxAggregateOutputType | null
+  }
+
+  export type BillingRunInvoiceAvgAggregateOutputType = {
+    id: number | null
+    dossierId: number | null
+    total: number | null
+  }
+
+  export type BillingRunInvoiceSumAggregateOutputType = {
+    id: number | null
+    dossierId: number | null
+    total: number | null
+  }
+
+  export type BillingRunInvoiceMinAggregateOutputType = {
+    id: number | null
+    billingRunId: string | null
+    dossierId: number | null
+    numero: string | null
+    tiers: string | null
+    total: number | null
+    pdfPath: string | null
+  }
+
+  export type BillingRunInvoiceMaxAggregateOutputType = {
+    id: number | null
+    billingRunId: string | null
+    dossierId: number | null
+    numero: string | null
+    tiers: string | null
+    total: number | null
+    pdfPath: string | null
+  }
+
+  export type BillingRunInvoiceCountAggregateOutputType = {
+    id: number
+    billingRunId: number
+    dossierId: number
+    numero: number
+    tiers: number
+    total: number
+    pdfPath: number
+    _all: number
+  }
+
+
+  export type BillingRunInvoiceAvgAggregateInputType = {
+    id?: true
+    dossierId?: true
+    total?: true
+  }
+
+  export type BillingRunInvoiceSumAggregateInputType = {
+    id?: true
+    dossierId?: true
+    total?: true
+  }
+
+  export type BillingRunInvoiceMinAggregateInputType = {
+    id?: true
+    billingRunId?: true
+    dossierId?: true
+    numero?: true
+    tiers?: true
+    total?: true
+    pdfPath?: true
+  }
+
+  export type BillingRunInvoiceMaxAggregateInputType = {
+    id?: true
+    billingRunId?: true
+    dossierId?: true
+    numero?: true
+    tiers?: true
+    total?: true
+    pdfPath?: true
+  }
+
+  export type BillingRunInvoiceCountAggregateInputType = {
+    id?: true
+    billingRunId?: true
+    dossierId?: true
+    numero?: true
+    tiers?: true
+    total?: true
+    pdfPath?: true
+    _all?: true
+  }
+
+  export type BillingRunInvoiceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BillingRunInvoice to aggregate.
+     */
+    where?: BillingRunInvoiceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BillingRunInvoices to fetch.
+     */
+    orderBy?: BillingRunInvoiceOrderByWithRelationInput | BillingRunInvoiceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BillingRunInvoiceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BillingRunInvoices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BillingRunInvoices.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BillingRunInvoices
+    **/
+    _count?: true | BillingRunInvoiceCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BillingRunInvoiceAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BillingRunInvoiceSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BillingRunInvoiceMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BillingRunInvoiceMaxAggregateInputType
+  }
+
+  export type GetBillingRunInvoiceAggregateType<T extends BillingRunInvoiceAggregateArgs> = {
+        [P in keyof T & keyof AggregateBillingRunInvoice]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBillingRunInvoice[P]>
+      : GetScalarType<T[P], AggregateBillingRunInvoice[P]>
+  }
+
+
+
+
+  export type BillingRunInvoiceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BillingRunInvoiceWhereInput
+    orderBy?: BillingRunInvoiceOrderByWithAggregationInput | BillingRunInvoiceOrderByWithAggregationInput[]
+    by: BillingRunInvoiceScalarFieldEnum[] | BillingRunInvoiceScalarFieldEnum
+    having?: BillingRunInvoiceScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BillingRunInvoiceCountAggregateInputType | true
+    _avg?: BillingRunInvoiceAvgAggregateInputType
+    _sum?: BillingRunInvoiceSumAggregateInputType
+    _min?: BillingRunInvoiceMinAggregateInputType
+    _max?: BillingRunInvoiceMaxAggregateInputType
+  }
+
+  export type BillingRunInvoiceGroupByOutputType = {
+    id: number
+    billingRunId: string
+    dossierId: number
+    numero: string
+    tiers: string
+    total: number
+    pdfPath: string
+    _count: BillingRunInvoiceCountAggregateOutputType | null
+    _avg: BillingRunInvoiceAvgAggregateOutputType | null
+    _sum: BillingRunInvoiceSumAggregateOutputType | null
+    _min: BillingRunInvoiceMinAggregateOutputType | null
+    _max: BillingRunInvoiceMaxAggregateOutputType | null
+  }
+
+  type GetBillingRunInvoiceGroupByPayload<T extends BillingRunInvoiceGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BillingRunInvoiceGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BillingRunInvoiceGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BillingRunInvoiceGroupByOutputType[P]>
+            : GetScalarType<T[P], BillingRunInvoiceGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BillingRunInvoiceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    billingRunId?: boolean
+    dossierId?: boolean
+    numero?: boolean
+    tiers?: boolean
+    total?: boolean
+    pdfPath?: boolean
+    run?: boolean | BillingRunDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["billingRunInvoice"]>
+
+  export type BillingRunInvoiceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    billingRunId?: boolean
+    dossierId?: boolean
+    numero?: boolean
+    tiers?: boolean
+    total?: boolean
+    pdfPath?: boolean
+    run?: boolean | BillingRunDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["billingRunInvoice"]>
+
+  export type BillingRunInvoiceSelectScalar = {
+    id?: boolean
+    billingRunId?: boolean
+    dossierId?: boolean
+    numero?: boolean
+    tiers?: boolean
+    total?: boolean
+    pdfPath?: boolean
+  }
+
+  export type BillingRunInvoiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    run?: boolean | BillingRunDefaultArgs<ExtArgs>
+  }
+  export type BillingRunInvoiceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    run?: boolean | BillingRunDefaultArgs<ExtArgs>
+  }
+
+  export type $BillingRunInvoicePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BillingRunInvoice"
+    objects: {
+      run: Prisma.$BillingRunPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      billingRunId: string
+      dossierId: number
+      numero: string
+      tiers: string
+      total: number
+      pdfPath: string
+    }, ExtArgs["result"]["billingRunInvoice"]>
+    composites: {}
+  }
+
+  type BillingRunInvoiceGetPayload<S extends boolean | null | undefined | BillingRunInvoiceDefaultArgs> = $Result.GetResult<Prisma.$BillingRunInvoicePayload, S>
+
+  type BillingRunInvoiceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<BillingRunInvoiceFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: BillingRunInvoiceCountAggregateInputType | true
+    }
+
+  export interface BillingRunInvoiceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BillingRunInvoice'], meta: { name: 'BillingRunInvoice' } }
+    /**
+     * Find zero or one BillingRunInvoice that matches the filter.
+     * @param {BillingRunInvoiceFindUniqueArgs} args - Arguments to find a BillingRunInvoice
+     * @example
+     * // Get one BillingRunInvoice
+     * const billingRunInvoice = await prisma.billingRunInvoice.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BillingRunInvoiceFindUniqueArgs>(args: SelectSubset<T, BillingRunInvoiceFindUniqueArgs<ExtArgs>>): Prisma__BillingRunInvoiceClient<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one BillingRunInvoice that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {BillingRunInvoiceFindUniqueOrThrowArgs} args - Arguments to find a BillingRunInvoice
+     * @example
+     * // Get one BillingRunInvoice
+     * const billingRunInvoice = await prisma.billingRunInvoice.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BillingRunInvoiceFindUniqueOrThrowArgs>(args: SelectSubset<T, BillingRunInvoiceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BillingRunInvoiceClient<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first BillingRunInvoice that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunInvoiceFindFirstArgs} args - Arguments to find a BillingRunInvoice
+     * @example
+     * // Get one BillingRunInvoice
+     * const billingRunInvoice = await prisma.billingRunInvoice.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BillingRunInvoiceFindFirstArgs>(args?: SelectSubset<T, BillingRunInvoiceFindFirstArgs<ExtArgs>>): Prisma__BillingRunInvoiceClient<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first BillingRunInvoice that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunInvoiceFindFirstOrThrowArgs} args - Arguments to find a BillingRunInvoice
+     * @example
+     * // Get one BillingRunInvoice
+     * const billingRunInvoice = await prisma.billingRunInvoice.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BillingRunInvoiceFindFirstOrThrowArgs>(args?: SelectSubset<T, BillingRunInvoiceFindFirstOrThrowArgs<ExtArgs>>): Prisma__BillingRunInvoiceClient<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more BillingRunInvoices that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunInvoiceFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BillingRunInvoices
+     * const billingRunInvoices = await prisma.billingRunInvoice.findMany()
+     * 
+     * // Get first 10 BillingRunInvoices
+     * const billingRunInvoices = await prisma.billingRunInvoice.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const billingRunInvoiceWithIdOnly = await prisma.billingRunInvoice.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BillingRunInvoiceFindManyArgs>(args?: SelectSubset<T, BillingRunInvoiceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a BillingRunInvoice.
+     * @param {BillingRunInvoiceCreateArgs} args - Arguments to create a BillingRunInvoice.
+     * @example
+     * // Create one BillingRunInvoice
+     * const BillingRunInvoice = await prisma.billingRunInvoice.create({
+     *   data: {
+     *     // ... data to create a BillingRunInvoice
+     *   }
+     * })
+     * 
+     */
+    create<T extends BillingRunInvoiceCreateArgs>(args: SelectSubset<T, BillingRunInvoiceCreateArgs<ExtArgs>>): Prisma__BillingRunInvoiceClient<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many BillingRunInvoices.
+     * @param {BillingRunInvoiceCreateManyArgs} args - Arguments to create many BillingRunInvoices.
+     * @example
+     * // Create many BillingRunInvoices
+     * const billingRunInvoice = await prisma.billingRunInvoice.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BillingRunInvoiceCreateManyArgs>(args?: SelectSubset<T, BillingRunInvoiceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BillingRunInvoices and returns the data saved in the database.
+     * @param {BillingRunInvoiceCreateManyAndReturnArgs} args - Arguments to create many BillingRunInvoices.
+     * @example
+     * // Create many BillingRunInvoices
+     * const billingRunInvoice = await prisma.billingRunInvoice.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BillingRunInvoices and only return the `id`
+     * const billingRunInvoiceWithIdOnly = await prisma.billingRunInvoice.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BillingRunInvoiceCreateManyAndReturnArgs>(args?: SelectSubset<T, BillingRunInvoiceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a BillingRunInvoice.
+     * @param {BillingRunInvoiceDeleteArgs} args - Arguments to delete one BillingRunInvoice.
+     * @example
+     * // Delete one BillingRunInvoice
+     * const BillingRunInvoice = await prisma.billingRunInvoice.delete({
+     *   where: {
+     *     // ... filter to delete one BillingRunInvoice
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BillingRunInvoiceDeleteArgs>(args: SelectSubset<T, BillingRunInvoiceDeleteArgs<ExtArgs>>): Prisma__BillingRunInvoiceClient<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one BillingRunInvoice.
+     * @param {BillingRunInvoiceUpdateArgs} args - Arguments to update one BillingRunInvoice.
+     * @example
+     * // Update one BillingRunInvoice
+     * const billingRunInvoice = await prisma.billingRunInvoice.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BillingRunInvoiceUpdateArgs>(args: SelectSubset<T, BillingRunInvoiceUpdateArgs<ExtArgs>>): Prisma__BillingRunInvoiceClient<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more BillingRunInvoices.
+     * @param {BillingRunInvoiceDeleteManyArgs} args - Arguments to filter BillingRunInvoices to delete.
+     * @example
+     * // Delete a few BillingRunInvoices
+     * const { count } = await prisma.billingRunInvoice.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BillingRunInvoiceDeleteManyArgs>(args?: SelectSubset<T, BillingRunInvoiceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BillingRunInvoices.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunInvoiceUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BillingRunInvoices
+     * const billingRunInvoice = await prisma.billingRunInvoice.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BillingRunInvoiceUpdateManyArgs>(args: SelectSubset<T, BillingRunInvoiceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one BillingRunInvoice.
+     * @param {BillingRunInvoiceUpsertArgs} args - Arguments to update or create a BillingRunInvoice.
+     * @example
+     * // Update or create a BillingRunInvoice
+     * const billingRunInvoice = await prisma.billingRunInvoice.upsert({
+     *   create: {
+     *     // ... data to create a BillingRunInvoice
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BillingRunInvoice we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BillingRunInvoiceUpsertArgs>(args: SelectSubset<T, BillingRunInvoiceUpsertArgs<ExtArgs>>): Prisma__BillingRunInvoiceClient<$Result.GetResult<Prisma.$BillingRunInvoicePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of BillingRunInvoices.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunInvoiceCountArgs} args - Arguments to filter BillingRunInvoices to count.
+     * @example
+     * // Count the number of BillingRunInvoices
+     * const count = await prisma.billingRunInvoice.count({
+     *   where: {
+     *     // ... the filter for the BillingRunInvoices we want to count
+     *   }
+     * })
+    **/
+    count<T extends BillingRunInvoiceCountArgs>(
+      args?: Subset<T, BillingRunInvoiceCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BillingRunInvoiceCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BillingRunInvoice.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunInvoiceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BillingRunInvoiceAggregateArgs>(args: Subset<T, BillingRunInvoiceAggregateArgs>): Prisma.PrismaPromise<GetBillingRunInvoiceAggregateType<T>>
+
+    /**
+     * Group by BillingRunInvoice.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BillingRunInvoiceGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BillingRunInvoiceGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BillingRunInvoiceGroupByArgs['orderBy'] }
+        : { orderBy?: BillingRunInvoiceGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BillingRunInvoiceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBillingRunInvoiceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BillingRunInvoice model
+   */
+  readonly fields: BillingRunInvoiceFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BillingRunInvoice.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BillingRunInvoiceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    run<T extends BillingRunDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BillingRunDefaultArgs<ExtArgs>>): Prisma__BillingRunClient<$Result.GetResult<Prisma.$BillingRunPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BillingRunInvoice model
+   */ 
+  interface BillingRunInvoiceFieldRefs {
+    readonly id: FieldRef<"BillingRunInvoice", 'Int'>
+    readonly billingRunId: FieldRef<"BillingRunInvoice", 'String'>
+    readonly dossierId: FieldRef<"BillingRunInvoice", 'Int'>
+    readonly numero: FieldRef<"BillingRunInvoice", 'String'>
+    readonly tiers: FieldRef<"BillingRunInvoice", 'String'>
+    readonly total: FieldRef<"BillingRunInvoice", 'Float'>
+    readonly pdfPath: FieldRef<"BillingRunInvoice", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BillingRunInvoice findUnique
+   */
+  export type BillingRunInvoiceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRunInvoice to fetch.
+     */
+    where: BillingRunInvoiceWhereUniqueInput
+  }
+
+  /**
+   * BillingRunInvoice findUniqueOrThrow
+   */
+  export type BillingRunInvoiceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRunInvoice to fetch.
+     */
+    where: BillingRunInvoiceWhereUniqueInput
+  }
+
+  /**
+   * BillingRunInvoice findFirst
+   */
+  export type BillingRunInvoiceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRunInvoice to fetch.
+     */
+    where?: BillingRunInvoiceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BillingRunInvoices to fetch.
+     */
+    orderBy?: BillingRunInvoiceOrderByWithRelationInput | BillingRunInvoiceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BillingRunInvoices.
+     */
+    cursor?: BillingRunInvoiceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BillingRunInvoices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BillingRunInvoices.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BillingRunInvoices.
+     */
+    distinct?: BillingRunInvoiceScalarFieldEnum | BillingRunInvoiceScalarFieldEnum[]
+  }
+
+  /**
+   * BillingRunInvoice findFirstOrThrow
+   */
+  export type BillingRunInvoiceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRunInvoice to fetch.
+     */
+    where?: BillingRunInvoiceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BillingRunInvoices to fetch.
+     */
+    orderBy?: BillingRunInvoiceOrderByWithRelationInput | BillingRunInvoiceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BillingRunInvoices.
+     */
+    cursor?: BillingRunInvoiceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BillingRunInvoices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BillingRunInvoices.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BillingRunInvoices.
+     */
+    distinct?: BillingRunInvoiceScalarFieldEnum | BillingRunInvoiceScalarFieldEnum[]
+  }
+
+  /**
+   * BillingRunInvoice findMany
+   */
+  export type BillingRunInvoiceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    /**
+     * Filter, which BillingRunInvoices to fetch.
+     */
+    where?: BillingRunInvoiceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BillingRunInvoices to fetch.
+     */
+    orderBy?: BillingRunInvoiceOrderByWithRelationInput | BillingRunInvoiceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BillingRunInvoices.
+     */
+    cursor?: BillingRunInvoiceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BillingRunInvoices from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BillingRunInvoices.
+     */
+    skip?: number
+    distinct?: BillingRunInvoiceScalarFieldEnum | BillingRunInvoiceScalarFieldEnum[]
+  }
+
+  /**
+   * BillingRunInvoice create
+   */
+  export type BillingRunInvoiceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BillingRunInvoice.
+     */
+    data: XOR<BillingRunInvoiceCreateInput, BillingRunInvoiceUncheckedCreateInput>
+  }
+
+  /**
+   * BillingRunInvoice createMany
+   */
+  export type BillingRunInvoiceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BillingRunInvoices.
+     */
+    data: BillingRunInvoiceCreateManyInput | BillingRunInvoiceCreateManyInput[]
+  }
+
+  /**
+   * BillingRunInvoice createManyAndReturn
+   */
+  export type BillingRunInvoiceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many BillingRunInvoices.
+     */
+    data: BillingRunInvoiceCreateManyInput | BillingRunInvoiceCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BillingRunInvoice update
+   */
+  export type BillingRunInvoiceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BillingRunInvoice.
+     */
+    data: XOR<BillingRunInvoiceUpdateInput, BillingRunInvoiceUncheckedUpdateInput>
+    /**
+     * Choose, which BillingRunInvoice to update.
+     */
+    where: BillingRunInvoiceWhereUniqueInput
+  }
+
+  /**
+   * BillingRunInvoice updateMany
+   */
+  export type BillingRunInvoiceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BillingRunInvoices.
+     */
+    data: XOR<BillingRunInvoiceUpdateManyMutationInput, BillingRunInvoiceUncheckedUpdateManyInput>
+    /**
+     * Filter which BillingRunInvoices to update
+     */
+    where?: BillingRunInvoiceWhereInput
+  }
+
+  /**
+   * BillingRunInvoice upsert
+   */
+  export type BillingRunInvoiceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BillingRunInvoice to update in case it exists.
+     */
+    where: BillingRunInvoiceWhereUniqueInput
+    /**
+     * In case the BillingRunInvoice found by the `where` argument doesn't exist, create a new BillingRunInvoice with this data.
+     */
+    create: XOR<BillingRunInvoiceCreateInput, BillingRunInvoiceUncheckedCreateInput>
+    /**
+     * In case the BillingRunInvoice was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BillingRunInvoiceUpdateInput, BillingRunInvoiceUncheckedUpdateInput>
+  }
+
+  /**
+   * BillingRunInvoice delete
+   */
+  export type BillingRunInvoiceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+    /**
+     * Filter which BillingRunInvoice to delete.
+     */
+    where: BillingRunInvoiceWhereUniqueInput
+  }
+
+  /**
+   * BillingRunInvoice deleteMany
+   */
+  export type BillingRunInvoiceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BillingRunInvoices to delete
+     */
+    where?: BillingRunInvoiceWhereInput
+  }
+
+  /**
+   * BillingRunInvoice without action
+   */
+  export type BillingRunInvoiceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BillingRunInvoice
+     */
+    select?: BillingRunInvoiceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BillingRunInvoiceInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -24839,6 +27095,9 @@ export namespace Prisma {
     signataireRole: 'signataireRole',
     signataireDelegation: 'signataireDelegation',
     signataireNom: 'signataireNom',
+    filienUncUser: 'filienUncUser',
+    filienUncPass: 'filienUncPass',
+    filienUncDomain: 'filienUncDomain',
     updated_at: 'updated_at'
   };
 
@@ -24976,6 +27235,33 @@ export namespace Prisma {
   };
 
   export type OdpConfigScalarFieldEnum = (typeof OdpConfigScalarFieldEnum)[keyof typeof OdpConfigScalarFieldEnum]
+
+
+  export const BillingRunScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    date: 'date',
+    count: 'count',
+    total: 'total',
+    agent: 'agent',
+    recapPath: 'recapPath',
+    filienPath: 'filienPath'
+  };
+
+  export type BillingRunScalarFieldEnum = (typeof BillingRunScalarFieldEnum)[keyof typeof BillingRunScalarFieldEnum]
+
+
+  export const BillingRunInvoiceScalarFieldEnum: {
+    id: 'id',
+    billingRunId: 'billingRunId',
+    dossierId: 'dossierId',
+    numero: 'numero',
+    tiers: 'tiers',
+    total: 'total',
+    pdfPath: 'pdfPath'
+  };
+
+  export type BillingRunInvoiceScalarFieldEnum = (typeof BillingRunInvoiceScalarFieldEnum)[keyof typeof BillingRunInvoiceScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -25977,6 +28263,9 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
   }
 
@@ -26017,6 +28306,9 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
+    filienUncUser?: SortOrderInput | SortOrder
+    filienUncPass?: SortOrderInput | SortOrder
+    filienUncDomain?: SortOrderInput | SortOrder
     updated_at?: SortOrder
   }
 
@@ -26060,6 +28352,9 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
   }, "id">
 
@@ -26100,6 +28395,9 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
+    filienUncUser?: SortOrderInput | SortOrder
+    filienUncPass?: SortOrderInput | SortOrder
+    filienUncDomain?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     _count?: AppSettingsCountOrderByAggregateInput
     _avg?: AppSettingsAvgOrderByAggregateInput
@@ -26148,6 +28446,9 @@ export namespace Prisma {
     signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     updated_at?: DateTimeWithAggregatesFilter<"AppSettings"> | Date | string
   }
 
@@ -26825,6 +29126,145 @@ export namespace Prisma {
     deliberationPath?: StringNullableWithAggregatesFilter<"OdpConfig"> | string | null
     tarifsTournagesPath?: StringNullableWithAggregatesFilter<"OdpConfig"> | string | null
     tarifsOdpPath?: StringNullableWithAggregatesFilter<"OdpConfig"> | string | null
+  }
+
+  export type BillingRunWhereInput = {
+    AND?: BillingRunWhereInput | BillingRunWhereInput[]
+    OR?: BillingRunWhereInput[]
+    NOT?: BillingRunWhereInput | BillingRunWhereInput[]
+    id?: StringFilter<"BillingRun"> | string
+    type?: StringFilter<"BillingRun"> | string
+    date?: DateTimeFilter<"BillingRun"> | Date | string
+    count?: IntFilter<"BillingRun"> | number
+    total?: FloatFilter<"BillingRun"> | number
+    agent?: StringNullableFilter<"BillingRun"> | string | null
+    recapPath?: StringNullableFilter<"BillingRun"> | string | null
+    filienPath?: StringNullableFilter<"BillingRun"> | string | null
+    invoices?: BillingRunInvoiceListRelationFilter
+  }
+
+  export type BillingRunOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    date?: SortOrder
+    count?: SortOrder
+    total?: SortOrder
+    agent?: SortOrderInput | SortOrder
+    recapPath?: SortOrderInput | SortOrder
+    filienPath?: SortOrderInput | SortOrder
+    invoices?: BillingRunInvoiceOrderByRelationAggregateInput
+  }
+
+  export type BillingRunWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: BillingRunWhereInput | BillingRunWhereInput[]
+    OR?: BillingRunWhereInput[]
+    NOT?: BillingRunWhereInput | BillingRunWhereInput[]
+    type?: StringFilter<"BillingRun"> | string
+    date?: DateTimeFilter<"BillingRun"> | Date | string
+    count?: IntFilter<"BillingRun"> | number
+    total?: FloatFilter<"BillingRun"> | number
+    agent?: StringNullableFilter<"BillingRun"> | string | null
+    recapPath?: StringNullableFilter<"BillingRun"> | string | null
+    filienPath?: StringNullableFilter<"BillingRun"> | string | null
+    invoices?: BillingRunInvoiceListRelationFilter
+  }, "id">
+
+  export type BillingRunOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    date?: SortOrder
+    count?: SortOrder
+    total?: SortOrder
+    agent?: SortOrderInput | SortOrder
+    recapPath?: SortOrderInput | SortOrder
+    filienPath?: SortOrderInput | SortOrder
+    _count?: BillingRunCountOrderByAggregateInput
+    _avg?: BillingRunAvgOrderByAggregateInput
+    _max?: BillingRunMaxOrderByAggregateInput
+    _min?: BillingRunMinOrderByAggregateInput
+    _sum?: BillingRunSumOrderByAggregateInput
+  }
+
+  export type BillingRunScalarWhereWithAggregatesInput = {
+    AND?: BillingRunScalarWhereWithAggregatesInput | BillingRunScalarWhereWithAggregatesInput[]
+    OR?: BillingRunScalarWhereWithAggregatesInput[]
+    NOT?: BillingRunScalarWhereWithAggregatesInput | BillingRunScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"BillingRun"> | string
+    type?: StringWithAggregatesFilter<"BillingRun"> | string
+    date?: DateTimeWithAggregatesFilter<"BillingRun"> | Date | string
+    count?: IntWithAggregatesFilter<"BillingRun"> | number
+    total?: FloatWithAggregatesFilter<"BillingRun"> | number
+    agent?: StringNullableWithAggregatesFilter<"BillingRun"> | string | null
+    recapPath?: StringNullableWithAggregatesFilter<"BillingRun"> | string | null
+    filienPath?: StringNullableWithAggregatesFilter<"BillingRun"> | string | null
+  }
+
+  export type BillingRunInvoiceWhereInput = {
+    AND?: BillingRunInvoiceWhereInput | BillingRunInvoiceWhereInput[]
+    OR?: BillingRunInvoiceWhereInput[]
+    NOT?: BillingRunInvoiceWhereInput | BillingRunInvoiceWhereInput[]
+    id?: IntFilter<"BillingRunInvoice"> | number
+    billingRunId?: StringFilter<"BillingRunInvoice"> | string
+    dossierId?: IntFilter<"BillingRunInvoice"> | number
+    numero?: StringFilter<"BillingRunInvoice"> | string
+    tiers?: StringFilter<"BillingRunInvoice"> | string
+    total?: FloatFilter<"BillingRunInvoice"> | number
+    pdfPath?: StringFilter<"BillingRunInvoice"> | string
+    run?: XOR<BillingRunRelationFilter, BillingRunWhereInput>
+  }
+
+  export type BillingRunInvoiceOrderByWithRelationInput = {
+    id?: SortOrder
+    billingRunId?: SortOrder
+    dossierId?: SortOrder
+    numero?: SortOrder
+    tiers?: SortOrder
+    total?: SortOrder
+    pdfPath?: SortOrder
+    run?: BillingRunOrderByWithRelationInput
+  }
+
+  export type BillingRunInvoiceWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: BillingRunInvoiceWhereInput | BillingRunInvoiceWhereInput[]
+    OR?: BillingRunInvoiceWhereInput[]
+    NOT?: BillingRunInvoiceWhereInput | BillingRunInvoiceWhereInput[]
+    billingRunId?: StringFilter<"BillingRunInvoice"> | string
+    dossierId?: IntFilter<"BillingRunInvoice"> | number
+    numero?: StringFilter<"BillingRunInvoice"> | string
+    tiers?: StringFilter<"BillingRunInvoice"> | string
+    total?: FloatFilter<"BillingRunInvoice"> | number
+    pdfPath?: StringFilter<"BillingRunInvoice"> | string
+    run?: XOR<BillingRunRelationFilter, BillingRunWhereInput>
+  }, "id">
+
+  export type BillingRunInvoiceOrderByWithAggregationInput = {
+    id?: SortOrder
+    billingRunId?: SortOrder
+    dossierId?: SortOrder
+    numero?: SortOrder
+    tiers?: SortOrder
+    total?: SortOrder
+    pdfPath?: SortOrder
+    _count?: BillingRunInvoiceCountOrderByAggregateInput
+    _avg?: BillingRunInvoiceAvgOrderByAggregateInput
+    _max?: BillingRunInvoiceMaxOrderByAggregateInput
+    _min?: BillingRunInvoiceMinOrderByAggregateInput
+    _sum?: BillingRunInvoiceSumOrderByAggregateInput
+  }
+
+  export type BillingRunInvoiceScalarWhereWithAggregatesInput = {
+    AND?: BillingRunInvoiceScalarWhereWithAggregatesInput | BillingRunInvoiceScalarWhereWithAggregatesInput[]
+    OR?: BillingRunInvoiceScalarWhereWithAggregatesInput[]
+    NOT?: BillingRunInvoiceScalarWhereWithAggregatesInput | BillingRunInvoiceScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"BillingRunInvoice"> | number
+    billingRunId?: StringWithAggregatesFilter<"BillingRunInvoice"> | string
+    dossierId?: IntWithAggregatesFilter<"BillingRunInvoice"> | number
+    numero?: StringWithAggregatesFilter<"BillingRunInvoice"> | string
+    tiers?: StringWithAggregatesFilter<"BillingRunInvoice"> | string
+    total?: FloatWithAggregatesFilter<"BillingRunInvoice"> | number
+    pdfPath?: StringWithAggregatesFilter<"BillingRunInvoice"> | string
   }
 
   export type TiersCreateInput = {
@@ -27859,6 +30299,9 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
+    filienUncUser?: string | null
+    filienUncPass?: string | null
+    filienUncDomain?: string | null
     updated_at?: Date | string
   }
 
@@ -27899,6 +30342,9 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
+    filienUncUser?: string | null
+    filienUncPass?: string | null
+    filienUncDomain?: string | null
     updated_at?: Date | string
   }
 
@@ -27938,6 +30384,9 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -27978,6 +30427,9 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28018,6 +30470,9 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
+    filienUncUser?: string | null
+    filienUncPass?: string | null
+    filienUncDomain?: string | null
     updated_at?: Date | string
   }
 
@@ -28057,6 +30512,9 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28097,6 +30555,9 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -28795,6 +31256,153 @@ export namespace Prisma {
     deliberationPath?: NullableStringFieldUpdateOperationsInput | string | null
     tarifsTournagesPath?: NullableStringFieldUpdateOperationsInput | string | null
     tarifsOdpPath?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BillingRunCreateInput = {
+    id: string
+    type: string
+    date?: Date | string
+    count: number
+    total: number
+    agent?: string | null
+    recapPath?: string | null
+    filienPath?: string | null
+    invoices?: BillingRunInvoiceCreateNestedManyWithoutRunInput
+  }
+
+  export type BillingRunUncheckedCreateInput = {
+    id: string
+    type: string
+    date?: Date | string
+    count: number
+    total: number
+    agent?: string | null
+    recapPath?: string | null
+    filienPath?: string | null
+    invoices?: BillingRunInvoiceUncheckedCreateNestedManyWithoutRunInput
+  }
+
+  export type BillingRunUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    count?: IntFieldUpdateOperationsInput | number
+    total?: FloatFieldUpdateOperationsInput | number
+    agent?: NullableStringFieldUpdateOperationsInput | string | null
+    recapPath?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPath?: NullableStringFieldUpdateOperationsInput | string | null
+    invoices?: BillingRunInvoiceUpdateManyWithoutRunNestedInput
+  }
+
+  export type BillingRunUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    count?: IntFieldUpdateOperationsInput | number
+    total?: FloatFieldUpdateOperationsInput | number
+    agent?: NullableStringFieldUpdateOperationsInput | string | null
+    recapPath?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPath?: NullableStringFieldUpdateOperationsInput | string | null
+    invoices?: BillingRunInvoiceUncheckedUpdateManyWithoutRunNestedInput
+  }
+
+  export type BillingRunCreateManyInput = {
+    id: string
+    type: string
+    date?: Date | string
+    count: number
+    total: number
+    agent?: string | null
+    recapPath?: string | null
+    filienPath?: string | null
+  }
+
+  export type BillingRunUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    count?: IntFieldUpdateOperationsInput | number
+    total?: FloatFieldUpdateOperationsInput | number
+    agent?: NullableStringFieldUpdateOperationsInput | string | null
+    recapPath?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPath?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BillingRunUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    count?: IntFieldUpdateOperationsInput | number
+    total?: FloatFieldUpdateOperationsInput | number
+    agent?: NullableStringFieldUpdateOperationsInput | string | null
+    recapPath?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPath?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BillingRunInvoiceCreateInput = {
+    dossierId: number
+    numero: string
+    tiers: string
+    total: number
+    pdfPath: string
+    run: BillingRunCreateNestedOneWithoutInvoicesInput
+  }
+
+  export type BillingRunInvoiceUncheckedCreateInput = {
+    id?: number
+    billingRunId: string
+    dossierId: number
+    numero: string
+    tiers: string
+    total: number
+    pdfPath: string
+  }
+
+  export type BillingRunInvoiceUpdateInput = {
+    dossierId?: IntFieldUpdateOperationsInput | number
+    numero?: StringFieldUpdateOperationsInput | string
+    tiers?: StringFieldUpdateOperationsInput | string
+    total?: FloatFieldUpdateOperationsInput | number
+    pdfPath?: StringFieldUpdateOperationsInput | string
+    run?: BillingRunUpdateOneRequiredWithoutInvoicesNestedInput
+  }
+
+  export type BillingRunInvoiceUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    billingRunId?: StringFieldUpdateOperationsInput | string
+    dossierId?: IntFieldUpdateOperationsInput | number
+    numero?: StringFieldUpdateOperationsInput | string
+    tiers?: StringFieldUpdateOperationsInput | string
+    total?: FloatFieldUpdateOperationsInput | number
+    pdfPath?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type BillingRunInvoiceCreateManyInput = {
+    id?: number
+    billingRunId: string
+    dossierId: number
+    numero: string
+    tiers: string
+    total: number
+    pdfPath: string
+  }
+
+  export type BillingRunInvoiceUpdateManyMutationInput = {
+    dossierId?: IntFieldUpdateOperationsInput | number
+    numero?: StringFieldUpdateOperationsInput | string
+    tiers?: StringFieldUpdateOperationsInput | string
+    total?: FloatFieldUpdateOperationsInput | number
+    pdfPath?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type BillingRunInvoiceUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    billingRunId?: StringFieldUpdateOperationsInput | string
+    dossierId?: IntFieldUpdateOperationsInput | number
+    numero?: StringFieldUpdateOperationsInput | string
+    tiers?: StringFieldUpdateOperationsInput | string
+    total?: FloatFieldUpdateOperationsInput | number
+    pdfPath?: StringFieldUpdateOperationsInput | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -29725,6 +32333,9 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncDomain?: SortOrder
     updated_at?: SortOrder
   }
 
@@ -29770,6 +32381,9 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncDomain?: SortOrder
     updated_at?: SortOrder
   }
 
@@ -29810,6 +32424,9 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncDomain?: SortOrder
     updated_at?: SortOrder
   }
 
@@ -30268,6 +32885,106 @@ export namespace Prisma {
 
   export type OdpConfigSumOrderByAggregateInput = {
     annee?: SortOrder
+  }
+
+  export type BillingRunInvoiceListRelationFilter = {
+    every?: BillingRunInvoiceWhereInput
+    some?: BillingRunInvoiceWhereInput
+    none?: BillingRunInvoiceWhereInput
+  }
+
+  export type BillingRunInvoiceOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BillingRunCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    date?: SortOrder
+    count?: SortOrder
+    total?: SortOrder
+    agent?: SortOrder
+    recapPath?: SortOrder
+    filienPath?: SortOrder
+  }
+
+  export type BillingRunAvgOrderByAggregateInput = {
+    count?: SortOrder
+    total?: SortOrder
+  }
+
+  export type BillingRunMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    date?: SortOrder
+    count?: SortOrder
+    total?: SortOrder
+    agent?: SortOrder
+    recapPath?: SortOrder
+    filienPath?: SortOrder
+  }
+
+  export type BillingRunMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    date?: SortOrder
+    count?: SortOrder
+    total?: SortOrder
+    agent?: SortOrder
+    recapPath?: SortOrder
+    filienPath?: SortOrder
+  }
+
+  export type BillingRunSumOrderByAggregateInput = {
+    count?: SortOrder
+    total?: SortOrder
+  }
+
+  export type BillingRunRelationFilter = {
+    is?: BillingRunWhereInput
+    isNot?: BillingRunWhereInput
+  }
+
+  export type BillingRunInvoiceCountOrderByAggregateInput = {
+    id?: SortOrder
+    billingRunId?: SortOrder
+    dossierId?: SortOrder
+    numero?: SortOrder
+    tiers?: SortOrder
+    total?: SortOrder
+    pdfPath?: SortOrder
+  }
+
+  export type BillingRunInvoiceAvgOrderByAggregateInput = {
+    id?: SortOrder
+    dossierId?: SortOrder
+    total?: SortOrder
+  }
+
+  export type BillingRunInvoiceMaxOrderByAggregateInput = {
+    id?: SortOrder
+    billingRunId?: SortOrder
+    dossierId?: SortOrder
+    numero?: SortOrder
+    tiers?: SortOrder
+    total?: SortOrder
+    pdfPath?: SortOrder
+  }
+
+  export type BillingRunInvoiceMinOrderByAggregateInput = {
+    id?: SortOrder
+    billingRunId?: SortOrder
+    dossierId?: SortOrder
+    numero?: SortOrder
+    tiers?: SortOrder
+    total?: SortOrder
+    pdfPath?: SortOrder
+  }
+
+  export type BillingRunInvoiceSumOrderByAggregateInput = {
+    id?: SortOrder
+    dossierId?: SortOrder
+    total?: SortOrder
   }
 
   export type OccupationCreateNestedManyWithoutTiersInput = {
@@ -31066,6 +33783,62 @@ export namespace Prisma {
     update?: BacklogItemUpdateWithWhereUniqueWithoutVersionInput | BacklogItemUpdateWithWhereUniqueWithoutVersionInput[]
     updateMany?: BacklogItemUpdateManyWithWhereWithoutVersionInput | BacklogItemUpdateManyWithWhereWithoutVersionInput[]
     deleteMany?: BacklogItemScalarWhereInput | BacklogItemScalarWhereInput[]
+  }
+
+  export type BillingRunInvoiceCreateNestedManyWithoutRunInput = {
+    create?: XOR<BillingRunInvoiceCreateWithoutRunInput, BillingRunInvoiceUncheckedCreateWithoutRunInput> | BillingRunInvoiceCreateWithoutRunInput[] | BillingRunInvoiceUncheckedCreateWithoutRunInput[]
+    connectOrCreate?: BillingRunInvoiceCreateOrConnectWithoutRunInput | BillingRunInvoiceCreateOrConnectWithoutRunInput[]
+    createMany?: BillingRunInvoiceCreateManyRunInputEnvelope
+    connect?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+  }
+
+  export type BillingRunInvoiceUncheckedCreateNestedManyWithoutRunInput = {
+    create?: XOR<BillingRunInvoiceCreateWithoutRunInput, BillingRunInvoiceUncheckedCreateWithoutRunInput> | BillingRunInvoiceCreateWithoutRunInput[] | BillingRunInvoiceUncheckedCreateWithoutRunInput[]
+    connectOrCreate?: BillingRunInvoiceCreateOrConnectWithoutRunInput | BillingRunInvoiceCreateOrConnectWithoutRunInput[]
+    createMany?: BillingRunInvoiceCreateManyRunInputEnvelope
+    connect?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+  }
+
+  export type BillingRunInvoiceUpdateManyWithoutRunNestedInput = {
+    create?: XOR<BillingRunInvoiceCreateWithoutRunInput, BillingRunInvoiceUncheckedCreateWithoutRunInput> | BillingRunInvoiceCreateWithoutRunInput[] | BillingRunInvoiceUncheckedCreateWithoutRunInput[]
+    connectOrCreate?: BillingRunInvoiceCreateOrConnectWithoutRunInput | BillingRunInvoiceCreateOrConnectWithoutRunInput[]
+    upsert?: BillingRunInvoiceUpsertWithWhereUniqueWithoutRunInput | BillingRunInvoiceUpsertWithWhereUniqueWithoutRunInput[]
+    createMany?: BillingRunInvoiceCreateManyRunInputEnvelope
+    set?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+    disconnect?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+    delete?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+    connect?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+    update?: BillingRunInvoiceUpdateWithWhereUniqueWithoutRunInput | BillingRunInvoiceUpdateWithWhereUniqueWithoutRunInput[]
+    updateMany?: BillingRunInvoiceUpdateManyWithWhereWithoutRunInput | BillingRunInvoiceUpdateManyWithWhereWithoutRunInput[]
+    deleteMany?: BillingRunInvoiceScalarWhereInput | BillingRunInvoiceScalarWhereInput[]
+  }
+
+  export type BillingRunInvoiceUncheckedUpdateManyWithoutRunNestedInput = {
+    create?: XOR<BillingRunInvoiceCreateWithoutRunInput, BillingRunInvoiceUncheckedCreateWithoutRunInput> | BillingRunInvoiceCreateWithoutRunInput[] | BillingRunInvoiceUncheckedCreateWithoutRunInput[]
+    connectOrCreate?: BillingRunInvoiceCreateOrConnectWithoutRunInput | BillingRunInvoiceCreateOrConnectWithoutRunInput[]
+    upsert?: BillingRunInvoiceUpsertWithWhereUniqueWithoutRunInput | BillingRunInvoiceUpsertWithWhereUniqueWithoutRunInput[]
+    createMany?: BillingRunInvoiceCreateManyRunInputEnvelope
+    set?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+    disconnect?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+    delete?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+    connect?: BillingRunInvoiceWhereUniqueInput | BillingRunInvoiceWhereUniqueInput[]
+    update?: BillingRunInvoiceUpdateWithWhereUniqueWithoutRunInput | BillingRunInvoiceUpdateWithWhereUniqueWithoutRunInput[]
+    updateMany?: BillingRunInvoiceUpdateManyWithWhereWithoutRunInput | BillingRunInvoiceUpdateManyWithWhereWithoutRunInput[]
+    deleteMany?: BillingRunInvoiceScalarWhereInput | BillingRunInvoiceScalarWhereInput[]
+  }
+
+  export type BillingRunCreateNestedOneWithoutInvoicesInput = {
+    create?: XOR<BillingRunCreateWithoutInvoicesInput, BillingRunUncheckedCreateWithoutInvoicesInput>
+    connectOrCreate?: BillingRunCreateOrConnectWithoutInvoicesInput
+    connect?: BillingRunWhereUniqueInput
+  }
+
+  export type BillingRunUpdateOneRequiredWithoutInvoicesNestedInput = {
+    create?: XOR<BillingRunCreateWithoutInvoicesInput, BillingRunUncheckedCreateWithoutInvoicesInput>
+    connectOrCreate?: BillingRunCreateOrConnectWithoutInvoicesInput
+    upsert?: BillingRunUpsertWithoutInvoicesInput
+    connect?: BillingRunWhereUniqueInput
+    update?: XOR<XOR<BillingRunUpdateToOneWithWhereWithoutInvoicesInput, BillingRunUpdateWithoutInvoicesInput>, BillingRunUncheckedUpdateWithoutInvoicesInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -33271,6 +36044,121 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
   }
 
+  export type BillingRunInvoiceCreateWithoutRunInput = {
+    dossierId: number
+    numero: string
+    tiers: string
+    total: number
+    pdfPath: string
+  }
+
+  export type BillingRunInvoiceUncheckedCreateWithoutRunInput = {
+    id?: number
+    dossierId: number
+    numero: string
+    tiers: string
+    total: number
+    pdfPath: string
+  }
+
+  export type BillingRunInvoiceCreateOrConnectWithoutRunInput = {
+    where: BillingRunInvoiceWhereUniqueInput
+    create: XOR<BillingRunInvoiceCreateWithoutRunInput, BillingRunInvoiceUncheckedCreateWithoutRunInput>
+  }
+
+  export type BillingRunInvoiceCreateManyRunInputEnvelope = {
+    data: BillingRunInvoiceCreateManyRunInput | BillingRunInvoiceCreateManyRunInput[]
+  }
+
+  export type BillingRunInvoiceUpsertWithWhereUniqueWithoutRunInput = {
+    where: BillingRunInvoiceWhereUniqueInput
+    update: XOR<BillingRunInvoiceUpdateWithoutRunInput, BillingRunInvoiceUncheckedUpdateWithoutRunInput>
+    create: XOR<BillingRunInvoiceCreateWithoutRunInput, BillingRunInvoiceUncheckedCreateWithoutRunInput>
+  }
+
+  export type BillingRunInvoiceUpdateWithWhereUniqueWithoutRunInput = {
+    where: BillingRunInvoiceWhereUniqueInput
+    data: XOR<BillingRunInvoiceUpdateWithoutRunInput, BillingRunInvoiceUncheckedUpdateWithoutRunInput>
+  }
+
+  export type BillingRunInvoiceUpdateManyWithWhereWithoutRunInput = {
+    where: BillingRunInvoiceScalarWhereInput
+    data: XOR<BillingRunInvoiceUpdateManyMutationInput, BillingRunInvoiceUncheckedUpdateManyWithoutRunInput>
+  }
+
+  export type BillingRunInvoiceScalarWhereInput = {
+    AND?: BillingRunInvoiceScalarWhereInput | BillingRunInvoiceScalarWhereInput[]
+    OR?: BillingRunInvoiceScalarWhereInput[]
+    NOT?: BillingRunInvoiceScalarWhereInput | BillingRunInvoiceScalarWhereInput[]
+    id?: IntFilter<"BillingRunInvoice"> | number
+    billingRunId?: StringFilter<"BillingRunInvoice"> | string
+    dossierId?: IntFilter<"BillingRunInvoice"> | number
+    numero?: StringFilter<"BillingRunInvoice"> | string
+    tiers?: StringFilter<"BillingRunInvoice"> | string
+    total?: FloatFilter<"BillingRunInvoice"> | number
+    pdfPath?: StringFilter<"BillingRunInvoice"> | string
+  }
+
+  export type BillingRunCreateWithoutInvoicesInput = {
+    id: string
+    type: string
+    date?: Date | string
+    count: number
+    total: number
+    agent?: string | null
+    recapPath?: string | null
+    filienPath?: string | null
+  }
+
+  export type BillingRunUncheckedCreateWithoutInvoicesInput = {
+    id: string
+    type: string
+    date?: Date | string
+    count: number
+    total: number
+    agent?: string | null
+    recapPath?: string | null
+    filienPath?: string | null
+  }
+
+  export type BillingRunCreateOrConnectWithoutInvoicesInput = {
+    where: BillingRunWhereUniqueInput
+    create: XOR<BillingRunCreateWithoutInvoicesInput, BillingRunUncheckedCreateWithoutInvoicesInput>
+  }
+
+  export type BillingRunUpsertWithoutInvoicesInput = {
+    update: XOR<BillingRunUpdateWithoutInvoicesInput, BillingRunUncheckedUpdateWithoutInvoicesInput>
+    create: XOR<BillingRunCreateWithoutInvoicesInput, BillingRunUncheckedCreateWithoutInvoicesInput>
+    where?: BillingRunWhereInput
+  }
+
+  export type BillingRunUpdateToOneWithWhereWithoutInvoicesInput = {
+    where?: BillingRunWhereInput
+    data: XOR<BillingRunUpdateWithoutInvoicesInput, BillingRunUncheckedUpdateWithoutInvoicesInput>
+  }
+
+  export type BillingRunUpdateWithoutInvoicesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    count?: IntFieldUpdateOperationsInput | number
+    total?: FloatFieldUpdateOperationsInput | number
+    agent?: NullableStringFieldUpdateOperationsInput | string | null
+    recapPath?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPath?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type BillingRunUncheckedUpdateWithoutInvoicesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    count?: IntFieldUpdateOperationsInput | number
+    total?: FloatFieldUpdateOperationsInput | number
+    agent?: NullableStringFieldUpdateOperationsInput | string | null
+    recapPath?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPath?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type OccupationCreateManyTiersInput = {
     id?: number
     nom?: string | null
@@ -34012,6 +36900,41 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BillingRunInvoiceCreateManyRunInput = {
+    id?: number
+    dossierId: number
+    numero: string
+    tiers: string
+    total: number
+    pdfPath: string
+  }
+
+  export type BillingRunInvoiceUpdateWithoutRunInput = {
+    dossierId?: IntFieldUpdateOperationsInput | number
+    numero?: StringFieldUpdateOperationsInput | string
+    tiers?: StringFieldUpdateOperationsInput | string
+    total?: FloatFieldUpdateOperationsInput | number
+    pdfPath?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type BillingRunInvoiceUncheckedUpdateWithoutRunInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    dossierId?: IntFieldUpdateOperationsInput | number
+    numero?: StringFieldUpdateOperationsInput | string
+    tiers?: StringFieldUpdateOperationsInput | string
+    total?: FloatFieldUpdateOperationsInput | number
+    pdfPath?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type BillingRunInvoiceUncheckedUpdateManyWithoutRunInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    dossierId?: IntFieldUpdateOperationsInput | number
+    numero?: StringFieldUpdateOperationsInput | string
+    tiers?: StringFieldUpdateOperationsInput | string
+    total?: FloatFieldUpdateOperationsInput | number
+    pdfPath?: StringFieldUpdateOperationsInput | string
+  }
+
 
 
   /**
@@ -34049,6 +36972,10 @@ export namespace Prisma {
      * @deprecated Use VersionReleaseCountOutputTypeDefaultArgs instead
      */
     export type VersionReleaseCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = VersionReleaseCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use BillingRunCountOutputTypeDefaultArgs instead
+     */
+    export type BillingRunCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = BillingRunCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use TiersDefaultArgs instead
      */
@@ -34133,6 +37060,14 @@ export namespace Prisma {
      * @deprecated Use OdpConfigDefaultArgs instead
      */
     export type OdpConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = OdpConfigDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use BillingRunDefaultArgs instead
+     */
+    export type BillingRunArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = BillingRunDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use BillingRunInvoiceDefaultArgs instead
+     */
+    export type BillingRunInvoiceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = BillingRunInvoiceDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

@@ -370,8 +370,37 @@ export async function POST(req: NextRequest) {
         tlpeConfig,
         recapFilename,
         recapPath,
-        facturesDir
+        facturesDir,
+        appSettings // Pass appSettings here
       });
+    }
+
+    // 7. Record run in DB for history and deletion support
+    try {
+      await (prisma as any).billingRun.create({
+        data: {
+          id: `FACT-${timestampStr}`,
+          type: type || 'Facturation',
+          date: now,
+          count: results.length,
+          total: grandTotal,
+          agent: agentName,
+          recapPath: `/Factures/${recapFilename}`,
+          filienPath: `/Factures/${filienFilename}`,
+          invoices: {
+            create: results.map(r => ({
+              dossierId: r.id,
+              numero: r.numero,
+              tiers: r.tiers,
+              total: r.total,
+              pdfPath: r.path
+            }))
+          }
+        }
+      });
+    } catch (dbErr) {
+      console.error('[DB RECORD ERROR]', dbErr);
+      // Don't fail the whole process if DB recording fails
     }
 
     return NextResponse.json({

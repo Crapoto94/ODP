@@ -23,7 +23,7 @@ import BacklogTab from './components/BacklogTab';
 import PostgresTab from './components/PostgresTab';
 import UserModal from './components/UserModal';
 
-type TabType = 'general' | 'postgres' | 'users' | 'filien' | 'mobile_logs' | 'backlog' | 'sql';
+type TabType = 'general' | 'postgres' | 'users' | 'mobile_logs' | 'backlog' | 'sql';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('general');
@@ -159,7 +159,6 @@ export default function SettingsPage() {
     { id: 'general', label: 'Général', icon: LayoutGrid },
     { id: 'postgres', label: 'Base PostgreSQL', icon: Database, accent: 'bg-blue-600' },
     { id: 'users', label: 'Utilisateurs', icon: Users },
-    { id: 'filien', label: 'Filien', icon: FileText },
     { id: 'backlog', label: 'Backlog', icon: Clock },
     { id: 'mobile_logs', label: 'Logs Mobiles', icon: Smartphone },
     { id: 'sql', label: 'Console SQL', icon: Database, accent: 'bg-indigo-600' },
@@ -194,7 +193,6 @@ export default function SettingsPage() {
         {activeTab === 'general' && <GeneralTab {...{settings, setSettings, handleSubmit, handleTestMail, saving, message, apmStatus}} />}
         {activeTab === 'postgres' && <PostgresTab />}
         {activeTab === 'users' && <UsersTab {...{users, loadingUsers, openUserModal, handleDeleteUser}} />}
-        {activeTab === 'filien' && <FilienTab {...{settings, setSettings, handleSubmit, saving, message}} />}
         {activeTab === 'backlog' && <BacklogTab />}
         {activeTab === 'mobile_logs' && <MobileLogsTab {...{mobileLogs, loadingLogs, fetchMobileLogs}} />}
         {activeTab === 'sql' && (

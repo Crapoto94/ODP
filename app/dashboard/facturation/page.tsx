@@ -17,13 +17,19 @@ import {
   Info,
   Calendar,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Trash2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import FilienTab from '../settings/components/FilienTab';
 
 export default function FacturationPage() {
-  const [view, setView] = useState<'new' | 'history'>('new');
+  const [view, setView] = useState<'new' | 'history' | 'config'>('new');
+  const [settings, setSettings] = useState<any>({});
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [loadingSettings, setLoadingSettings] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [expandedHistory, setExpandedHistory] = useState<string | null>(null);
@@ -51,7 +57,36 @@ export default function FacturationPage() {
     if (view === 'history') {
       fetchHistory();
     }
+    if (view === 'config') {
+      fetchSettings();
+    }
   }, [view]);
+
+  const fetchSettings = async () => {
+    setLoadingSettings(true);
+    try {
+      const res = await axios.get('/api/settings');
+      setSettings(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingSettings(false);
+    }
+  };
+
+  const handleSettingsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setMessage(null);
+    try {
+      await axios.patch('/api/settings', settings);
+      setMessage({ type: 'success', text: 'Paramètres Filien enregistrés avec succès' });
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Erreur lors de l\'enregistrement' });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const fetchHistory = async () => {
     setLoadingHistory(true);
@@ -62,6 +97,17 @@ export default function FacturationPage() {
       console.error(err);
     } finally {
       setLoadingHistory(false);
+    }
+  };
+
+  const handleDeleteRun = async (id: string) => {
+    if (!confirm("Attention : supprimer ce train de facturation annulera les factures associées et remettra les dossiers en état 'VÉRIFIÉ'. Souhaitez-vous continuer ?")) return;
+    
+    try {
+      await axios.delete(`/api/billing/history?id=${id}`);
+      fetchHistory();
+    } catch (err) {
+      alert("Erreur lors de la suppression");
     }
   };
 
@@ -121,6 +167,12 @@ export default function FacturationPage() {
           >
             Historique des Trains
           </button>
+          <button 
+             onClick={() => setView('config')} 
+             className={`px-5 py-2.5 font-black text-xs uppercase tracking-widest rounded-xl transition-all ${view === 'config' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            Paramétrage Filien
+          </button>
         </div>
       </div>
 
@@ -161,21 +213,28 @@ export default function FacturationPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-8">
-                      <div className="text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total TTC</p>
-                        <p className="text-lg font-black text-slate-900">{run.total.toLocaleString('fr-FR', {minimumFractionDigits: 2})} €</p>
+                      <div className="flex items-center gap-6">
+                        <div className="text-right">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total TTC</p>
+                          <p className="text-lg font-black text-slate-900">{run.total.toLocaleString('fr-FR', {minimumFractionDigits: 2})} €</p>
+                        </div>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleDeleteRun(run.id); }}
+                          className="p-3 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                          title="Supprimer ce train"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                        <div className="text-slate-400">
+                          {expandedHistory === run.id ? <ChevronUp size={20}/> : <ChevronDown size={20}/>}
+                        </div>
                       </div>
-                      <div className="text-slate-400">
-                        {expandedHistory === run.id ? <ChevronUp size={20}/> : <ChevronDown size={20}/>}
-                      </div>
-                    </div>
                   </div>
                   
                   {expandedHistory === run.id && (
                     <div className="p-6 border-t border-slate-100 bg-white">
                       <div className="flex flex-wrap gap-4 mb-6">
-                        <a href={run.recapPdf} target="_blank" className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-xl font-bold text-xs transition-colors">
+                        <a href={run.recapPath || run.recapPdf} target="_blank" className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-xl font-bold text-xs transition-colors">
                           <Download size={14}/> PDF File Recapitulatif
                         </a>
                         <a href={run.filienPath} download className="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-xl font-bold text-xs transition-colors">
@@ -186,7 +245,7 @@ export default function FacturationPage() {
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Détail des factures ({run.invoices?.length || 0})</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                           {run.invoices?.map((inv: any) => (
-                            <a href={inv.pdf} target="_blank" key={inv.numero} className="flex items-center justify-between p-3 border border-slate-100 rounded-2xl hover:border-blue-300 hover:shadow-md transition-all group">
+                            <a href={inv.pdfPath || inv.pdf} target="_blank" key={inv.numero} className="flex items-center justify-between p-3 border border-slate-100 rounded-2xl hover:border-blue-300 hover:shadow-md transition-all group">
                               <div>
                                 <p className="text-xs font-black text-slate-900 group-hover:text-blue-600 transition-colors">{inv.numero}</p>
                                 <p className="text-[10px] font-bold text-slate-400 truncate max-w-[140px] uppercase">{inv.tiers}</p>
@@ -207,6 +266,23 @@ export default function FacturationPage() {
               ))}
             </div>
           )}
+        </div>
+      ) : view === 'config' ? (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+           {loadingSettings ? (
+            <div className="py-20 text-center flex flex-col items-center gap-6">
+              <Loader2 className="animate-spin text-indigo-600" size={48} />
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Chargement des paramètres...</p>
+            </div>
+           ) : (
+            <FilienTab 
+              settings={settings} 
+              setSettings={setSettings} 
+              handleSubmit={handleSettingsSubmit} 
+              saving={saving} 
+              message={message} 
+            />
+           )}
         </div>
       ) : (
         <div className="space-y-6">

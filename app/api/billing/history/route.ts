@@ -1,128 +1,162 @@
 import { NextResponse } from 'next/server';
-import { readdir, readFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { unlink, readdir, readFile } from 'fs/promises';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const facturesDir = join(process.cwd(), 'public', 'Factures');
-    if (!existsSync(facturesDir)) {
-      return NextResponse.json([]);
-    }
+    // 1. Fetch from Database
+    const dbRuns = await (prisma as any).billingRun.findMany({
+      include: { invoices: true },
+      orderBy: { date: 'desc' }
+    });
 
-    const files = await readdir(facturesDir);
-    const filienFiles = files.filter(f => f.startsWith('FACT-') && f.endsWith('.filien'));
-
-    const history = await Promise.all(filienFiles.map(async (filename) => {
-      const content = await readFile(join(facturesDir, filename), 'utf-8');
-      const lines = content.split('\n');
-      const baseName = filename.replace('.filien', '');
-      
-      // Parse date from filename: FACT-2023-10-31-0830
-      let date = '';
-      const dateParts = baseName.split('-');
-      if (dateParts.length >= 5) {
-        date = `${dateParts[3]}/${dateParts[2]}/${dateParts[1]} ${dateParts[4].slice(0, 2)}:${dateParts[4].slice(2)}`;
-      }
-
-      let type = 'Inconnu';
-      let agent = 'Système';
-      let total = 0;
-      let count = 0;
-      const invoices: any[] = [];
-
-      // Detect Format
-      const isFilienFormat = content.includes('/PARAM/') || content.startsWith('/##/');
-
-      if (isFilienFormat) {
-        // Parse technical Filien format
-        let currentInvoice: any = null;
-        
-        for (const line of lines) {
-          if (line.startsWith('/01/')) {
-            count++;
-            const raw = line.replace('/01/', '').trim();
-            // Try to recover ODP format: 2026ODP1 -> 2026-ODP-1
-            let numero = raw;
-            if (raw.includes('ODP')) {
-              const p = raw.split('ODP');
-              numero = `${p[0]}-ODP-${p[1]}`;
-            }
-            currentInvoice = { numero, tiers: '', total: 0, pdf: `/Factures/${numero}.pdf` };
-            invoices.push(currentInvoice);
-          } else if (line.startsWith('/03/') && currentInvoice) {
-            // Sedit code, we don't have the name here yet, wait for /04/
-          } else if (line.startsWith('/04/') && currentInvoice) {
-            currentInvoice.tiers = line.replace('/04/', '').trim();
-          } else if (line.startsWith('/66/') && currentInvoice) {
-            const val = parseFloat(line.replace('/66/', '').replace(',', '.') || '0');
-            currentInvoice.total += val;
-            total += val;
-          } else if (line.startsWith('/PARAM/')) {
-            // /PARAM/30/01/2026/...
-            const p = line.split('/');
-            if (p[2] === '30') type = 'TLPE';
-            else if (p[2] === '01') type = 'Commerce';
-            else type = 'Facturation';
-          }
-        }
-      } else {
-        // Parse legacy/human format
-        const headerRegex = /RECAPITULATIF FACTURATION (.*?) - (.*?) - Par: (.*)/;
-        let match = lines[0]?.match(headerRegex);
-        
-        if (match) {
-          type = match[1];
-          if (!date) date = match[2];
-          agent = match[3];
-        } else {
-          const oldRegex = /RECAPITULATIF FACTURATION (.*?) - (.*)/;
-          const oldMatch = lines[0]?.match(oldRegex);
-          if (oldMatch) {
-            type = oldMatch[1];
-            if (!date) date = oldMatch[2];
-          }
-        }
-        
-        total = parseFloat(lines[1]?.split(': ')[1]?.replace(' EUR', '') || '0');
-        count = parseInt(lines[2]?.split(': ')[1] || '0');
-        
-        for (let i = 4; i < lines.length; i++) {
-          const line = lines[i].trim();
-          if (!line || line.startsWith('DET|')) continue;
-          
-          const parts = line.split('|');
-          if (parts.length >= 4) {
-            invoices.push({
-              numero: parts[0],
-              tiers: parts[1],
-              total: parseFloat(parts[2]),
-              dossierId: parseInt(parts[3]),
-              pdf: `/Factures/${parts[0]}.pdf`
-            });
-          }
-        }
-      }
-
-      return {
-        id: baseName,
-        type,
-        date,
-        agent,
-        total,
-        count,
-        recapPdf: `/Factures/${baseName}.pdf`,
-        filienPath: `/Factures/${filename}`,
-        invoices
-      };
+    const dbHistory = dbRuns.map((run: any) => ({
+      ...run,
+      date: run.date ? new Date(run.date).toLocaleString('fr-FR') : 'Date inconnue',
+      source: 'db'
     }));
 
-    // Sort by chronological order (descending): assuming FACT-YYYY-MM-DD-HHmm
-    history.sort((a, b) => b.id.localeCompare(a.id));
+    // 2. Fetch from Filesystem (Legacy)
+    const facturesDir = join(process.cwd(), 'public', 'Factures');
+    const legacyHistory: any[] = [];
+    
+    if (existsSync(facturesDir)) {
+      const files = await readdir(facturesDir);
+      const filienFiles = files.filter((f: string) => f.startsWith('FACT-') && f.endsWith('.filien'));
+      
+      // Filter out files that already exist in DB to avoid duplicates
+      const dbIds = new Set(dbRuns.map((r: any) => r.id));
+      const legacyFiles = filienFiles.filter((f: string) => !dbIds.has(f.replace('.filien', '')));
 
-    return NextResponse.json(history);
+      const parsedLegacy = await Promise.all(legacyFiles.map(async (filename: string) => {
+        try {
+          const content = await readFile(join(facturesDir, filename), 'utf-8');
+          const lines = content.split('\n');
+          const baseName = filename.replace('.filien', '');
+          
+          let date = '';
+          const dateParts = baseName.split('-');
+          if (dateParts.length >= 5) {
+            date = `${dateParts[3]}/${dateParts[2]}/${dateParts[1]} ${dateParts[4].slice(0, 2)}:${dateParts[4].slice(2)}`;
+          }
+
+          let type = 'Inconnu';
+          let total = 0;
+          let count = 0;
+          const invoices: any[] = [];
+
+          const isFilienFormat = content.includes('/PARAM/') || content.startsWith('/##/');
+
+          if (isFilienFormat) {
+            for (const line of lines) {
+              if (line.startsWith('/01/')) {
+                count++;
+                const raw = line.replace('/01/', '').trim();
+                let numero = raw;
+                if (raw.includes('ODP')) {
+                  const p = raw.split('ODP');
+                  numero = `${p[0]}-ODP-${p[1]}`;
+                }
+                invoices.push({ numero, tiers: '...', total: 0, pdfPath: `/Factures/${numero}.pdf` });
+              } else if (line.startsWith('/66/')) {
+                total += parseFloat(line.replace('/66/', '').replace(',', '.') || '0');
+              } else if (line.startsWith('/PARAM/')) {
+                const p = line.split('/');
+                if (p[2] === '30') type = 'TLPE';
+                else if (p[2] === '01') type = 'Commerce / ODP';
+                else type = 'Facturation';
+              }
+            }
+          }
+
+          return {
+            id: baseName,
+            type,
+            date,
+            agent: 'Système (Ancien)',
+            total,
+            count,
+            recapPath: `/Factures/${baseName}.pdf`,
+            filienPath: `/Factures/${filename}`,
+            invoices,
+            source: 'file'
+          };
+        } catch (e) {
+          return null;
+        }
+      }));
+      
+      parsedLegacy.forEach(h => { if (h) legacyHistory.push(h); });
+    }
+
+    // 3. Merge and Sort
+    const combined = [...dbHistory, ...legacyHistory].sort((a, b) => {
+      // Sort by chronological ID (FACT-YYYY-MM-DD-HHmm)
+      return b.id.localeCompare(a.id);
+    });
+
+    return NextResponse.json(combined);
   } catch (error: any) {
     console.error('[HISTORY ERROR]', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const url = new URL(req.url);
+    const id = url.searchParams.get('id');
+    
+    if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
+
+    // 1. Find the run and associated invoices
+    const run = await (prisma as any).billingRun.findUnique({
+      where: { id },
+      include: { invoices: true }
+    });
+
+    if (!run) return NextResponse.json({ error: 'Train de facturation introuvable' }, { status: 404 });
+
+    // 2. Revert dossier statuses
+    const invoiceIds = run.invoices.map((inv: any) => inv.dossierId);
+    if (invoiceIds.length > 0) {
+      await (prisma as any).occupation.updateMany({
+        where: { id: { in: invoiceIds } },
+        data: {
+          statut: 'VERIFIE',
+          numeroFacture: null,
+          facturePath: null
+        }
+      });
+    }
+
+    // 3. Delete files from disk
+    const facturesDir = join(process.cwd(), 'public', 'Factures');
+    
+    // Delete individual invoices
+    for (const inv of run.invoices) {
+      const filePath = join(process.cwd(), 'public', inv.pdfPath);
+      if (existsSync(filePath)) await unlink(filePath).catch(() => {});
+    }
+
+    // Delete recap and filien files
+    if (run.recapPath) {
+      const recapPath = join(process.cwd(), 'public', run.recapPath);
+      if (existsSync(recapPath)) await unlink(recapPath).catch(() => {});
+    }
+    if (run.filienPath) {
+      const filienPath = join(process.cwd(), 'public', run.filienPath);
+      if (existsSync(filienPath)) await unlink(filienPath).catch(() => {});
+    }
+
+    // 4. Delete the record from DB
+    await (prisma as any).billingRun.delete({ where: { id } });
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('[DELETE HISTORY ERROR]', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

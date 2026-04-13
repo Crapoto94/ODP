@@ -3,10 +3,10 @@
   "version": "0.3.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 0.0.0.0",
-    "dev:https": "next dev --experimental-https -H 0.0.0.0",
+    "dev": "SET NODE_OPTIONS=--openssl-legacy-provider && next dev -H 0.0.0.0",
+    "dev:https": "SET NODE_OPTIONS=--openssl-legacy-provider && next dev --experimental-https -H 0.0.0.0",
     "build": "next build",
-    "start": "next start",
+    "start": "SET NODE_OPTIONS=--openssl-legacy-provider && next start",
     "lint": "eslint",
     "prisma:generate:pg": "npx prisma generate --schema=prisma/schema-postgres.prisma",
     "prisma:pull:pg": "npx prisma db pull --schema=prisma/schema-postgres.prisma"
@@ -27,6 +27,7 @@
     "react-dom": "19.2.3",
     "react-leaflet": "^5.0.0",
     "recharts": "^3.8.0",
+    "smb2": "^0.2.11",
     "tesseract.js": "^5.1.1",
     "xlsx": "^0.18.5"
   },

@@ -40,7 +40,10 @@ export async function GET() {
           filienStructure: '',
           filienGestionnaire: '',
           filienUncPj: '',
-          signataireRole: "Pour le Maire d'Ivry-sur-Seine,",
+          filienUncUser: '',
+          filienUncPass: '',
+          filienUncDomain: 'WORKGROUP',
+          signataireRole: "Le Maire d'Ivry-sur-Seine,",
           signataireDelegation: "et par délégation,",
           signataireNom: "Dominique Montet - Directrice Générale Adjointe"
         }
@@ -73,6 +76,9 @@ export async function PATCH(req: Request) {
       filienStructure,
       filienGestionnaire,
       filienUncPj,
+      filienUncUser,
+      filienUncPass,
+      filienUncDomain,
       signataireRole,
       signataireDelegation,
       signataireNom
@@ -120,6 +126,9 @@ export async function PATCH(req: Request) {
           filienStructure = ${filienStructure},
           filienGestionnaire = ${filienGestionnaire},
           filienUncPj = ${filienUncPj},
+          filienUncUser = ${filienUncUser},
+          filienUncPass = ${filienUncPass},
+          filienUncDomain = ${filienUncDomain},
           signataireRole = ${signataireRole},
           signataireDelegation = ${signataireDelegation},
           signataireNom = ${signataireNom},
@@ -136,17 +145,16 @@ export async function PATCH(req: Request) {
           filienMonnaie, filienMouvementEx, filienPreBordereau,
           filienPoste, filienBordereau, filienObjet,
           filienTypeMouvement, filienSens, filienStructure, filienGestionnaire,
-          filienUncPj, signataireRole, signataireDelegation, signataireNom, updated_at
+          filienUncPj, filienUncUser, filienUncPass, filienUncDomain, signataireRole, signataireDelegation, signataireNom, updated_at
         ) VALUES (
           1, ${financeEmail}, ${appUrl}, ${apmUrl}, ${apmToken}, ${senderName}, ${senderEmail},
           ${filienOrga}, ${filienBudget}, ${parseInt(filienExercice) || new Date().getFullYear()}, ${filienAvancement},
-          ${filienRejetDispo ? 1 : 0}, ${filienRejetCA ? 1 : 0}, ${filienRejetMarche ? 1 : 0},
-          ${filienMouvement}, ${filienType}, ${filienLibelle}, ${filienCalendrier},
-          ${filienMonnaie}, ${filienMouvementEx}, ${filienPreBordereau},
+          ${filienRejetDispo}, ${filienRejetCA}, ${filienRejetMarche},
+          ${filienMouvement}, ${filienType}, ${filienLibelle}, ${filienCalendrier}, ${filienMonnaie}, ${filienMouvementEx}, ${filienPreBordereau},
           ${filienPoste}, ${filienBordereau}, ${filienObjet},
           ${filienChapitre}, ${filienNature}, ${filienFonction}, ${filienCodeInterne},
           ${filienTypeMouvement}, ${filienSens}, ${filienStructure}, ${filienGestionnaire},
-          ${filienUncPj}, ${signataireRole}, ${signataireDelegation}, ${signataireNom}, CURRENT_TIMESTAMP
+          ${filienUncPj}, ${filienUncUser}, ${filienUncPass}, ${filienUncDomain}, ${signataireRole}, ${signataireDelegation}, ${signataireNom}, CURRENT_TIMESTAMP
         )
       `;
     }

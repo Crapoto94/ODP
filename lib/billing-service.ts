@@ -1,6 +1,8 @@
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { writeFile, readFile, mkdir } from 'fs/promises';
+import { promisify } from 'util';
+const SMB2 = require('smb2');
 export { generateFilienFile } from './filien';
 import { FilienMovement, FilienParams, generateFilienFile } from './filien';
 
@@ -102,7 +104,7 @@ export function prepareFilienMovements(
  */
 export async function exportToUnc(params: {
   uncDir: string;
-  runName: string; // The subfolder name for this train
+  runName: string;
   filienContent: string;
   filienFilename: string;
   results: BillingResult[];
@@ -110,53 +112,132 @@ export async function exportToUnc(params: {
   recapFilename?: string;
   recapPath?: string;
   facturesDir: string;
+  appSettings?: any; // Add appSettings to params
 }): Promise<boolean> {
-  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, recapFilename, recapPath, facturesDir } = params;
+  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, recapFilename, recapPath, facturesDir, appSettings } = params;
   
   try {
-    // Target is the subfolder
-    const targetDir = join(uncDir, runName);
-    if (!existsSync(targetDir)) await mkdir(targetDir, { recursive: true });
+    // If SMB credentials are provided, use SMB2
+    if (appSettings?.filienUncUser && appSettings?.filienUncPass) {
+      console.log(`[UNC] Attempting SMB export to ${uncDir} with user ${appSettings.filienUncUser} (Domain: ${appSettings.filienUncDomain || 'WORKGROUP'})`);
+      
+      // Parse UNC path: \\SERVER\SHARE\PATH
+      const normalizedPath = uncDir.replace(/\//g, '\\');
+      const parts = normalizedPath.split('\\').filter(Boolean);
+      if (parts.length < 2) throw new Error("Format UNC invalide (attendu: \\\\serveur\\partage\\...)");
+      
+      const server = parts[0];
+      const shareName = parts[1];
+      const remainingPath = parts.slice(2).join('\\');
+      
+      const smbClient = new SMB2({
+        share: `\\\\${server}\\${shareName}`,
+        domain: appSettings.filienUncDomain || 'WORKGROUP',
+        username: appSettings.filienUncUser,
+        password: appSettings.filienUncPass
+      });
 
-    // 1. Copy individual invoices
-    for (const res of results) {
-      const pdfName = `${res.numero}.pdf`;
-      const source = join(facturesDir, pdfName);
-      const target = join(targetDir, pdfName);
-      if (existsSync(source)) {
-        await writeFile(target, await readFile(source));
+      const smbMkdir = promisify(smbClient.mkdir.bind(smbClient));
+      const smbWriteFile = promisify(smbClient.writeFile.bind(smbClient));
+      const smbExists = promisify(smbClient.exists.bind(smbClient));
+
+      // Target subfolder
+      const targetSubDir = remainingPath ? join(remainingPath, runName) : runName;
+      
+      // Ensure directories exist recursively
+      const pathParts = targetSubDir.split(/[\\/]/).filter(Boolean);
+      let currentPath = '';
+      for (const part of pathParts) {
+        currentPath = currentPath ? join(currentPath, part) : part;
+        const exists = await smbExists(currentPath).catch(() => false);
+        if (!exists) {
+          await smbMkdir(currentPath).catch((err: any) => {
+            // Directory might already exist (race condition)
+            if (err.code !== 'STATUS_OBJECT_NAME_COLLISION') throw err;
+          });
+        }
       }
-    }
 
-    // 2. Copy Recap PDF if provided
-    if (recapFilename && recapPath && existsSync(recapPath)) {
-      await writeFile(join(targetDir, recapFilename), await readFile(recapPath));
-    }
-    
-    // 3. Copy Filien file (also inside the subfolder)
-    await writeFile(join(targetDir, filienFilename), filienContent);
-
-    // 4. Copy Regulatory documents from public/ to UNC subfolder
-    const publicPath = join(process.cwd(), 'public');
-    
-    if (tlpeConfig?.deliberationPath) {
-      const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
-      const delibSrc = tlpeConfig.deliberationPath.startsWith('/') ? join(publicPath, tlpeConfig.deliberationPath) : tlpeConfig.deliberationPath;
-      if (existsSync(delibSrc)) {
-        await writeFile(join(targetDir, delibName), await readFile(delibSrc));
+      // 1. Copy individual invoices
+      for (const res of results) {
+        const pdfName = `${res.numero}.pdf`;
+        const source = join(facturesDir, pdfName);
+        const target = join(targetSubDir, pdfName);
+        if (existsSync(source)) {
+          const content = await readFile(source);
+          await smbWriteFile(target, content);
+        }
       }
-    }
 
-    if (tlpeConfig?.tarifsPath) {
-      const tarifsName = tlpeConfig.tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
-      const tarifsSrc = tlpeConfig.tarifsPath.startsWith('/') ? join(publicPath, tlpeConfig.tarifsPath) : tlpeConfig.tarifsPath;
-      if (existsSync(tarifsSrc)) {
-        await writeFile(join(targetDir, tarifsName), await readFile(tarifsSrc));
+      // 2. Copy Recap PDF
+      if (recapFilename && recapPath && existsSync(recapPath)) {
+        await smbWriteFile(join(targetSubDir, recapFilename), await readFile(recapPath));
       }
-    }
+      
+      // 3. Copy Filien file
+      await smbWriteFile(join(targetSubDir, filienFilename), Buffer.from(filienContent));
 
-    console.log(`[UNC] Successfully exported to ${targetDir}`);
-    return true;
+      // 4. Copy Regulatory documents
+      const publicPath = join(process.cwd(), 'public');
+      if (tlpeConfig?.deliberationPath) {
+        const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
+        const delibSrc = tlpeConfig.deliberationPath.startsWith('/') ? join(publicPath, tlpeConfig.deliberationPath) : tlpeConfig.deliberationPath;
+        if (existsSync(delibSrc)) {
+          await smbWriteFile(join(targetSubDir, delibName), await readFile(delibSrc));
+        }
+      }
+
+      if (tlpeConfig?.tarifsPath) {
+        const tarifsName = tlpeConfig.tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
+        const tarifsSrc = tlpeConfig.tarifsPath.startsWith('/') ? join(publicPath, tlpeConfig.tarifsPath) : tlpeConfig.tarifsPath;
+        if (existsSync(tarifsSrc)) {
+          await smbWriteFile(join(targetSubDir, tarifsName), await readFile(tarifsSrc));
+        }
+      }
+
+      console.log(`[UNC] Successfully exported via SMB to \\\\${server}\\${shareName}\\${targetSubDir}`);
+      return true;
+
+    } else {
+      // Fallback to local fs (mapped drive)
+      const targetDir = join(uncDir, runName);
+      if (!existsSync(targetDir)) await mkdir(targetDir, { recursive: true });
+
+      for (const res of results) {
+        const pdfName = `${res.numero}.pdf`;
+        const source = join(facturesDir, pdfName);
+        const target = join(targetDir, pdfName);
+        if (existsSync(source)) {
+          await writeFile(target, await readFile(source));
+        }
+      }
+
+      if (recapFilename && recapPath && existsSync(recapPath)) {
+        await writeFile(join(targetDir, recapFilename), await readFile(recapPath));
+      }
+      
+      await writeFile(join(targetDir, filienFilename), filienContent);
+
+      const publicPath = join(process.cwd(), 'public');
+      if (tlpeConfig?.deliberationPath) {
+        const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
+        const delibSrc = tlpeConfig.deliberationPath.startsWith('/') ? join(publicPath, tlpeConfig.deliberationPath) : tlpeConfig.deliberationPath;
+        if (existsSync(delibSrc)) {
+          await writeFile(join(targetDir, delibName), await readFile(delibSrc));
+        }
+      }
+
+      if (tlpeConfig?.tarifsPath) {
+        const tarifsName = tlpeConfig.tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
+        const tarifsSrc = tlpeConfig.tarifsPath.startsWith('/') ? join(publicPath, tlpeConfig.tarifsPath) : tlpeConfig.tarifsPath;
+        if (existsSync(tarifsSrc)) {
+          await writeFile(join(targetDir, tarifsName), await readFile(tarifsSrc));
+        }
+      }
+
+      console.log(`[UNC] Successfully exported to ${targetDir}`);
+      return true;
+    }
   } catch (err) {
     console.error('[UNC EXPORT ERROR]', err);
     return false;

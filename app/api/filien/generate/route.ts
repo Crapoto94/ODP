@@ -91,7 +91,8 @@ export async function POST(req: NextRequest) {
         filienFilename,
         results,
         tlpeConfig,
-        facturesDir
+        facturesDir,
+        appSettings: settings // Pass settings here
       });
     }
 
