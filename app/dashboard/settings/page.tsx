@@ -9,7 +9,8 @@ import {
   Smartphone,
   Database,
   Loader2,
-  Clock
+  Clock,
+  Mail
 } from 'lucide-react';
 
 import SQLEditor from '@/components/SQLEditor';
@@ -20,9 +21,9 @@ import MobileLogsTab from './components/MobileLogsTab';
 import BacklogTab from './components/BacklogTab';
 import PostgresTab from './components/PostgresTab';
 import SignatureConfigTab from './components/SignatureConfigTab';
-import UserModal from './components/UserModal';
+import MessagesContextuelsTab from './components/MessagesContextuelsTab';
 
-type TabType = 'general' | 'postgres' | 'users' | 'mobile_logs' | 'backlog' | 'signature' | 'sql';
+type TabType = 'general' | 'postgres' | 'users' | 'mobile_logs' | 'backlog' | 'signature' | 'messages' | 'sql';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('general');
@@ -32,14 +33,8 @@ export default function SettingsPage() {
   const [apmStatus, setApmStatus] = useState<'pending' | 'online' | 'offline'>('pending');
 
   const [settings, setSettings] = useState<any>({});
-  const [users, setUsers] = useState<any[]>([]);
-  const [loadingUsers, setLoadingUsers] = useState(false);
   const [mobileLogs, setMobileLogs] = useState<any[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
-
-  const [showUserModal, setShowUserModal] = useState(false);
-  const [editingUser, setEditingUser] = useState<any>(null);
-  const [userForm, setUserForm] = useState({ nom: '', prenom: '', email: '', login: '', password: '', role: 'AGENT_TERRAIN' });
 
   useEffect(() => {
     loadInitialData();
@@ -48,26 +43,14 @@ export default function SettingsPage() {
   const loadInitialData = async () => {
     try {
       setLoading(true);
-      const [settingsRes, usersRes] = await Promise.all([
-        axios.get('/api/settings'),
-        axios.get('/api/users').catch(() => ({ data: [] }))
-      ]);
+      const settingsRes = await axios.get('/api/settings');
       setSettings(settingsRes.data);
-      setUsers(usersRes.data);
     } catch (err) {
-       console.error('Failed to load initial data:', err);
+      console.error('Failed to load initial data:', err);
     } finally {
       setLoading(false);
     }
   };
-
-  const fetchUsers = async () => {
-    try {
-      setLoadingUsers(true);
-      const res = await axios.get('/api/users');
-      setUsers(res.data);
-    } catch(err) { console.error(err); } finally { setLoadingUsers(false); }
-  }
 
   const fetchMobileLogs = async () => {
     try {
@@ -115,36 +98,6 @@ export default function SettingsPage() {
     } catch (err: any) { setMessage({ type: 'error', text: err.response?.data?.error || 'Erreur lors de l\'envoi du test' }); } finally { setSaving(false); }
   };
 
-  const openUserModal = async (user: any = null) => {
-    if (user) {
-      setEditingUser(user);
-      setUserForm({ nom: user.nom, prenom: user.prenom, email: user.email, login: user.login, password: '', role: user.role });
-    } else {
-      setEditingUser(null);
-      setUserForm({ nom: '', prenom: '', email: '', login: '', password: '', role: 'AGENT_TERRAIN' });
-    }
-    setShowUserModal(true);
-  };
-
-  const handleSaveUser = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      if (editingUser) await axios.patch(`/api/users/${editingUser.id}`, userForm);
-      else await axios.post('/api/users', userForm);
-      setShowUserModal(false);
-      fetchUsers();
-    } catch (error: any) { alert(error.response?.data?.error || "Erreur de sauvegarde"); } finally { setSaving(false); }
-  }
-
-  const handleDeleteUser = async (id: number) => {
-    if (!confirm("Supprimer ce compte ?")) return;
-    try {
-      await axios.delete(`/api/users/${id}`);
-      fetchUsers();
-    } catch (err) { alert("Erreur de suppression"); }
-  }
-
   if (loading) {
     return (
       <div className="py-20 text-center flex flex-col items-center gap-6 animate-pulse">
@@ -159,6 +112,7 @@ export default function SettingsPage() {
     { id: 'postgres', label: 'Base PostgreSQL', icon: Database, accent: 'bg-blue-600' },
     { id: 'users', label: 'Utilisateurs', icon: Users },
     { id: 'signature', label: 'Signatures', icon: FileText, accent: 'bg-purple-600' },
+    { id: 'messages', label: 'Messages Contextuels', icon: Mail, accent: 'bg-blue-600' },
     { id: 'backlog', label: 'Backlog', icon: Clock },
     { id: 'mobile_logs', label: 'Logs Mobiles', icon: Smartphone },
     { id: 'sql', label: 'Console SQL', icon: Database, accent: 'bg-indigo-600' },
@@ -192,8 +146,9 @@ export default function SettingsPage() {
       <div className="relative">
         {activeTab === 'general' && <GeneralTab {...{settings, setSettings, handleSubmit, handleTestMail, saving, message, apmStatus}} />}
         {activeTab === 'postgres' && <PostgresTab />}
-        {activeTab === 'users' && <UsersTab {...{users, loadingUsers, openUserModal, handleDeleteUser}} />}
+        {activeTab === 'users' && <UsersTab />}
         {activeTab === 'signature' && <SignatureConfigTab />}
+        {activeTab === 'messages' && <MessagesContextuelsTab />}
         {activeTab === 'backlog' && <BacklogTab />}
         {activeTab === 'mobile_logs' && <MobileLogsTab {...{mobileLogs, loadingLogs, fetchMobileLogs}} />}
         {activeTab === 'sql' && (
@@ -210,15 +165,6 @@ export default function SettingsPage() {
         )}
       </div>
 
-      <UserModal 
-        show={showUserModal} 
-        onClose={() => setShowUserModal(false)}
-        editingUser={editingUser}
-        userForm={userForm}
-        setUserForm={setUserForm}
-        handleSaveUser={handleSaveUser}
-        saving={saving}
-      />
     </div>
   );
 }

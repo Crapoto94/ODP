@@ -169,6 +169,8 @@ export default function SignaturePage() {
       if (!cancelled) {
         setPdfDocObj(doc);
         setTotalPages(doc.numPages);
+        setPlacement(prev => ({ ...prev, signaturePage: doc.numPages }));
+        setSigPos(prev => ({ ...prev })); // keep position, just switch page
       }
     }
 

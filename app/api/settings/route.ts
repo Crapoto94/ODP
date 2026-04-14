@@ -81,7 +81,12 @@ export async function PATCH(req: Request) {
       filienUncDomain,
       signataireRole,
       signataireDelegation,
-      signataireNom
+      signataireNom,
+      footer1,
+      footer2,
+      footer3,
+      footerColor,
+      adDomain
     } = body;
 
     // Use Raw SQL to bypass Prisma Client sync issues (due to locked files during generate)
@@ -132,6 +137,11 @@ export async function PATCH(req: Request) {
           signataireRole = ${signataireRole},
           signataireDelegation = ${signataireDelegation},
           signataireNom = ${signataireNom},
+          footer1 = ${footer1 || null},
+          footer2 = ${footer2 || null},
+          footer3 = ${footer3 || null},
+          footerColor = ${footerColor || null},
+          adDomain = ${adDomain || null},
           updated_at = CURRENT_TIMESTAMP
         WHERE id = 1
       `;
@@ -145,7 +155,8 @@ export async function PATCH(req: Request) {
           filienMonnaie, filienMouvementEx, filienPreBordereau,
           filienPoste, filienBordereau, filienObjet,
           filienTypeMouvement, filienSens, filienStructure, filienGestionnaire,
-          filienUncPj, filienUncUser, filienUncPass, filienUncDomain, signataireRole, signataireDelegation, signataireNom, updated_at
+          filienUncPj, filienUncUser, filienUncPass, filienUncDomain, signataireRole, signataireDelegation, signataireNom,
+          footer1, footer2, footer3, footerColor, updated_at
         ) VALUES (
           1, ${financeEmail}, ${appUrl}, ${apmUrl}, ${apmToken}, ${senderName}, ${senderEmail},
           ${filienOrga}, ${filienBudget}, ${parseInt(filienExercice) || new Date().getFullYear()}, ${filienAvancement},
@@ -154,7 +165,8 @@ export async function PATCH(req: Request) {
           ${filienPoste}, ${filienBordereau}, ${filienObjet},
           ${filienChapitre}, ${filienNature}, ${filienFonction}, ${filienCodeInterne},
           ${filienTypeMouvement}, ${filienSens}, ${filienStructure}, ${filienGestionnaire},
-          ${filienUncPj}, ${filienUncUser}, ${filienUncPass}, ${filienUncDomain}, ${signataireRole}, ${signataireDelegation}, ${signataireNom}, CURRENT_TIMESTAMP
+          ${filienUncPj}, ${filienUncUser}, ${filienUncPass}, ${filienUncDomain}, ${signataireRole}, ${signataireDelegation}, ${signataireNom},
+          ${footer1 || null}, ${footer2 || null}, ${footer3 || null}, ${footerColor || null}, CURRENT_TIMESTAMP
         )
       `;
     }

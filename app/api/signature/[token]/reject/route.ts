@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateSignatureToken } from '@/lib/signature-token';
 import { sendApmMail } from '@/lib/apm';
-import { generateSignatureRejectionEmail } from '@/lib/signature-email-templates';
+import { getContextualMessageData } from '@/lib/contextual-messages';
 
 /**
  * POST /api/signature/[token]/reject
@@ -31,7 +31,7 @@ export async function POST(
     let signatureRequest = await prisma.signatureRequest.findUnique({
       where: { token },
       include: {
-        occupation: true,
+        occupation: { include: { tiers: true } },
         signatory: true
       }
     });
@@ -84,39 +84,62 @@ export async function POST(
       }
     });
 
-    // Get settings for admin email
+    // Get settings for admin email + appUrl
     const settings = await prisma.appSettings.findFirst({
       where: { id: 1 }
     });
+    const baseUrl = (settings?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
+    const lienDossier = `${baseUrl}/dashboard/occupations/${signatureRequest.occupation.id}`;
+    const tiersNom = (signatureRequest.occupation as any).tiers?.nom || `Dossier #${signatureRequest.occupation.id}`;
 
-    // Send rejection notification to admin (finance email)
+    const rejectedAtStr = now.toLocaleDateString('fr-FR', {
+      year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+
+    // Notification admin (finance email)
     if (settings?.financeEmail) {
       try {
-        const rejectedAtStr = now.toLocaleDateString('fr-FR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
+        const { html: emailHtml, subject: emailSubject } = await getContextualMessageData('MSG_SIGNATURE_REJET', {
+          SIGNATAIRE: signatureRequest.signatory.nom,
+          AOT_REF: signatureRequest.occupation.id.toString(),
+          DATE_REJET: rejectedAtStr,
+          COMMENTAIRE: comment || '',
         });
-
-        const emailHtml = generateSignatureRejectionEmail({
-          adminEmail: settings.financeEmail,
-          signatorName: signatureRequest.signatory.nom,
-          occupationRef: signatureRequest.occupation.id.toString(),
-          rejectedAt: rejectedAtStr,
-          rejectionComment: comment
-        });
-
         await sendApmMail(
           settings.financeEmail,
-          `✗ Document rejeté - AOT #${signatureRequest.occupation.id}`,
+          emailSubject || `✗ Signature refusée — ${tiersNom}`,
           emailHtml
         );
       } catch (emailError) {
-        console.error('[SignatureReject] Notification email failed:', emailError);
-        // Continue - email error doesn't block rejection
+        console.error('[SignatureReject] Notification admin failed:', emailError);
       }
+    }
+
+    // Notifier le demandeur
+    try {
+      const reqRows = await (prisma as any).$queryRaw`
+        SELECT requestedByLogin FROM SignatureRequest WHERE id = ${signatureRequest.id} LIMIT 1
+      `;
+      const reqLogin = (reqRows as any[])[0]?.requestedByLogin;
+      if (reqLogin && reqLogin !== 'admin') {
+        const userRows = await (prisma as any).$queryRaw`
+          SELECT email, prenom, nom FROM "User" WHERE login = ${reqLogin} LIMIT 1
+        `;
+        const requester = (userRows as any[])[0];
+        if (requester?.email) {
+          const { html: emailHtml, subject: emailSubject } = await getContextualMessageData('MSG_AOT_REFUSE', {
+            DEMANDEUR: `${requester.prenom} ${requester.nom}`.trim() || reqLogin,
+            TIERS: tiersNom,
+            LIEN_DOSSIER: lienDossier,
+            SIGNATAIRE: signatureRequest.signatory.nom,
+            DATE_REJET: rejectedAtStr,
+            COMMENTAIRE: comment || '',
+          });
+          await sendApmMail(requester.email, emailSubject || `⚠️ AOT refusé — ${tiersNom}`, emailHtml);
+        }
+      }
+    } catch (notifErr) {
+      console.warn('[Reject] Notification demandeur échouée:', notifErr);
     }
 
     return NextResponse.json({

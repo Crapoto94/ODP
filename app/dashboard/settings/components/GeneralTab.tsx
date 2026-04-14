@@ -106,6 +106,58 @@ export default function GeneralTab({
                     onChange={e => setSettings({...settings, senderEmail: e.target.value})}
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Footer ligne 1</label>
+                  <input
+                    type="text"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                    placeholder="ex: Direction Générale des Services"
+                    value={settings.footer1 || ''}
+                    onChange={e => setSettings({...settings, footer1: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Footer ligne 2</label>
+                  <input
+                    type="text"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                    placeholder="ex: Mairie d'Ivry-sur-Seine"
+                    value={settings.footer2 || ''}
+                    onChange={e => setSettings({...settings, footer2: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Footer ligne 3</label>
+                  <input
+                    type="text"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                    placeholder="ex: 01 49 60 20 20 — contact@mairie.fr"
+                    value={settings.footer3 || ''}
+                    onChange={e => setSettings({...settings, footer3: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Couleur du footer</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      className="w-12 h-12 rounded-lg border border-slate-200 cursor-pointer bg-slate-50"
+                      value={settings.footerColor || '#1e40af'}
+                      onChange={e => setSettings({...settings, footerColor: e.target.value})}
+                    />
+                    <input
+                      type="text"
+                      className="flex-1 bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                      placeholder="#1e40af"
+                      value={settings.footerColor || ''}
+                      onChange={e => setSettings({...settings, footerColor: e.target.value})}
+                    />
+                  </div>
+                </div>
               </FormSection>
             </div>
 
@@ -158,6 +210,17 @@ export default function GeneralTab({
                     onChange={e => setSettings({...settings, apmToken: e.target.value})}
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Domaine Active Directory</label>
+                <input
+                  type="text"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                  placeholder="ivry.local"
+                  value={settings.adDomain || ''}
+                  onChange={e => setSettings({...settings, adDomain: e.target.value})}
+                />
               </div>
             </div>
           </div>

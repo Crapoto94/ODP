@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { fetchSiretInfo } from '@/lib/insee';
 import { sendApmMail } from '@/lib/apm';
+import { getContextualMessageData } from '@/lib/contextual-messages';
 
 function mapNatureJuridique(apiNature: string): string {
   if (!apiNature) return '';
@@ -154,38 +155,19 @@ export async function POST(req: Request) {
         const baseUrl = settings?.appUrl || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
         const verifyUrl = `${baseUrl}/dashboard/tiers/verify/${tiers.id}`;
         
-        const mailContent = `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden;">
-            <div style="background-color: #0f172a; color: white; padding: 30px; text-align: center;">
-              <h2 style="margin: 0; font-size: 20px; letter-spacing: -0.5px;">Demande de création de tiers ${typeLabel}</h2>
-            </div>
-            <div style="padding: 30px; color: #334155;">
-              <p>Un nouveau tiers a été identifié par le service ODP :</p>
-              <div style="background-color: #f8fafc; padding: 20px; border-radius: 12px; margin: 20px 0;">
-                <p style="margin: 5px 0;"><strong>Nom :</strong> ${finalNom}</p>
-                <p style="margin: 5px 0;"><strong>Email :</strong> ${email || 'N/A'}</p>
-                <p style="margin: 5px 0;"><strong>SIRET :</strong> ${siret || 'N/A'}</p>
-                <p style="margin: 5px 0;"><strong>Adresse :</strong> ${finalAdresse || 'N/A'}</p>
-              </div>
-              
-              ${isSeditRequest ? `
-              <div style="text-align: center; margin-top: 30px;">
-                <a href="${verifyUrl}" style="background-color: #2563eb; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: bold; display: inline-block; font-size: 14px;">
-                  Saisir le code SEDIT & Valider
-                </a>
-              </div>
-              <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 20px;">
-                Cliquer sur ce bouton pour passer le tiers en définitif dans l'application ODP.
-              </p>
-              ` : '<p style="color: #64748b; font-style: italic;">Veuillez procéder à son intégration dans le référentiel RH.</p>'}
-            </div>
-          </div>
-        `;
-        
+        const { html: mailContent, subject: mailSubject } = await getContextualMessageData('MSG_TIERS', {
+          NOM: finalNom,
+          EMAIL: email || 'N/A',
+          SIRET: siret || 'N/A',
+          ADRESSE: finalAdresse || 'N/A',
+          TYPE: typeLabel,
+          LIEN_VALIDATION: verifyUrl,
+        });
+
         try {
           await sendApmMail(
             targetEmail,
-            `[ODP] Demande création tiers ${typeLabel} : ${finalNom}`,
+            mailSubject || `[ODP] Demande création tiers ${typeLabel} : ${finalNom}`,
             mailContent,
             'Console ODP'
           );

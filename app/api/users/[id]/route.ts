@@ -11,24 +11,26 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     const data = await req.json();
-    const updateData: any = {
-      nom: data.nom,
-      prenom: data.prenom,
-      email: data.email,
-      login: data.login,
-      role: data.role
-    };
-
-    if (data.password && data.password.trim() !== '') {
-      updateData.password = await bcrypt.hash(data.password, 10);
-    }
-
+    const isAd = !!data.isAd;
+    const isAdInt = isAd ? 1 : 0;
     const { id } = await params;
+    const userId = parseInt(id);
 
-    const user = await (prisma as any).user.update({
-      where: { id: parseInt(id) },
-      data: updateData
-    });
+    // Mot de passe : ignoré pour les comptes AD, optionnel pour les comptes locaux
+    if (!isAd && data.password && data.password.trim() !== '') {
+      const hashed = await bcrypt.hash(data.password, 10);
+      await (prisma as any).$executeRaw`
+        UPDATE "User" SET nom=${data.nom}, prenom=${data.prenom}, email=${data.email || ''},
+          login=${data.login}, role=${data.role}, isAd=${isAdInt}, password=${hashed},
+          updated_at=CURRENT_TIMESTAMP WHERE id=${userId}
+      `;
+    } else {
+      await (prisma as any).$executeRaw`
+        UPDATE "User" SET nom=${data.nom}, prenom=${data.prenom}, email=${data.email || ''},
+          login=${data.login}, role=${data.role}, isAd=${isAdInt},
+          updated_at=CURRENT_TIMESTAMP WHERE id=${userId}
+      `;
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

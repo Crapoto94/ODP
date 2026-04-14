@@ -156,6 +156,7 @@ model User {
   login      String      @unique
   password   String
   role       String
+  isAd       Boolean     @default(false)
   created_at DateTime    @default(now())
   updated_at DateTime    @updatedAt
   logs       MobileLog[]
@@ -170,6 +171,15 @@ model MobileLog {
   ip         String?
   created_at DateTime @default(now())
   user       User?    @relation(fields: [userId], references: [id])
+}
+
+model ContextualMessage {
+  id       Int     @id @default(autoincrement())
+  cle      String  @unique
+  label    String?
+  sujet    String?
+  valeur   String
+  disabled Boolean @default(false)
 }
 
 model AppSettings {
@@ -206,9 +216,14 @@ model AppSettings {
   filienStructure           String?  @default("")
   filienGestionnaire        String?  @default("")
   filienUncPj               String?  @default("")
+  adDomain                  String?  @default("ivry.local")
   signataireRole            String?  @default("Le Maire d'Ivry-sur-Seine,")
   signataireDelegation      String?  @default("et par délégation,")
   signataireNom             String?  @default("Dominique Montet - Directrice Générale Adjointe")
+  footer1                   String?
+  footer2                   String?
+  footer3                   String?
+  footerColor               String?
   updated_at                DateTime @updatedAt
   filienUncPass             String?  @default("")
   filienUncUser             String?  @default("")
@@ -375,6 +390,7 @@ model SignatureRequest {
   tokenExpiresAt     DateTime
   rejectionComment   String?
   signedAt           DateTime?
+  requestedByLogin   String?
   created_at         DateTime   @default(now())
   updated_at         DateTime   @updatedAt
   occupation         Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)

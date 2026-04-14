@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import { encrypt } from '@/lib/auth';
 import { cookies } from 'next/headers';
+import { authenticateAD } from '@/lib/ad';
 
 export async function POST(req: Request) {
   try {
@@ -33,16 +34,24 @@ export async function POST(req: Request) {
       });
     }
 
-    const user = await (prisma as any).user.findUnique({
-      where: { login }
-    });
+    const rows = await (prisma as any).$queryRaw`
+      SELECT id, nom, prenom, email, login, password, role, isAd FROM "User" WHERE login = ${login} LIMIT 1
+    `;
+    const user = (rows as any[])[0] || null;
 
     if (!user) {
       return NextResponse.json({ error: 'Identifiants invalides' }, { status: 401 });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    
+    let isMatch = false;
+    if (user.isAd) {
+      // Compte AD : authentification via proxy APM
+      isMatch = await authenticateAD(user.login, password);
+    } else {
+      // Compte local : vérification bcrypt
+      isMatch = await bcrypt.compare(password, user.password);
+    }
+
     if (!isMatch) {
       return NextResponse.json({ error: 'Identifiants invalides' }, { status: 401 });
     }

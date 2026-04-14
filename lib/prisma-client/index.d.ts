@@ -14091,6 +14091,10 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
+    footer1: string | null
+    footer2: string | null
+    footer3: string | null
+    footerColor: string | null
     updated_at: Date | null
     filienUncPass: string | null
     filienUncUser: string | null
@@ -14134,6 +14138,10 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
+    footer1: string | null
+    footer2: string | null
+    footer3: string | null
+    footerColor: string | null
     updated_at: Date | null
     filienUncPass: string | null
     filienUncUser: string | null
@@ -14177,6 +14185,10 @@ export namespace Prisma {
     signataireRole: number
     signataireDelegation: number
     signataireNom: number
+    footer1: number
+    footer2: number
+    footer3: number
+    footerColor: number
     updated_at: number
     filienUncPass: number
     filienUncUser: number
@@ -14232,6 +14244,10 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
+    footer1?: true
+    footer2?: true
+    footer3?: true
+    footerColor?: true
     updated_at?: true
     filienUncPass?: true
     filienUncUser?: true
@@ -14275,6 +14291,10 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
+    footer1?: true
+    footer2?: true
+    footer3?: true
+    footerColor?: true
     updated_at?: true
     filienUncPass?: true
     filienUncUser?: true
@@ -14318,6 +14338,10 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
+    footer1?: true
+    footer2?: true
+    footer3?: true
+    footerColor?: true
     updated_at?: true
     filienUncPass?: true
     filienUncUser?: true
@@ -14448,6 +14472,10 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
+    footer1: string | null
+    footer2: string | null
+    footer3: string | null
+    footerColor: string | null
     updated_at: Date
     filienUncPass: string | null
     filienUncUser: string | null
@@ -14510,6 +14538,10 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
+    footer1?: boolean
+    footer2?: boolean
+    footer3?: boolean
+    footerColor?: boolean
     updated_at?: boolean
     filienUncPass?: boolean
     filienUncUser?: boolean
@@ -14553,6 +14585,10 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
+    footer1?: boolean
+    footer2?: boolean
+    footer3?: boolean
+    footerColor?: boolean
     updated_at?: boolean
     filienUncPass?: boolean
     filienUncUser?: boolean
@@ -14596,6 +14632,10 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
+    footer1?: boolean
+    footer2?: boolean
+    footer3?: boolean
+    footerColor?: boolean
     updated_at?: boolean
     filienUncPass?: boolean
     filienUncUser?: boolean
@@ -14643,6 +14683,10 @@ export namespace Prisma {
       signataireRole: string | null
       signataireDelegation: string | null
       signataireNom: string | null
+      footer1: string | null
+      footer2: string | null
+      footer3: string | null
+      footerColor: string | null
       updated_at: Date
       filienUncPass: string | null
       filienUncUser: string | null
@@ -15076,6 +15120,10 @@ export namespace Prisma {
     readonly signataireRole: FieldRef<"AppSettings", 'String'>
     readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
     readonly signataireNom: FieldRef<"AppSettings", 'String'>
+    readonly footer1: FieldRef<"AppSettings", 'String'>
+    readonly footer2: FieldRef<"AppSettings", 'String'>
+    readonly footer3: FieldRef<"AppSettings", 'String'>
+    readonly footerColor: FieldRef<"AppSettings", 'String'>
     readonly updated_at: FieldRef<"AppSettings", 'DateTime'>
     readonly filienUncPass: FieldRef<"AppSettings", 'String'>
     readonly filienUncUser: FieldRef<"AppSettings", 'String'>
@@ -29484,6 +29532,10 @@ export namespace Prisma {
     signataireRole: 'signataireRole',
     signataireDelegation: 'signataireDelegation',
     signataireNom: 'signataireNom',
+    footer1: 'footer1',
+    footer2: 'footer2',
+    footer3: 'footer3',
+    footerColor: 'footerColor',
     updated_at: 'updated_at',
     filienUncPass: 'filienUncPass',
     filienUncUser: 'filienUncUser',
@@ -30701,6 +30753,10 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    footer1?: StringNullableFilter<"AppSettings"> | string | null
+    footer2?: StringNullableFilter<"AppSettings"> | string | null
+    footer3?: StringNullableFilter<"AppSettings"> | string | null
+    footerColor?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
     filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
@@ -30744,6 +30800,10 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
+    footer1?: SortOrderInput | SortOrder
+    footer2?: SortOrderInput | SortOrder
+    footer3?: SortOrderInput | SortOrder
+    footerColor?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrderInput | SortOrder
     filienUncUser?: SortOrderInput | SortOrder
@@ -30790,6 +30850,10 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    footer1?: StringNullableFilter<"AppSettings"> | string | null
+    footer2?: StringNullableFilter<"AppSettings"> | string | null
+    footer3?: StringNullableFilter<"AppSettings"> | string | null
+    footerColor?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
     filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
@@ -30833,6 +30897,10 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
+    footer1?: SortOrderInput | SortOrder
+    footer2?: SortOrderInput | SortOrder
+    footer3?: SortOrderInput | SortOrder
+    footerColor?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrderInput | SortOrder
     filienUncUser?: SortOrderInput | SortOrder
@@ -30884,6 +30952,10 @@ export namespace Prisma {
     signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footer1?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footer2?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footer3?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footerColor?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     updated_at?: DateTimeWithAggregatesFilter<"AppSettings"> | Date | string
     filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
@@ -32942,6 +33014,10 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
+    footer1?: string | null
+    footer2?: string | null
+    footer3?: string | null
+    footerColor?: string | null
     updated_at?: Date | string
     filienUncPass?: string | null
     filienUncUser?: string | null
@@ -32985,6 +33061,10 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
+    footer1?: string | null
+    footer2?: string | null
+    footer3?: string | null
+    footerColor?: string | null
     updated_at?: Date | string
     filienUncPass?: string | null
     filienUncUser?: string | null
@@ -33027,6 +33107,10 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33070,6 +33154,10 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33113,6 +33201,10 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
+    footer1?: string | null
+    footer2?: string | null
+    footer3?: string | null
+    footerColor?: string | null
     updated_at?: Date | string
     filienUncPass?: string | null
     filienUncUser?: string | null
@@ -33155,6 +33247,10 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33198,6 +33294,10 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35195,6 +35295,10 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
+    footer1?: SortOrder
+    footer2?: SortOrder
+    footer3?: SortOrder
+    footerColor?: SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
@@ -35243,6 +35347,10 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
+    footer1?: SortOrder
+    footer2?: SortOrder
+    footer3?: SortOrder
+    footerColor?: SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
@@ -35286,6 +35394,10 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
+    footer1?: SortOrder
+    footer2?: SortOrder
+    footer3?: SortOrder
+    footerColor?: SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder

@@ -39,6 +39,7 @@ export default function OccupationDetailPage({ params }: Props) {
   const [editingLigne, setEditingLigne] = useState<LigneArticle | null>(null);
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
   const [latestSignatureRequest, setLatestSignatureRequest] = useState<any>(null);
+  const [tlpeExonerationThreshold, setTlpeExonerationThreshold] = useState<number>(12);
 
   const {
     occ,
@@ -87,6 +88,18 @@ export default function OccupationDetailPage({ params }: Props) {
     isPublishingAot,
     handleDeleteAotFinal
   } = useOccupationLogic(paramId);
+
+  // Load TLPE config when needed (for enseigne exemption display)
+  useEffect(() => {
+    if (!occ || occ.type !== 'TLPE') return;
+    const year = occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear());
+    axios.get(`/api/articles/tlpe?annee=${year}`)
+      .then(res => {
+        const threshold = res.data?.config?.exoneration;
+        if (threshold !== undefined) setTlpeExonerationThreshold(threshold);
+      })
+      .catch(() => {});
+  }, [occ?.type, occ?.anneeTaxation, occ?.dateDebut]);
 
   // Load latest signature request for this occupation
   useEffect(() => {
@@ -163,6 +176,12 @@ export default function OccupationDetailPage({ params }: Props) {
                 lignes={occ.lignes || []}
                 isFactured={isFactured}
                 anneeTaxation={occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear())}
+                isEnseigneExempt={
+                  (occ.lignes || []).reduce((sum: number, l: any) => {
+                    if (l.article?.meta?.tlpeType === 'ENSEIGNE') return sum + (l.quantite1 || 0);
+                    return sum;
+                  }, 0) <= tlpeExonerationThreshold
+                }
                 onAddArticle={() => { setEditingLigne(null); setIsLigneModalOpen(true); }}
                 onEditArticle={(ligne: any) => { setEditingLigne(ligne); setIsLigneModalOpen(true); }}
                 onDeleteArticle={handleDeleteLigne}

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { validateSignatureToken } from '@/lib/signature-token';
 import { sendApmMail } from '@/lib/apm';
-import { generateSignatureAcceptanceEmail } from '@/lib/signature-email-templates';
+import { getContextualMessageData } from '@/lib/contextual-messages';
 import * as fs from 'fs';
 import * as path from 'path';
 import { spawnSync } from 'child_process';
@@ -134,11 +134,6 @@ export async function POST(
         { status: 400 }
       );
     }
-
-    // Get settings
-    const settings = await prisma.appSettings.findFirst({
-      where: { id: 1 }
-    });
 
     // --- PDF Signing ---
     const aotFinalPath = signatureRequest.occupation.aotFinalPath;
@@ -322,13 +317,24 @@ export async function POST(
       }
     }
 
-    // Update occupation.aotFinalPath if we produced a signed PDF
-    if (signedPdfPublicPath) {
-      await prisma.occupation.update({
-        where: { id: signatureRequest.occupation.id },
-        data: { aotFinalPath: signedPdfPublicPath }
-      });
-    }
+    // Update occupation: aotFinalPath + aotSigned + advance statut
+    const nextStatusMap: Record<string, string> = {
+      'INIT': 'INST',
+      'INST': 'PREP',
+      'PREP': 'EN_COURS',
+      'EN_COURS': 'VALIDE',
+    };
+    const currentStatut = signatureRequest.occupation.statut;
+    const nextStatut = nextStatusMap[currentStatut];
+
+    await prisma.occupation.update({
+      where: { id: signatureRequest.occupation.id },
+      data: {
+        ...(signedPdfPublicPath ? { aotFinalPath: signedPdfPublicPath } : {}),
+        aotSigned: true,
+        ...(nextStatut ? { statut: nextStatut } : {}),
+      }
+    });
 
     // Mark as accepted
     const now = new Date();
@@ -346,32 +352,33 @@ export async function POST(
       }
     });
 
-    // Send confirmation email to admin (finance email)
-    if (settings?.financeEmail) {
-      try {
-        const signedAtStr = now.toLocaleDateString('fr-FR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-
-        const emailHtml = generateSignatureAcceptanceEmail({
-          adminEmail: settings.financeEmail,
-          signatorName: signatureRequest.signatory.nom,
-          occupationRef: signatureRequest.occupation.id.toString(),
-          signedAt: signedAtStr
-        });
-
-        await sendApmMail(
-          settings.financeEmail,
-          `✓ Document signé - AOT #${signatureRequest.occupation.id}`,
-          emailHtml
-        );
-      } catch (emailError) {
-        console.error('[SignatureAccept] Confirmation email failed:', emailError);
+    // Notifier le demandeur
+    try {
+      const reqLogin = (signatureRequest as any).requestedByLogin;
+      if (reqLogin && reqLogin !== 'admin') {
+        const userRows = await (prisma as any).$queryRaw`
+          SELECT email, prenom, nom FROM "User" WHERE login = ${reqLogin} LIMIT 1
+        `;
+        const requester = (userRows as any[])[0];
+        if (requester?.email) {
+          const signedAtStr = now.toLocaleDateString('fr-FR', {
+            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+          const baseUrl = (settings?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
+          const lienDossier = `${baseUrl}/dashboard/occupations/${signatureRequest.occupation.id}`;
+          const tiersNom = (signatureRequest.occupation as any).tiers?.nom || `Dossier #${signatureRequest.occupation.id}`;
+          const { html: emailHtml, subject: emailSubject } = await getContextualMessageData('MSG_AOT_SIGNE', {
+            DEMANDEUR: `${requester.prenom} ${requester.nom}`.trim() || reqLogin,
+            TIERS: tiersNom,
+            LIEN_DOSSIER: lienDossier,
+            SIGNATAIRE: signatureRequest.signatory.nom,
+            DATE_SIGNATURE: signedAtStr,
+          });
+          await sendApmMail(requester.email, emailSubject || `✅ AOT signé — ${tiersNom}`, emailHtml);
+        }
       }
+    } catch (notifErr) {
+      console.warn('[Accept] Notification demandeur échouée:', notifErr);
     }
 
     return NextResponse.json({

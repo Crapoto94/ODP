@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { generateSignatureToken, getTokenExpirationDate } from '@/lib/signature-token';
 import { sendApmMail } from '@/lib/apm';
-import { generateSignatureRequestEmail } from '@/lib/signature-email-templates';
+import { getContextualMessageData } from '@/lib/contextual-messages';
 
 /**
  * POST /api/occupations/[id]/signature-request
@@ -75,29 +75,35 @@ export async function POST(
     // Generate token expiration
     const tokenExpirationDate = getTokenExpirationDate(7);
 
-    // Create signature request (temp, to get ID for token)
-    const tempRequest = await prisma.signatureRequest.create({
-      data: {
-        occupationId,
-        signatoriesId: signatory.id,
-        status: 'PENDING',
-        token: 'temp', // Placeholder until we have the ID
-        tokenExpiresAt: tokenExpirationDate
-      }
-    });
+    // Create signature request (temp, to get ID for token) — raw SQL (client Prisma stale)
+    const now = new Date().toISOString();
+    const expiresIso = tokenExpirationDate.toISOString();
+    const requestedBy = session.login ?? null;
+    const tempToken = `__tmp_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+
+    await (prisma as any).$executeRaw`
+      INSERT INTO SignatureRequest (occupationId, signatoriesId, status, token, tokenExpiresAt, requestedByLogin, created_at, updated_at)
+      VALUES (${occupationId}, ${signatory.id}, 'PENDING', ${tempToken}, ${expiresIso}, ${requestedBy}, ${now}, ${now})
+    `;
+
+    const tempRows = await (prisma as any).$queryRaw`
+      SELECT id FROM SignatureRequest WHERE token = ${tempToken} LIMIT 1
+    `;
+    const tempId = (tempRows as any[])[0]?.id;
 
     // Generate actual token with request ID
     const signatureToken = await generateSignatureToken(
       occupationId,
       signatory.id,
-      tempRequest.id
+      tempId
     );
 
     // Update request with actual token
-    const signatureRequest = await prisma.signatureRequest.update({
-      where: { id: tempRequest.id },
-      data: { token: signatureToken }
-    });
+    await (prisma as any).$executeRaw`
+      UPDATE SignatureRequest SET token = ${signatureToken}, updated_at = ${now} WHERE id = ${tempId}
+    `;
+
+    const signatureRequest = { id: tempId, token: signatureToken };
 
     // Generate signature link
     const baseUrl = (settings?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
@@ -112,19 +118,17 @@ export async function POST(
 
     // Send email to signatory
     try {
-      const emailHtml = generateSignatureRequestEmail({
-        signatorName: signatory.nom,
-        signatorEmail: signatory.email,
-        occupationRef: occupation.id.toString(),
-        occupationType: occupation.type || 'AOT',
-        signatureLink,
-        expirationDate: expirationDateStr,
-        appName: 'ODP Console'
+      const { html: emailHtml, subject: emailSubject } = await getContextualMessageData('MSG_SIGNATURE_REQUEST', {
+        SIGNATAIRE: signatory.nom,
+        AOT_REF: occupation.id.toString(),
+        AOT_TYPE: occupation.type || 'AOT',
+        LIEN_SIGNATURE: signatureLink,
+        DATE_EXPIRATION: expirationDateStr,
       });
 
       await sendApmMail(
         signatory.email,
-        `Signature requise - AOT #${occupation.id}`,
+        emailSubject || `Signature requise — AOT #${occupation.id}`,
         emailHtml
       );
     } catch (emailError) {

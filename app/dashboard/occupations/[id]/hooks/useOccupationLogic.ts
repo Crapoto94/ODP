@@ -397,11 +397,13 @@ export function useOccupationLogic(occupationId: string) {
       const aotUrl = res.data.url;
 
       // Determine next status if signed
-      let newStatut: string | undefined;
-      if (isSigned) {
-        if (occ.statut === 'PREP') newStatut = 'EN_COURS';
-        else if (occ.statut === 'INST') newStatut = 'PREP';
-      }
+      const nextStatusMap: Record<string, string> = {
+        'INIT': 'INST',
+        'INST': 'PREP',
+        'PREP': 'EN_COURS',
+        'EN_COURS': 'VALIDE',
+      };
+      const newStatut = isSigned ? nextStatusMap[occ.statut] : undefined;
 
       await axios.patch(`/api/occupations/${occ.id}`, {
         aotFinalPath: aotUrl,
