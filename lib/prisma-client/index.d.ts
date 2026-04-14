@@ -4436,6 +4436,7 @@ export namespace Prisma {
     agissantPour: string | null
     aotGabaritId: number | null
     aotFinalPath: string | null
+    aotSigned: boolean | null
     datePaiement: Date | null
   }
 
@@ -4463,6 +4464,7 @@ export namespace Prisma {
     agissantPour: string | null
     aotGabaritId: number | null
     aotFinalPath: string | null
+    aotSigned: boolean | null
     datePaiement: Date | null
   }
 
@@ -4490,6 +4492,7 @@ export namespace Prisma {
     agissantPour: number
     aotGabaritId: number
     aotFinalPath: number
+    aotSigned: number
     datePaiement: number
     _all: number
   }
@@ -4541,6 +4544,7 @@ export namespace Prisma {
     agissantPour?: true
     aotGabaritId?: true
     aotFinalPath?: true
+    aotSigned?: true
     datePaiement?: true
   }
 
@@ -4568,6 +4572,7 @@ export namespace Prisma {
     agissantPour?: true
     aotGabaritId?: true
     aotFinalPath?: true
+    aotSigned?: true
     datePaiement?: true
   }
 
@@ -4595,6 +4600,7 @@ export namespace Prisma {
     agissantPour?: true
     aotGabaritId?: true
     aotFinalPath?: true
+    aotSigned?: true
     datePaiement?: true
     _all?: true
   }
@@ -4709,6 +4715,7 @@ export namespace Prisma {
     agissantPour: string | null
     aotGabaritId: number | null
     aotFinalPath: string | null
+    aotSigned: boolean
     datePaiement: Date | null
     _count: OccupationCountAggregateOutputType | null
     _avg: OccupationAvgAggregateOutputType | null
@@ -4755,6 +4762,7 @@ export namespace Prisma {
     agissantPour?: boolean
     aotGabaritId?: boolean
     aotFinalPath?: boolean
+    aotSigned?: boolean
     datePaiement?: boolean
     contacts?: boolean | Occupation$contactsArgs<ExtArgs>
     dispositifs?: boolean | Occupation$dispositifsArgs<ExtArgs>
@@ -4789,6 +4797,7 @@ export namespace Prisma {
     agissantPour?: boolean
     aotGabaritId?: boolean
     aotFinalPath?: boolean
+    aotSigned?: boolean
     datePaiement?: boolean
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["occupation"]>
@@ -4817,6 +4826,7 @@ export namespace Prisma {
     agissantPour?: boolean
     aotGabaritId?: boolean
     aotFinalPath?: boolean
+    aotSigned?: boolean
     datePaiement?: boolean
   }
 
@@ -4867,6 +4877,7 @@ export namespace Prisma {
       agissantPour: string | null
       aotGabaritId: number | null
       aotFinalPath: string | null
+      aotSigned: boolean
       datePaiement: Date | null
     }, ExtArgs["result"]["occupation"]>
     composites: {}
@@ -5290,6 +5301,7 @@ export namespace Prisma {
     readonly agissantPour: FieldRef<"Occupation", 'String'>
     readonly aotGabaritId: FieldRef<"Occupation", 'Int'>
     readonly aotFinalPath: FieldRef<"Occupation", 'String'>
+    readonly aotSigned: FieldRef<"Occupation", 'Boolean'>
     readonly datePaiement: FieldRef<"Occupation", 'DateTime'>
   }
     
@@ -29305,6 +29317,7 @@ export namespace Prisma {
     agissantPour: 'agissantPour',
     aotGabaritId: 'aotGabaritId',
     aotFinalPath: 'aotFinalPath',
+    aotSigned: 'aotSigned',
     datePaiement: 'datePaiement'
   };
 
@@ -29862,6 +29875,7 @@ export namespace Prisma {
     agissantPour?: StringNullableFilter<"Occupation"> | string | null
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
+    aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
@@ -29895,6 +29909,7 @@ export namespace Prisma {
     agissantPour?: SortOrderInput | SortOrder
     aotGabaritId?: SortOrderInput | SortOrder
     aotFinalPath?: SortOrderInput | SortOrder
+    aotSigned?: SortOrder
     datePaiement?: SortOrderInput | SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     dispositifs?: DispositifOrderByRelationAggregateInput
@@ -29931,6 +29946,7 @@ export namespace Prisma {
     agissantPour?: StringNullableFilter<"Occupation"> | string | null
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
+    aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
@@ -29964,6 +29980,7 @@ export namespace Prisma {
     agissantPour?: SortOrderInput | SortOrder
     aotGabaritId?: SortOrderInput | SortOrder
     aotFinalPath?: SortOrderInput | SortOrder
+    aotSigned?: SortOrder
     datePaiement?: SortOrderInput | SortOrder
     _count?: OccupationCountOrderByAggregateInput
     _avg?: OccupationAvgOrderByAggregateInput
@@ -29999,6 +30016,7 @@ export namespace Prisma {
     agissantPour?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     aotGabaritId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
+    aotSigned?: BoolWithAggregatesFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
   }
 
@@ -32013,6 +32031,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
@@ -32046,6 +32065,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
@@ -32076,6 +32096,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
@@ -32109,6 +32130,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
@@ -32141,6 +32163,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
   }
 
@@ -32166,6 +32189,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -32193,6 +32217,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -34559,6 +34584,7 @@ export namespace Prisma {
     agissantPour?: SortOrder
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
+    aotSigned?: SortOrder
     datePaiement?: SortOrder
   }
 
@@ -34597,6 +34623,7 @@ export namespace Prisma {
     agissantPour?: SortOrder
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
+    aotSigned?: SortOrder
     datePaiement?: SortOrder
   }
 
@@ -34624,6 +34651,7 @@ export namespace Prisma {
     agissantPour?: SortOrder
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
+    aotSigned?: SortOrder
     datePaiement?: SortOrder
   }
 
@@ -37208,6 +37236,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
@@ -37239,6 +37268,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
@@ -37334,6 +37364,7 @@ export namespace Prisma {
     agissantPour?: StringNullableFilter<"Occupation"> | string | null
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
+    aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
   }
 
@@ -37798,6 +37829,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -37830,6 +37862,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -37919,6 +37952,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -37951,6 +37985,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -37980,6 +38015,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
@@ -38012,6 +38048,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
@@ -38057,6 +38094,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
@@ -38089,6 +38127,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
@@ -38680,6 +38719,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
@@ -38712,6 +38752,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
@@ -38809,6 +38850,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
@@ -38841,6 +38883,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
@@ -38870,6 +38913,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -38902,6 +38946,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -38947,6 +38992,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -38979,6 +39025,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -39391,6 +39438,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
@@ -39423,6 +39471,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
@@ -39502,6 +39551,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
@@ -39534,6 +39584,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
@@ -39619,6 +39670,7 @@ export namespace Prisma {
     agissantPour?: string | null
     aotGabaritId?: number | null
     aotFinalPath?: string | null
+    aotSigned?: boolean
     datePaiement?: Date | string | null
   }
 
@@ -39688,6 +39740,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
@@ -39719,6 +39772,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
@@ -39750,6 +39804,7 @@ export namespace Prisma {
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 

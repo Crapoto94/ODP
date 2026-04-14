@@ -5,36 +5,58 @@ import { sendApmMail } from '@/lib/apm';
 import { generateSignatureAcceptanceEmail } from '@/lib/signature-email-templates';
 import * as fs from 'fs';
 import * as path from 'path';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import { PDFDocument } from 'pdf-lib';
 import * as forge from 'node-forge';
 
+function getLibreOfficeBin(): string {
+  if (process.platform !== 'win32') return 'libreoffice';
+
+  const roots = [
+    process.env['ProgramFiles'] || 'C:\\Program Files',
+    process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)',
+  ];
+  for (const root of roots) {
+    try {
+      for (const entry of fs.readdirSync(root)) {
+        if (entry.toLowerCase().startsWith('libreoffice')) {
+          for (const bin of ['soffice.com', 'soffice.exe', 'soffice_safe.exe']) {
+            const candidate = path.join(root, entry, 'program', bin);
+            if (fs.existsSync(candidate)) return candidate;
+          }
+        }
+      }
+    } catch {}
+  }
+  throw new Error('LibreOffice introuvable dans Program Files.');
+}
+
 /**
- * Convert a DOCX to PDF using PowerShell + Word COM automation.
- * Returns the absolute path to the generated PDF.
+ * Convert a DOCX to PDF using LibreOffice headless.
+ * Uses spawnSync with shell:false — no cmd.exe, no AV issues.
  */
 function convertDocxToPdf(docxAbsPath: string): string {
-  const pdfAbsPath = docxAbsPath.replace(/\.docx$/i, '.pdf');
+  const outDir = path.dirname(docxAbsPath);
+  const baseName = path.basename(docxAbsPath, path.extname(docxAbsPath));
+  const pdfAbsPath = path.join(outDir, `${baseName}.pdf`);
 
   if (fs.existsSync(pdfAbsPath)) {
     return pdfAbsPath;
   }
 
-  const psScript = `
-$word = New-Object -ComObject Word.Application
-$word.Visible = $false
-$doc = $word.Documents.Open("${docxAbsPath.replace(/\\/g, '\\\\')}")
-$doc.SaveAs([ref] "${pdfAbsPath.replace(/\\/g, '\\\\')}", [ref] 17)
-$doc.Close()
-$word.Quit()
-[System.Runtime.Interopservices.Marshal]::ReleaseComObject($word) | Out-Null
-`.trim();
+  const bin = getLibreOfficeBin();
+  const result = spawnSync(
+    bin,
+    ['--headless', '--convert-to', 'pdf', '--outdir', outDir, docxAbsPath],
+    { timeout: 60000, windowsHide: true, shell: false }
+  );
 
-  execSync(`powershell -NoProfile -NonInteractive -Command "${psScript.replace(/"/g, '\\"')}"`, {
-    timeout: 60000,
-    windowsHide: true
-  });
-
+  if (result.error) {
+    throw new Error(`LibreOffice introuvable : ${result.error.message}`);
+  }
+  if (result.status !== 0) {
+    throw new Error(`LibreOffice a échoué (code ${result.status}) : ${result.stderr?.toString()}`);
+  }
   if (!fs.existsSync(pdfAbsPath)) {
     throw new Error('PDF conversion failed: output file not created');
   }
@@ -157,6 +179,11 @@ export async function POST(
           const xPos = (signatureX / 100) * width - sigWidth / 2;
           const yPos = height - (signatureY / 100) * height - sigHeight / 2;
 
+          // Embed fonts for text under signature
+          const { StandardFonts, rgb } = await import('pdf-lib');
+          const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+          const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
           // Try to embed signature image
           const signatory = signatureRequest.signatory;
           let imageEmbedded = false;
@@ -175,19 +202,31 @@ export async function POST(
                 if (imgExt.endsWith('.png')) {
                   embeddedImage = await pdfDoc.embedPng(imgBytes);
                 } else {
-                  // Try jpg/jpeg
                   embeddedImage = await pdfDoc.embedJpg(imgBytes);
                 }
 
+                // Preserve aspect ratio within the signature box
+                const { width: natW, height: natH } = embeddedImage.scale(1);
+                const imgRatio = natW / natH;
+                const boxRatio = sigWidth / sigHeight;
+                let drawW = sigWidth;
+                let drawH = sigHeight;
+                if (imgRatio > boxRatio) {
+                  drawH = sigWidth / imgRatio;
+                } else {
+                  drawW = sigHeight * imgRatio;
+                }
+                const drawX = xPos + (sigWidth - drawW) / 2;
+                const drawY = yPos + (sigHeight - drawH) / 2;
+
                 page.drawImage(embeddedImage, {
-                  x: Math.max(0, xPos),
-                  y: Math.max(0, yPos),
-                  width: sigWidth,
-                  height: sigHeight
+                  x: Math.max(0, drawX),
+                  y: Math.max(0, drawY),
+                  width: drawW,
+                  height: drawH,
                 });
 
                 imageEmbedded = true;
-                console.log('[SignatureAccept] Signature image embedded at', { xPos, yPos, sigWidth, sigHeight });
               }
             } catch (imgErr) {
               console.error('[SignatureAccept] Failed to embed signature image:', imgErr);
@@ -195,8 +234,7 @@ export async function POST(
           }
 
           if (!imageEmbedded) {
-            // Draw a simple text placeholder
-            const { rgb } = await import('pdf-lib');
+            // Placeholder rectangle when no image
             page.drawRectangle({
               x: Math.max(0, xPos),
               y: Math.max(0, yPos),
@@ -204,7 +242,34 @@ export async function POST(
               height: sigHeight,
               borderColor: rgb(0.2, 0.4, 0.8),
               borderWidth: 1,
-              color: rgb(0.95, 0.97, 1.0)
+              color: rgb(0.95, 0.97, 1.0),
+            });
+          }
+
+          // Draw nom + titre/rôle below the signature box
+          const textX = Math.max(0, xPos);
+          const nameFontSize = 7;
+          const subtitleFontSize = 6;
+          const lineGap = 9;
+
+          page.drawText(signatory.nom, {
+            x: textX,
+            y: Math.max(0, yPos - lineGap),
+            size: nameFontSize,
+            font: fontBold,
+            color: rgb(0.1, 0.1, 0.1),
+            maxWidth: sigWidth,
+          });
+
+          const subtitle = signatory.titre || signatory.role;
+          if (subtitle) {
+            page.drawText(subtitle, {
+              x: textX,
+              y: Math.max(0, yPos - lineGap * 2),
+              size: subtitleFontSize,
+              font: fontRegular,
+              color: rgb(0.3, 0.3, 0.3),
+              maxWidth: sigWidth,
             });
           }
 

@@ -51,6 +51,7 @@ model Occupation {
   agissantPour     String?
   aotGabaritId     Int?
   aotFinalPath     String?
+  aotSigned        Boolean            @default(false)
   datePaiement     DateTime?
   contacts         Contact[]
   dispositifs      Dispositif[]

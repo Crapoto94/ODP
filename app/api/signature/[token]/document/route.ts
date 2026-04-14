@@ -3,36 +3,59 @@ import { prisma } from '@/lib/prisma';
 import { validateSignatureToken } from '@/lib/signature-token';
 import * as fs from 'fs';
 import * as path from 'path';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
+
+function getLibreOfficeBin(): string {
+  if (process.platform !== 'win32') return 'libreoffice';
+
+  const roots = [
+    process.env['ProgramFiles'] || 'C:\\Program Files',
+    process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)',
+  ];
+  for (const root of roots) {
+    try {
+      for (const entry of fs.readdirSync(root)) {
+        if (entry.toLowerCase().startsWith('libreoffice')) {
+          // soffice.com est le binaire CLI sur Windows (pas soffice.exe)
+          for (const bin of ['soffice.com', 'soffice.exe', 'soffice_safe.exe']) {
+            const candidate = path.join(root, entry, 'program', bin);
+            if (fs.existsSync(candidate)) return candidate;
+          }
+        }
+      }
+    } catch {}
+  }
+  throw new Error('LibreOffice introuvable dans Program Files.');
+}
 
 /**
- * Convert a DOCX to PDF using PowerShell + Word COM automation.
- * Returns the absolute path to the generated PDF.
+ * Convert a DOCX to PDF using LibreOffice headless.
+ * Uses spawnSync with shell:false — no cmd.exe, no AV issues.
  */
 function convertDocxToPdf(docxAbsPath: string): string {
-  const pdfAbsPath = docxAbsPath.replace(/\.docx$/i, '.pdf');
+  const outDir = path.dirname(docxAbsPath);
+  const baseName = path.basename(docxAbsPath, path.extname(docxAbsPath));
+  const pdfAbsPath = path.join(outDir, `${baseName}.pdf`);
 
   if (fs.existsSync(pdfAbsPath)) {
     return pdfAbsPath;
   }
 
-  const psScript = `
-$word = New-Object -ComObject Word.Application
-$word.Visible = $false
-$doc = $word.Documents.Open("${docxAbsPath.replace(/\\/g, '\\\\')}")
-$doc.SaveAs([ref] "${pdfAbsPath.replace(/\\/g, '\\\\')}", [ref] 17)
-$doc.Close()
-$word.Quit()
-[System.Runtime.Interopservices.Marshal]::ReleaseComObject($word) | Out-Null
-`.trim();
+  const bin = getLibreOfficeBin();
+  const result = spawnSync(
+    bin,
+    ['--headless', '--convert-to', 'pdf', '--outdir', outDir, docxAbsPath],
+    { timeout: 60000, windowsHide: true, shell: false }
+  );
 
-  execSync(`powershell -NoProfile -NonInteractive -Command "${psScript.replace(/"/g, '\\"')}"`, {
-    timeout: 60000,
-    windowsHide: true
-  });
-
+  if (result.error) {
+    throw new Error(`LibreOffice erreur de lancement : ${result.error.message}`);
+  }
+  if (result.status !== 0) {
+    throw new Error(`LibreOffice a échoué (code ${result.status}) : ${result.stderr?.toString()}`);
+  }
   if (!fs.existsSync(pdfAbsPath)) {
-    throw new Error('PDF conversion failed: output file not created');
+    throw new Error('Conversion PDF échouée : fichier de sortie absent');
   }
 
   return pdfAbsPath;

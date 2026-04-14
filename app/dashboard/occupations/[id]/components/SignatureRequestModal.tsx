@@ -22,7 +22,6 @@ export default function SignatureRequestModal({ isOpen, onClose, occupationId, o
   const [signatories, setSignatories] = useState<Signatory[]>([]);
   const [loadingSignatories, setLoadingSignatories] = useState(true);
   const [selectedSignatoryId, setSelectedSignatoryId] = useState<number | null>(null);
-  const [documentType, setDocumentType] = useState<'pdf' | 'docx'>('pdf');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<{ link: string; signatorName: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +65,7 @@ export default function SignatureRequestModal({ isOpen, onClose, occupationId, o
     try {
       const res = await axios.post(`/api/occupations/${occupationId}/signature-request`, {
         signatoriesId: selectedSignatoryId,
-        documentType
+        documentType: 'pdf'
       });
 
       const signatory = signatories.find(s => s.id === selectedSignatoryId);
@@ -187,43 +186,6 @@ export default function SignatureRequestModal({ isOpen, onClose, occupationId, o
                     ))}
                   </div>
                 )}
-              </div>
-
-              {/* Document type */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 uppercase tracking-widest">
-                  Format du document
-                </label>
-                <div className="flex gap-3">
-                  <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                    documentType === 'pdf' ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
-                  }`}>
-                    <input
-                      type="radio"
-                      name="documentType"
-                      value="pdf"
-                      checked={documentType === 'pdf'}
-                      onChange={() => setDocumentType('pdf')}
-                      className="hidden"
-                    />
-                    <span className="text-lg">📄</span>
-                    <span className="font-black text-sm">PDF</span>
-                  </label>
-                  <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                    documentType === 'docx' ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300'
-                  }`}>
-                    <input
-                      type="radio"
-                      name="documentType"
-                      value="docx"
-                      checked={documentType === 'docx'}
-                      onChange={() => setDocumentType('docx')}
-                      className="hidden"
-                    />
-                    <span className="text-lg">📝</span>
-                    <span className="font-black text-sm">DOCX</span>
-                  </label>
-                </div>
               </div>
 
               {/* Actions */}

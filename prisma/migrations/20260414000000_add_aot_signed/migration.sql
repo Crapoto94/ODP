@@ -1,0 +1,1 @@
+ALTER TABLE "Occupation" ADD COLUMN "aotSigned" BOOLEAN NOT NULL DEFAULT false;

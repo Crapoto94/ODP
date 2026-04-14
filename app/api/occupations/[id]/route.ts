@@ -78,7 +78,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       isCourtMetrage,
       agissantPour,
       aotGabaritId,
-      aotFinalPath
+      aotFinalPath,
+      aotSigned
     } = body;
 
     const updateData: any = {
@@ -99,6 +100,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       facturePath: facturePath !== undefined ? facturePath : undefined,
       aotGabaritId: aotGabaritId !== undefined ? (aotGabaritId ? parseInt(aotGabaritId) : null) : undefined,
       aotFinalPath: aotFinalPath !== undefined ? aotFinalPath : undefined,
+      aotSigned: aotSigned !== undefined ? !!aotSigned : undefined,
     };
 
     const occupation = await (prisma as any).occupation.update({

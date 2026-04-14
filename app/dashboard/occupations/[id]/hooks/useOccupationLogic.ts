@@ -387,7 +387,7 @@ export function useOccupationLogic(occupationId: string) {
     }
   };
 
-  const handleUploadAotFinal = async (file: File) => {
+  const handleUploadAotFinal = async (file: File, isSigned: boolean) => {
     if (!occ) return;
     setIsUploadingAotFinal(true);
     try {
@@ -396,10 +396,28 @@ export function useOccupationLogic(occupationId: string) {
       const res = await axios.post('/api/upload', fd);
       const aotUrl = res.data.url;
 
-      // Update occupation with aotFinalPath
-      await axios.patch(`/api/occupations/${occ.id}`, { aotFinalPath: aotUrl });
+      // Determine next status if signed
+      let newStatut: string | undefined;
+      if (isSigned) {
+        if (occ.statut === 'PREP') newStatut = 'EN_COURS';
+        else if (occ.statut === 'INST') newStatut = 'PREP';
+      }
+
+      await axios.patch(`/api/occupations/${occ.id}`, {
+        aotFinalPath: aotUrl,
+        aotSigned: isSigned,
+        ...(newStatut ? { statut: newStatut } : {}),
+      });
       await fetchOccupation();
       setIsAotFinalModalOpen(false);
+
+      // Trigger PDF conversion in background if DOCX
+      if (aotUrl.toLowerCase().endsWith('.docx')) {
+        fetch(`/api/occupations/${occ.id}/convert-aot-pdf`, { method: 'POST' })
+          .then(r => r.json())
+          .then(data => { if (data.url && !data.alreadyPdf) fetchOccupation(); })
+          .catch(err => console.error('[convert-aot-pdf background]', err));
+      }
     } catch (err) {
       console.error('[Upload AOT Final] Error:', err);
       alert("Erreur lors de l'envoi de l'AOT final");

@@ -43,6 +43,12 @@ export default function SignaturePage() {
   const dragOffset = useRef({ x: 0, y: 0 });
   const [sigPos, setSigPos] = useState({ x: 75, y: 85 }); // percent
 
+  // PDF rendering state
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [pdfDocObj, setPdfDocObj] = useState<any>(null);
+  const [pageRendering, setPageRendering] = useState(false);
+  const renderTaskRef = useRef<any>(null);
+
   useEffect(() => {
     loadSignatureRequest();
   }, [token]);
@@ -147,6 +153,69 @@ export default function SignaturePage() {
       }));
     }
   }, [sigPos]);
+
+  // Load PDF document when modal opens
+  useEffect(() => {
+    if (!showPlacementModal || !pdfUrl) return;
+    let cancelled = false;
+
+    async function loadPdf() {
+      const pdfjsLib = await import('pdfjs-dist');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+      const fullUrl = pdfUrl!.startsWith('/')
+        ? window.location.origin + pdfUrl
+        : pdfUrl!;
+      const doc = await pdfjsLib.getDocument(fullUrl).promise;
+      if (!cancelled) {
+        setPdfDocObj(doc);
+        setTotalPages(doc.numPages);
+      }
+    }
+
+    loadPdf().catch(err => console.error('[PDF load]', err));
+    return () => { cancelled = true; };
+  }, [showPlacementModal, pdfUrl]);
+
+  // Render current page on canvas
+  useEffect(() => {
+    if (!pdfDocObj || !canvasRef.current) return;
+    let cancelled = false;
+
+    async function renderPage() {
+      setPageRendering(true);
+      // Cancel any ongoing render
+      if (renderTaskRef.current) {
+        renderTaskRef.current.cancel();
+      }
+      const page = await pdfDocObj.getPage(placement.signaturePage);
+      const containerWidth = canvasRef.current?.parentElement?.clientWidth || 560;
+      const unscaledVp = page.getViewport({ scale: 1 });
+      const scale = containerWidth / unscaledVp.width;
+      const viewport = page.getViewport({ scale });
+
+      const canvas = canvasRef.current!;
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      const renderTask = page.render({
+        canvasContext: canvas.getContext('2d')!,
+        viewport,
+      });
+      renderTaskRef.current = renderTask;
+
+      try {
+        await renderTask.promise;
+      } catch (e: any) {
+        if (e?.name !== 'RenderingCancelledException') {
+          console.error('[PDF render]', e);
+        }
+      }
+      if (!cancelled) setPageRendering(false);
+    }
+
+    renderPage();
+    return () => { cancelled = true; };
+  }, [pdfDocObj, placement.signaturePage]);
 
   const handleOpenPlacementModal = () => {
     setSigPos({ x: placement.signatureX, y: placement.signatureY });
@@ -253,9 +322,13 @@ export default function SignaturePage() {
   const hoursLeft = Math.max(0, Math.round((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60)));
   const daysLeft = Math.floor(hoursLeft / 24);
 
-  // Signature box position as px in 400x566 A4 mockup
-  const sigBoxLeft = (sigPos.x / 100) * 400 - 75;
-  const sigBoxTop = (sigPos.y / 100) * 566 - 37.5;
+  // Signature box position uses CSS calc — works for any container size
+  const sigBoxStyle = {
+    left: `calc(${sigPos.x}% - 75px)`,
+    top: `calc(${sigPos.y}% - 37.5px)`,
+    width: 150,
+    height: 75,
+  } as React.CSSProperties;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -447,41 +520,41 @@ export default function SignaturePage() {
                 </div>
               </div>
 
-              {/* A4 Mockup with draggable signature */}
-              <div className="flex justify-center">
-                <div
-                  ref={containerRef}
-                  className="relative bg-white border-2 border-slate-300 shadow-lg cursor-crosshair select-none"
-                  style={{ width: 400, height: 566 }}
-                  onMouseMove={handleMouseMove}
-                  onMouseUp={handleMouseUp}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  {/* Page background */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-slate-50 to-white" />
-                  <div className="absolute inset-4 border border-dashed border-slate-200 rounded" />
-                  <p className="absolute top-6 left-1/2 -translate-x-1/2 text-[9px] text-slate-300 font-black uppercase tracking-widest">
-                    Page {placement.signaturePage}
-                  </p>
+              {/* PDF page with draggable signature overlay */}
+              <div
+                ref={containerRef}
+                className="relative w-full border-2 border-slate-300 shadow-lg cursor-crosshair select-none overflow-hidden bg-slate-100"
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseLeave}
+              >
+                {/* PDF canvas */}
+                {pageRendering && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
+                    <Loader2 className="animate-spin text-blue-600" size={32} />
+                  </div>
+                )}
+                {pdfUrl ? (
+                  <canvas ref={canvasRef} className="w-full block" />
+                ) : (
+                  <div className="flex items-center justify-center h-64 text-slate-400">
+                    <Loader2 className="animate-spin mr-2" size={20} />
+                    <span className="text-sm">Chargement du document...</span>
+                  </div>
+                )}
 
-                  {/* Draggable signature box */}
-                  <div
-                    className="absolute flex items-center justify-center border-2 border-blue-500 bg-blue-50/90 rounded cursor-grab active:cursor-grabbing shadow-md select-none"
-                    style={{
-                      left: Math.max(0, Math.min(400 - 150, sigBoxLeft)),
-                      top: Math.max(0, Math.min(566 - 75, sigBoxTop)),
-                      width: 150,
-                      height: 75
-                    }}
-                    onMouseDown={handleMouseDown}
-                  >
-                    <div className="text-center pointer-events-none">
-                      <Move className="text-blue-500 mx-auto mb-1" size={14} />
-                      <p className="text-[9px] font-black text-blue-700 uppercase tracking-widest">
-                        {signatureRequest.signatory.nom}
-                      </p>
-                      <p className="text-[8px] text-blue-400 uppercase tracking-widest">SIGNATURE</p>
-                    </div>
+                {/* Draggable signature box */}
+                <div
+                  className="absolute flex items-center justify-center border-2 border-blue-500 bg-blue-50/90 rounded cursor-grab active:cursor-grabbing shadow-md select-none z-20"
+                  style={sigBoxStyle}
+                  onMouseDown={handleMouseDown}
+                >
+                  <div className="text-center pointer-events-none">
+                    <Move className="text-blue-500 mx-auto mb-1" size={14} />
+                    <p className="text-[9px] font-black text-blue-700 uppercase tracking-widest">
+                      {signatureRequest.signatory.nom}
+                    </p>
+                    <p className="text-[8px] text-blue-400 uppercase tracking-widest">SIGNATURE</p>
                   </div>
                 </div>
               </div>
