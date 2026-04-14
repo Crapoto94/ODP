@@ -91,6 +91,8 @@ export async function GET(req: NextRequest) {
         titre: true,
         isDefault: true,
         statut: true,
+        signatureImagePath: true,
+        signatureCertificatePath: true,
         created_at: true
       }
     });

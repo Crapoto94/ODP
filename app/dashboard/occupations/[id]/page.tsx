@@ -1,9 +1,10 @@
 "use client";
 
-import React, { use, useState } from 'react';
+import React, { use, useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 // Hooks & Types
 import { useOccupationLogic } from './hooks/useOccupationLogic';
@@ -37,6 +38,7 @@ export default function OccupationDetailPage({ params }: Props) {
   const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
   const [editingLigne, setEditingLigne] = useState<LigneArticle | null>(null);
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
+  const [latestSignatureRequest, setLatestSignatureRequest] = useState<any>(null);
 
   const {
     occ,
@@ -86,6 +88,21 @@ export default function OccupationDetailPage({ params }: Props) {
     handleDeleteAotFinal
   } = useOccupationLogic(paramId);
 
+  // Load latest signature request for this occupation
+  useEffect(() => {
+    if (!paramId) return;
+    axios.get(`/api/occupations/${paramId}/signature-request`)
+      .then(res => {
+        const requests = res.data;
+        if (Array.isArray(requests) && requests.length > 0) {
+          setLatestSignatureRequest(requests[0]); // already ordered desc
+        }
+      })
+      .catch(() => {
+        // non-fatal: signature status is optional display
+      });
+  }, [paramId]);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -124,10 +141,11 @@ export default function OccupationDetailPage({ params }: Props) {
 
       <div className="max-w-7xl mx-auto space-y-12">
         <div className="flex flex-col lg:flex-row items-stretch justify-between gap-12">
-          <OccupationHero 
-            occupation={occ} 
-            statusInfo={statusInfo} 
-            typeInfo={typeInfo} 
+          <OccupationHero
+            occupation={occ}
+            statusInfo={statusInfo}
+            typeInfo={typeInfo}
+            latestSignatureRequest={latestSignatureRequest}
           />
           {!(occ.type === 'CHANTIER' && (occ.statut === 'INIT' || occ.statut === 'INITIALISATION' || occ.statut === 'EN_ATTENTE')) && (
             <OccupationFinancialCard

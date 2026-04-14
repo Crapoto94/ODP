@@ -75,6 +75,7 @@ export async function GET(
         adresse: signatureRequest.occupation.adresse,
         dateDebut: signatureRequest.occupation.dateDebut,
         dateFin: signatureRequest.occupation.dateFin,
+        aotFinalPath: signatureRequest.occupation.aotFinalPath,
         tiers: {
           id: signatureRequest.occupation.tiers.id,
           nom: signatureRequest.occupation.tiers.nom,

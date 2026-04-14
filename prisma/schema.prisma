@@ -208,9 +208,6 @@ model AppSettings {
   signataireRole            String?  @default("Le Maire d'Ivry-sur-Seine,")
   signataireDelegation      String?  @default("et par délégation,")
   signataireNom             String?  @default("Dominique Montet - Directrice Générale Adjointe")
-  signatureImagePath        String?
-  signatureCertificatePath  String?
-  signatureCertificatePassword String?
   updated_at                DateTime @updatedAt
   filienUncPass             String?  @default("")
   filienUncUser             String?  @default("")
@@ -353,16 +350,19 @@ model BillingRunInvoice {
 }
 
 model Signatory {
-  id                 Int                @id @default(autoincrement())
-  nom                String
-  email              String             @unique
-  role               String
-  titre              String?
-  isDefault          Boolean            @default(false)
-  statut             String             @default("ACTIF")
-  created_at         DateTime           @default(now())
-  updated_at         DateTime           @updatedAt
-  signatureRequests  SignatureRequest[]
+  id                          Int                @id @default(autoincrement())
+  nom                         String
+  email                       String             @unique
+  role                        String
+  titre                       String?
+  isDefault                   Boolean            @default(false)
+  statut                      String             @default("ACTIF")
+  signatureImagePath          String?
+  signatureCertificatePath    String?
+  signatureCertificatePassword String?
+  created_at                  DateTime           @default(now())
+  updated_at                  DateTime           @updatedAt
+  signatureRequests           SignatureRequest[]
 }
 
 model SignatureRequest {

@@ -1,16 +1,51 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { User, MapPin, Calendar, ArrowRight } from 'lucide-react';
+import { User, MapPin, Calendar, ArrowRight, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { Occupation, StatusConfig, TypeConfig } from '../types';
 
 interface Props {
   occupation: Occupation;
   statusInfo: StatusConfig;
   typeInfo: TypeConfig;
+  latestSignatureRequest?: any;
 }
 
-export default function OccupationHero({ occupation, statusInfo, typeInfo }: Props) {
+function SignatureStatusBadge({ request }: { request: any }) {
+  if (!request) return null;
+
+  const statusMap: Record<string, { label: string; icon: React.ReactNode; classes: string }> = {
+    PENDING: {
+      label: 'Signature en attente',
+      icon: <Clock size={12} />,
+      classes: 'bg-amber-50 text-amber-700 border-amber-200'
+    },
+    ACCEPTED: {
+      label: 'Signé',
+      icon: <CheckCircle2 size={12} />,
+      classes: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    },
+    REJECTED: {
+      label: 'Signature rejetée',
+      icon: <XCircle size={12} />,
+      classes: 'bg-rose-50 text-rose-700 border-rose-200'
+    }
+  };
+
+  const config = statusMap[request.status] || statusMap.PENDING;
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm ${config.classes}`}>
+      {config.icon}
+      {config.label}
+      {request.signatory?.nom && (
+        <span className="opacity-70">— {request.signatory.nom}</span>
+      )}
+    </span>
+  );
+}
+
+export default function OccupationHero({ occupation, statusInfo, typeInfo, latestSignatureRequest }: Props) {
   return (
     <div className="relative group/hero">
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/10 to-emerald-600/10 rounded-xl blur-xl opacity-25 group-hover/hero:opacity-50 transition duration-1000"></div>
@@ -26,6 +61,9 @@ export default function OccupationHero({ occupation, statusInfo, typeInfo }: Pro
             <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest ml-1">
               Ref. #{occupation.id}
             </span>
+            {latestSignatureRequest && (
+              <SignatureStatusBadge request={latestSignatureRequest} />
+            )}
           </div>
 
           <h1 className="text-2xl md:text-3xl font-black text-slate-950 tracking-tight leading-tight max-w-2xl">

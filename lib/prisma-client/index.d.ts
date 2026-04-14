@@ -14079,9 +14079,6 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
-    signatureImagePath: string | null
-    signatureCertificatePath: string | null
-    signatureCertificatePassword: string | null
     updated_at: Date | null
     filienUncPass: string | null
     filienUncUser: string | null
@@ -14125,9 +14122,6 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
-    signatureImagePath: string | null
-    signatureCertificatePath: string | null
-    signatureCertificatePassword: string | null
     updated_at: Date | null
     filienUncPass: string | null
     filienUncUser: string | null
@@ -14171,9 +14165,6 @@ export namespace Prisma {
     signataireRole: number
     signataireDelegation: number
     signataireNom: number
-    signatureImagePath: number
-    signatureCertificatePath: number
-    signatureCertificatePassword: number
     updated_at: number
     filienUncPass: number
     filienUncUser: number
@@ -14229,9 +14220,6 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
-    signatureImagePath?: true
-    signatureCertificatePath?: true
-    signatureCertificatePassword?: true
     updated_at?: true
     filienUncPass?: true
     filienUncUser?: true
@@ -14275,9 +14263,6 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
-    signatureImagePath?: true
-    signatureCertificatePath?: true
-    signatureCertificatePassword?: true
     updated_at?: true
     filienUncPass?: true
     filienUncUser?: true
@@ -14321,9 +14306,6 @@ export namespace Prisma {
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
-    signatureImagePath?: true
-    signatureCertificatePath?: true
-    signatureCertificatePassword?: true
     updated_at?: true
     filienUncPass?: true
     filienUncUser?: true
@@ -14454,9 +14436,6 @@ export namespace Prisma {
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
-    signatureImagePath: string | null
-    signatureCertificatePath: string | null
-    signatureCertificatePassword: string | null
     updated_at: Date
     filienUncPass: string | null
     filienUncUser: string | null
@@ -14519,9 +14498,6 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
-    signatureImagePath?: boolean
-    signatureCertificatePath?: boolean
-    signatureCertificatePassword?: boolean
     updated_at?: boolean
     filienUncPass?: boolean
     filienUncUser?: boolean
@@ -14565,9 +14541,6 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
-    signatureImagePath?: boolean
-    signatureCertificatePath?: boolean
-    signatureCertificatePassword?: boolean
     updated_at?: boolean
     filienUncPass?: boolean
     filienUncUser?: boolean
@@ -14611,9 +14584,6 @@ export namespace Prisma {
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
-    signatureImagePath?: boolean
-    signatureCertificatePath?: boolean
-    signatureCertificatePassword?: boolean
     updated_at?: boolean
     filienUncPass?: boolean
     filienUncUser?: boolean
@@ -14661,9 +14631,6 @@ export namespace Prisma {
       signataireRole: string | null
       signataireDelegation: string | null
       signataireNom: string | null
-      signatureImagePath: string | null
-      signatureCertificatePath: string | null
-      signatureCertificatePassword: string | null
       updated_at: Date
       filienUncPass: string | null
       filienUncUser: string | null
@@ -15097,9 +15064,6 @@ export namespace Prisma {
     readonly signataireRole: FieldRef<"AppSettings", 'String'>
     readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
     readonly signataireNom: FieldRef<"AppSettings", 'String'>
-    readonly signatureImagePath: FieldRef<"AppSettings", 'String'>
-    readonly signatureCertificatePath: FieldRef<"AppSettings", 'String'>
-    readonly signatureCertificatePassword: FieldRef<"AppSettings", 'String'>
     readonly updated_at: FieldRef<"AppSettings", 'DateTime'>
     readonly filienUncPass: FieldRef<"AppSettings", 'String'>
     readonly filienUncUser: FieldRef<"AppSettings", 'String'>
@@ -27212,6 +27176,9 @@ export namespace Prisma {
     titre: string | null
     isDefault: boolean | null
     statut: string | null
+    signatureImagePath: string | null
+    signatureCertificatePath: string | null
+    signatureCertificatePassword: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -27224,6 +27191,9 @@ export namespace Prisma {
     titre: string | null
     isDefault: boolean | null
     statut: string | null
+    signatureImagePath: string | null
+    signatureCertificatePath: string | null
+    signatureCertificatePassword: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -27236,6 +27206,9 @@ export namespace Prisma {
     titre: number
     isDefault: number
     statut: number
+    signatureImagePath: number
+    signatureCertificatePath: number
+    signatureCertificatePassword: number
     created_at: number
     updated_at: number
     _all: number
@@ -27258,6 +27231,9 @@ export namespace Prisma {
     titre?: true
     isDefault?: true
     statut?: true
+    signatureImagePath?: true
+    signatureCertificatePath?: true
+    signatureCertificatePassword?: true
     created_at?: true
     updated_at?: true
   }
@@ -27270,6 +27246,9 @@ export namespace Prisma {
     titre?: true
     isDefault?: true
     statut?: true
+    signatureImagePath?: true
+    signatureCertificatePath?: true
+    signatureCertificatePassword?: true
     created_at?: true
     updated_at?: true
   }
@@ -27282,6 +27261,9 @@ export namespace Prisma {
     titre?: true
     isDefault?: true
     statut?: true
+    signatureImagePath?: true
+    signatureCertificatePath?: true
+    signatureCertificatePassword?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -27381,6 +27363,9 @@ export namespace Prisma {
     titre: string | null
     isDefault: boolean
     statut: string
+    signatureImagePath: string | null
+    signatureCertificatePath: string | null
+    signatureCertificatePassword: string | null
     created_at: Date
     updated_at: Date
     _count: SignatoryCountAggregateOutputType | null
@@ -27412,6 +27397,9 @@ export namespace Prisma {
     titre?: boolean
     isDefault?: boolean
     statut?: boolean
+    signatureImagePath?: boolean
+    signatureCertificatePath?: boolean
+    signatureCertificatePassword?: boolean
     created_at?: boolean
     updated_at?: boolean
     signatureRequests?: boolean | Signatory$signatureRequestsArgs<ExtArgs>
@@ -27426,6 +27414,9 @@ export namespace Prisma {
     titre?: boolean
     isDefault?: boolean
     statut?: boolean
+    signatureImagePath?: boolean
+    signatureCertificatePath?: boolean
+    signatureCertificatePassword?: boolean
     created_at?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["signatory"]>
@@ -27438,6 +27429,9 @@ export namespace Prisma {
     titre?: boolean
     isDefault?: boolean
     statut?: boolean
+    signatureImagePath?: boolean
+    signatureCertificatePath?: boolean
+    signatureCertificatePassword?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
@@ -27461,6 +27455,9 @@ export namespace Prisma {
       titre: string | null
       isDefault: boolean
       statut: string
+      signatureImagePath: string | null
+      signatureCertificatePath: string | null
+      signatureCertificatePassword: string | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["signatory"]>
@@ -27864,6 +27861,9 @@ export namespace Prisma {
     readonly titre: FieldRef<"Signatory", 'String'>
     readonly isDefault: FieldRef<"Signatory", 'Boolean'>
     readonly statut: FieldRef<"Signatory", 'String'>
+    readonly signatureImagePath: FieldRef<"Signatory", 'String'>
+    readonly signatureCertificatePath: FieldRef<"Signatory", 'String'>
+    readonly signatureCertificatePassword: FieldRef<"Signatory", 'String'>
     readonly created_at: FieldRef<"Signatory", 'DateTime'>
     readonly updated_at: FieldRef<"Signatory", 'DateTime'>
   }
@@ -29471,9 +29471,6 @@ export namespace Prisma {
     signataireRole: 'signataireRole',
     signataireDelegation: 'signataireDelegation',
     signataireNom: 'signataireNom',
-    signatureImagePath: 'signatureImagePath',
-    signatureCertificatePath: 'signatureCertificatePath',
-    signatureCertificatePassword: 'signatureCertificatePassword',
     updated_at: 'updated_at',
     filienUncPass: 'filienUncPass',
     filienUncUser: 'filienUncUser',
@@ -29653,6 +29650,9 @@ export namespace Prisma {
     titre: 'titre',
     isDefault: 'isDefault',
     statut: 'statut',
+    signatureImagePath: 'signatureImagePath',
+    signatureCertificatePath: 'signatureCertificatePath',
+    signatureCertificatePassword: 'signatureCertificatePassword',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -30683,9 +30683,6 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
-    signatureImagePath?: StringNullableFilter<"AppSettings"> | string | null
-    signatureCertificatePath?: StringNullableFilter<"AppSettings"> | string | null
-    signatureCertificatePassword?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
     filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
@@ -30729,9 +30726,6 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
-    signatureImagePath?: SortOrderInput | SortOrder
-    signatureCertificatePath?: SortOrderInput | SortOrder
-    signatureCertificatePassword?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrderInput | SortOrder
     filienUncUser?: SortOrderInput | SortOrder
@@ -30778,9 +30772,6 @@ export namespace Prisma {
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
-    signatureImagePath?: StringNullableFilter<"AppSettings"> | string | null
-    signatureCertificatePath?: StringNullableFilter<"AppSettings"> | string | null
-    signatureCertificatePassword?: StringNullableFilter<"AppSettings"> | string | null
     updated_at?: DateTimeFilter<"AppSettings"> | Date | string
     filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
@@ -30824,9 +30815,6 @@ export namespace Prisma {
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
-    signatureImagePath?: SortOrderInput | SortOrder
-    signatureCertificatePath?: SortOrderInput | SortOrder
-    signatureCertificatePassword?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrderInput | SortOrder
     filienUncUser?: SortOrderInput | SortOrder
@@ -30878,9 +30866,6 @@ export namespace Prisma {
     signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    signatureImagePath?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    signatureCertificatePath?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    signatureCertificatePassword?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     updated_at?: DateTimeWithAggregatesFilter<"AppSettings"> | Date | string
     filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
@@ -31723,6 +31708,9 @@ export namespace Prisma {
     titre?: StringNullableFilter<"Signatory"> | string | null
     isDefault?: BoolFilter<"Signatory"> | boolean
     statut?: StringFilter<"Signatory"> | string
+    signatureImagePath?: StringNullableFilter<"Signatory"> | string | null
+    signatureCertificatePath?: StringNullableFilter<"Signatory"> | string | null
+    signatureCertificatePassword?: StringNullableFilter<"Signatory"> | string | null
     created_at?: DateTimeFilter<"Signatory"> | Date | string
     updated_at?: DateTimeFilter<"Signatory"> | Date | string
     signatureRequests?: SignatureRequestListRelationFilter
@@ -31736,6 +31724,9 @@ export namespace Prisma {
     titre?: SortOrderInput | SortOrder
     isDefault?: SortOrder
     statut?: SortOrder
+    signatureImagePath?: SortOrderInput | SortOrder
+    signatureCertificatePath?: SortOrderInput | SortOrder
+    signatureCertificatePassword?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     signatureRequests?: SignatureRequestOrderByRelationAggregateInput
@@ -31752,6 +31743,9 @@ export namespace Prisma {
     titre?: StringNullableFilter<"Signatory"> | string | null
     isDefault?: BoolFilter<"Signatory"> | boolean
     statut?: StringFilter<"Signatory"> | string
+    signatureImagePath?: StringNullableFilter<"Signatory"> | string | null
+    signatureCertificatePath?: StringNullableFilter<"Signatory"> | string | null
+    signatureCertificatePassword?: StringNullableFilter<"Signatory"> | string | null
     created_at?: DateTimeFilter<"Signatory"> | Date | string
     updated_at?: DateTimeFilter<"Signatory"> | Date | string
     signatureRequests?: SignatureRequestListRelationFilter
@@ -31765,6 +31759,9 @@ export namespace Prisma {
     titre?: SortOrderInput | SortOrder
     isDefault?: SortOrder
     statut?: SortOrder
+    signatureImagePath?: SortOrderInput | SortOrder
+    signatureCertificatePath?: SortOrderInput | SortOrder
+    signatureCertificatePassword?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: SignatoryCountOrderByAggregateInput
@@ -31785,6 +31782,9 @@ export namespace Prisma {
     titre?: StringNullableWithAggregatesFilter<"Signatory"> | string | null
     isDefault?: BoolWithAggregatesFilter<"Signatory"> | boolean
     statut?: StringWithAggregatesFilter<"Signatory"> | string
+    signatureImagePath?: StringNullableWithAggregatesFilter<"Signatory"> | string | null
+    signatureCertificatePath?: StringNullableWithAggregatesFilter<"Signatory"> | string | null
+    signatureCertificatePassword?: StringNullableWithAggregatesFilter<"Signatory"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"Signatory"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Signatory"> | Date | string
   }
@@ -32917,9 +32917,6 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
-    signatureImagePath?: string | null
-    signatureCertificatePath?: string | null
-    signatureCertificatePassword?: string | null
     updated_at?: Date | string
     filienUncPass?: string | null
     filienUncUser?: string | null
@@ -32963,9 +32960,6 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
-    signatureImagePath?: string | null
-    signatureCertificatePath?: string | null
-    signatureCertificatePassword?: string | null
     updated_at?: Date | string
     filienUncPass?: string | null
     filienUncUser?: string | null
@@ -33008,9 +33002,6 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33054,9 +33045,6 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33100,9 +33088,6 @@ export namespace Prisma {
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
-    signatureImagePath?: string | null
-    signatureCertificatePath?: string | null
-    signatureCertificatePassword?: string | null
     updated_at?: Date | string
     filienUncPass?: string | null
     filienUncUser?: string | null
@@ -33145,9 +33130,6 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33191,9 +33173,6 @@ export namespace Prisma {
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
-    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34062,6 +34041,9 @@ export namespace Prisma {
     titre?: string | null
     isDefault?: boolean
     statut?: string
+    signatureImagePath?: string | null
+    signatureCertificatePath?: string | null
+    signatureCertificatePassword?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     signatureRequests?: SignatureRequestCreateNestedManyWithoutSignatoryInput
@@ -34075,6 +34057,9 @@ export namespace Prisma {
     titre?: string | null
     isDefault?: boolean
     statut?: string
+    signatureImagePath?: string | null
+    signatureCertificatePath?: string | null
+    signatureCertificatePassword?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutSignatoryInput
@@ -34087,6 +34072,9 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     statut?: StringFieldUpdateOperationsInput | string
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     signatureRequests?: SignatureRequestUpdateManyWithoutSignatoryNestedInput
@@ -34100,6 +34088,9 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     statut?: StringFieldUpdateOperationsInput | string
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutSignatoryNestedInput
@@ -34113,6 +34104,9 @@ export namespace Prisma {
     titre?: string | null
     isDefault?: boolean
     statut?: string
+    signatureImagePath?: string | null
+    signatureCertificatePath?: string | null
+    signatureCertificatePassword?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -34124,6 +34118,9 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     statut?: StringFieldUpdateOperationsInput | string
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34136,6 +34133,9 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     statut?: StringFieldUpdateOperationsInput | string
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -35167,9 +35167,6 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
-    signatureImagePath?: SortOrder
-    signatureCertificatePath?: SortOrder
-    signatureCertificatePassword?: SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
@@ -35218,9 +35215,6 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
-    signatureImagePath?: SortOrder
-    signatureCertificatePath?: SortOrder
-    signatureCertificatePassword?: SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
@@ -35264,9 +35258,6 @@ export namespace Prisma {
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
-    signatureImagePath?: SortOrder
-    signatureCertificatePath?: SortOrder
-    signatureCertificatePassword?: SortOrder
     updated_at?: SortOrder
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
@@ -35844,6 +35835,9 @@ export namespace Prisma {
     titre?: SortOrder
     isDefault?: SortOrder
     statut?: SortOrder
+    signatureImagePath?: SortOrder
+    signatureCertificatePath?: SortOrder
+    signatureCertificatePassword?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35860,6 +35854,9 @@ export namespace Prisma {
     titre?: SortOrder
     isDefault?: SortOrder
     statut?: SortOrder
+    signatureImagePath?: SortOrder
+    signatureCertificatePath?: SortOrder
+    signatureCertificatePassword?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35872,6 +35869,9 @@ export namespace Prisma {
     titre?: SortOrder
     isDefault?: SortOrder
     statut?: SortOrder
+    signatureImagePath?: SortOrder
+    signatureCertificatePath?: SortOrder
+    signatureCertificatePassword?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -39442,6 +39442,9 @@ export namespace Prisma {
     titre?: string | null
     isDefault?: boolean
     statut?: string
+    signatureImagePath?: string | null
+    signatureCertificatePath?: string | null
+    signatureCertificatePassword?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -39454,6 +39457,9 @@ export namespace Prisma {
     titre?: string | null
     isDefault?: boolean
     statut?: string
+    signatureImagePath?: string | null
+    signatureCertificatePath?: string | null
+    signatureCertificatePassword?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -39553,6 +39559,9 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     statut?: StringFieldUpdateOperationsInput | string
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39565,6 +39574,9 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     statut?: StringFieldUpdateOperationsInput | string
+    signatureImagePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePath?: NullableStringFieldUpdateOperationsInput | string | null
+    signatureCertificatePassword?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }

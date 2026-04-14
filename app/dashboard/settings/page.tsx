@@ -2,22 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  LayoutGrid, 
-  Users, 
-  FileText, 
-  Smartphone, 
-  Database, 
+import {
+  LayoutGrid,
+  Users,
+  FileText,
+  Smartphone,
+  Database,
   Loader2,
-  Clock,
-  Zap
+  Clock
 } from 'lucide-react';
 
 import SQLEditor from '@/components/SQLEditor';
 import VersionHeader from './components/VersionHeader';
 import GeneralTab from './components/GeneralTab';
 import UsersTab from './components/UsersTab';
-import FilienTab from './components/FilienTab';
 import MobileLogsTab from './components/MobileLogsTab';
 import BacklogTab from './components/BacklogTab';
 import PostgresTab from './components/PostgresTab';
