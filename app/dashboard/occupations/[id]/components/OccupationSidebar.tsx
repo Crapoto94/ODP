@@ -171,9 +171,10 @@ export default function OccupationSidebar({
                   onClick={e => { e.preventDefault(); handleSendAot(); }}
                   disabled={sendingAot}
                   title="Envoyer au demandeur"
-                  className="w-8 h-8 rounded-lg bg-white border border-emerald-200 flex items-center justify-center text-emerald-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 disabled:opacity-40 transition-all shrink-0"
+                  className="h-8 px-3 rounded-lg bg-white border border-emerald-200 flex items-center gap-1.5 text-emerald-600 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 disabled:opacity-40 transition-all shrink-0 text-[9px] font-black uppercase tracking-wider"
                 >
                   {sendingAot ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                  Envoyer
                 </button>
               </a>
               {aotSentMsg && (
@@ -202,9 +203,10 @@ export default function OccupationSidebar({
                   onClick={e => { e.preventDefault(); handleSendAot(); }}
                   disabled={sendingAot}
                   title="Envoyer au demandeur"
-                  className="w-8 h-8 rounded-lg bg-white border border-amber-200 flex items-center justify-center text-amber-500 hover:bg-amber-500 hover:text-white hover:border-amber-500 disabled:opacity-40 transition-all shrink-0"
+                  className="h-8 px-3 rounded-lg bg-white border border-amber-200 flex items-center gap-1.5 text-amber-600 hover:bg-amber-500 hover:text-white hover:border-amber-500 disabled:opacity-40 transition-all shrink-0 text-[9px] font-black uppercase tracking-wider"
                 >
                   {sendingAot ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                  Envoyer
                 </button>
               </a>
               {aotSentMsg && (
