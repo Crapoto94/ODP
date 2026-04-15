@@ -9,7 +9,9 @@ import {
   Mail,
   Smartphone,
   Trash2,
-  Clock
+  Clock,
+  Send,
+  Loader2,
 } from 'lucide-react';
 import { Occupation } from '../types';
 
@@ -32,6 +34,25 @@ export default function OccupationSidebar({
   onDeletePhoto,
   onDeleteAotFinal
 }: Props) {
+  const [sendingAot, setSendingAot] = React.useState(false);
+  const [aotSentMsg, setAotSentMsg] = React.useState<string | null>(null);
+
+  const handleSendAot = async () => {
+    setSendingAot(true);
+    setAotSentMsg(null);
+    try {
+      const res = await fetch(`/api/occupations/${occupation.id}/send-aot`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur');
+      setAotSentMsg(`AOT envoyé à : ${data.sent.join(', ')}`);
+      setTimeout(() => setAotSentMsg(null), 5000);
+    } catch (e: any) {
+      setAotSentMsg(`Erreur : ${e.message}`);
+      setTimeout(() => setAotSentMsg(null), 5000);
+    } finally {
+      setSendingAot(false);
+    }
+  };
   const photoList = occupation.photos ? occupation.photos.split(',').filter(Boolean) : [];
   const docCount = photoList.length + (occupation.facturePath ? 1 : 0) + (occupation.aotFinalPath ? 1 : 0);
 
@@ -170,6 +191,24 @@ export default function OccupationSidebar({
             </a>
           )}
 
+          {/* Bouton envoi AOT au demandeur */}
+          {occupation.aotFinalPath && (
+            <div className="space-y-2">
+              <button
+                onClick={handleSendAot}
+                disabled={sendingAot}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm shadow-blue-500/20"
+              >
+                {sendingAot ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                Envoyer AOT au demandeur
+              </button>
+              {aotSentMsg && (
+                <p className={`text-[9px] font-black text-center px-2 ${aotSentMsg.startsWith('Erreur') ? 'text-rose-500' : 'text-emerald-600'}`}>
+                  {aotSentMsg}
+                </p>
+              )}
+            </div>
+          )}
 
           {docCount === 0 && (
             <div className="py-12 bg-white rounded-2xl border border-dashed border-slate-200 text-center flex flex-col items-center">

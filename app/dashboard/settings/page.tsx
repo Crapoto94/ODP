@@ -10,7 +10,8 @@ import {
   Database,
   Loader2,
   Clock,
-  Mail
+  Mail,
+  UserCog,
 } from 'lucide-react';
 
 import SQLEditor from '@/components/SQLEditor';
@@ -22,8 +23,9 @@ import BacklogTab from './components/BacklogTab';
 import PostgresTab from './components/PostgresTab';
 import SignatureConfigTab from './components/SignatureConfigTab';
 import MessagesContextuelsTab from './components/MessagesContextuelsTab';
+import ContactRolesTab from './components/ContactRolesTab';
 
-type TabType = 'general' | 'postgres' | 'users' | 'mobile_logs' | 'backlog' | 'signature' | 'messages' | 'sql';
+type TabType = 'general' | 'postgres' | 'users' | 'contact_roles' | 'mobile_logs' | 'backlog' | 'signature' | 'messages' | 'sql';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('general');
@@ -111,6 +113,7 @@ export default function SettingsPage() {
     { id: 'general', label: 'Général', icon: LayoutGrid },
     { id: 'postgres', label: 'Base PostgreSQL', icon: Database, accent: 'bg-blue-600' },
     { id: 'users', label: 'Utilisateurs', icon: Users },
+    { id: 'contact_roles', label: 'Types de contacts', icon: UserCog },
     { id: 'signature', label: 'Signatures', icon: FileText, accent: 'bg-purple-600' },
     { id: 'messages', label: 'Messages Contextuels', icon: Mail, accent: 'bg-blue-600' },
     { id: 'backlog', label: 'Backlog', icon: Clock },
@@ -147,6 +150,7 @@ export default function SettingsPage() {
         {activeTab === 'general' && <GeneralTab {...{settings, setSettings, handleSubmit, handleTestMail, saving, message, apmStatus}} />}
         {activeTab === 'postgres' && <PostgresTab />}
         {activeTab === 'users' && <UsersTab />}
+        {activeTab === 'contact_roles' && <ContactRolesTab />}
         {activeTab === 'signature' && <SignatureConfigTab />}
         {activeTab === 'messages' && <MessagesContextuelsTab />}
         {activeTab === 'backlog' && <BacklogTab />}

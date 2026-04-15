@@ -335,6 +335,15 @@ model PostgresConfig {
   password String
 }
 
+model ContactRoleConfig {
+  id          Int      @id @default(autoincrement())
+  nom         String   @unique
+  isSendAot   Boolean  @default(false)
+  ordre       Int      @default(0)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
 model OdpConfig {
   annee               Int     @id @default(autoincrement())
   deliberationPath    String?

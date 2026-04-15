@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, User, ImageIcon, Loader2, Plus } from 'lucide-react';
 import { Contact } from '../types';
 
@@ -21,6 +21,16 @@ export default function OccupationContactModal({
   onAddContact,
   onPhotoContact
 }: Props) {
+  const [roles, setRoles] = useState<{ id: number; nom: string; isSendAot: boolean }[]>([]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    fetch('/api/settings/contact-roles')
+      .then(r => r.json())
+      .then(data => Array.isArray(data) && setRoles(data))
+      .catch(() => {});
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
@@ -146,13 +156,21 @@ export default function OccupationContactModal({
                 onChange={e => setNewContact({...newContact, role: e.target.value})}
                 className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:border-blue-500 font-bold transition-all text-sm appearance-none"
               >
-                <option value="Contact principal">Contact principal</option>
-                <option value="Gérant">Gérant</option>
-                <option value="Architecte / Maitre d'œuvre">Architecte / Maitre d'œuvre</option>
-                <option value="Conducteur de travaux">Conducteur de travaux</option>
-                <option value="Contact administratif">Contact administratif</option>
-                <option value="Autre">Autre</option>
+                {roles.length > 0 ? roles.map(r => (
+                  <option key={r.id} value={r.nom}>{r.nom}{r.isSendAot ? ' ✉' : ''}</option>
+                )) : (
+                  <>
+                    <option value="Contact principal">Contact principal</option>
+                    <option value="Demandeur">Demandeur</option>
+                    <option value="Gérant">Gérant</option>
+                    <option value="Architecte / Maitre d'œuvre">Architecte / Maitre d'œuvre</option>
+                    <option value="Conducteur de travaux">Conducteur de travaux</option>
+                    <option value="Contact administratif">Contact administratif</option>
+                    <option value="Autre">Autre</option>
+                  </>
+                )}
               </select>
+              <p className="text-[9px] text-slate-400 ml-4">Les rôles marqués ✉ recevront l'AOT</p>
             </div>
 
             <button

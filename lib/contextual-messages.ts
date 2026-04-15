@@ -152,6 +152,35 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
 </div></body></html>`,
   },
 
+  MSG_AOT_DEMANDEUR: {
+    label: 'Envoi AOT au demandeur',
+    description: 'Envoyé aux contacts "Demandeur" et "Contact principal" du dossier pour leur transmettre l\'AOT final.',
+    vars: ['{{CONTACT}}', '{{TIERS}}', '{{LIEN_AOT}}', '{{LIEN_DOSSIER}}', '{{DATE}}'],
+    defaultSubject: 'Votre AOT — {{TIERS}}',
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#333;line-height:1.6;margin:0;padding:0}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%);color:white;padding:30px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px;font-weight:900}
+  .content{background:#f8fafc;padding:30px;border-radius:0 0 8px 8px;border:1px solid #e2e8f0}
+  .cta-button{display:inline-block;background:#0f172a;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;margin:20px 0;font-size:15px}
+  .footer{color:#94a3b8;font-size:11px;text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>Arrêté d'Occupation du Domaine Public</h1></div>
+  <div class="content">
+    <p>Bonjour <strong>{{CONTACT}}</strong>,</p>
+    <p>Veuillez trouver ci-dessous votre Arrêté d'Occupation du Domaine Public concernant le dossier <strong>{{TIERS}}</strong>.</p>
+    <p style="text-align:center"><a href="{{LIEN_AOT}}" class="cta-button">Télécharger l'AOT</a></p>
+    <p>Vous pouvez également consulter votre dossier en ligne :</p>
+    <p style="text-align:center"><a href="{{LIEN_DOSSIER}}" style="color:#2563eb">Accéder au dossier</a></p>
+    <div class="footer"><p>ODP Console — Ville d'Ivry-sur-Seine</p><p>Document transmis le {{DATE}}</p></div>
+  </div>
+</div></body></html>`,
+  },
+
   MSG_TIERS: {
     label: 'Demande de création de tiers',
     description: 'Envoyé au service RH ou SEDIT lors de la création d\'un nouveau tiers.',
