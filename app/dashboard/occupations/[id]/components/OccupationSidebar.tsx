@@ -12,17 +12,22 @@ import {
   Clock,
   Send,
   Loader2,
+  Pencil,
+  Check,
+  X,
 } from 'lucide-react';
-import { Occupation } from '../types';
+import { Occupation, Contact } from '../types';
 
 interface Props {
   occupation: Occupation;
   isFactured: boolean;
   onOpenContactModal: () => void;
   onDeleteContact: (id: number) => void;
+  onEditContact?: (contact: Contact) => void;
   onOpenUploadModal: () => void;
   onDeletePhoto?: (index: number) => void;
   onDeleteAotFinal?: () => void;
+  onSaveObservations?: (obs: string) => Promise<void>;
 }
 
 export default function OccupationSidebar({
@@ -30,12 +35,21 @@ export default function OccupationSidebar({
   isFactured,
   onOpenContactModal,
   onDeleteContact,
+  onEditContact,
   onOpenUploadModal,
   onDeletePhoto,
-  onDeleteAotFinal
+  onDeleteAotFinal,
+  onSaveObservations,
 }: Props) {
   const [sendingAot, setSendingAot] = React.useState(false);
   const [aotSentMsg, setAotSentMsg] = React.useState<string | null>(null);
+  const [isEditingObs, setIsEditingObs] = React.useState(false);
+  const [obsValue, setObsValue] = React.useState(occupation.observations || '');
+  const [savingObs, setSavingObs] = React.useState(false);
+
+  React.useEffect(() => {
+    setObsValue(occupation.observations || '');
+  }, [occupation.observations]);
 
   const handleSendAot = async () => {
     setSendingAot(true);
@@ -274,10 +288,10 @@ export default function OccupationSidebar({
                     <p className="text-base font-black text-slate-950 truncate mt-2 uppercase">{contact.prenom} {contact.nom}</p>
                     <div className="flex flex-col gap-1.5 mt-2">
                       {contact.email && (
-                        <a href={`mailto:${contact.email}`} className="text-[10px] font-black text-slate-400 hover:text-blue-600 flex items-center gap-2 transition-colors">
+                        <span className="text-[10px] font-black text-slate-400 flex items-center gap-2">
                           <Mail size={12} className="shrink-0 text-slate-300" />
                           <span className="truncate">{contact.email}</span>
-                        </a>
+                        </span>
                       )}
                       {contact.telephone && (
                         <a href={`tel:${contact.telephone}`} className="text-[10px] font-black text-slate-400 hover:text-emerald-600 flex items-center gap-2 transition-colors">
@@ -289,13 +303,24 @@ export default function OccupationSidebar({
                   </div>
                 </div>
                 {!isFactured && contact.source === 'DOSSIER' && (
-                  <button 
-                    onClick={() => onDeleteContact(contact.id)}
-                    className="opacity-0 group-hover:opacity-100 w-10 h-10 flex items-center justify-center text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
-                    title="Supprimer ce contact du dossier"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  <div className="opacity-0 group-hover:opacity-100 flex flex-col gap-1.5 transition-all">
+                    {onEditContact && (
+                      <button
+                        onClick={() => onEditContact(contact as Contact)}
+                        className="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                        title="Modifier ce contact"
+                      >
+                        <Pencil size={14} />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => onDeleteContact(contact.id)}
+                      className="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                      title="Supprimer ce contact du dossier"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 )}
               </div>
             ))
@@ -310,16 +335,65 @@ export default function OccupationSidebar({
 
       {/* Observations Section */}
       <section className="space-y-6">
-        <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
-           <FileArchive size={16} className="text-amber-500" /> Observations Techniques
-        </h3>
-        <div className="bg-white p-10 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden min-h-[160px]">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-[4rem] flex items-center justify-center -mr-10 -mt-10 opacity-50">
-             <Clock size={32} className="text-amber-200" />
-          </div>
-          <p className="text-slate-600 font-medium leading-relaxed italic text-sm relative z-10">
-            {occupation.observations || "Aucune observation technique complémentaire n'a été consignée pour ce dossier d'occupation."}
-          </p>
+        <div className="flex items-center justify-between">
+          <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
+            <FileArchive size={16} className="text-amber-500" /> Observations Techniques
+          </h3>
+          {!isFactured && onSaveObservations && !isEditingObs && (
+            <button
+              onClick={() => setIsEditingObs(true)}
+              className="w-8 h-8 bg-amber-50 text-amber-500 rounded-xl hover:bg-amber-500 hover:text-white transition-all flex items-center justify-center"
+              title="Modifier les observations"
+            >
+              <Pencil size={14} />
+            </button>
+          )}
+        </div>
+        <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden min-h-[160px]">
+          {!isEditingObs && (
+            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-[4rem] flex items-center justify-center -mr-10 -mt-10 opacity-50">
+              <Clock size={32} className="text-amber-200" />
+            </div>
+          )}
+          {isEditingObs ? (
+            <div className="space-y-4">
+              <textarea
+                value={obsValue}
+                onChange={e => setObsValue(e.target.value)}
+                rows={6}
+                autoFocus
+                placeholder="Observations techniques, remarques complémentaires..."
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-amber-400 font-medium text-sm text-slate-700 leading-relaxed resize-none transition-all"
+              />
+              <div className="flex gap-2 justify-end">
+                <button
+                  type="button"
+                  onClick={() => { setIsEditingObs(false); setObsValue(occupation.observations || ''); }}
+                  className="h-8 px-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider"
+                >
+                  <X size={12} /> Annuler
+                </button>
+                <button
+                  type="button"
+                  disabled={savingObs}
+                  onClick={async () => {
+                    if (!onSaveObservations) return;
+                    setSavingObs(true);
+                    try { await onSaveObservations(obsValue); setIsEditingObs(false); }
+                    finally { setSavingObs(false); }
+                  }}
+                  className="h-8 px-3 rounded-xl bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 transition-all flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider"
+                >
+                  {savingObs ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                  Enregistrer
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-slate-600 font-medium leading-relaxed italic text-sm relative z-10">
+              {occupation.observations || "Aucune observation technique complémentaire n'a été consignée pour ce dossier d'occupation."}
+            </p>
+          )}
         </div>
       </section>
     </aside>

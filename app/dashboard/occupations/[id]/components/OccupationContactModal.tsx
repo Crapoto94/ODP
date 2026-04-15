@@ -10,6 +10,7 @@ interface Props {
   isSubmittingContact: boolean;
   onAddContact: (e: React.FormEvent) => void;
   onPhotoContact: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  editingContactId?: number | null;
 }
 
 export default function OccupationContactModal({
@@ -19,9 +20,18 @@ export default function OccupationContactModal({
   setNewContact,
   isSubmittingContact,
   onAddContact,
-  onPhotoContact
+  onPhotoContact,
+  editingContactId,
 }: Props) {
-  const [roles, setRoles] = useState<{ id: number; nom: string; isSendAot: boolean }[]>([]);
+  const [roles, setRoles] = useState<{ id: number; nom: string; isSendAot: boolean }[]>([
+    { id: 1, nom: 'Contact principal', isSendAot: true },
+    { id: 2, nom: 'Demandeur', isSendAot: true },
+    { id: 3, nom: 'Gérant', isSendAot: false },
+    { id: 4, nom: "Architecte / Maitre d'œuvre", isSendAot: false },
+    { id: 5, nom: 'Conducteur de travaux', isSendAot: false },
+    { id: 6, nom: 'Contact administratif', isSendAot: false },
+    { id: 7, nom: 'Autre', isSendAot: false },
+  ]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -43,7 +53,7 @@ export default function OccupationContactModal({
                 <User size={24} />
               </div>
               <div>
-                <h2 className="text-xl font-black text-slate-900 leading-tight">Ajouter un Contact</h2>
+                <h2 className="text-xl font-black text-slate-900 leading-tight">{editingContactId ? 'Modifier le Contact' : 'Ajouter un Contact'}</h2>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Personne référente pour ce dossier</p>
               </div>
             </div>
@@ -156,19 +166,9 @@ export default function OccupationContactModal({
                 onChange={e => setNewContact({...newContact, role: e.target.value})}
                 className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-3xl focus:outline-none focus:border-blue-500 font-bold transition-all text-sm appearance-none"
               >
-                {roles.length > 0 ? roles.map(r => (
+                {roles.map(r => (
                   <option key={r.id} value={r.nom}>{r.nom}{r.isSendAot ? ' ✉' : ''}</option>
-                )) : (
-                  <>
-                    <option value="Contact principal">Contact principal</option>
-                    <option value="Demandeur">Demandeur</option>
-                    <option value="Gérant">Gérant</option>
-                    <option value="Architecte / Maitre d'œuvre">Architecte / Maitre d'œuvre</option>
-                    <option value="Conducteur de travaux">Conducteur de travaux</option>
-                    <option value="Contact administratif">Contact administratif</option>
-                    <option value="Autre">Autre</option>
-                  </>
-                )}
+                ))}
               </select>
               <p className="text-[9px] text-slate-400 ml-4">Les rôles marqués ✉ recevront l'AOT</p>
             </div>

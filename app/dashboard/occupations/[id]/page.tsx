@@ -22,7 +22,7 @@ import UploadDocModal from './components/UploadDocModal';
 import TlpeArticles from '../../tlpe/[id]/components/TlpeArticles';
 
 // Shared Components
-import ContactModal from '@/components/ContactModal';
+import OccupationContactModal from './components/OccupationContactModal';
 import LigneArticleModal from '@/components/LigneArticleModal';
 import TlpeLigneArticleModal from '@/components/TlpeLigneArticleModal';
 import AotFinalModal from './components/AotFinalModal';
@@ -59,9 +59,12 @@ export default function OccupationDetailPage({ params }: Props) {
     isContactModalOpen,
     setIsContactModalOpen,
     isSubmittingContact,
+    editingContactId,
+    setEditingContactId,
     newContact,
     setNewContact,
     handleAddContact,
+    handleOpenEditContact,
     handleDeleteContact,
     handlePhotoContact,
     // Dossier Upload
@@ -86,7 +89,8 @@ export default function OccupationDetailPage({ params }: Props) {
     handleUploadAotFinal,
     handlePublishAot,
     isPublishingAot,
-    handleDeleteAotFinal
+    handleDeleteAotFinal,
+    handleSaveObservations,
   } = useOccupationLogic(paramId);
 
   // Load TLPE config when needed (for enseigne exemption display)
@@ -215,9 +219,11 @@ export default function OccupationDetailPage({ params }: Props) {
             isFactured={isFactured}
             onOpenContactModal={() => setIsContactModalOpen(true)}
             onDeleteContact={handleDeleteContact}
+            onEditContact={handleOpenEditContact}
             onOpenUploadModal={() => setIsUploadModalOpen(true)}
             onDeletePhoto={handleDeletePhoto}
             onDeleteAotFinal={handleDeleteAotFinal}
+            onSaveObservations={handleSaveObservations}
           />
         </div>
       </div>
@@ -250,14 +256,15 @@ export default function OccupationDetailPage({ params }: Props) {
         )
       )}
 
-      <ContactModal 
+      <OccupationContactModal
         isOpen={isContactModalOpen}
-        onClose={() => setIsContactModalOpen(false)}
+        onClose={() => { setIsContactModalOpen(false); setEditingContactId(null); }}
         newContact={newContact}
         setNewContact={setNewContact}
         isSubmittingContact={isSubmittingContact}
         onAddContact={handleAddContact}
         onPhotoContact={handlePhotoContact}
+        editingContactId={editingContactId}
       />
 
       <UploadDocModal

@@ -23,14 +23,15 @@ export function useOccupationLogic(occupationId: string) {
   // Contacts states
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
-  const [newContact, setNewContact] = useState<Partial<Contact>>({ 
-    nom: '', 
-    prenom: '', 
-    email: '', 
-    telephone: '', 
-    titre: '', 
-    entreprise: '', 
-    role: 'Contact principal', 
+  const [editingContactId, setEditingContactId] = useState<number | null>(null);
+  const [newContact, setNewContact] = useState<Partial<Contact>>({
+    nom: '',
+    prenom: '',
+    email: '',
+    telephone: '',
+    titre: '',
+    entreprise: '',
+    role: 'Contact principal',
     pjPath: '' 
   });
 
@@ -187,19 +188,39 @@ export function useOccupationLogic(occupationId: string) {
   };
 
   // Contacts handlers
+  const handleOpenEditContact = (contact: Contact) => {
+    setEditingContactId(contact.id);
+    setNewContact({
+      nom: contact.nom || '',
+      prenom: contact.prenom || '',
+      email: contact.email || '',
+      telephone: contact.telephone || '',
+      titre: contact.titre || '',
+      entreprise: contact.entreprise || '',
+      role: contact.role || 'Contact principal',
+      pjPath: contact.pjPath || '',
+    });
+    setIsContactModalOpen(true);
+  };
+
   const handleAddContact = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingContact(true);
     try {
-      await axios.post(`/api/occupations/${occupationId}/contacts`, newContact);
+      if (editingContactId) {
+        await axios.patch(`/api/occupations/${occupationId}/contacts`, { id: editingContactId, ...newContact });
+      } else {
+        await axios.post(`/api/occupations/${occupationId}/contacts`, newContact);
+      }
       setIsContactModalOpen(false);
-      setNewContact({ 
-        nom: '', prenom: '', email: '', telephone: '', 
-        titre: '', entreprise: '', role: 'Contact principal', pjPath: '' 
+      setEditingContactId(null);
+      setNewContact({
+        nom: '', prenom: '', email: '', telephone: '',
+        titre: '', entreprise: '', role: 'Contact principal', pjPath: ''
       });
       fetchOccupation();
     } catch (err) {
-      alert('Erreur lors de l\'ajout du contact');
+      alert(editingContactId ? 'Erreur lors de la modification du contact' : 'Erreur lors de l\'ajout du contact');
     } finally {
       setIsSubmittingContact(false);
     }
@@ -278,6 +299,12 @@ export function useOccupationLogic(occupationId: string) {
       console.error('[Delete Photo] Error:', err);
       alert('Erreur lors de la suppression');
     }
+  };
+
+  const handleSaveObservations = async (observations: string) => {
+    if (!occ) return;
+    await axios.patch(`/api/occupations/${occ.id}`, { observations });
+    await fetchOccupation();
   };
 
   const handleDeleteAotFinal = async () => {
@@ -464,9 +491,12 @@ export function useOccupationLogic(occupationId: string) {
     isContactModalOpen,
     setIsContactModalOpen,
     isSubmittingContact,
+    editingContactId,
+    setEditingContactId,
     newContact,
     setNewContact,
     handleAddContact,
+    handleOpenEditContact,
     handleDeleteContact,
     handlePhotoContact,
     // Dossier Upload
@@ -491,6 +521,7 @@ export function useOccupationLogic(occupationId: string) {
     handleUploadAotFinal,
     handlePublishAot,
     isPublishingAot,
-    handleDeleteAotFinal
+    handleDeleteAotFinal,
+    handleSaveObservations,
   };
 }
