@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendApmMail } from '@/lib/apm';
 import { getContextualMessageData } from '@/lib/contextual-messages';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export async function POST(
   req: NextRequest,
@@ -12,7 +14,6 @@ export async function POST(
   if (isNaN(occupationId)) return NextResponse.json({ error: 'ID invalide' }, { status: 400 });
 
   try {
-    // Fetch occupation with contacts (dossier + tiers)
     const occ = await (prisma as any).occupation.findUnique({
       where: { id: occupationId },
       include: {
@@ -30,7 +31,6 @@ export async function POST(
     `;
     const sendAotRoles = new Set((roleRows as any[]).map((r: any) => r.nom.toLowerCase()));
 
-    // Build recipient list from dossier contacts + inherited tiers contacts
     const allContacts = [
       ...(occ.contacts || []),
       ...(occ.tiers?.contacts || []),
@@ -44,11 +44,25 @@ export async function POST(
       return NextResponse.json({ error: 'Aucun contact "Demandeur" ou "Contact principal" avec email trouvé' }, { status: 400 });
     }
 
-    // App URL for links
+    // Read AOT file as base64 attachment
+    const aotRelPath = occ.aotFinalPath.replace(/^\//, '');
+    const aotAbsPath = path.join(process.cwd(), 'public', aotRelPath);
+    if (!fs.existsSync(aotAbsPath)) {
+      return NextResponse.json({ error: `Fichier AOT introuvable : ${aotAbsPath}` }, { status: 404 });
+    }
+    const aotBuffer = fs.readFileSync(aotAbsPath);
+    const aotBase64 = aotBuffer.toString('base64');
+    const aotFilename = path.basename(aotAbsPath);
+    const isPdf = aotFilename.toLowerCase().endsWith('.pdf');
+    const attachment = {
+      filename: aotFilename,
+      content: aotBase64,
+      content_type: isPdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    };
+
     const settingsRows = await (prisma as any).$queryRaw`SELECT appUrl FROM AppSettings WHERE id = 1`;
     const baseUrl = ((settingsRows as any[])[0]?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
     const lienDossier = `${baseUrl}/dashboard/occupations/${occupationId}`;
-    const lienAot = occ.aotFinalPath.startsWith('http') ? occ.aotFinalPath : `${baseUrl}${occ.aotFinalPath}`;
     const tiersNom = occ.tiers?.nom || `Dossier #${occupationId}`;
     const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -58,12 +72,17 @@ export async function POST(
       const { html, subject } = await getContextualMessageData('MSG_AOT_DEMANDEUR', {
         CONTACT: contactNom,
         TIERS: tiersNom,
-        LIEN_AOT: lienAot,
         LIEN_DOSSIER: lienDossier,
         DATE: date,
       });
       if (!html) continue;
-      await sendApmMail(contact.email, subject || `Votre AOT — ${tiersNom}`, html);
+      await sendApmMail(
+        contact.email,
+        subject || `Votre AOT — ${tiersNom}`,
+        html,
+        undefined,
+        [attachment]
+      );
       sent.push(contact.email);
     }
 

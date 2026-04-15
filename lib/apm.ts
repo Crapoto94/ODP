@@ -35,7 +35,19 @@ export async function getApmSettings() {
   };
 }
 
-export async function sendApmMail(to: string, subject: string, content: string, fromName?: string) {
+export interface MailAttachment {
+  filename: string;
+  content: string; // base64
+  content_type: string;
+}
+
+export async function sendApmMail(
+  to: string,
+  subject: string,
+  content: string,
+  fromName?: string,
+  attachments?: MailAttachment[]
+) {
   try {
     const { url, token, senderName, senderEmail, footer1, footer2, footer3, footerColor } = await getApmSettings();
 
@@ -51,6 +63,7 @@ export async function sendApmMail(to: string, subject: string, content: string, 
     if (footer2) payload.footer2 = footer2;
     if (footer3) payload.footer3 = footer3;
     if (footerColor) payload.footer_color = footerColor;
+    if (attachments?.length) payload.attachments = attachments;
 
     const res = await axios.post(`${url}/mail/send`, payload, {
       headers: { 'X-API-KEY': token },

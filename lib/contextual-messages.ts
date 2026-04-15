@@ -155,7 +155,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   MSG_AOT_DEMANDEUR: {
     label: 'Envoi AOT au demandeur',
     description: 'Envoyé aux contacts "Demandeur" et "Contact principal" du dossier pour leur transmettre l\'AOT final.',
-    vars: ['{{CONTACT}}', '{{TIERS}}', '{{LIEN_AOT}}', '{{LIEN_DOSSIER}}', '{{DATE}}'],
+    vars: ['{{CONTACT}}', '{{TIERS}}', '{{LIEN_DOSSIER}}', '{{DATE}}'],
     defaultSubject: 'Votre AOT — {{TIERS}}',
     default: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -172,8 +172,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   <div class="header"><h1>Arrêté d'Occupation du Domaine Public</h1></div>
   <div class="content">
     <p>Bonjour <strong>{{CONTACT}}</strong>,</p>
-    <p>Veuillez trouver ci-dessous votre Arrêté d'Occupation du Domaine Public concernant le dossier <strong>{{TIERS}}</strong>.</p>
-    <p style="text-align:center"><a href="{{LIEN_AOT}}" class="cta-button">Télécharger l'AOT</a></p>
+    <p>Veuillez trouver en pièce jointe votre Arrêté d'Occupation du Domaine Public concernant le dossier <strong>{{TIERS}}</strong>.</p>
     <p>Vous pouvez également consulter votre dossier en ligne :</p>
     <p style="text-align:center"><a href="{{LIEN_DOSSIER}}" style="color:#2563eb">Accéder au dossier</a></p>
     <div class="footer"><p>ODP Console — Ville d'Ivry-sur-Seine</p><p>Document transmis le {{DATE}}</p></div>
