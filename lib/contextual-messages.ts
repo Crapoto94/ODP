@@ -155,7 +155,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   MSG_AOT_DEMANDEUR: {
     label: 'Envoi AOT au demandeur',
     description: 'Envoyé aux contacts "Demandeur" et "Contact principal" du dossier pour leur transmettre l\'AOT final.',
-    vars: ['{{CONTACT}}', '{{TIERS}}', '{{LIEN_DOSSIER}}', '{{DATE}}'],
+    vars: ['{{CONTACT}}', '{{TIERS}}', '{{DATE}}'],
     defaultSubject: 'Votre AOT — {{TIERS}}',
     default: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -165,7 +165,6 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   .header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%);color:white;padding:30px;border-radius:8px 8px 0 0;text-align:center}
   .header h1{margin:0;font-size:22px;font-weight:900}
   .content{background:#f8fafc;padding:30px;border-radius:0 0 8px 8px;border:1px solid #e2e8f0}
-  .cta-button{display:inline-block;background:#0f172a;color:white;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;margin:20px 0;font-size:15px}
   .footer{color:#94a3b8;font-size:11px;text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0}
 </style></head>
 <body><div class="container">
@@ -173,9 +172,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   <div class="content">
     <p>Bonjour <strong>{{CONTACT}}</strong>,</p>
     <p>Veuillez trouver en pièce jointe votre Arrêté d'Occupation du Domaine Public concernant le dossier <strong>{{TIERS}}</strong>.</p>
-    <p>Vous pouvez également consulter votre dossier en ligne :</p>
-    <p style="text-align:center"><a href="{{LIEN_DOSSIER}}" style="color:#2563eb">Accéder au dossier</a></p>
-    <div class="footer"><p>ODP Console — Ville d'Ivry-sur-Seine</p><p>Document transmis le {{DATE}}</p></div>
+    <div class="footer"><p>Ville d'Ivry-sur-Seine — Service Domaine Public</p><p>Document transmis le {{DATE}}</p></div>
   </div>
 </div></body></html>`,
   },

@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { sendApmMail } from '@/lib/apm';
+import { sendApmMail, MailAttachment } from '@/lib/apm';
 import { getContextualMessageData } from '@/lib/contextual-messages';
 import * as fs from 'fs';
 import * as path from 'path';
+
+// APM server limit for attachments (OpenResty client_max_body_size)
+// ~50 KB raw file → ~66 KB base64 payload
+const MAX_ATTACHMENT_BYTES = 48 * 1024;
 
 export async function POST(
   req: NextRequest,
@@ -44,25 +48,29 @@ export async function POST(
       return NextResponse.json({ error: 'Aucun contact "Demandeur" ou "Contact principal" avec email trouvé' }, { status: 400 });
     }
 
-    // Read AOT file as base64 attachment
+    // Read AOT file
     const aotRelPath = occ.aotFinalPath.replace(/^\//, '');
     const aotAbsPath = path.join(process.cwd(), 'public', aotRelPath);
     if (!fs.existsSync(aotAbsPath)) {
       return NextResponse.json({ error: `Fichier AOT introuvable : ${aotAbsPath}` }, { status: 404 });
     }
-    const aotBuffer = fs.readFileSync(aotAbsPath);
-    const aotBase64 = aotBuffer.toString('base64');
     const aotFilename = path.basename(aotAbsPath);
+    const aotBuffer = fs.readFileSync(aotAbsPath);
+
+    if (aotBuffer.length > MAX_ATTACHMENT_BYTES) {
+      return NextResponse.json({
+        error: `Le fichier AOT est trop volumineux pour l'API mail (${Math.round(aotBuffer.length / 1024)} KB > 48 KB). Demandez à l'administrateur APM d'augmenter la limite client_max_body_size.`,
+      }, { status: 413 });
+    }
+
     const isPdf = aotFilename.toLowerCase().endsWith('.pdf');
-    const attachment = {
+    const attachment: MailAttachment = {
       filename: aotFilename,
-      content: aotBase64,
+      content: aotBuffer.toString('base64'),
       content_type: isPdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     };
 
     const settingsRows = await (prisma as any).$queryRaw`SELECT appUrl FROM AppSettings WHERE id = 1`;
-    const baseUrl = ((settingsRows as any[])[0]?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
-    const lienDossier = `${baseUrl}/dashboard/occupations/${occupationId}`;
     const tiersNom = occ.tiers?.nom || `Dossier #${occupationId}`;
     const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -72,7 +80,6 @@ export async function POST(
       const { html, subject } = await getContextualMessageData('MSG_AOT_DEMANDEUR', {
         CONTACT: contactNom,
         TIERS: tiersNom,
-        LIEN_DOSSIER: lienDossier,
         DATE: date,
       });
       if (!html) continue;
