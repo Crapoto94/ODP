@@ -364,7 +364,8 @@ export async function POST(
           const signedAtStr = now.toLocaleDateString('fr-FR', {
             year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
           });
-          const baseUrl = (settings?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
+          const appSettings = await (prisma as any).$queryRaw`SELECT appUrl FROM AppSettings WHERE id = 1`;
+          const baseUrl = ((appSettings as any[])[0]?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
           const lienDossier = `${baseUrl}/dashboard/occupations/${signatureRequest.occupation.id}`;
           const tiersNom = (signatureRequest.occupation as any).tiers?.nom || `Dossier #${signatureRequest.occupation.id}`;
           const { html: emailHtml, subject: emailSubject } = await getContextualMessageData('MSG_AOT_SIGNE', {
