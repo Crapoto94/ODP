@@ -9,9 +9,11 @@ export async function authenticateAD(login: string, password: string): Promise<b
   if (!password || !password.trim()) return false;
   try {
     const { url, token, httpsAgent } = await getVilleSettingsWithAgent();
+    // Strip @domain if the login is stored as UPN (e.g. MaChevalier@ivry94.fr → MaChevalier)
+    const shortLogin = login.includes('@') ? login.split('@')[0] : login;
     const res = await axios.post(
       `${url}/ad/authenticate`,
-      { username: login, password },
+      { username: shortLogin, password },
       { headers: { 'X-API-KEY': token }, httpsAgent, timeout: 6000 }
     );
     return res.data?.success === true || res.data?.authenticated === true;
