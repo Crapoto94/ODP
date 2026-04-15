@@ -86,6 +86,20 @@ export async function POST(
       sent.push(contact.email);
     }
 
+    // Note automatique dans le fil de discussion
+    if (sent.length > 0) {
+      const noteContent = `📄 AOT envoyé en pièce jointe à : ${sent.join(', ')}\nFichier : ${aotFilename}`;
+      await (prisma as any).$executeRawUnsafe(
+        `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+        occupationId,
+        noteContent,
+        'Système',
+        false,
+        'desktop',
+        new Date().toISOString()
+      );
+    }
+
     return NextResponse.json({ success: true, sent });
   } catch (err: any) {
     console.error('[send-aot]', err);
