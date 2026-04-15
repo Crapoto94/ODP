@@ -221,7 +221,10 @@ export default function BacklogTab() {
             onClick={async () => {
               try {
                 const vRes = await axios.get('/api/version');
-                setNewVersion({ ...newVersion, number: vRes.data.version });
+                const current = vRes.data.version || '0.1.0';
+                const parts = current.split('.').map(Number);
+                parts[2] = (parts[2] || 0) + 1;
+                setNewVersion({ ...newVersion, number: parts.join('.') });
               } catch (e) {}
               setNewVersionModal(true);
             }}
