@@ -37,7 +37,17 @@ export async function POST(req: Request) {
     const rows = await (prisma as any).$queryRaw`
       SELECT id, nom, prenom, email, login, password, role, isAd FROM "User" WHERE login = ${login} LIMIT 1
     `;
-    const user = (rows as any[])[0] || null;
+    let user = (rows as any[])[0] || null;
+
+    // Si non trouvé, cherche un compte AD dont le login UPN commence par ce login
+    if (!user) {
+      const likeLogin = `${login}@%`;
+      const adRows = await (prisma as any).$queryRaw`
+        SELECT id, nom, prenom, email, login, password, role, isAd FROM "User"
+        WHERE isAd = 1 AND login LIKE ${likeLogin} LIMIT 1
+      `;
+      user = (adRows as any[])[0] || null;
+    }
 
     if (!user) {
       return NextResponse.json({ error: 'Identifiants invalides' }, { status: 401 });
