@@ -63,7 +63,7 @@ export async function POST(
     };
 
     const settingsRows = await (prisma as any).$queryRaw`SELECT appUrl FROM AppSettings WHERE id = 1`;
-    const tiersNom = occ.tiers?.nom || `Dossier #${occupationId}`;
+    const tiersNom = occ.nom || occ.tiers?.nom || `Dossier #${occupationId}`;
     const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
     const sent: string[] = [];
