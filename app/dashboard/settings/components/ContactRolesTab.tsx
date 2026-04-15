@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Users, Plus, Trash2, Save, Loader2, Mail, MailOff } from 'lucide-react';
+import { Users, Plus, Trash2, Save, Loader2, Mail, MailX } from 'lucide-react';
 
 interface ContactRole {
   id: number;
@@ -127,7 +127,7 @@ export default function ContactRolesTab() {
                       title={editSendAot ? 'Reçoit AOT — cliquer pour désactiver' : 'Ne reçoit pas AOT — cliquer pour activer'}
                       className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all shrink-0 ${editSendAot ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-400'}`}
                     >
-                      {editSendAot ? <Mail size={14} /> : <MailOff size={14} />}
+                      {editSendAot ? <Mail size={14} /> : <MailX size={14} />}
                     </button>
                     <button
                       onClick={handleSaveEdit}
@@ -187,7 +187,7 @@ export default function ContactRolesTab() {
             title={newSendAot ? 'Reçoit AOT' : 'Ne reçoit pas AOT'}
             className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all shrink-0 ${newSendAot ? 'bg-blue-100 border-blue-200 text-blue-600' : 'bg-white border-slate-200 text-slate-400'}`}
           >
-            {newSendAot ? <Mail size={16} /> : <MailOff size={16} />}
+            {newSendAot ? <Mail size={16} /> : <MailX size={16} />}
           </button>
           <button
             type="submit"
