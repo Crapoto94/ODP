@@ -5,9 +5,6 @@ import { getContextualMessageData } from '@/lib/contextual-messages';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// APM server limit for attachments (OpenResty client_max_body_size)
-// ~50 KB raw file → ~66 KB base64 payload
-const MAX_ATTACHMENT_BYTES = 48 * 1024;
 
 export async function POST(
   req: NextRequest,
@@ -56,12 +53,6 @@ export async function POST(
     }
     const aotFilename = path.basename(aotAbsPath);
     const aotBuffer = fs.readFileSync(aotAbsPath);
-
-    if (aotBuffer.length > MAX_ATTACHMENT_BYTES) {
-      return NextResponse.json({
-        error: `Le fichier AOT est trop volumineux pour l'API mail (${Math.round(aotBuffer.length / 1024)} KB > 48 KB). Demandez à l'administrateur APM d'augmenter la limite client_max_body_size.`,
-      }, { status: 413 });
-    }
 
     const isPdf = aotFilename.toLowerCase().endsWith('.pdf');
     const attachment: MailAttachment = {
