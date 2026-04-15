@@ -76,6 +76,7 @@ export interface Occupation {
   photos?: string;
   aotGabaritId?: number | null;
   aotFinalPath?: string;
+  aotSigned?: boolean;
   facturePath?: string;
 }
 
