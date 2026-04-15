@@ -152,60 +152,63 @@ export default function OccupationSidebar({
           )}
 
           {occupation.aotFinalPath && occupation.aotSigned && (
-            <a
-              href={occupation.aotFinalPath}
-              target="_blank"
-              rel="noreferrer"
-              className="group flex items-center gap-4 p-4 bg-emerald-50/50 rounded-2xl border-2 border-emerald-100 shadow-sm transition-all hover:border-emerald-400 hover:shadow-lg hover:-translate-y-0.5"
-            >
-              <div className="w-12 h-12 rounded-xl shrink-0 bg-emerald-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <FileText size={20} />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest truncate">AOT Final — Signé</p>
-                <p className="text-[8px] font-black text-emerald-400/70 uppercase tracking-tighter mt-1">Document Finalisé</p>
-              </div>
-              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-emerald-300 group-hover:text-emerald-600 transition-all">
-                <ExternalLink size={14} />
-              </div>
-            </a>
+            <div className="space-y-1.5">
+              <a
+                href={occupation.aotFinalPath}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center gap-4 p-4 bg-emerald-50/50 rounded-2xl border-2 border-emerald-100 shadow-sm transition-all hover:border-emerald-400 hover:shadow-lg hover:-translate-y-0.5"
+              >
+                <div className="w-12 h-12 rounded-xl shrink-0 bg-emerald-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <FileText size={20} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest truncate">AOT Final — Signé</p>
+                  <p className="text-[8px] font-black text-emerald-400/70 uppercase tracking-tighter mt-1">Document Finalisé</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={e => { e.preventDefault(); handleSendAot(); }}
+                  disabled={sendingAot}
+                  title="Envoyer au demandeur"
+                  className="w-8 h-8 rounded-lg bg-white border border-emerald-200 flex items-center justify-center text-emerald-500 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 disabled:opacity-40 transition-all shrink-0"
+                >
+                  {sendingAot ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                </button>
+              </a>
+              {aotSentMsg && (
+                <p className={`text-[9px] font-black px-2 ${aotSentMsg.startsWith('Erreur') ? 'text-rose-500' : 'text-emerald-600'}`}>{aotSentMsg}</p>
+              )}
+            </div>
           )}
 
           {occupation.aotFinalPath && !occupation.aotSigned && (
-            <a
-              href={occupation.aotFinalPath}
-              target="_blank"
-              rel="noreferrer"
-              className="group flex items-center gap-4 p-4 bg-amber-50/50 rounded-2xl border-2 border-amber-100 shadow-sm transition-all hover:border-amber-400 hover:shadow-lg hover:-translate-y-0.5"
-            >
-              <div className="w-12 h-12 rounded-xl shrink-0 bg-amber-500 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <FileText size={20} />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest truncate">AOT Final — Non signé</p>
-                <p className="text-[8px] font-black text-amber-400/70 uppercase tracking-tighter mt-1">En attente de signature</p>
-              </div>
-              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-amber-300 group-hover:text-amber-600 transition-all">
-                <ExternalLink size={14} />
-              </div>
-            </a>
-          )}
-
-          {/* Bouton envoi AOT au demandeur */}
-          {occupation.aotFinalPath && (
-            <div className="space-y-2">
-              <button
-                onClick={handleSendAot}
-                disabled={sendingAot}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm shadow-blue-500/20"
+            <div className="space-y-1.5">
+              <a
+                href={occupation.aotFinalPath}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center gap-4 p-4 bg-amber-50/50 rounded-2xl border-2 border-amber-100 shadow-sm transition-all hover:border-amber-400 hover:shadow-lg hover:-translate-y-0.5"
               >
-                {sendingAot ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-                Envoyer AOT au demandeur
-              </button>
+                <div className="w-12 h-12 rounded-xl shrink-0 bg-amber-500 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <FileText size={20} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest truncate">AOT Final — Non signé</p>
+                  <p className="text-[8px] font-black text-amber-400/70 uppercase tracking-tighter mt-1">En attente de signature</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={e => { e.preventDefault(); handleSendAot(); }}
+                  disabled={sendingAot}
+                  title="Envoyer au demandeur"
+                  className="w-8 h-8 rounded-lg bg-white border border-amber-200 flex items-center justify-center text-amber-500 hover:bg-amber-500 hover:text-white hover:border-amber-500 disabled:opacity-40 transition-all shrink-0"
+                >
+                  {sendingAot ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                </button>
+              </a>
               {aotSentMsg && (
-                <p className={`text-[9px] font-black text-center px-2 ${aotSentMsg.startsWith('Erreur') ? 'text-rose-500' : 'text-emerald-600'}`}>
-                  {aotSentMsg}
-                </p>
+                <p className={`text-[9px] font-black px-2 ${aotSentMsg.startsWith('Erreur') ? 'text-rose-500' : 'text-emerald-600'}`}>{aotSentMsg}</p>
               )}
             </div>
           )}

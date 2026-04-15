@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendApmMail, MailAttachment } from '@/lib/apm';
 import { getContextualMessageData } from '@/lib/contextual-messages';
+import { getSession } from '@/lib/auth';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -86,12 +87,14 @@ export async function POST(
 
     // Note automatique dans le fil de discussion
     if (sent.length > 0) {
-      const noteContent = `📄 AOT envoyé en pièce jointe à : ${sent.join(', ')}\nFichier : ${aotFilename}`;
+      const session = await getSession();
+      const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Conseiller';
+      const noteContent = `📄 AOT envoyé en pièce jointe à : ${sent.join(', ')}`;
       await (prisma as any).$executeRawUnsafe(
         `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
         occupationId,
         noteContent,
-        'Système',
+        author,
         false,
         'desktop',
         new Date().toISOString()
