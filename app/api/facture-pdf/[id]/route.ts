@@ -90,7 +90,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       doc.setFontSize(70);
       doc.setFont('helvetica', 'bold');
 
-      doc.text(watermark.toUpperCase(), pageWidth / 2, (pageHeight * 2) / 3, {
+      doc.text(watermark.toUpperCase(), pageWidth / 2, (pageHeight * 2) / 3 + 141.75, {
         align: 'center',
         baseline: 'middle',
         angle: 45
