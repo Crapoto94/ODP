@@ -208,7 +208,11 @@ export async function POST(req: NextRequest) {
     // US Format Date-Time: YYYY-MM-DD-HHMM
     const timestampStr = format(now, 'yyyy-MM-dd-HHmm');
     
-    const facturesDir = join(process.cwd(), 'public', 'Factures');
+    const runName = timestampStr;
+    const facturesBaseDir = join(process.cwd(), 'public', 'Factures');
+    const facturesDir = join(facturesBaseDir, runName);
+    
+    if (!existsSync(facturesBaseDir)) await mkdir(facturesBaseDir, { recursive: true });
     if (!existsSync(facturesDir)) await mkdir(facturesDir, { recursive: true });
 
     // 2. Determine starting invoice index for the year
@@ -285,14 +289,14 @@ export async function POST(req: NextRequest) {
         data: {
           statut: 'FACTURE',
           numeroFacture: invoiceNumber,
-          facturePath: `/Factures/${filename}`
+          facturePath: `/Factures/${runName}/${filename}`
         }
       });
 
       results.push({ 
         id: occ.id, 
         numero: invoiceNumber, 
-        path: `/Factures/${filename}`,
+        path: `/Factures/${runName}/${filename}`,
         tiers: occ.tiers.nom, 
         total,
         lignes: lineResults 
@@ -385,8 +389,8 @@ export async function POST(req: NextRequest) {
           count: results.length,
           total: grandTotal,
           agent: agentName,
-          recapPath: `/Factures/${recapFilename}`,
-          filienPath: `/Factures/${filienFilename}`,
+          recapPath: `/Factures/${runName}/${recapFilename}`,
+          filienPath: `/Factures/${runName}/${filienFilename}`,
           invoices: {
             create: results.map(r => ({
               dossierId: r.id,
@@ -407,8 +411,8 @@ export async function POST(req: NextRequest) {
       success: true,
       count: results.length,
       total: grandTotal,
-      recapPdf: `/Factures/${recapFilename}`,
-      filienPath: `/Factures/${filienFilename}`,
+      recapPdf: `/Factures/${runName}/${recapFilename}`,
+      filienPath: `/Factures/${runName}/${filienFilename}`,
       invoices: results.map((r: any) => ({ id: r.id, numero: r.numero, path: r.path, tiers: r.tiers }))
     });
 

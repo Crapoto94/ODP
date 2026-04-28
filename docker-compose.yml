@@ -11,6 +11,7 @@ services:
     volumes:
       - ./prisma:/app/prisma
       - ./public/uploads:/app/public/uploads
+      - ./public/Factures:/app/public/Factures
     restart: always
 
   mobile:
