@@ -156,7 +156,7 @@ export default function OccupationSidebar({
 
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest truncate">Facture Officielle</p>
-                <p className="text-[8px] font-black text-blue-400/70 uppercase tracking-tighter mt-1">Générée par Sedit • PDF</p>
+                <p className="text-[8px] font-black text-blue-400/70 uppercase tracking-tighter mt-1">Facture • PDF</p>
               </div>
 
               <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-blue-300 group-hover:text-blue-600 transition-all">
