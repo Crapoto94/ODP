@@ -222,9 +222,36 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             } else if (el.type === 'TEXT' || el.type === 'VARIABLE') {
                 const text = replaceVars(el.value, instances[i]);
                 if (text) {
-                  doc.setFontSize(style.fontSize || 12);
+                  const fontSize = style.fontSize || 12;
+                  doc.setFontSize(fontSize);
                   doc.setTextColor(style.color || '#000000');
-                  doc.text(doc.splitTextToSize(text, el.width), el.x, y + (style.fontSize || 12));
+                  
+                  const weight = style.fontWeight === 'bold' || style.fontWeight === 'black' ? 'bold' : 'normal';
+                  const fontStyle = style.italic ? 'italic' : weight;
+                  let family = 'helvetica';
+                  if (style.fontFamily?.includes('Times')) family = 'times';
+                  else if (style.fontFamily?.includes('Courier')) family = 'courier';
+                  doc.setFont(family, fontStyle);
+
+                  const lines = text.split('\n');
+                  let currentY = y + fontSize;
+                  
+                  lines.forEach((line: string) => {
+                    const splitLine = doc.splitTextToSize(line, el.width);
+                    const options: any = { align: 'left' };
+                    let targetX = el.x;
+
+                    if (style.textAlign === 'center') {
+                      targetX = el.x + el.width / 2;
+                      options.align = 'center';
+                    } else if (style.textAlign === 'right') {
+                      targetX = el.x + el.width;
+                      options.align = 'right';
+                    }
+
+                    doc.text(splitLine, targetX, currentY, options);
+                    currentY += (splitLine.length * fontSize * 1.2);
+                  });
                 }
             } else if (el.type === 'IMAGE' && el.value) {
                 try {

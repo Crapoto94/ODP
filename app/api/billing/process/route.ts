@@ -178,16 +178,25 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string,
         if (style.fontFamily?.includes('Times')) family = 'times';
         else if (style.fontFamily?.includes('Courier')) family = 'courier';
         doc.setFont(family, fontStyle);
+
         const lines = text.split('\n');
-        lines.forEach((line: string, lineIdx: number) => {
+        let currentY = y + fontSize;
+        
+        lines.forEach((line: string) => {
           const splitLine = doc.splitTextToSize(line, w);
+          const options: any = { align: 'left' };
+          let targetX = x;
+
           if (style.textAlign === 'center') {
-            doc.text(splitLine, x + w / 2, y + fontSize + (lineIdx * fontSize * 1.2), { align: 'center' });
+            targetX = x + w / 2;
+            options.align = 'center';
           } else if (style.textAlign === 'right') {
-            doc.text(splitLine, x + w, y + fontSize + (lineIdx * fontSize * 1.2), { align: 'right' });
-          } else {
-            doc.text(splitLine, x, y + fontSize + (lineIdx * fontSize * 1.2));
+            targetX = x + w;
+            options.align = 'right';
           }
+
+          doc.text(splitLine, targetX, currentY, options);
+          currentY += (splitLine.length * fontSize * 1.2);
         });
       }
     }
