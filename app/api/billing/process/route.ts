@@ -101,7 +101,11 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string,
       const unit = modeParts[1] || modeParts[0] || '';
       const timeUnit = modeParts[2] || (ligne.article.modeTaxation?.nom?.toLowerCase().includes('jour') ? 'jours' : 'mois');
       
-      replacements['{article.quantite}'] = `${ligne.quantite1 || 0} ${unit}`;
+      let qteFull = `${ligne.quantite1 || 0} ${unit}`;
+      if (ligne.quantite2 > 0) {
+        qteFull += ` x ${ligne.quantite2} ${timeUnit}`;
+      }
+      replacements['{article.quantite}'] = qteFull;
       replacements['{article.dates}'] = dateStr;
       
       const pu = occ.type === 'TLPE' ? (ligne.montant || 0) : (ligne.article.montant || 0);
