@@ -227,10 +227,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
                   doc.setFontSize(fontSize);
                   doc.setTextColor(style.color || '#000000');
                   
+                  const isItalic = style.italic || style.fontStyle === 'italic';
                   const weight = (style.fontWeight === 'bold' || style.fontWeight === 'black' || style.fontWeight >= 700) ? 'bold' : 'normal';
                   let fontStyle = weight;
-                  if (style.italic && weight === 'bold') fontStyle = 'bolditalic';
-                  else if (style.italic) fontStyle = 'italic';
+                  if (isItalic && weight === 'bold') fontStyle = 'bolditalic';
+                  else if (isItalic) fontStyle = 'italic';
                   
                   let family = 'helvetica';
                   if (style.fontFamily?.includes('Times')) family = 'times';
