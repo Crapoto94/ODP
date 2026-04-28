@@ -155,9 +155,16 @@ export async function generateInvoicePdfBuffer(
           : (ligne.article.designation || '');
         replacements['{article.note}'] = ligne.note || '';
         
+        const modeNom = (ligne.article.modeTaxation?.nom || 'unité').toLowerCase();
         const modeParts = (ligne.article.modeTaxation?.nom || 'unité').split('/');
-        const unit = modeParts[1] || modeParts[0] || '';
-        const timeUnit = modeParts[2] || (ligne.article.modeTaxation?.nom?.toLowerCase().includes('jour') ? 'jours' : 'mois');
+        
+        let unit = modeParts[1] || modeParts[0] || '';
+        let timeUnit = modeParts[2] || (modeNom.includes('jour') ? 'jours' : 'mois');
+
+        // Si l'unité extraite est en fait l'unité de temps (ex: Benne/jour)
+        if (modeParts.length === 2 && (unit.toLowerCase().includes('jour') || unit.toLowerCase().includes('mois'))) {
+          unit = 'unité';
+        }
 
         let qteFull = `${ligne.quantite1 || 0} ${unit}`;
         if (ligne.quantite2 > 0) {
