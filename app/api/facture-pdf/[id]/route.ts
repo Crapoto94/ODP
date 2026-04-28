@@ -150,12 +150,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
           let mt: any = {};
           try { mt = ligne.article.notes ? JSON.parse(ligne.article.notes) : {}; } catch(e){}
           
-          const d1 = new Date(ligne.dateDebut);
-          const d2 = new Date(ligne.dateFin);
+          const d1 = new Date(ligne.dateDebutConstatee || ligne.dateDebut);
+          const d2 = new Date(ligne.dateFinConstatee || ligne.dateFin);
           const dateStr = `${format(d1, 'dd/MM/yyyy')} - ${format(d2, 'dd/MM/yyyy')}`;
 
           const occD1 = occ.dateDebut ? new Date(occ.dateDebut) : null;
           const occD2 = occ.dateFin ? new Date(occ.dateFin) : null;
+          
           const isDifferentDates = !occD1 || !occD2 || 
             format(d1, 'yyyy-MM-dd') !== format(occD1, 'yyyy-MM-dd') || 
             format(d2, 'yyyy-MM-dd') !== format(occD2, 'yyyy-MM-dd');
@@ -226,8 +227,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
                   doc.setFontSize(fontSize);
                   doc.setTextColor(style.color || '#000000');
                   
-                  const weight = style.fontWeight === 'bold' || style.fontWeight === 'black' ? 'bold' : 'normal';
-                  const fontStyle = style.italic ? 'italic' : weight;
+                  const weight = (style.fontWeight === 'bold' || style.fontWeight === 'black' || style.fontWeight >= 700) ? 'bold' : 'normal';
+                  let fontStyle = weight;
+                  if (style.italic && weight === 'bold') fontStyle = 'bolditalic';
+                  else if (style.italic) fontStyle = 'italic';
+                  
                   let family = 'helvetica';
                   if (style.fontFamily?.includes('Times')) family = 'times';
                   else if (style.fontFamily?.includes('Courier')) family = 'courier';
