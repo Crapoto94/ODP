@@ -30,10 +30,10 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Install SMB/CIFS support and ca-certificates
 # Note: OpenSSL 3.x is already included in bookworm
 # Retry logic to handle temporary package server unavailability
-RUN apt-get update || apt-get update || true && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    ca-certificates cifs-utils smbclient \
-    && rm -rf /var/lib/apt/lists/* || true
+    ca-certificates cifs-utils smbclient openssl libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
