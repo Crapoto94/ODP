@@ -88,7 +88,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
       doc.setTextColor(220, 220, 220);
       doc.setFontSize(70);
-      doc.setFont(undefined, 'bold');
+      doc.setFont('helvetica', 'bold');
 
       doc.text(watermark.toUpperCase(), pageWidth / 2, (pageHeight * 2) / 3, {
         align: 'center',

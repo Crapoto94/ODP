@@ -40,6 +40,7 @@ model Occupation {
   latitude          Float?
   longitude         Float?
   description       String?
+  observations      String?
   photos            String?
   montantCalcule    Float              @default(0)
   facturePath       String?
@@ -51,6 +52,7 @@ model Occupation {
   agissantPour      String?
   aotGabaritId      Int?
   aotFinalPath      String?
+  aotSigned         Boolean            @default(false)
   datePaiement      DateTime?
   contacts          Contact[]
   dispositifs       Dispositif[]
@@ -155,6 +157,7 @@ model User {
   login      String      @unique
   password   String
   role       String
+  isAd       Boolean     @default(false)
   created_at DateTime    @default(now())
   updated_at DateTime    @updatedAt
   logs       MobileLog[]
@@ -169,6 +172,15 @@ model MobileLog {
   ip         String?
   created_at DateTime @default(now())
   user       User?    @relation(fields: [userId], references: [id])
+}
+
+model ContextualMessage {
+  id       Int     @id @default(autoincrement())
+  cle      String  @unique
+  label    String?
+  sujet    String?
+  valeur   String
+  disabled Boolean @default(false)
 }
 
 model AppSettings {
@@ -205,13 +217,19 @@ model AppSettings {
   filienStructure      String?  @default("")
   filienGestionnaire   String?  @default("")
   filienUncPj          String?  @default("")
+  adDomain             String?  @default("ivry.local")
   signataireRole       String?  @default("Le Maire d'Ivry-sur-Seine,")
   signataireDelegation String?  @default("et par délégation,")
   signataireNom        String?  @default("Dominique Montet - Directrice Générale Adjointe")
+  footer1              String?
+  footer2              String?
+  footer3              String?
+  footerColor          String?
   updated_at           DateTime @updatedAt
   filienUncPass        String?  @default("")
   filienUncUser        String?  @default("")
   filienUncDomain      String?  @default("WORKGROUP")
+  watermark            String?  @default("BROUILLON")
 }
 
 model LigneOccupation {
@@ -285,6 +303,7 @@ model BacklogItem {
   priority    String           @default("MEDIUM")
   status      String           @default("OPEN")
   versionId   Int?
+  requestedBy String?
   created_at  DateTime         @default(now())
   updated_at  DateTime         @updatedAt
   comments    BacklogComment[]
@@ -317,6 +336,15 @@ model PostgresConfig {
   schema   String @default("public")
   user     String
   password String
+}
+
+model ContactRoleConfig {
+  id         Int      @id @default(autoincrement())
+  nom        String   @unique
+  isSendAot  Boolean  @default(false)
+  ordre      Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model OdpConfig {
@@ -374,6 +402,7 @@ model SignatureRequest {
   tokenExpiresAt   DateTime
   rejectionComment String?
   signedAt         DateTime?
+  requestedByLogin String?
   created_at       DateTime   @default(now())
   updated_at       DateTime   @updatedAt
   occupation       Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)

@@ -225,6 +225,20 @@ export default function GeneralTab({
             </div>
           </div>
 
+          {/* Factures et Documents */}
+          <FormSection icon={FileText} title="Factures et Documents" accentColor="blue" className="pt-8 border-t border-slate-50">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Filigranne (Watermark)</label>
+              <input
+                type="text"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                placeholder="ex: BROUILLON"
+                value={settings.watermark || ''}
+                onChange={e => setSettings({...settings, watermark: e.target.value})}
+              />
+            </div>
+          </FormSection>
+
           {/* Signature Arrêtés */}
           <FormSection icon={FileText} title="Signature des Arrêtés" accentColor="blue" className="pt-8 border-t border-slate-50">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

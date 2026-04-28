@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getPostgresClient } from '@/lib/postgresClient';
+import { cookies } from 'next/headers';
+import { decrypt } from '@/lib/auth';
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -7,7 +9,24 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const { id: idStr } = await params;
     const id = parseInt(idStr);
     const body = await req.json();
-    const item = await pgPrisma.backlogItem.update({
+
+    let userRole = '';
+    try {
+      const cookieStore = await cookies();
+      const sessionToken = cookieStore.get('session')?.value;
+      if (sessionToken) {
+        const session = await decrypt(sessionToken);
+        userRole = session?.role || '';
+      }
+    } catch (e) {
+      console.error('[PATCH /api/backlog/[id]] Error decrypting session:', e);
+    }
+
+    if (userRole !== 'ADMIN') {
+      return NextResponse.json({ error: 'Only admins can modify backlog items' }, { status: 403 });
+    }
+
+    const item = await (pgPrisma.backlogItem as any).update({
       where: { id },
       data: body
     });

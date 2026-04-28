@@ -73,15 +73,20 @@ export default function ReleaseHistory({ releases, onRefresh }: ReleaseHistoryPr
 
               {/* Backlog Items List */}
               {itemCount > 0 && (
-                <div className="mb-4 bg-slate-50/50 rounded-xl p-3 space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
+                <div className="mb-4 bg-slate-50/50 rounded-xl p-3 space-y-3 max-h-48 overflow-y-auto custom-scrollbar">
                   {release.backlogItems?.map((item: any) => (
-                    <div key={item.id} className="flex items-start gap-2">
-                      <div className="mt-0.5 text-slate-400">
-                        {item.type === 'BUG' ? <Bug size={10} className="text-rose-400" /> : <ChevronRight size={10} />}
+                    <div key={item.id} className="border-l-2 border-slate-200 pl-3 space-y-1">
+                      <div className="flex items-start gap-2">
+                        <div className="mt-0.5 text-slate-400 flex-shrink-0">
+                          {item.type === 'BUG' ? <Bug size={10} className="text-rose-400" /> : <ChevronRight size={10} />}
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-700 leading-tight" title={item.title}>
+                          {item.title}
+                        </span>
                       </div>
-                      <span className="text-[10px] font-bold text-slate-600 leading-tight truncate" title={item.title}>
-                        {item.title}
-                      </span>
+                      {item.description && (
+                        <p className="text-[9px] text-slate-500 ml-4 leading-tight italic">{item.description}</p>
+                      )}
                     </div>
                   ))}
                 </div>

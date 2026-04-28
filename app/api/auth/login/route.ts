@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     const rows = await (prisma as any).$queryRaw`
-      SELECT id, nom, prenom, email, login, password, role, isAd FROM "User" WHERE login = ${login} LIMIT 1
+      SELECT id, nom, prenom, email, login, password, role, isAd FROM "User" WHERE LOWER(login) = LOWER(${login}) LIMIT 1
     `;
     let user = (rows as any[])[0] || null;
 
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       const likeLogin = `${login}@%`;
       const adRows = await (prisma as any).$queryRaw`
         SELECT id, nom, prenom, email, login, password, role, isAd FROM "User"
-        WHERE isAd = 1 AND login LIKE ${likeLogin} LIMIT 1
+        WHERE isAd = 1 AND LOWER(login) LIKE LOWER(${likeLogin}) LIMIT 1
       `;
       user = (adRows as any[])[0] || null;
     }

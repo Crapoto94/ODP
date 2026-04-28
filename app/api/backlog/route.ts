@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getPostgresClient } from '@/lib/postgresClient';
+import { cookies } from 'next/headers';
+import { decrypt } from '@/lib/auth';
 
 export async function GET() {
   try {
     const pgPrisma = await getPostgresClient();
     const items = await pgPrisma.backlogItem.findMany({
-      include: { 
+      include: {
         version: true,
         comments: {
           orderBy: { created_at: 'desc' },
@@ -25,13 +27,29 @@ export async function POST(req: Request) {
   try {
     const pgPrisma = await getPostgresClient();
     const body = await req.json();
-    const item = await pgPrisma.backlogItem.create({
+
+    let requestedBy = 'Anonymous';
+    try {
+      const cookieStore = await cookies();
+      const sessionToken = cookieStore.get('session')?.value;
+      if (sessionToken) {
+        const session = await decrypt(sessionToken);
+        if (session && session.prenom && session.nom) {
+          requestedBy = `${session.prenom} ${session.nom}`;
+        }
+      }
+    } catch (e) {
+      console.error('[POST /api/backlog] Error decrypting session:', e);
+    }
+
+    const item = await (pgPrisma.backlogItem as any).create({
       data: {
         title: body.title,
         description: body.description,
         type: body.type || 'FEATURE',
         priority: body.priority || 'MEDIUM',
-        status: 'OPEN'
+        status: 'OPEN',
+        requestedBy
       }
     });
     return NextResponse.json(item);

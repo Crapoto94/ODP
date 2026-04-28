@@ -40,6 +40,7 @@ model Occupation {
   latitude         Float?
   longitude        Float?
   description      String?
+  observations     String?
   photos           String?
   montantCalcule   Float              @default(0)
   facturePath      String?
@@ -228,6 +229,7 @@ model AppSettings {
   filienUncPass             String?  @default("")
   filienUncUser             String?  @default("")
   filienUncDomain           String?  @default("WORKGROUP")
+  watermark                 String?  @default("BROUILLON")
 }
 
 model LigneOccupation {
@@ -301,6 +303,7 @@ model BacklogItem {
   priority    String           @default("MEDIUM")
   status      String           @default("OPEN")
   versionId   Int?
+  requestedBy String?
   created_at  DateTime         @default(now())
   updated_at  DateTime         @updatedAt
   comments    BacklogComment[]

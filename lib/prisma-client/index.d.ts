@@ -64,6 +64,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type MobileLog = $Result.DefaultSelection<Prisma.$MobileLogPayload>
 /**
+ * Model ContextualMessage
+ * 
+ */
+export type ContextualMessage = $Result.DefaultSelection<Prisma.$ContextualMessagePayload>
+/**
  * Model AppSettings
  * 
  */
@@ -113,6 +118,11 @@ export type VersionRelease = $Result.DefaultSelection<Prisma.$VersionReleasePayl
  * 
  */
 export type PostgresConfig = $Result.DefaultSelection<Prisma.$PostgresConfigPayload>
+/**
+ * Model ContactRoleConfig
+ * 
+ */
+export type ContactRoleConfig = $Result.DefaultSelection<Prisma.$ContactRoleConfigPayload>
 /**
  * Model OdpConfig
  * 
@@ -363,6 +373,16 @@ export class PrismaClient<
   get mobileLog(): Prisma.MobileLogDelegate<ExtArgs>;
 
   /**
+   * `prisma.contextualMessage`: Exposes CRUD operations for the **ContextualMessage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ContextualMessages
+    * const contextualMessages = await prisma.contextualMessage.findMany()
+    * ```
+    */
+  get contextualMessage(): Prisma.ContextualMessageDelegate<ExtArgs>;
+
+  /**
    * `prisma.appSettings`: Exposes CRUD operations for the **AppSettings** model.
     * Example usage:
     * ```ts
@@ -461,6 +481,16 @@ export class PrismaClient<
     * ```
     */
   get postgresConfig(): Prisma.PostgresConfigDelegate<ExtArgs>;
+
+  /**
+   * `prisma.contactRoleConfig`: Exposes CRUD operations for the **ContactRoleConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ContactRoleConfigs
+    * const contactRoleConfigs = await prisma.contactRoleConfig.findMany()
+    * ```
+    */
+  get contactRoleConfig(): Prisma.ContactRoleConfigDelegate<ExtArgs>;
 
   /**
    * `prisma.odpConfig`: Exposes CRUD operations for the **OdpConfig** model.
@@ -962,6 +992,7 @@ export namespace Prisma {
     Article: 'Article',
     User: 'User',
     MobileLog: 'MobileLog',
+    ContextualMessage: 'ContextualMessage',
     AppSettings: 'AppSettings',
     LigneOccupation: 'LigneOccupation',
     Dispositif: 'Dispositif',
@@ -972,6 +1003,7 @@ export namespace Prisma {
     BacklogComment: 'BacklogComment',
     VersionRelease: 'VersionRelease',
     PostgresConfig: 'PostgresConfig',
+    ContactRoleConfig: 'ContactRoleConfig',
     OdpConfig: 'OdpConfig',
     BillingRun: 'BillingRun',
     BillingRunInvoice: 'BillingRunInvoice',
@@ -992,7 +1024,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "contextualMessage" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1696,6 +1728,76 @@ export namespace Prisma {
           }
         }
       }
+      ContextualMessage: {
+        payload: Prisma.$ContextualMessagePayload<ExtArgs>
+        fields: Prisma.ContextualMessageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ContextualMessageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ContextualMessageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
+          }
+          findFirst: {
+            args: Prisma.ContextualMessageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ContextualMessageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
+          }
+          findMany: {
+            args: Prisma.ContextualMessageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>[]
+          }
+          create: {
+            args: Prisma.ContextualMessageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
+          }
+          createMany: {
+            args: Prisma.ContextualMessageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ContextualMessageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>[]
+          }
+          delete: {
+            args: Prisma.ContextualMessageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
+          }
+          update: {
+            args: Prisma.ContextualMessageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
+          }
+          deleteMany: {
+            args: Prisma.ContextualMessageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ContextualMessageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ContextualMessageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
+          }
+          aggregate: {
+            args: Prisma.ContextualMessageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateContextualMessage>
+          }
+          groupBy: {
+            args: Prisma.ContextualMessageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ContextualMessageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ContextualMessageCountArgs<ExtArgs>
+            result: $Utils.Optional<ContextualMessageCountAggregateOutputType> | number
+          }
+        }
+      }
       AppSettings: {
         payload: Prisma.$AppSettingsPayload<ExtArgs>
         fields: Prisma.AppSettingsFieldRefs
@@ -2393,6 +2495,76 @@ export namespace Prisma {
           count: {
             args: Prisma.PostgresConfigCountArgs<ExtArgs>
             result: $Utils.Optional<PostgresConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      ContactRoleConfig: {
+        payload: Prisma.$ContactRoleConfigPayload<ExtArgs>
+        fields: Prisma.ContactRoleConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ContactRoleConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ContactRoleConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.ContactRoleConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ContactRoleConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
+          }
+          findMany: {
+            args: Prisma.ContactRoleConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>[]
+          }
+          create: {
+            args: Prisma.ContactRoleConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
+          }
+          createMany: {
+            args: Prisma.ContactRoleConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ContactRoleConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.ContactRoleConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
+          }
+          update: {
+            args: Prisma.ContactRoleConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.ContactRoleConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ContactRoleConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ContactRoleConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.ContactRoleConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateContactRoleConfig>
+          }
+          groupBy: {
+            args: Prisma.ContactRoleConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ContactRoleConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ContactRoleConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<ContactRoleConfigCountAggregateOutputType> | number
           }
         }
       }
@@ -4425,6 +4597,7 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     description: string | null
+    observations: string | null
     photos: string | null
     montantCalcule: number | null
     facturePath: string | null
@@ -4453,6 +4626,7 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     description: string | null
+    observations: string | null
     photos: string | null
     montantCalcule: number | null
     facturePath: string | null
@@ -4481,6 +4655,7 @@ export namespace Prisma {
     latitude: number
     longitude: number
     description: number
+    observations: number
     photos: number
     montantCalcule: number
     facturePath: number
@@ -4533,6 +4708,7 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     description?: true
+    observations?: true
     photos?: true
     montantCalcule?: true
     facturePath?: true
@@ -4561,6 +4737,7 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     description?: true
+    observations?: true
     photos?: true
     montantCalcule?: true
     facturePath?: true
@@ -4589,6 +4766,7 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     description?: true
+    observations?: true
     photos?: true
     montantCalcule?: true
     facturePath?: true
@@ -4704,6 +4882,7 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     description: string | null
+    observations: string | null
     photos: string | null
     montantCalcule: number
     facturePath: string | null
@@ -4751,6 +4930,7 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     description?: boolean
+    observations?: boolean
     photos?: boolean
     montantCalcule?: boolean
     facturePath?: boolean
@@ -4786,6 +4966,7 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     description?: boolean
+    observations?: boolean
     photos?: boolean
     montantCalcule?: boolean
     facturePath?: boolean
@@ -4815,6 +4996,7 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     description?: boolean
+    observations?: boolean
     photos?: boolean
     montantCalcule?: boolean
     facturePath?: boolean
@@ -4866,6 +5048,7 @@ export namespace Prisma {
       latitude: number | null
       longitude: number | null
       description: string | null
+      observations: string | null
       photos: string | null
       montantCalcule: number
       facturePath: string | null
@@ -5290,6 +5473,7 @@ export namespace Prisma {
     readonly latitude: FieldRef<"Occupation", 'Float'>
     readonly longitude: FieldRef<"Occupation", 'Float'>
     readonly description: FieldRef<"Occupation", 'String'>
+    readonly observations: FieldRef<"Occupation", 'String'>
     readonly photos: FieldRef<"Occupation", 'String'>
     readonly montantCalcule: FieldRef<"Occupation", 'Float'>
     readonly facturePath: FieldRef<"Occupation", 'String'>
@@ -12024,6 +12208,7 @@ export namespace Prisma {
     login: string | null
     password: string | null
     role: string | null
+    isAd: boolean | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -12036,6 +12221,7 @@ export namespace Prisma {
     login: string | null
     password: string | null
     role: string | null
+    isAd: boolean | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -12048,6 +12234,7 @@ export namespace Prisma {
     login: number
     password: number
     role: number
+    isAd: number
     created_at: number
     updated_at: number
     _all: number
@@ -12070,6 +12257,7 @@ export namespace Prisma {
     login?: true
     password?: true
     role?: true
+    isAd?: true
     created_at?: true
     updated_at?: true
   }
@@ -12082,6 +12270,7 @@ export namespace Prisma {
     login?: true
     password?: true
     role?: true
+    isAd?: true
     created_at?: true
     updated_at?: true
   }
@@ -12094,6 +12283,7 @@ export namespace Prisma {
     login?: true
     password?: true
     role?: true
+    isAd?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -12193,6 +12383,7 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd: boolean
     created_at: Date
     updated_at: Date
     _count: UserCountAggregateOutputType | null
@@ -12224,6 +12415,7 @@ export namespace Prisma {
     login?: boolean
     password?: boolean
     role?: boolean
+    isAd?: boolean
     created_at?: boolean
     updated_at?: boolean
     logs?: boolean | User$logsArgs<ExtArgs>
@@ -12238,6 +12430,7 @@ export namespace Prisma {
     login?: boolean
     password?: boolean
     role?: boolean
+    isAd?: boolean
     created_at?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["user"]>
@@ -12250,6 +12443,7 @@ export namespace Prisma {
     login?: boolean
     password?: boolean
     role?: boolean
+    isAd?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
@@ -12273,6 +12467,7 @@ export namespace Prisma {
       login: string
       password: string
       role: string
+      isAd: boolean
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["user"]>
@@ -12676,6 +12871,7 @@ export namespace Prisma {
     readonly login: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'String'>
+    readonly isAd: FieldRef<"User", 'Boolean'>
     readonly created_at: FieldRef<"User", 'DateTime'>
     readonly updated_at: FieldRef<"User", 'DateTime'>
   }
@@ -14033,6 +14229,928 @@ export namespace Prisma {
 
 
   /**
+   * Model ContextualMessage
+   */
+
+  export type AggregateContextualMessage = {
+    _count: ContextualMessageCountAggregateOutputType | null
+    _avg: ContextualMessageAvgAggregateOutputType | null
+    _sum: ContextualMessageSumAggregateOutputType | null
+    _min: ContextualMessageMinAggregateOutputType | null
+    _max: ContextualMessageMaxAggregateOutputType | null
+  }
+
+  export type ContextualMessageAvgAggregateOutputType = {
+    id: number | null
+  }
+
+  export type ContextualMessageSumAggregateOutputType = {
+    id: number | null
+  }
+
+  export type ContextualMessageMinAggregateOutputType = {
+    id: number | null
+    cle: string | null
+    label: string | null
+    sujet: string | null
+    valeur: string | null
+    disabled: boolean | null
+  }
+
+  export type ContextualMessageMaxAggregateOutputType = {
+    id: number | null
+    cle: string | null
+    label: string | null
+    sujet: string | null
+    valeur: string | null
+    disabled: boolean | null
+  }
+
+  export type ContextualMessageCountAggregateOutputType = {
+    id: number
+    cle: number
+    label: number
+    sujet: number
+    valeur: number
+    disabled: number
+    _all: number
+  }
+
+
+  export type ContextualMessageAvgAggregateInputType = {
+    id?: true
+  }
+
+  export type ContextualMessageSumAggregateInputType = {
+    id?: true
+  }
+
+  export type ContextualMessageMinAggregateInputType = {
+    id?: true
+    cle?: true
+    label?: true
+    sujet?: true
+    valeur?: true
+    disabled?: true
+  }
+
+  export type ContextualMessageMaxAggregateInputType = {
+    id?: true
+    cle?: true
+    label?: true
+    sujet?: true
+    valeur?: true
+    disabled?: true
+  }
+
+  export type ContextualMessageCountAggregateInputType = {
+    id?: true
+    cle?: true
+    label?: true
+    sujet?: true
+    valeur?: true
+    disabled?: true
+    _all?: true
+  }
+
+  export type ContextualMessageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContextualMessage to aggregate.
+     */
+    where?: ContextualMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContextualMessages to fetch.
+     */
+    orderBy?: ContextualMessageOrderByWithRelationInput | ContextualMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ContextualMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContextualMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContextualMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ContextualMessages
+    **/
+    _count?: true | ContextualMessageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ContextualMessageAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ContextualMessageSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ContextualMessageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ContextualMessageMaxAggregateInputType
+  }
+
+  export type GetContextualMessageAggregateType<T extends ContextualMessageAggregateArgs> = {
+        [P in keyof T & keyof AggregateContextualMessage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateContextualMessage[P]>
+      : GetScalarType<T[P], AggregateContextualMessage[P]>
+  }
+
+
+
+
+  export type ContextualMessageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContextualMessageWhereInput
+    orderBy?: ContextualMessageOrderByWithAggregationInput | ContextualMessageOrderByWithAggregationInput[]
+    by: ContextualMessageScalarFieldEnum[] | ContextualMessageScalarFieldEnum
+    having?: ContextualMessageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ContextualMessageCountAggregateInputType | true
+    _avg?: ContextualMessageAvgAggregateInputType
+    _sum?: ContextualMessageSumAggregateInputType
+    _min?: ContextualMessageMinAggregateInputType
+    _max?: ContextualMessageMaxAggregateInputType
+  }
+
+  export type ContextualMessageGroupByOutputType = {
+    id: number
+    cle: string
+    label: string | null
+    sujet: string | null
+    valeur: string
+    disabled: boolean
+    _count: ContextualMessageCountAggregateOutputType | null
+    _avg: ContextualMessageAvgAggregateOutputType | null
+    _sum: ContextualMessageSumAggregateOutputType | null
+    _min: ContextualMessageMinAggregateOutputType | null
+    _max: ContextualMessageMaxAggregateOutputType | null
+  }
+
+  type GetContextualMessageGroupByPayload<T extends ContextualMessageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ContextualMessageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ContextualMessageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ContextualMessageGroupByOutputType[P]>
+            : GetScalarType<T[P], ContextualMessageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ContextualMessageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    cle?: boolean
+    label?: boolean
+    sujet?: boolean
+    valeur?: boolean
+    disabled?: boolean
+  }, ExtArgs["result"]["contextualMessage"]>
+
+  export type ContextualMessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    cle?: boolean
+    label?: boolean
+    sujet?: boolean
+    valeur?: boolean
+    disabled?: boolean
+  }, ExtArgs["result"]["contextualMessage"]>
+
+  export type ContextualMessageSelectScalar = {
+    id?: boolean
+    cle?: boolean
+    label?: boolean
+    sujet?: boolean
+    valeur?: boolean
+    disabled?: boolean
+  }
+
+
+  export type $ContextualMessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ContextualMessage"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      cle: string
+      label: string | null
+      sujet: string | null
+      valeur: string
+      disabled: boolean
+    }, ExtArgs["result"]["contextualMessage"]>
+    composites: {}
+  }
+
+  type ContextualMessageGetPayload<S extends boolean | null | undefined | ContextualMessageDefaultArgs> = $Result.GetResult<Prisma.$ContextualMessagePayload, S>
+
+  type ContextualMessageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ContextualMessageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ContextualMessageCountAggregateInputType | true
+    }
+
+  export interface ContextualMessageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ContextualMessage'], meta: { name: 'ContextualMessage' } }
+    /**
+     * Find zero or one ContextualMessage that matches the filter.
+     * @param {ContextualMessageFindUniqueArgs} args - Arguments to find a ContextualMessage
+     * @example
+     * // Get one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ContextualMessageFindUniqueArgs>(args: SelectSubset<T, ContextualMessageFindUniqueArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one ContextualMessage that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ContextualMessageFindUniqueOrThrowArgs} args - Arguments to find a ContextualMessage
+     * @example
+     * // Get one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ContextualMessageFindUniqueOrThrowArgs>(args: SelectSubset<T, ContextualMessageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first ContextualMessage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContextualMessageFindFirstArgs} args - Arguments to find a ContextualMessage
+     * @example
+     * // Get one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ContextualMessageFindFirstArgs>(args?: SelectSubset<T, ContextualMessageFindFirstArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first ContextualMessage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContextualMessageFindFirstOrThrowArgs} args - Arguments to find a ContextualMessage
+     * @example
+     * // Get one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ContextualMessageFindFirstOrThrowArgs>(args?: SelectSubset<T, ContextualMessageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more ContextualMessages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContextualMessageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ContextualMessages
+     * const contextualMessages = await prisma.contextualMessage.findMany()
+     * 
+     * // Get first 10 ContextualMessages
+     * const contextualMessages = await prisma.contextualMessage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const contextualMessageWithIdOnly = await prisma.contextualMessage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ContextualMessageFindManyArgs>(args?: SelectSubset<T, ContextualMessageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a ContextualMessage.
+     * @param {ContextualMessageCreateArgs} args - Arguments to create a ContextualMessage.
+     * @example
+     * // Create one ContextualMessage
+     * const ContextualMessage = await prisma.contextualMessage.create({
+     *   data: {
+     *     // ... data to create a ContextualMessage
+     *   }
+     * })
+     * 
+     */
+    create<T extends ContextualMessageCreateArgs>(args: SelectSubset<T, ContextualMessageCreateArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many ContextualMessages.
+     * @param {ContextualMessageCreateManyArgs} args - Arguments to create many ContextualMessages.
+     * @example
+     * // Create many ContextualMessages
+     * const contextualMessage = await prisma.contextualMessage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ContextualMessageCreateManyArgs>(args?: SelectSubset<T, ContextualMessageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ContextualMessages and returns the data saved in the database.
+     * @param {ContextualMessageCreateManyAndReturnArgs} args - Arguments to create many ContextualMessages.
+     * @example
+     * // Create many ContextualMessages
+     * const contextualMessage = await prisma.contextualMessage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ContextualMessages and only return the `id`
+     * const contextualMessageWithIdOnly = await prisma.contextualMessage.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ContextualMessageCreateManyAndReturnArgs>(args?: SelectSubset<T, ContextualMessageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a ContextualMessage.
+     * @param {ContextualMessageDeleteArgs} args - Arguments to delete one ContextualMessage.
+     * @example
+     * // Delete one ContextualMessage
+     * const ContextualMessage = await prisma.contextualMessage.delete({
+     *   where: {
+     *     // ... filter to delete one ContextualMessage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ContextualMessageDeleteArgs>(args: SelectSubset<T, ContextualMessageDeleteArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one ContextualMessage.
+     * @param {ContextualMessageUpdateArgs} args - Arguments to update one ContextualMessage.
+     * @example
+     * // Update one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ContextualMessageUpdateArgs>(args: SelectSubset<T, ContextualMessageUpdateArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more ContextualMessages.
+     * @param {ContextualMessageDeleteManyArgs} args - Arguments to filter ContextualMessages to delete.
+     * @example
+     * // Delete a few ContextualMessages
+     * const { count } = await prisma.contextualMessage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ContextualMessageDeleteManyArgs>(args?: SelectSubset<T, ContextualMessageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContextualMessages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContextualMessageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ContextualMessages
+     * const contextualMessage = await prisma.contextualMessage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ContextualMessageUpdateManyArgs>(args: SelectSubset<T, ContextualMessageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ContextualMessage.
+     * @param {ContextualMessageUpsertArgs} args - Arguments to update or create a ContextualMessage.
+     * @example
+     * // Update or create a ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.upsert({
+     *   create: {
+     *     // ... data to create a ContextualMessage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ContextualMessage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ContextualMessageUpsertArgs>(args: SelectSubset<T, ContextualMessageUpsertArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of ContextualMessages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContextualMessageCountArgs} args - Arguments to filter ContextualMessages to count.
+     * @example
+     * // Count the number of ContextualMessages
+     * const count = await prisma.contextualMessage.count({
+     *   where: {
+     *     // ... the filter for the ContextualMessages we want to count
+     *   }
+     * })
+    **/
+    count<T extends ContextualMessageCountArgs>(
+      args?: Subset<T, ContextualMessageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ContextualMessageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ContextualMessage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContextualMessageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ContextualMessageAggregateArgs>(args: Subset<T, ContextualMessageAggregateArgs>): Prisma.PrismaPromise<GetContextualMessageAggregateType<T>>
+
+    /**
+     * Group by ContextualMessage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContextualMessageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ContextualMessageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ContextualMessageGroupByArgs['orderBy'] }
+        : { orderBy?: ContextualMessageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ContextualMessageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetContextualMessageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ContextualMessage model
+   */
+  readonly fields: ContextualMessageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ContextualMessage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ContextualMessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ContextualMessage model
+   */ 
+  interface ContextualMessageFieldRefs {
+    readonly id: FieldRef<"ContextualMessage", 'Int'>
+    readonly cle: FieldRef<"ContextualMessage", 'String'>
+    readonly label: FieldRef<"ContextualMessage", 'String'>
+    readonly sujet: FieldRef<"ContextualMessage", 'String'>
+    readonly valeur: FieldRef<"ContextualMessage", 'String'>
+    readonly disabled: FieldRef<"ContextualMessage", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ContextualMessage findUnique
+   */
+  export type ContextualMessageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+    /**
+     * Filter, which ContextualMessage to fetch.
+     */
+    where: ContextualMessageWhereUniqueInput
+  }
+
+  /**
+   * ContextualMessage findUniqueOrThrow
+   */
+  export type ContextualMessageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+    /**
+     * Filter, which ContextualMessage to fetch.
+     */
+    where: ContextualMessageWhereUniqueInput
+  }
+
+  /**
+   * ContextualMessage findFirst
+   */
+  export type ContextualMessageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+    /**
+     * Filter, which ContextualMessage to fetch.
+     */
+    where?: ContextualMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContextualMessages to fetch.
+     */
+    orderBy?: ContextualMessageOrderByWithRelationInput | ContextualMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContextualMessages.
+     */
+    cursor?: ContextualMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContextualMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContextualMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContextualMessages.
+     */
+    distinct?: ContextualMessageScalarFieldEnum | ContextualMessageScalarFieldEnum[]
+  }
+
+  /**
+   * ContextualMessage findFirstOrThrow
+   */
+  export type ContextualMessageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+    /**
+     * Filter, which ContextualMessage to fetch.
+     */
+    where?: ContextualMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContextualMessages to fetch.
+     */
+    orderBy?: ContextualMessageOrderByWithRelationInput | ContextualMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContextualMessages.
+     */
+    cursor?: ContextualMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContextualMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContextualMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContextualMessages.
+     */
+    distinct?: ContextualMessageScalarFieldEnum | ContextualMessageScalarFieldEnum[]
+  }
+
+  /**
+   * ContextualMessage findMany
+   */
+  export type ContextualMessageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+    /**
+     * Filter, which ContextualMessages to fetch.
+     */
+    where?: ContextualMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContextualMessages to fetch.
+     */
+    orderBy?: ContextualMessageOrderByWithRelationInput | ContextualMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ContextualMessages.
+     */
+    cursor?: ContextualMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContextualMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContextualMessages.
+     */
+    skip?: number
+    distinct?: ContextualMessageScalarFieldEnum | ContextualMessageScalarFieldEnum[]
+  }
+
+  /**
+   * ContextualMessage create
+   */
+  export type ContextualMessageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+    /**
+     * The data needed to create a ContextualMessage.
+     */
+    data: XOR<ContextualMessageCreateInput, ContextualMessageUncheckedCreateInput>
+  }
+
+  /**
+   * ContextualMessage createMany
+   */
+  export type ContextualMessageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ContextualMessages.
+     */
+    data: ContextualMessageCreateManyInput | ContextualMessageCreateManyInput[]
+  }
+
+  /**
+   * ContextualMessage createManyAndReturn
+   */
+  export type ContextualMessageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many ContextualMessages.
+     */
+    data: ContextualMessageCreateManyInput | ContextualMessageCreateManyInput[]
+  }
+
+  /**
+   * ContextualMessage update
+   */
+  export type ContextualMessageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+    /**
+     * The data needed to update a ContextualMessage.
+     */
+    data: XOR<ContextualMessageUpdateInput, ContextualMessageUncheckedUpdateInput>
+    /**
+     * Choose, which ContextualMessage to update.
+     */
+    where: ContextualMessageWhereUniqueInput
+  }
+
+  /**
+   * ContextualMessage updateMany
+   */
+  export type ContextualMessageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ContextualMessages.
+     */
+    data: XOR<ContextualMessageUpdateManyMutationInput, ContextualMessageUncheckedUpdateManyInput>
+    /**
+     * Filter which ContextualMessages to update
+     */
+    where?: ContextualMessageWhereInput
+  }
+
+  /**
+   * ContextualMessage upsert
+   */
+  export type ContextualMessageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+    /**
+     * The filter to search for the ContextualMessage to update in case it exists.
+     */
+    where: ContextualMessageWhereUniqueInput
+    /**
+     * In case the ContextualMessage found by the `where` argument doesn't exist, create a new ContextualMessage with this data.
+     */
+    create: XOR<ContextualMessageCreateInput, ContextualMessageUncheckedCreateInput>
+    /**
+     * In case the ContextualMessage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ContextualMessageUpdateInput, ContextualMessageUncheckedUpdateInput>
+  }
+
+  /**
+   * ContextualMessage delete
+   */
+  export type ContextualMessageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+    /**
+     * Filter which ContextualMessage to delete.
+     */
+    where: ContextualMessageWhereUniqueInput
+  }
+
+  /**
+   * ContextualMessage deleteMany
+   */
+  export type ContextualMessageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContextualMessages to delete
+     */
+    where?: ContextualMessageWhereInput
+  }
+
+  /**
+   * ContextualMessage without action
+   */
+  export type ContextualMessageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContextualMessage
+     */
+    select?: ContextualMessageSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Model AppSettings
    */
 
@@ -14088,6 +15206,7 @@ export namespace Prisma {
     filienStructure: string | null
     filienGestionnaire: string | null
     filienUncPj: string | null
+    adDomain: string | null
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
@@ -14099,6 +15218,7 @@ export namespace Prisma {
     filienUncPass: string | null
     filienUncUser: string | null
     filienUncDomain: string | null
+    watermark: string | null
   }
 
   export type AppSettingsMaxAggregateOutputType = {
@@ -14135,6 +15255,7 @@ export namespace Prisma {
     filienStructure: string | null
     filienGestionnaire: string | null
     filienUncPj: string | null
+    adDomain: string | null
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
@@ -14146,6 +15267,7 @@ export namespace Prisma {
     filienUncPass: string | null
     filienUncUser: string | null
     filienUncDomain: string | null
+    watermark: string | null
   }
 
   export type AppSettingsCountAggregateOutputType = {
@@ -14182,6 +15304,7 @@ export namespace Prisma {
     filienStructure: number
     filienGestionnaire: number
     filienUncPj: number
+    adDomain: number
     signataireRole: number
     signataireDelegation: number
     signataireNom: number
@@ -14193,6 +15316,7 @@ export namespace Prisma {
     filienUncPass: number
     filienUncUser: number
     filienUncDomain: number
+    watermark: number
     _all: number
   }
 
@@ -14241,6 +15365,7 @@ export namespace Prisma {
     filienStructure?: true
     filienGestionnaire?: true
     filienUncPj?: true
+    adDomain?: true
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
@@ -14252,6 +15377,7 @@ export namespace Prisma {
     filienUncPass?: true
     filienUncUser?: true
     filienUncDomain?: true
+    watermark?: true
   }
 
   export type AppSettingsMaxAggregateInputType = {
@@ -14288,6 +15414,7 @@ export namespace Prisma {
     filienStructure?: true
     filienGestionnaire?: true
     filienUncPj?: true
+    adDomain?: true
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
@@ -14299,6 +15426,7 @@ export namespace Prisma {
     filienUncPass?: true
     filienUncUser?: true
     filienUncDomain?: true
+    watermark?: true
   }
 
   export type AppSettingsCountAggregateInputType = {
@@ -14335,6 +15463,7 @@ export namespace Prisma {
     filienStructure?: true
     filienGestionnaire?: true
     filienUncPj?: true
+    adDomain?: true
     signataireRole?: true
     signataireDelegation?: true
     signataireNom?: true
@@ -14346,6 +15475,7 @@ export namespace Prisma {
     filienUncPass?: true
     filienUncUser?: true
     filienUncDomain?: true
+    watermark?: true
     _all?: true
   }
 
@@ -14469,6 +15599,7 @@ export namespace Prisma {
     filienStructure: string | null
     filienGestionnaire: string | null
     filienUncPj: string | null
+    adDomain: string | null
     signataireRole: string | null
     signataireDelegation: string | null
     signataireNom: string | null
@@ -14480,6 +15611,7 @@ export namespace Prisma {
     filienUncPass: string | null
     filienUncUser: string | null
     filienUncDomain: string | null
+    watermark: string | null
     _count: AppSettingsCountAggregateOutputType | null
     _avg: AppSettingsAvgAggregateOutputType | null
     _sum: AppSettingsSumAggregateOutputType | null
@@ -14535,6 +15667,7 @@ export namespace Prisma {
     filienStructure?: boolean
     filienGestionnaire?: boolean
     filienUncPj?: boolean
+    adDomain?: boolean
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
@@ -14546,6 +15679,7 @@ export namespace Prisma {
     filienUncPass?: boolean
     filienUncUser?: boolean
     filienUncDomain?: boolean
+    watermark?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
   export type AppSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14582,6 +15716,7 @@ export namespace Prisma {
     filienStructure?: boolean
     filienGestionnaire?: boolean
     filienUncPj?: boolean
+    adDomain?: boolean
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
@@ -14593,6 +15728,7 @@ export namespace Prisma {
     filienUncPass?: boolean
     filienUncUser?: boolean
     filienUncDomain?: boolean
+    watermark?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
   export type AppSettingsSelectScalar = {
@@ -14629,6 +15765,7 @@ export namespace Prisma {
     filienStructure?: boolean
     filienGestionnaire?: boolean
     filienUncPj?: boolean
+    adDomain?: boolean
     signataireRole?: boolean
     signataireDelegation?: boolean
     signataireNom?: boolean
@@ -14640,6 +15777,7 @@ export namespace Prisma {
     filienUncPass?: boolean
     filienUncUser?: boolean
     filienUncDomain?: boolean
+    watermark?: boolean
   }
 
 
@@ -14680,6 +15818,7 @@ export namespace Prisma {
       filienStructure: string | null
       filienGestionnaire: string | null
       filienUncPj: string | null
+      adDomain: string | null
       signataireRole: string | null
       signataireDelegation: string | null
       signataireNom: string | null
@@ -14691,6 +15830,7 @@ export namespace Prisma {
       filienUncPass: string | null
       filienUncUser: string | null
       filienUncDomain: string | null
+      watermark: string | null
     }, ExtArgs["result"]["appSettings"]>
     composites: {}
   }
@@ -15117,6 +16257,7 @@ export namespace Prisma {
     readonly filienStructure: FieldRef<"AppSettings", 'String'>
     readonly filienGestionnaire: FieldRef<"AppSettings", 'String'>
     readonly filienUncPj: FieldRef<"AppSettings", 'String'>
+    readonly adDomain: FieldRef<"AppSettings", 'String'>
     readonly signataireRole: FieldRef<"AppSettings", 'String'>
     readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
     readonly signataireNom: FieldRef<"AppSettings", 'String'>
@@ -15128,6 +16269,7 @@ export namespace Prisma {
     readonly filienUncPass: FieldRef<"AppSettings", 'String'>
     readonly filienUncUser: FieldRef<"AppSettings", 'String'>
     readonly filienUncDomain: FieldRef<"AppSettings", 'String'>
+    readonly watermark: FieldRef<"AppSettings", 'String'>
   }
     
 
@@ -20378,6 +21520,7 @@ export namespace Prisma {
     priority: string | null
     status: string | null
     versionId: number | null
+    requestedBy: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -20390,6 +21533,7 @@ export namespace Prisma {
     priority: string | null
     status: string | null
     versionId: number | null
+    requestedBy: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -20402,6 +21546,7 @@ export namespace Prisma {
     priority: number
     status: number
     versionId: number
+    requestedBy: number
     created_at: number
     updated_at: number
     _all: number
@@ -20426,6 +21571,7 @@ export namespace Prisma {
     priority?: true
     status?: true
     versionId?: true
+    requestedBy?: true
     created_at?: true
     updated_at?: true
   }
@@ -20438,6 +21584,7 @@ export namespace Prisma {
     priority?: true
     status?: true
     versionId?: true
+    requestedBy?: true
     created_at?: true
     updated_at?: true
   }
@@ -20450,6 +21597,7 @@ export namespace Prisma {
     priority?: true
     status?: true
     versionId?: true
+    requestedBy?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -20549,6 +21697,7 @@ export namespace Prisma {
     priority: string
     status: string
     versionId: number | null
+    requestedBy: string | null
     created_at: Date
     updated_at: Date
     _count: BacklogItemCountAggregateOutputType | null
@@ -20580,6 +21729,7 @@ export namespace Prisma {
     priority?: boolean
     status?: boolean
     versionId?: boolean
+    requestedBy?: boolean
     created_at?: boolean
     updated_at?: boolean
     comments?: boolean | BacklogItem$commentsArgs<ExtArgs>
@@ -20595,6 +21745,7 @@ export namespace Prisma {
     priority?: boolean
     status?: boolean
     versionId?: boolean
+    requestedBy?: boolean
     created_at?: boolean
     updated_at?: boolean
     version?: boolean | BacklogItem$versionArgs<ExtArgs>
@@ -20608,6 +21759,7 @@ export namespace Prisma {
     priority?: boolean
     status?: boolean
     versionId?: boolean
+    requestedBy?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
@@ -20635,6 +21787,7 @@ export namespace Prisma {
       priority: string
       status: string
       versionId: number | null
+      requestedBy: string | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["backlogItem"]>
@@ -21039,6 +22192,7 @@ export namespace Prisma {
     readonly priority: FieldRef<"BacklogItem", 'String'>
     readonly status: FieldRef<"BacklogItem", 'String'>
     readonly versionId: FieldRef<"BacklogItem", 'Int'>
+    readonly requestedBy: FieldRef<"BacklogItem", 'String'>
     readonly created_at: FieldRef<"BacklogItem", 'DateTime'>
     readonly updated_at: FieldRef<"BacklogItem", 'DateTime'>
   }
@@ -24290,6 +25444,932 @@ export namespace Prisma {
      * Select specific fields to fetch from the PostgresConfig
      */
     select?: PostgresConfigSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ContactRoleConfig
+   */
+
+  export type AggregateContactRoleConfig = {
+    _count: ContactRoleConfigCountAggregateOutputType | null
+    _avg: ContactRoleConfigAvgAggregateOutputType | null
+    _sum: ContactRoleConfigSumAggregateOutputType | null
+    _min: ContactRoleConfigMinAggregateOutputType | null
+    _max: ContactRoleConfigMaxAggregateOutputType | null
+  }
+
+  export type ContactRoleConfigAvgAggregateOutputType = {
+    id: number | null
+    ordre: number | null
+  }
+
+  export type ContactRoleConfigSumAggregateOutputType = {
+    id: number | null
+    ordre: number | null
+  }
+
+  export type ContactRoleConfigMinAggregateOutputType = {
+    id: number | null
+    nom: string | null
+    isSendAot: boolean | null
+    ordre: number | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type ContactRoleConfigMaxAggregateOutputType = {
+    id: number | null
+    nom: string | null
+    isSendAot: boolean | null
+    ordre: number | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type ContactRoleConfigCountAggregateOutputType = {
+    id: number
+    nom: number
+    isSendAot: number
+    ordre: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type ContactRoleConfigAvgAggregateInputType = {
+    id?: true
+    ordre?: true
+  }
+
+  export type ContactRoleConfigSumAggregateInputType = {
+    id?: true
+    ordre?: true
+  }
+
+  export type ContactRoleConfigMinAggregateInputType = {
+    id?: true
+    nom?: true
+    isSendAot?: true
+    ordre?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type ContactRoleConfigMaxAggregateInputType = {
+    id?: true
+    nom?: true
+    isSendAot?: true
+    ordre?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type ContactRoleConfigCountAggregateInputType = {
+    id?: true
+    nom?: true
+    isSendAot?: true
+    ordre?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type ContactRoleConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContactRoleConfig to aggregate.
+     */
+    where?: ContactRoleConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContactRoleConfigs to fetch.
+     */
+    orderBy?: ContactRoleConfigOrderByWithRelationInput | ContactRoleConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ContactRoleConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContactRoleConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContactRoleConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ContactRoleConfigs
+    **/
+    _count?: true | ContactRoleConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ContactRoleConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ContactRoleConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ContactRoleConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ContactRoleConfigMaxAggregateInputType
+  }
+
+  export type GetContactRoleConfigAggregateType<T extends ContactRoleConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateContactRoleConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateContactRoleConfig[P]>
+      : GetScalarType<T[P], AggregateContactRoleConfig[P]>
+  }
+
+
+
+
+  export type ContactRoleConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContactRoleConfigWhereInput
+    orderBy?: ContactRoleConfigOrderByWithAggregationInput | ContactRoleConfigOrderByWithAggregationInput[]
+    by: ContactRoleConfigScalarFieldEnum[] | ContactRoleConfigScalarFieldEnum
+    having?: ContactRoleConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ContactRoleConfigCountAggregateInputType | true
+    _avg?: ContactRoleConfigAvgAggregateInputType
+    _sum?: ContactRoleConfigSumAggregateInputType
+    _min?: ContactRoleConfigMinAggregateInputType
+    _max?: ContactRoleConfigMaxAggregateInputType
+  }
+
+  export type ContactRoleConfigGroupByOutputType = {
+    id: number
+    nom: string
+    isSendAot: boolean
+    ordre: number
+    created_at: Date
+    updated_at: Date
+    _count: ContactRoleConfigCountAggregateOutputType | null
+    _avg: ContactRoleConfigAvgAggregateOutputType | null
+    _sum: ContactRoleConfigSumAggregateOutputType | null
+    _min: ContactRoleConfigMinAggregateOutputType | null
+    _max: ContactRoleConfigMaxAggregateOutputType | null
+  }
+
+  type GetContactRoleConfigGroupByPayload<T extends ContactRoleConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ContactRoleConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ContactRoleConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ContactRoleConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], ContactRoleConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ContactRoleConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nom?: boolean
+    isSendAot?: boolean
+    ordre?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["contactRoleConfig"]>
+
+  export type ContactRoleConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    nom?: boolean
+    isSendAot?: boolean
+    ordre?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["contactRoleConfig"]>
+
+  export type ContactRoleConfigSelectScalar = {
+    id?: boolean
+    nom?: boolean
+    isSendAot?: boolean
+    ordre?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+
+  export type $ContactRoleConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ContactRoleConfig"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      nom: string
+      isSendAot: boolean
+      ordre: number
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["contactRoleConfig"]>
+    composites: {}
+  }
+
+  type ContactRoleConfigGetPayload<S extends boolean | null | undefined | ContactRoleConfigDefaultArgs> = $Result.GetResult<Prisma.$ContactRoleConfigPayload, S>
+
+  type ContactRoleConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ContactRoleConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ContactRoleConfigCountAggregateInputType | true
+    }
+
+  export interface ContactRoleConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ContactRoleConfig'], meta: { name: 'ContactRoleConfig' } }
+    /**
+     * Find zero or one ContactRoleConfig that matches the filter.
+     * @param {ContactRoleConfigFindUniqueArgs} args - Arguments to find a ContactRoleConfig
+     * @example
+     * // Get one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ContactRoleConfigFindUniqueArgs>(args: SelectSubset<T, ContactRoleConfigFindUniqueArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one ContactRoleConfig that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ContactRoleConfigFindUniqueOrThrowArgs} args - Arguments to find a ContactRoleConfig
+     * @example
+     * // Get one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ContactRoleConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, ContactRoleConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first ContactRoleConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactRoleConfigFindFirstArgs} args - Arguments to find a ContactRoleConfig
+     * @example
+     * // Get one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ContactRoleConfigFindFirstArgs>(args?: SelectSubset<T, ContactRoleConfigFindFirstArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first ContactRoleConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactRoleConfigFindFirstOrThrowArgs} args - Arguments to find a ContactRoleConfig
+     * @example
+     * // Get one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ContactRoleConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, ContactRoleConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more ContactRoleConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactRoleConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ContactRoleConfigs
+     * const contactRoleConfigs = await prisma.contactRoleConfig.findMany()
+     * 
+     * // Get first 10 ContactRoleConfigs
+     * const contactRoleConfigs = await prisma.contactRoleConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const contactRoleConfigWithIdOnly = await prisma.contactRoleConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ContactRoleConfigFindManyArgs>(args?: SelectSubset<T, ContactRoleConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a ContactRoleConfig.
+     * @param {ContactRoleConfigCreateArgs} args - Arguments to create a ContactRoleConfig.
+     * @example
+     * // Create one ContactRoleConfig
+     * const ContactRoleConfig = await prisma.contactRoleConfig.create({
+     *   data: {
+     *     // ... data to create a ContactRoleConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends ContactRoleConfigCreateArgs>(args: SelectSubset<T, ContactRoleConfigCreateArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many ContactRoleConfigs.
+     * @param {ContactRoleConfigCreateManyArgs} args - Arguments to create many ContactRoleConfigs.
+     * @example
+     * // Create many ContactRoleConfigs
+     * const contactRoleConfig = await prisma.contactRoleConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ContactRoleConfigCreateManyArgs>(args?: SelectSubset<T, ContactRoleConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ContactRoleConfigs and returns the data saved in the database.
+     * @param {ContactRoleConfigCreateManyAndReturnArgs} args - Arguments to create many ContactRoleConfigs.
+     * @example
+     * // Create many ContactRoleConfigs
+     * const contactRoleConfig = await prisma.contactRoleConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ContactRoleConfigs and only return the `id`
+     * const contactRoleConfigWithIdOnly = await prisma.contactRoleConfig.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ContactRoleConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, ContactRoleConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a ContactRoleConfig.
+     * @param {ContactRoleConfigDeleteArgs} args - Arguments to delete one ContactRoleConfig.
+     * @example
+     * // Delete one ContactRoleConfig
+     * const ContactRoleConfig = await prisma.contactRoleConfig.delete({
+     *   where: {
+     *     // ... filter to delete one ContactRoleConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ContactRoleConfigDeleteArgs>(args: SelectSubset<T, ContactRoleConfigDeleteArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one ContactRoleConfig.
+     * @param {ContactRoleConfigUpdateArgs} args - Arguments to update one ContactRoleConfig.
+     * @example
+     * // Update one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ContactRoleConfigUpdateArgs>(args: SelectSubset<T, ContactRoleConfigUpdateArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more ContactRoleConfigs.
+     * @param {ContactRoleConfigDeleteManyArgs} args - Arguments to filter ContactRoleConfigs to delete.
+     * @example
+     * // Delete a few ContactRoleConfigs
+     * const { count } = await prisma.contactRoleConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ContactRoleConfigDeleteManyArgs>(args?: SelectSubset<T, ContactRoleConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContactRoleConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactRoleConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ContactRoleConfigs
+     * const contactRoleConfig = await prisma.contactRoleConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ContactRoleConfigUpdateManyArgs>(args: SelectSubset<T, ContactRoleConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ContactRoleConfig.
+     * @param {ContactRoleConfigUpsertArgs} args - Arguments to update or create a ContactRoleConfig.
+     * @example
+     * // Update or create a ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.upsert({
+     *   create: {
+     *     // ... data to create a ContactRoleConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ContactRoleConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ContactRoleConfigUpsertArgs>(args: SelectSubset<T, ContactRoleConfigUpsertArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of ContactRoleConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactRoleConfigCountArgs} args - Arguments to filter ContactRoleConfigs to count.
+     * @example
+     * // Count the number of ContactRoleConfigs
+     * const count = await prisma.contactRoleConfig.count({
+     *   where: {
+     *     // ... the filter for the ContactRoleConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends ContactRoleConfigCountArgs>(
+      args?: Subset<T, ContactRoleConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ContactRoleConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ContactRoleConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactRoleConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ContactRoleConfigAggregateArgs>(args: Subset<T, ContactRoleConfigAggregateArgs>): Prisma.PrismaPromise<GetContactRoleConfigAggregateType<T>>
+
+    /**
+     * Group by ContactRoleConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactRoleConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ContactRoleConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ContactRoleConfigGroupByArgs['orderBy'] }
+        : { orderBy?: ContactRoleConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ContactRoleConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetContactRoleConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ContactRoleConfig model
+   */
+  readonly fields: ContactRoleConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ContactRoleConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ContactRoleConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ContactRoleConfig model
+   */ 
+  interface ContactRoleConfigFieldRefs {
+    readonly id: FieldRef<"ContactRoleConfig", 'Int'>
+    readonly nom: FieldRef<"ContactRoleConfig", 'String'>
+    readonly isSendAot: FieldRef<"ContactRoleConfig", 'Boolean'>
+    readonly ordre: FieldRef<"ContactRoleConfig", 'Int'>
+    readonly created_at: FieldRef<"ContactRoleConfig", 'DateTime'>
+    readonly updated_at: FieldRef<"ContactRoleConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ContactRoleConfig findUnique
+   */
+  export type ContactRoleConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which ContactRoleConfig to fetch.
+     */
+    where: ContactRoleConfigWhereUniqueInput
+  }
+
+  /**
+   * ContactRoleConfig findUniqueOrThrow
+   */
+  export type ContactRoleConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which ContactRoleConfig to fetch.
+     */
+    where: ContactRoleConfigWhereUniqueInput
+  }
+
+  /**
+   * ContactRoleConfig findFirst
+   */
+  export type ContactRoleConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which ContactRoleConfig to fetch.
+     */
+    where?: ContactRoleConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContactRoleConfigs to fetch.
+     */
+    orderBy?: ContactRoleConfigOrderByWithRelationInput | ContactRoleConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContactRoleConfigs.
+     */
+    cursor?: ContactRoleConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContactRoleConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContactRoleConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContactRoleConfigs.
+     */
+    distinct?: ContactRoleConfigScalarFieldEnum | ContactRoleConfigScalarFieldEnum[]
+  }
+
+  /**
+   * ContactRoleConfig findFirstOrThrow
+   */
+  export type ContactRoleConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which ContactRoleConfig to fetch.
+     */
+    where?: ContactRoleConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContactRoleConfigs to fetch.
+     */
+    orderBy?: ContactRoleConfigOrderByWithRelationInput | ContactRoleConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContactRoleConfigs.
+     */
+    cursor?: ContactRoleConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContactRoleConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContactRoleConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContactRoleConfigs.
+     */
+    distinct?: ContactRoleConfigScalarFieldEnum | ContactRoleConfigScalarFieldEnum[]
+  }
+
+  /**
+   * ContactRoleConfig findMany
+   */
+  export type ContactRoleConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which ContactRoleConfigs to fetch.
+     */
+    where?: ContactRoleConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContactRoleConfigs to fetch.
+     */
+    orderBy?: ContactRoleConfigOrderByWithRelationInput | ContactRoleConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ContactRoleConfigs.
+     */
+    cursor?: ContactRoleConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContactRoleConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContactRoleConfigs.
+     */
+    skip?: number
+    distinct?: ContactRoleConfigScalarFieldEnum | ContactRoleConfigScalarFieldEnum[]
+  }
+
+  /**
+   * ContactRoleConfig create
+   */
+  export type ContactRoleConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to create a ContactRoleConfig.
+     */
+    data: XOR<ContactRoleConfigCreateInput, ContactRoleConfigUncheckedCreateInput>
+  }
+
+  /**
+   * ContactRoleConfig createMany
+   */
+  export type ContactRoleConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ContactRoleConfigs.
+     */
+    data: ContactRoleConfigCreateManyInput | ContactRoleConfigCreateManyInput[]
+  }
+
+  /**
+   * ContactRoleConfig createManyAndReturn
+   */
+  export type ContactRoleConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many ContactRoleConfigs.
+     */
+    data: ContactRoleConfigCreateManyInput | ContactRoleConfigCreateManyInput[]
+  }
+
+  /**
+   * ContactRoleConfig update
+   */
+  export type ContactRoleConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to update a ContactRoleConfig.
+     */
+    data: XOR<ContactRoleConfigUpdateInput, ContactRoleConfigUncheckedUpdateInput>
+    /**
+     * Choose, which ContactRoleConfig to update.
+     */
+    where: ContactRoleConfigWhereUniqueInput
+  }
+
+  /**
+   * ContactRoleConfig updateMany
+   */
+  export type ContactRoleConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ContactRoleConfigs.
+     */
+    data: XOR<ContactRoleConfigUpdateManyMutationInput, ContactRoleConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which ContactRoleConfigs to update
+     */
+    where?: ContactRoleConfigWhereInput
+  }
+
+  /**
+   * ContactRoleConfig upsert
+   */
+  export type ContactRoleConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
+    /**
+     * The filter to search for the ContactRoleConfig to update in case it exists.
+     */
+    where: ContactRoleConfigWhereUniqueInput
+    /**
+     * In case the ContactRoleConfig found by the `where` argument doesn't exist, create a new ContactRoleConfig with this data.
+     */
+    create: XOR<ContactRoleConfigCreateInput, ContactRoleConfigUncheckedCreateInput>
+    /**
+     * In case the ContactRoleConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ContactRoleConfigUpdateInput, ContactRoleConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * ContactRoleConfig delete
+   */
+  export type ContactRoleConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
+    /**
+     * Filter which ContactRoleConfig to delete.
+     */
+    where: ContactRoleConfigWhereUniqueInput
+  }
+
+  /**
+   * ContactRoleConfig deleteMany
+   */
+  export type ContactRoleConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContactRoleConfigs to delete
+     */
+    where?: ContactRoleConfigWhereInput
+  }
+
+  /**
+   * ContactRoleConfig without action
+   */
+  export type ContactRoleConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactRoleConfig
+     */
+    select?: ContactRoleConfigSelect<ExtArgs> | null
   }
 
 
@@ -28305,6 +30385,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | null
     rejectionComment: string | null
     signedAt: Date | null
+    requestedByLogin: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -28318,6 +30399,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | null
     rejectionComment: string | null
     signedAt: Date | null
+    requestedByLogin: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -28331,6 +30413,7 @@ export namespace Prisma {
     tokenExpiresAt: number
     rejectionComment: number
     signedAt: number
+    requestedByLogin: number
     created_at: number
     updated_at: number
     _all: number
@@ -28358,6 +30441,7 @@ export namespace Prisma {
     tokenExpiresAt?: true
     rejectionComment?: true
     signedAt?: true
+    requestedByLogin?: true
     created_at?: true
     updated_at?: true
   }
@@ -28371,6 +30455,7 @@ export namespace Prisma {
     tokenExpiresAt?: true
     rejectionComment?: true
     signedAt?: true
+    requestedByLogin?: true
     created_at?: true
     updated_at?: true
   }
@@ -28384,6 +30469,7 @@ export namespace Prisma {
     tokenExpiresAt?: true
     rejectionComment?: true
     signedAt?: true
+    requestedByLogin?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -28484,6 +30570,7 @@ export namespace Prisma {
     tokenExpiresAt: Date
     rejectionComment: string | null
     signedAt: Date | null
+    requestedByLogin: string | null
     created_at: Date
     updated_at: Date
     _count: SignatureRequestCountAggregateOutputType | null
@@ -28516,6 +30603,7 @@ export namespace Prisma {
     tokenExpiresAt?: boolean
     rejectionComment?: boolean
     signedAt?: boolean
+    requestedByLogin?: boolean
     created_at?: boolean
     updated_at?: boolean
     occupation?: boolean | OccupationDefaultArgs<ExtArgs>
@@ -28531,6 +30619,7 @@ export namespace Prisma {
     tokenExpiresAt?: boolean
     rejectionComment?: boolean
     signedAt?: boolean
+    requestedByLogin?: boolean
     created_at?: boolean
     updated_at?: boolean
     occupation?: boolean | OccupationDefaultArgs<ExtArgs>
@@ -28546,6 +30635,7 @@ export namespace Prisma {
     tokenExpiresAt?: boolean
     rejectionComment?: boolean
     signedAt?: boolean
+    requestedByLogin?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
@@ -28574,6 +30664,7 @@ export namespace Prisma {
       tokenExpiresAt: Date
       rejectionComment: string | null
       signedAt: Date | null
+      requestedByLogin: string | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["signatureRequest"]>
@@ -28979,6 +31070,7 @@ export namespace Prisma {
     readonly tokenExpiresAt: FieldRef<"SignatureRequest", 'DateTime'>
     readonly rejectionComment: FieldRef<"SignatureRequest", 'String'>
     readonly signedAt: FieldRef<"SignatureRequest", 'DateTime'>
+    readonly requestedByLogin: FieldRef<"SignatureRequest", 'String'>
     readonly created_at: FieldRef<"SignatureRequest", 'DateTime'>
     readonly updated_at: FieldRef<"SignatureRequest", 'DateTime'>
   }
@@ -29354,6 +31446,7 @@ export namespace Prisma {
     latitude: 'latitude',
     longitude: 'longitude',
     description: 'description',
+    observations: 'observations',
     photos: 'photos',
     montantCalcule: 'montantCalcule',
     facturePath: 'facturePath',
@@ -29475,6 +31568,7 @@ export namespace Prisma {
     login: 'login',
     password: 'password',
     role: 'role',
+    isAd: 'isAd',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -29493,6 +31587,18 @@ export namespace Prisma {
   };
 
   export type MobileLogScalarFieldEnum = (typeof MobileLogScalarFieldEnum)[keyof typeof MobileLogScalarFieldEnum]
+
+
+  export const ContextualMessageScalarFieldEnum: {
+    id: 'id',
+    cle: 'cle',
+    label: 'label',
+    sujet: 'sujet',
+    valeur: 'valeur',
+    disabled: 'disabled'
+  };
+
+  export type ContextualMessageScalarFieldEnum = (typeof ContextualMessageScalarFieldEnum)[keyof typeof ContextualMessageScalarFieldEnum]
 
 
   export const AppSettingsScalarFieldEnum: {
@@ -29529,6 +31635,7 @@ export namespace Prisma {
     filienStructure: 'filienStructure',
     filienGestionnaire: 'filienGestionnaire',
     filienUncPj: 'filienUncPj',
+    adDomain: 'adDomain',
     signataireRole: 'signataireRole',
     signataireDelegation: 'signataireDelegation',
     signataireNom: 'signataireNom',
@@ -29539,7 +31646,8 @@ export namespace Prisma {
     updated_at: 'updated_at',
     filienUncPass: 'filienUncPass',
     filienUncUser: 'filienUncUser',
-    filienUncDomain: 'filienUncDomain'
+    filienUncDomain: 'filienUncDomain',
+    watermark: 'watermark'
   };
 
   export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
@@ -29628,6 +31736,7 @@ export namespace Prisma {
     priority: 'priority',
     status: 'status',
     versionId: 'versionId',
+    requestedBy: 'requestedBy',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -29668,6 +31777,18 @@ export namespace Prisma {
   };
 
   export type PostgresConfigScalarFieldEnum = (typeof PostgresConfigScalarFieldEnum)[keyof typeof PostgresConfigScalarFieldEnum]
+
+
+  export const ContactRoleConfigScalarFieldEnum: {
+    id: 'id',
+    nom: 'nom',
+    isSendAot: 'isSendAot',
+    ordre: 'ordre',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type ContactRoleConfigScalarFieldEnum = (typeof ContactRoleConfigScalarFieldEnum)[keyof typeof ContactRoleConfigScalarFieldEnum]
 
 
   export const OdpConfigScalarFieldEnum: {
@@ -29734,6 +31855,7 @@ export namespace Prisma {
     tokenExpiresAt: 'tokenExpiresAt',
     rejectionComment: 'rejectionComment',
     signedAt: 'signedAt',
+    requestedByLogin: 'requestedByLogin',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -29916,6 +32038,7 @@ export namespace Prisma {
     latitude?: FloatNullableFilter<"Occupation"> | number | null
     longitude?: FloatNullableFilter<"Occupation"> | number | null
     description?: StringNullableFilter<"Occupation"> | string | null
+    observations?: StringNullableFilter<"Occupation"> | string | null
     photos?: StringNullableFilter<"Occupation"> | string | null
     montantCalcule?: FloatFilter<"Occupation"> | number
     facturePath?: StringNullableFilter<"Occupation"> | string | null
@@ -29950,6 +32073,7 @@ export namespace Prisma {
     latitude?: SortOrderInput | SortOrder
     longitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    observations?: SortOrderInput | SortOrder
     photos?: SortOrderInput | SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrderInput | SortOrder
@@ -29987,6 +32111,7 @@ export namespace Prisma {
     latitude?: FloatNullableFilter<"Occupation"> | number | null
     longitude?: FloatNullableFilter<"Occupation"> | number | null
     description?: StringNullableFilter<"Occupation"> | string | null
+    observations?: StringNullableFilter<"Occupation"> | string | null
     photos?: StringNullableFilter<"Occupation"> | string | null
     montantCalcule?: FloatFilter<"Occupation"> | number
     facturePath?: StringNullableFilter<"Occupation"> | string | null
@@ -30021,6 +32146,7 @@ export namespace Prisma {
     latitude?: SortOrderInput | SortOrder
     longitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    observations?: SortOrderInput | SortOrder
     photos?: SortOrderInput | SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrderInput | SortOrder
@@ -30057,6 +32183,7 @@ export namespace Prisma {
     latitude?: FloatNullableWithAggregatesFilter<"Occupation"> | number | null
     longitude?: FloatNullableWithAggregatesFilter<"Occupation"> | number | null
     description?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
+    observations?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     photos?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     montantCalcule?: FloatWithAggregatesFilter<"Occupation"> | number
     facturePath?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
@@ -30580,6 +32707,7 @@ export namespace Prisma {
     login?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
     role?: StringFilter<"User"> | string
+    isAd?: BoolFilter<"User"> | boolean
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     logs?: MobileLogListRelationFilter
@@ -30593,6 +32721,7 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     logs?: MobileLogOrderByRelationAggregateInput
@@ -30609,6 +32738,7 @@ export namespace Prisma {
     prenom?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
     role?: StringFilter<"User"> | string
+    isAd?: BoolFilter<"User"> | boolean
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     logs?: MobileLogListRelationFilter
@@ -30622,6 +32752,7 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -30642,6 +32773,7 @@ export namespace Prisma {
     login?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
     role?: StringWithAggregatesFilter<"User"> | string
+    isAd?: BoolWithAggregatesFilter<"User"> | boolean
     created_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -30713,6 +32845,65 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"MobileLog"> | Date | string
   }
 
+  export type ContextualMessageWhereInput = {
+    AND?: ContextualMessageWhereInput | ContextualMessageWhereInput[]
+    OR?: ContextualMessageWhereInput[]
+    NOT?: ContextualMessageWhereInput | ContextualMessageWhereInput[]
+    id?: IntFilter<"ContextualMessage"> | number
+    cle?: StringFilter<"ContextualMessage"> | string
+    label?: StringNullableFilter<"ContextualMessage"> | string | null
+    sujet?: StringNullableFilter<"ContextualMessage"> | string | null
+    valeur?: StringFilter<"ContextualMessage"> | string
+    disabled?: BoolFilter<"ContextualMessage"> | boolean
+  }
+
+  export type ContextualMessageOrderByWithRelationInput = {
+    id?: SortOrder
+    cle?: SortOrder
+    label?: SortOrderInput | SortOrder
+    sujet?: SortOrderInput | SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
+  }
+
+  export type ContextualMessageWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    cle?: string
+    AND?: ContextualMessageWhereInput | ContextualMessageWhereInput[]
+    OR?: ContextualMessageWhereInput[]
+    NOT?: ContextualMessageWhereInput | ContextualMessageWhereInput[]
+    label?: StringNullableFilter<"ContextualMessage"> | string | null
+    sujet?: StringNullableFilter<"ContextualMessage"> | string | null
+    valeur?: StringFilter<"ContextualMessage"> | string
+    disabled?: BoolFilter<"ContextualMessage"> | boolean
+  }, "id" | "cle">
+
+  export type ContextualMessageOrderByWithAggregationInput = {
+    id?: SortOrder
+    cle?: SortOrder
+    label?: SortOrderInput | SortOrder
+    sujet?: SortOrderInput | SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
+    _count?: ContextualMessageCountOrderByAggregateInput
+    _avg?: ContextualMessageAvgOrderByAggregateInput
+    _max?: ContextualMessageMaxOrderByAggregateInput
+    _min?: ContextualMessageMinOrderByAggregateInput
+    _sum?: ContextualMessageSumOrderByAggregateInput
+  }
+
+  export type ContextualMessageScalarWhereWithAggregatesInput = {
+    AND?: ContextualMessageScalarWhereWithAggregatesInput | ContextualMessageScalarWhereWithAggregatesInput[]
+    OR?: ContextualMessageScalarWhereWithAggregatesInput[]
+    NOT?: ContextualMessageScalarWhereWithAggregatesInput | ContextualMessageScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ContextualMessage"> | number
+    cle?: StringWithAggregatesFilter<"ContextualMessage"> | string
+    label?: StringNullableWithAggregatesFilter<"ContextualMessage"> | string | null
+    sujet?: StringNullableWithAggregatesFilter<"ContextualMessage"> | string | null
+    valeur?: StringWithAggregatesFilter<"ContextualMessage"> | string
+    disabled?: BoolWithAggregatesFilter<"ContextualMessage"> | boolean
+  }
+
   export type AppSettingsWhereInput = {
     AND?: AppSettingsWhereInput | AppSettingsWhereInput[]
     OR?: AppSettingsWhereInput[]
@@ -30750,6 +32941,7 @@ export namespace Prisma {
     filienStructure?: StringNullableFilter<"AppSettings"> | string | null
     filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
     filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
+    adDomain?: StringNullableFilter<"AppSettings"> | string | null
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
@@ -30761,6 +32953,7 @@ export namespace Prisma {
     filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
     filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
+    watermark?: StringNullableFilter<"AppSettings"> | string | null
   }
 
   export type AppSettingsOrderByWithRelationInput = {
@@ -30797,6 +32990,7 @@ export namespace Prisma {
     filienStructure?: SortOrderInput | SortOrder
     filienGestionnaire?: SortOrderInput | SortOrder
     filienUncPj?: SortOrderInput | SortOrder
+    adDomain?: SortOrderInput | SortOrder
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
@@ -30808,6 +33002,7 @@ export namespace Prisma {
     filienUncPass?: SortOrderInput | SortOrder
     filienUncUser?: SortOrderInput | SortOrder
     filienUncDomain?: SortOrderInput | SortOrder
+    watermark?: SortOrderInput | SortOrder
   }
 
   export type AppSettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -30847,6 +33042,7 @@ export namespace Prisma {
     filienStructure?: StringNullableFilter<"AppSettings"> | string | null
     filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
     filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
+    adDomain?: StringNullableFilter<"AppSettings"> | string | null
     signataireRole?: StringNullableFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableFilter<"AppSettings"> | string | null
@@ -30858,6 +33054,7 @@ export namespace Prisma {
     filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
     filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
+    watermark?: StringNullableFilter<"AppSettings"> | string | null
   }, "id">
 
   export type AppSettingsOrderByWithAggregationInput = {
@@ -30894,6 +33091,7 @@ export namespace Prisma {
     filienStructure?: SortOrderInput | SortOrder
     filienGestionnaire?: SortOrderInput | SortOrder
     filienUncPj?: SortOrderInput | SortOrder
+    adDomain?: SortOrderInput | SortOrder
     signataireRole?: SortOrderInput | SortOrder
     signataireDelegation?: SortOrderInput | SortOrder
     signataireNom?: SortOrderInput | SortOrder
@@ -30905,6 +33103,7 @@ export namespace Prisma {
     filienUncPass?: SortOrderInput | SortOrder
     filienUncUser?: SortOrderInput | SortOrder
     filienUncDomain?: SortOrderInput | SortOrder
+    watermark?: SortOrderInput | SortOrder
     _count?: AppSettingsCountOrderByAggregateInput
     _avg?: AppSettingsAvgOrderByAggregateInput
     _max?: AppSettingsMaxOrderByAggregateInput
@@ -30949,6 +33148,7 @@ export namespace Prisma {
     filienStructure?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     filienGestionnaire?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     filienUncPj?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    adDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
@@ -30960,6 +33160,7 @@ export namespace Prisma {
     filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     filienUncDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    watermark?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
   }
 
   export type LigneOccupationWhereInput = {
@@ -31352,6 +33553,7 @@ export namespace Prisma {
     priority?: StringFilter<"BacklogItem"> | string
     status?: StringFilter<"BacklogItem"> | string
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
+    requestedBy?: StringNullableFilter<"BacklogItem"> | string | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
     comments?: BacklogCommentListRelationFilter
@@ -31366,6 +33568,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrderInput | SortOrder
+    requestedBy?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     comments?: BacklogCommentOrderByRelationAggregateInput
@@ -31383,6 +33586,7 @@ export namespace Prisma {
     priority?: StringFilter<"BacklogItem"> | string
     status?: StringFilter<"BacklogItem"> | string
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
+    requestedBy?: StringNullableFilter<"BacklogItem"> | string | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
     comments?: BacklogCommentListRelationFilter
@@ -31397,6 +33601,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrderInput | SortOrder
+    requestedBy?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: BacklogItemCountOrderByAggregateInput
@@ -31417,6 +33622,7 @@ export namespace Prisma {
     priority?: StringWithAggregatesFilter<"BacklogItem"> | string
     status?: StringWithAggregatesFilter<"BacklogItem"> | string
     versionId?: IntNullableWithAggregatesFilter<"BacklogItem"> | number | null
+    requestedBy?: StringNullableWithAggregatesFilter<"BacklogItem"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"BacklogItem"> | Date | string
   }
@@ -31597,6 +33803,65 @@ export namespace Prisma {
     schema?: StringWithAggregatesFilter<"PostgresConfig"> | string
     user?: StringWithAggregatesFilter<"PostgresConfig"> | string
     password?: StringWithAggregatesFilter<"PostgresConfig"> | string
+  }
+
+  export type ContactRoleConfigWhereInput = {
+    AND?: ContactRoleConfigWhereInput | ContactRoleConfigWhereInput[]
+    OR?: ContactRoleConfigWhereInput[]
+    NOT?: ContactRoleConfigWhereInput | ContactRoleConfigWhereInput[]
+    id?: IntFilter<"ContactRoleConfig"> | number
+    nom?: StringFilter<"ContactRoleConfig"> | string
+    isSendAot?: BoolFilter<"ContactRoleConfig"> | boolean
+    ordre?: IntFilter<"ContactRoleConfig"> | number
+    created_at?: DateTimeFilter<"ContactRoleConfig"> | Date | string
+    updated_at?: DateTimeFilter<"ContactRoleConfig"> | Date | string
+  }
+
+  export type ContactRoleConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type ContactRoleConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    nom?: string
+    AND?: ContactRoleConfigWhereInput | ContactRoleConfigWhereInput[]
+    OR?: ContactRoleConfigWhereInput[]
+    NOT?: ContactRoleConfigWhereInput | ContactRoleConfigWhereInput[]
+    isSendAot?: BoolFilter<"ContactRoleConfig"> | boolean
+    ordre?: IntFilter<"ContactRoleConfig"> | number
+    created_at?: DateTimeFilter<"ContactRoleConfig"> | Date | string
+    updated_at?: DateTimeFilter<"ContactRoleConfig"> | Date | string
+  }, "id" | "nom">
+
+  export type ContactRoleConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: ContactRoleConfigCountOrderByAggregateInput
+    _avg?: ContactRoleConfigAvgOrderByAggregateInput
+    _max?: ContactRoleConfigMaxOrderByAggregateInput
+    _min?: ContactRoleConfigMinOrderByAggregateInput
+    _sum?: ContactRoleConfigSumOrderByAggregateInput
+  }
+
+  export type ContactRoleConfigScalarWhereWithAggregatesInput = {
+    AND?: ContactRoleConfigScalarWhereWithAggregatesInput | ContactRoleConfigScalarWhereWithAggregatesInput[]
+    OR?: ContactRoleConfigScalarWhereWithAggregatesInput[]
+    NOT?: ContactRoleConfigScalarWhereWithAggregatesInput | ContactRoleConfigScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ContactRoleConfig"> | number
+    nom?: StringWithAggregatesFilter<"ContactRoleConfig"> | string
+    isSendAot?: BoolWithAggregatesFilter<"ContactRoleConfig"> | boolean
+    ordre?: IntWithAggregatesFilter<"ContactRoleConfig"> | number
+    created_at?: DateTimeWithAggregatesFilter<"ContactRoleConfig"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"ContactRoleConfig"> | Date | string
   }
 
   export type OdpConfigWhereInput = {
@@ -31891,6 +34156,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFilter<"SignatureRequest"> | Date | string
     rejectionComment?: StringNullableFilter<"SignatureRequest"> | string | null
     signedAt?: DateTimeNullableFilter<"SignatureRequest"> | Date | string | null
+    requestedByLogin?: StringNullableFilter<"SignatureRequest"> | string | null
     created_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
@@ -31906,6 +34172,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrderInput | SortOrder
     signedAt?: SortOrderInput | SortOrder
+    requestedByLogin?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     occupation?: OccupationOrderByWithRelationInput
@@ -31924,6 +34191,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFilter<"SignatureRequest"> | Date | string
     rejectionComment?: StringNullableFilter<"SignatureRequest"> | string | null
     signedAt?: DateTimeNullableFilter<"SignatureRequest"> | Date | string | null
+    requestedByLogin?: StringNullableFilter<"SignatureRequest"> | string | null
     created_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
@@ -31939,6 +34207,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrderInput | SortOrder
     signedAt?: SortOrderInput | SortOrder
+    requestedByLogin?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: SignatureRequestCountOrderByAggregateInput
@@ -31960,6 +34229,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
     rejectionComment?: StringNullableWithAggregatesFilter<"SignatureRequest"> | string | null
     signedAt?: DateTimeNullableWithAggregatesFilter<"SignatureRequest"> | Date | string | null
+    requestedByLogin?: StringNullableWithAggregatesFilter<"SignatureRequest"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
   }
@@ -32092,6 +34362,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -32126,6 +34397,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -32157,6 +34429,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32191,6 +34464,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32224,6 +34498,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -32250,6 +34525,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32278,6 +34554,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32834,6 +35111,7 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
     logs?: MobileLogCreateNestedManyWithoutUserInput
@@ -32847,6 +35125,7 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
     logs?: MobileLogUncheckedCreateNestedManyWithoutUserInput
@@ -32859,6 +35138,7 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     logs?: MobileLogUpdateManyWithoutUserNestedInput
@@ -32872,6 +35152,7 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     logs?: MobileLogUncheckedUpdateManyWithoutUserNestedInput
@@ -32885,6 +35166,7 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -32896,6 +35178,7 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -32908,6 +35191,7 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -32978,6 +35262,66 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ContextualMessageCreateInput = {
+    cle: string
+    label?: string | null
+    sujet?: string | null
+    valeur: string
+    disabled?: boolean
+  }
+
+  export type ContextualMessageUncheckedCreateInput = {
+    id?: number
+    cle: string
+    label?: string | null
+    sujet?: string | null
+    valeur: string
+    disabled?: boolean
+  }
+
+  export type ContextualMessageUpdateInput = {
+    cle?: StringFieldUpdateOperationsInput | string
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    sujet?: NullableStringFieldUpdateOperationsInput | string | null
+    valeur?: StringFieldUpdateOperationsInput | string
+    disabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type ContextualMessageUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cle?: StringFieldUpdateOperationsInput | string
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    sujet?: NullableStringFieldUpdateOperationsInput | string | null
+    valeur?: StringFieldUpdateOperationsInput | string
+    disabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type ContextualMessageCreateManyInput = {
+    id?: number
+    cle: string
+    label?: string | null
+    sujet?: string | null
+    valeur: string
+    disabled?: boolean
+  }
+
+  export type ContextualMessageUpdateManyMutationInput = {
+    cle?: StringFieldUpdateOperationsInput | string
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    sujet?: NullableStringFieldUpdateOperationsInput | string | null
+    valeur?: StringFieldUpdateOperationsInput | string
+    disabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type ContextualMessageUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    cle?: StringFieldUpdateOperationsInput | string
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    sujet?: NullableStringFieldUpdateOperationsInput | string | null
+    valeur?: StringFieldUpdateOperationsInput | string
+    disabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
   export type AppSettingsCreateInput = {
     financeEmail?: string | null
     appUrl?: string | null
@@ -33011,6 +35355,7 @@ export namespace Prisma {
     filienStructure?: string | null
     filienGestionnaire?: string | null
     filienUncPj?: string | null
+    adDomain?: string | null
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
@@ -33022,6 +35367,7 @@ export namespace Prisma {
     filienUncPass?: string | null
     filienUncUser?: string | null
     filienUncDomain?: string | null
+    watermark?: string | null
   }
 
   export type AppSettingsUncheckedCreateInput = {
@@ -33058,6 +35404,7 @@ export namespace Prisma {
     filienStructure?: string | null
     filienGestionnaire?: string | null
     filienUncPj?: string | null
+    adDomain?: string | null
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
@@ -33069,6 +35416,7 @@ export namespace Prisma {
     filienUncPass?: string | null
     filienUncUser?: string | null
     filienUncDomain?: string | null
+    watermark?: string | null
   }
 
   export type AppSettingsUpdateInput = {
@@ -33104,6 +35452,7 @@ export namespace Prisma {
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33115,6 +35464,7 @@ export namespace Prisma {
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppSettingsUncheckedUpdateInput = {
@@ -33151,6 +35501,7 @@ export namespace Prisma {
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33162,6 +35513,7 @@ export namespace Prisma {
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppSettingsCreateManyInput = {
@@ -33198,6 +35550,7 @@ export namespace Prisma {
     filienStructure?: string | null
     filienGestionnaire?: string | null
     filienUncPj?: string | null
+    adDomain?: string | null
     signataireRole?: string | null
     signataireDelegation?: string | null
     signataireNom?: string | null
@@ -33209,6 +35562,7 @@ export namespace Prisma {
     filienUncPass?: string | null
     filienUncUser?: string | null
     filienUncDomain?: string | null
+    watermark?: string | null
   }
 
   export type AppSettingsUpdateManyMutationInput = {
@@ -33244,6 +35598,7 @@ export namespace Prisma {
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33255,6 +35610,7 @@ export namespace Prisma {
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AppSettingsUncheckedUpdateManyInput = {
@@ -33291,6 +35647,7 @@ export namespace Prisma {
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
     signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
     signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
     signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33302,6 +35659,7 @@ export namespace Prisma {
     filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
     filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type LigneOccupationCreateInput = {
@@ -33712,6 +36070,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentCreateNestedManyWithoutBacklogItemInput
@@ -33726,6 +36085,7 @@ export namespace Prisma {
     priority?: string
     status?: string
     versionId?: number | null
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentUncheckedCreateNestedManyWithoutBacklogItemInput
@@ -33737,6 +36097,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUpdateManyWithoutBacklogItemNestedInput
@@ -33751,6 +36112,7 @@ export namespace Prisma {
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     versionId?: NullableIntFieldUpdateOperationsInput | number | null
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUncheckedUpdateManyWithoutBacklogItemNestedInput
@@ -33764,6 +36126,7 @@ export namespace Prisma {
     priority?: string
     status?: string
     versionId?: number | null
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -33774,6 +36137,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33786,6 +36150,7 @@ export namespace Prisma {
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     versionId?: NullableIntFieldUpdateOperationsInput | number | null
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33964,6 +36329,66 @@ export namespace Prisma {
     schema?: StringFieldUpdateOperationsInput | string
     user?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ContactRoleConfigCreateInput = {
+    nom: string
+    isSendAot?: boolean
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type ContactRoleConfigUncheckedCreateInput = {
+    id?: number
+    nom: string
+    isSendAot?: boolean
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type ContactRoleConfigUpdateInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    isSendAot?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContactRoleConfigUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    isSendAot?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContactRoleConfigCreateManyInput = {
+    id?: number
+    nom: string
+    isSendAot?: boolean
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type ContactRoleConfigUpdateManyMutationInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    isSendAot?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContactRoleConfigUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    isSendAot?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OdpConfigCreateInput = {
@@ -34271,6 +36696,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     occupation: OccupationCreateNestedOneWithoutSignatureRequestsInput
@@ -34286,6 +36712,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -34296,6 +36723,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     occupation?: OccupationUpdateOneRequiredWithoutSignatureRequestsNestedInput
@@ -34311,6 +36739,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34324,6 +36753,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -34334,6 +36764,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34347,6 +36778,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34673,6 +37105,7 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     description?: SortOrder
+    observations?: SortOrder
     photos?: SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrder
@@ -34712,6 +37145,7 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     description?: SortOrder
+    observations?: SortOrder
     photos?: SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrder
@@ -34740,6 +37174,7 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     description?: SortOrder
+    observations?: SortOrder
     photos?: SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrder
@@ -35172,6 +37607,7 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35188,6 +37624,7 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35200,6 +37637,7 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35253,6 +37691,41 @@ export namespace Prisma {
     userId?: SortOrder
   }
 
+  export type ContextualMessageCountOrderByAggregateInput = {
+    id?: SortOrder
+    cle?: SortOrder
+    label?: SortOrder
+    sujet?: SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
+  }
+
+  export type ContextualMessageAvgOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
+  export type ContextualMessageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    cle?: SortOrder
+    label?: SortOrder
+    sujet?: SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
+  }
+
+  export type ContextualMessageMinOrderByAggregateInput = {
+    id?: SortOrder
+    cle?: SortOrder
+    label?: SortOrder
+    sujet?: SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
+  }
+
+  export type ContextualMessageSumOrderByAggregateInput = {
+    id?: SortOrder
+  }
+
   export type BoolNullableFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
@@ -35292,6 +37765,7 @@ export namespace Prisma {
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
     filienUncPj?: SortOrder
+    adDomain?: SortOrder
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
@@ -35303,6 +37777,7 @@ export namespace Prisma {
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
     filienUncDomain?: SortOrder
+    watermark?: SortOrder
   }
 
   export type AppSettingsAvgOrderByAggregateInput = {
@@ -35344,6 +37819,7 @@ export namespace Prisma {
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
     filienUncPj?: SortOrder
+    adDomain?: SortOrder
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
@@ -35355,6 +37831,7 @@ export namespace Prisma {
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
     filienUncDomain?: SortOrder
+    watermark?: SortOrder
   }
 
   export type AppSettingsMinOrderByAggregateInput = {
@@ -35391,6 +37868,7 @@ export namespace Prisma {
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
     filienUncPj?: SortOrder
+    adDomain?: SortOrder
     signataireRole?: SortOrder
     signataireDelegation?: SortOrder
     signataireNom?: SortOrder
@@ -35402,6 +37880,7 @@ export namespace Prisma {
     filienUncPass?: SortOrder
     filienUncUser?: SortOrder
     filienUncDomain?: SortOrder
+    watermark?: SortOrder
   }
 
   export type AppSettingsSumOrderByAggregateInput = {
@@ -35679,6 +38158,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrder
+    requestedBy?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35696,6 +38176,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrder
+    requestedBy?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35708,6 +38189,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrder
+    requestedBy?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35836,6 +38318,43 @@ export namespace Prisma {
   export type PostgresConfigSumOrderByAggregateInput = {
     id?: SortOrder
     port?: SortOrder
+  }
+
+  export type ContactRoleConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type ContactRoleConfigAvgOrderByAggregateInput = {
+    id?: SortOrder
+    ordre?: SortOrder
+  }
+
+  export type ContactRoleConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type ContactRoleConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type ContactRoleConfigSumOrderByAggregateInput = {
+    id?: SortOrder
+    ordre?: SortOrder
   }
 
   export type OdpConfigCountOrderByAggregateInput = {
@@ -36034,6 +38553,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrder
     signedAt?: SortOrder
+    requestedByLogin?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -36053,6 +38573,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrder
     signedAt?: SortOrder
+    requestedByLogin?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -36066,6 +38587,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrder
     signedAt?: SortOrder
+    requestedByLogin?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -37337,6 +39859,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -37369,6 +39892,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -37465,6 +39989,7 @@ export namespace Prisma {
     latitude?: FloatNullableFilter<"Occupation"> | number | null
     longitude?: FloatNullableFilter<"Occupation"> | number | null
     description?: StringNullableFilter<"Occupation"> | string | null
+    observations?: StringNullableFilter<"Occupation"> | string | null
     photos?: StringNullableFilter<"Occupation"> | string | null
     montantCalcule?: FloatFilter<"Occupation"> | number
     facturePath?: StringNullableFilter<"Occupation"> | string | null
@@ -37626,6 +40151,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     signatory: SignatoryCreateNestedOneWithoutSignatureRequestsInput
@@ -37639,6 +40165,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -37833,6 +40360,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFilter<"SignatureRequest"> | Date | string
     rejectionComment?: StringNullableFilter<"SignatureRequest"> | string | null
     signedAt?: DateTimeNullableFilter<"SignatureRequest"> | Date | string | null
+    requestedByLogin?: StringNullableFilter<"SignatureRequest"> | string | null
     created_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
   }
@@ -37930,6 +40458,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -37963,6 +40492,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -38053,6 +40583,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38086,6 +40617,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38116,6 +40648,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -38149,6 +40682,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -38195,6 +40729,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38228,6 +40763,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38708,6 +41244,7 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -38720,6 +41257,7 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -38747,6 +41285,7 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38759,6 +41298,7 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38820,6 +41360,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -38853,6 +41394,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -38951,6 +41493,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38984,6 +41527,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39014,6 +41558,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39047,6 +41592,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39093,6 +41639,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39126,6 +41673,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39246,6 +41794,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     version?: VersionReleaseCreateNestedOneWithoutBacklogItemsInput
@@ -39259,6 +41808,7 @@ export namespace Prisma {
     priority?: string
     status?: string
     versionId?: number | null
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -39285,6 +41835,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: VersionReleaseUpdateOneWithoutBacklogItemsNestedInput
@@ -39298,6 +41849,7 @@ export namespace Prisma {
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     versionId?: NullableIntFieldUpdateOperationsInput | number | null
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39308,6 +41860,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentCreateNestedManyWithoutBacklogItemInput
@@ -39320,6 +41873,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentUncheckedCreateNestedManyWithoutBacklogItemInput
@@ -39361,6 +41915,7 @@ export namespace Prisma {
     priority?: StringFilter<"BacklogItem"> | string
     status?: StringFilter<"BacklogItem"> | string
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
+    requestedBy?: StringNullableFilter<"BacklogItem"> | string | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
   }
@@ -39486,6 +42041,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     occupation: OccupationCreateNestedOneWithoutSignatureRequestsInput
@@ -39499,6 +42055,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -39539,6 +42096,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39572,6 +42130,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39652,6 +42211,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39685,6 +42245,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39771,6 +42332,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39841,6 +42403,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39873,6 +42436,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39905,6 +42469,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39982,6 +42547,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -40150,6 +42716,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     signatory?: SignatoryUpdateOneRequiredWithoutSignatureRequestsNestedInput
@@ -40163,6 +42730,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40175,6 +42743,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40504,6 +43073,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -40514,6 +43084,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUpdateManyWithoutBacklogItemNestedInput
@@ -40526,6 +43097,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUncheckedUpdateManyWithoutBacklogItemNestedInput
@@ -40538,6 +43110,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40585,6 +43158,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -40595,6 +43169,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     occupation?: OccupationUpdateOneRequiredWithoutSignatureRequestsNestedInput
@@ -40608,6 +43183,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40620,6 +43196,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40710,6 +43287,10 @@ export namespace Prisma {
      */
     export type MobileLogArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MobileLogDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use ContextualMessageDefaultArgs instead
+     */
+    export type ContextualMessageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ContextualMessageDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use AppSettingsDefaultArgs instead
      */
     export type AppSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AppSettingsDefaultArgs<ExtArgs>
@@ -40749,6 +43330,10 @@ export namespace Prisma {
      * @deprecated Use PostgresConfigDefaultArgs instead
      */
     export type PostgresConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PostgresConfigDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use ContactRoleConfigDefaultArgs instead
+     */
+    export type ContactRoleConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ContactRoleConfigDefaultArgs<ExtArgs>
     /**
      * @deprecated Use OdpConfigDefaultArgs instead
      */

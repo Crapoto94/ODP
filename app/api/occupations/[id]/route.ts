@@ -79,7 +79,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       agissantPour,
       aotGabaritId,
       aotFinalPath,
-      aotSigned
+      aotSigned,
+      observations
     } = body;
 
     const updateData: any = {
@@ -95,6 +96,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       longitude: longitude !== undefined ? (longitude ? parseFloat(longitude) : null) : undefined,
       description,
       photos,
+      observations: observations !== undefined ? observations : undefined,
       agissantPour: agissantPour !== undefined ? agissantPour : undefined,
       numeroFacture: numeroFacture !== undefined ? numeroFacture : undefined,
       facturePath: facturePath !== undefined ? facturePath : undefined,

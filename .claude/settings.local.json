@@ -7,7 +7,31 @@
       "Bash(npm run:*)",
       "Bash(node)",
       "Bash(sqlite3 dev.db \".schema Occupation\")",
-      "Bash(find \"C:\\\\dev\\\\ODP\\\\app\\\\dashboard\\\\occupations\" -name \"*.tsx\" -type f -exec grep -l \"Signé et publié\" {} \\\\;)"
+      "Bash(find \"C:\\\\dev\\\\ODP\\\\app\\\\dashboard\\\\occupations\" -name \"*.tsx\" -type f -exec grep -l \"Signé et publié\" {} \\\\;)",
+      "mcp__Claude_Preview__preview_start",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs kill *)",
+      "Bash(curl -s http://localhost:3000/api/version)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(curl -s http://localhost:3000/api/occupations/38)",
+      "Bash(pkill -f \"node.*next\")",
+      "Bash(npm run *)",
+      "Bash(sqlite3 C:/dev/ODP/dev.db \".schema Occupation\")",
+      "Bash(python3 -c \"import sys, json; data = json.load\\(sys.stdin\\); print\\('observations' in data, '- value:', data.get\\('observations', 'NOT FOUND'\\)\\)\")",
+      "Bash(pkill -9 node)",
+      "Bash(rm -rf C:/dev/ODP/.next)",
+      "Bash(curl -s --max-time 3 http://localhost:3000/api/version)",
+      "Bash(kill -9 14424)",
+      "Bash(rm -rf C:/dev/ODP/.next/dev/lock)",
+      "Bash(grep -r \"test\\\\|admin\\\\|demo\" C:\\\\\\\\dev\\\\\\\\ODP\\\\\\\\prisma\\\\\\\\schema.prisma)",
+      "Bash(sqlite3 \"C:/dev/ODP/prisma/dev.db\" \"SELECT login, nom, prenom, role FROM User LIMIT 5;\")",
+      "Bash(grep -E \"\\\\.\\(tsx?|js\\)$\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(xargs grep *)"
     ]
   }
 }

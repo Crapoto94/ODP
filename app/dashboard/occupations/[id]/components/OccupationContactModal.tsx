@@ -13,6 +13,13 @@ interface Props {
   editingContactId?: number | null;
 }
 
+const RequiredLabel = ({ label, required }: { label: string; required?: boolean }) => (
+  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">
+    {label}
+    {required && <span className="text-rose-600 ml-1">*</span>}
+  </label>
+);
+
 export default function OccupationContactModal({
   isOpen,
   onClose,
@@ -90,10 +97,9 @@ export default function OccupationContactModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Prénom</label>
+                <RequiredLabel label="Prénom" />
                 <input
                   type="text"
-                  required
                   value={newContact.prenom || ''}
                   onChange={e => setNewContact({...newContact, prenom: e.target.value})}
                   placeholder="Jean"
@@ -101,7 +107,7 @@ export default function OccupationContactModal({
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Nom</label>
+                <RequiredLabel label="Nom" />
                 <input
                   type="text"
                   value={newContact.nom || ''}
@@ -114,7 +120,7 @@ export default function OccupationContactModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Entreprise</label>
+                <RequiredLabel label="Entreprise" />
                 <input
                   type="text"
                   value={newContact.entreprise || ''}
@@ -124,7 +130,7 @@ export default function OccupationContactModal({
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Titre / Fonction</label>
+                <RequiredLabel label="Titre / Fonction" />
                 <input
                   type="text"
                   value={newContact.titre || ''}
@@ -137,10 +143,9 @@ export default function OccupationContactModal({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Email</label>
+                <RequiredLabel label="Email" />
                 <input
                   type="email"
-                  required
                   value={newContact.email || ''}
                   onChange={e => setNewContact({...newContact, email: e.target.value})}
                   placeholder="jean@exemple.fr"
@@ -148,7 +153,7 @@ export default function OccupationContactModal({
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Téléphone</label>
+                <RequiredLabel label="Téléphone" />
                 <input
                   type="tel"
                   value={newContact.telephone || ''}
@@ -160,7 +165,7 @@ export default function OccupationContactModal({
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4 block">Rôle / Type de Contact</label>
+              <RequiredLabel label="Rôle / Type de Contact" />
               <select
                 value={newContact.role || 'Contact principal'}
                 onChange={e => setNewContact({...newContact, role: e.target.value})}

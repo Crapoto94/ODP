@@ -58,7 +58,7 @@ export async function GET() {
 export async function PATCH(req: Request) {
   try {
     const body = await req.json();
-    const { 
+    const {
       financeEmail, appUrl, apmUrl, apmToken, senderName, senderEmail,
       filienOrga, filienBudget, filienExercice, filienAvancement,
       filienRejetDispo, filienRejetCA, filienRejetMarche,
@@ -86,7 +86,8 @@ export async function PATCH(req: Request) {
       footer2,
       footer3,
       footerColor,
-      adDomain
+      adDomain,
+      watermark
     } = body;
 
     // Use Raw SQL to bypass Prisma Client sync issues (due to locked files during generate)
@@ -142,6 +143,7 @@ export async function PATCH(req: Request) {
           footer3 = ${footer3 || null},
           footerColor = ${footerColor || null},
           adDomain = ${adDomain || null},
+          watermark = ${watermark || 'BROUILLON'},
           updated_at = CURRENT_TIMESTAMP
         WHERE id = 1
       `;

@@ -390,7 +390,7 @@ export default function OccupationSidebar({
               </div>
             </div>
           ) : (
-            <p className="text-slate-600 font-medium leading-relaxed italic text-sm relative z-10">
+            <p className="text-slate-600 font-medium leading-relaxed italic text-sm relative z-10 whitespace-pre-wrap">
               {occupation.observations || "Aucune observation technique complémentaire n'a été consignée pour ce dossier d'occupation."}
             </p>
           )}

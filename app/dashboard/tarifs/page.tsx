@@ -267,11 +267,11 @@ export default function TarifsPage() {
 
   const groupedArticles = useMemo(() => {
     const groups: Record<string, Record<string, Article[]>> = {};
-    
+
     filtered.forEach(art => {
       let typeName = 'Non classé';
       let subTypeName = 'Divers';
-      
+
       if (art.categorie) {
         if (art.categorie.niveau === 1) {
           typeName = art.categorie.nom;
@@ -284,12 +284,23 @@ export default function TarifsPage() {
           typeName = (art.categorie.parent as any)?.parent?.nom || art.categorie.parent?.nom || 'Autre';
         }
       }
-      
+
       if (!groups[typeName]) groups[typeName] = {};
       if (!groups[typeName][subTypeName]) groups[typeName][subTypeName] = [];
       groups[typeName][subTypeName].push(art);
     });
-    
+
+    // Tri par numéro d'article dans chaque sous-catégorie
+    Object.keys(groups).forEach(typeName => {
+      Object.keys(groups[typeName]).forEach(subTypeName => {
+        groups[typeName][subTypeName].sort((a, b) => {
+          const numA = a.numero ? parseFloat(a.numero) : Infinity;
+          const numB = b.numero ? parseFloat(b.numero) : Infinity;
+          return numA - numB;
+        });
+      });
+    });
+
     return groups;
   }, [filtered]);
 
