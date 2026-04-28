@@ -79,12 +79,22 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string,
     if (ligne && ligne.article) {
       let mt: any = {};
       try { mt = ligne.article.notes ? JSON.parse(ligne.article.notes) : {}; } catch(e){}
-      replacements['{article.designation}'] = ligne.article.designation || '';
-      replacements['{article.quantite}'] = (ligne.quantite1 || 0).toString();
       
       const d1 = new Date(ligne.dateDebut);
       const d2 = new Date(ligne.dateFin);
-      replacements['{article.dates}'] = `${format(d1, 'dd/MM/yyyy')} - ${format(d2, 'dd/MM/yyyy')}`;
+      const dateStr = `${format(d1, 'dd/MM/yyyy')} - ${format(d2, 'dd/MM/yyyy')}`;
+      
+      replacements['{article.designation}'] = ligne.article.designation || '';
+      replacements['{article.designationcomplete}'] = `${ligne.article.designation || ''} du ${dateStr}`;
+      replacements['{article.note}'] = ligne.note || '';
+      
+      // Handle Units and Quantities
+      const modeParts = (ligne.article.modeTaxation?.nom || 'unité').split('/');
+      const unit = modeParts[1] || modeParts[0] || '';
+      const timeUnit = modeParts[2] || (ligne.article.modeTaxation?.nom?.toLowerCase().includes('jour') ? 'jours' : 'mois');
+      
+      replacements['{article.quantite}'] = `${ligne.quantite1 || 0} ${unit}`;
+      replacements['{article.dates}'] = dateStr;
       
       const pu = occ.type === 'TLPE' ? (ligne.montant || 0) : (ligne.article.montant || 0);
       let lineVal = (ligne.montant || 0) * (ligne.quantite1 || 0);
@@ -99,17 +109,17 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string,
         lineVal = isExempt ? 0 : (pu * (ligne.quantite1 || 0) * prorata);
         detailStr = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (${daysActive}j)` : ''}${isExempt ? ' (Exonéré)' : ''} soit ${lineVal.toFixed(2)} €`;
       } else {
-        const u1 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[1] || 'unité';
-        const u2 = (ligne.article.modeTaxation?.nom || 'unité').split('/')[2] || (ligne.article.modeTaxation?.nom?.includes('jour') ? 'jours' : 'mois');
-        detailStr = `${ligne.quantite1} ${u1}`;
-        if (ligne.quantite2 > 1) detailStr += ` x ${ligne.quantite2} ${u2}`;
+        detailStr = `${ligne.quantite1} ${unit}`;
+        if (ligne.quantite2 > 1) {
+          detailStr += ` x ${ligne.quantite2} ${timeUnit}`;
+        }
         detailStr += ` à ${pu.toFixed(2)}€ soit ${lineVal.toFixed(2)} €`;
       }
 
       replacements['{article.details}'] = detailStr;
       replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
       replacements['{article.totalHT}'] = `${lineVal.toFixed(2)} €`;
-      replacements['{article.full_description}'] = `${ligne.article.designation}\n${replacements['{article.dates}']}\n${detailStr}`;
+      replacements['{article.full_description}'] = `${ligne.article.designation}\n${dateStr}\n${detailStr}`;
     }
 
     Object.entries(replacements)
