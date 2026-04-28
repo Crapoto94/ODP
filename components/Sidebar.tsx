@@ -102,7 +102,7 @@ export default function Sidebar() {
         </button>
       </div>
 
-      <nav className={`flex-1 p-4 space-y-1.5 overflow-hidden ${isCollapsed ? 'items-center' : ''}`}>
+      <nav className={`flex-1 p-4 space-y-1 overflow-hidden ${isCollapsed ? 'items-center' : ''}`}>
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
 
@@ -114,15 +114,15 @@ export default function Sidebar() {
           if (item.href === '/dashboard/settings' && !user) return null;
 
           return (
-            <Link 
+            <Link
               key={item.href}
               href={item.href}
               title={isCollapsed ? item.label : ''}
-              className={`flex items-center gap-4 transition-all group font-bold text-sm h-12 rounded-2xl ${
+              className={`flex items-center gap-4 transition-all group font-bold text-sm h-10 rounded-2xl ${
                 isCollapsed ? 'justify-center w-full px-0' : 'px-4'
               } ${
-                isActive 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                isActive
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
