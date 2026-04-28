@@ -23,8 +23,12 @@ export async function GET() {
     const legacyHistory: any[] = [];
     
     if (existsSync(facturesDir)) {
-      const files = await readdir(facturesDir);
-      const filienFiles = files.filter((f: string) => f.startsWith('FACT-') && f.endsWith('.filien'));
+      const items = await readdir(facturesDir, { withFileTypes: true });
+      const filienFiles = items
+        .filter(item => !item.isDirectory() && item.name.startsWith('FACT-') && item.name.endsWith('.filien'))
+        .map(item => item.name);
+      
+      const subDirs = items.filter(item => item.isDirectory()).map(item => item.name);
       
       // Filter out files that already exist in DB to avoid duplicates
       const dbIds = new Set(dbRuns.map((r: any) => r.id));
@@ -59,7 +63,17 @@ export async function GET() {
                   const p = raw.split('ODP');
                   numero = `${p[0]}-ODP-${p[1]}`;
                 }
-                invoices.push({ numero, tiers: '...', total: 0, pdfPath: `/Factures/${numero}.pdf` });
+                let pdfPath = `/Factures/${numero}.pdf`;
+                // Try to find it in subfolders if not in root
+                if (!existsSync(join(facturesDir, `${numero}.pdf`))) {
+                  for (const sd of subDirs) {
+                    if (existsSync(join(facturesDir, sd, `${numero}.pdf`))) {
+                      pdfPath = `/Factures/${sd}/${numero}.pdf`;
+                      break;
+                    }
+                  }
+                }
+                invoices.push({ numero, tiers: '...', total: 0, pdfPath });
               } else if (line.startsWith('/66/')) {
                 total += parseFloat(line.replace('/66/', '').replace(',', '.') || '0');
               } else if (line.startsWith('/PARAM/')) {
