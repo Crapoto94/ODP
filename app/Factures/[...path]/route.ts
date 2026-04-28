@@ -5,10 +5,11 @@ import { existsSync } from 'fs';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
-    const filePath = params.path.join('/');
+    const resolvedParams = await params;
+    const filePath = resolvedParams.path.join('/');
     const fullPath = join(process.cwd(), 'public', 'Factures', filePath);
 
     if (!existsSync(fullPath)) {
