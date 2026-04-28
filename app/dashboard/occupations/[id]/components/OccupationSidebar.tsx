@@ -28,6 +28,8 @@ interface Props {
   onDeletePhoto?: (index: number) => void;
   onDeleteAotFinal?: () => void;
   onSaveObservations?: (obs: string) => Promise<void>;
+  onSendInvoice?: () => Promise<void>;
+  isSendingInvoice?: boolean;
 }
 
 export default function OccupationSidebar({
@@ -40,9 +42,12 @@ export default function OccupationSidebar({
   onDeletePhoto,
   onDeleteAotFinal,
   onSaveObservations,
+  onSendInvoice,
+  isSendingInvoice,
 }: Props) {
   const [sendingAot, setSendingAot] = React.useState(false);
   const [aotSentMsg, setAotSentMsg] = React.useState<string | null>(null);
+  const [invoiceSentMsg, setInvoiceSentMsg] = React.useState<string | null>(null);
   const [isEditingObs, setIsEditingObs] = React.useState(false);
   const [obsValue, setObsValue] = React.useState(occupation.observations || '');
   const [savingObs, setSavingObs] = React.useState(false);
@@ -67,8 +72,23 @@ export default function OccupationSidebar({
       setSendingAot(false);
     }
   };
+
+  const handleSendInvoice = async () => {
+    if (!onSendInvoice) return;
+    setInvoiceSentMsg(null);
+    try {
+      await onSendInvoice();
+      setInvoiceSentMsg("Facture envoyée avec succès !");
+      setTimeout(() => setInvoiceSentMsg(null), 5000);
+    } catch (e: any) {
+      setInvoiceSentMsg(`Erreur : ${e.message}`);
+      setTimeout(() => setInvoiceSentMsg(null), 5000);
+    }
+  };
+
   const photoList = occupation.photos ? occupation.photos.split(',').filter(Boolean) : [];
-  const docCount = photoList.length + (occupation.facturePath ? 1 : 0) + (occupation.aotFinalPath ? 1 : 0);
+  const showInvoiceBlock = !!occupation.facturePath || occupation.statut === 'VERIFIE' || occupation.statut === 'FACTURE' || occupation.statut === 'PAYE';
+  const docCount = photoList.length + (showInvoiceBlock ? 1 : 0) + (occupation.aotFinalPath ? 1 : 0);
 
   React.useEffect(() => {
     console.log('[OccupationSidebar] Rendering with:');
@@ -143,26 +163,40 @@ export default function OccupationSidebar({
             );
           })}
 
-          {occupation.facturePath && (
-            <a
-              href={occupation.facturePath}
-              target="_blank"
-              rel="noreferrer"
-              className="group flex items-center gap-4 p-4 bg-blue-50/50 rounded-2xl border-2 border-blue-100 shadow-sm transition-all hover:border-blue-400 hover:shadow-lg hover:-translate-y-0.5"
-            >
-              <div className="w-12 h-12 rounded-xl shrink-0 bg-blue-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <FileText size={20} />
-              </div>
+          {showInvoiceBlock && (
+            <div className="space-y-1.5">
+              <a
+                href={occupation.facturePath || `/api/facture-pdf/${occupation.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center gap-4 p-4 bg-blue-50/50 rounded-2xl border-2 border-blue-100 shadow-sm transition-all hover:border-blue-400 hover:shadow-lg hover:-translate-y-0.5"
+              >
+                <div className="w-12 h-12 rounded-xl shrink-0 bg-blue-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <FileText size={20} />
+                </div>
 
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest truncate">Facture Officielle</p>
-                <p className="text-[8px] font-black text-blue-400/70 uppercase tracking-tighter mt-1">Facture • PDF</p>
-              </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-black text-blue-700 uppercase tracking-widest truncate">
+                    {occupation.facturePath ? 'Facture Officielle' : 'Facture Provisoire'}
+                  </p>
+                  <p className="text-[8px] font-black text-blue-400/70 uppercase tracking-tighter mt-1">Facture • PDF</p>
+                </div>
 
-              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-blue-300 group-hover:text-blue-600 transition-all">
-                <ExternalLink size={14} />
-              </div>
-            </a>
+                <button
+                  type="button"
+                  onClick={e => { e.preventDefault(); handleSendInvoice(); }}
+                  disabled={isSendingInvoice}
+                  title="Envoyer au demandeur"
+                  className="h-8 px-3 rounded-lg bg-white border border-blue-200 flex items-center gap-1.5 text-blue-600 hover:bg-blue-600 hover:text-white hover:border-blue-600 disabled:opacity-40 transition-all shrink-0 text-[9px] font-black uppercase tracking-wider"
+                >
+                  {isSendingInvoice ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                  Envoyer
+                </button>
+              </a>
+              {invoiceSentMsg && (
+                <p className={`text-[9px] font-black px-2 ${invoiceSentMsg.startsWith('Erreur') ? 'text-rose-500' : 'text-blue-600'}`}>{invoiceSentMsg}</p>
+              )}
+            </div>
           )}
 
           {occupation.aotFinalPath && occupation.aotSigned && (

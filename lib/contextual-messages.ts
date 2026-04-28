@@ -205,6 +205,36 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   </div>
 </div>`,
   },
+  
+  MSG_INVOICE_DEBTOR: {
+    label: 'Envoi facture au débiteur',
+    description: 'Envoyé au contact principal du tiers pour lui transmettre la facture.',
+    vars: ['{{CONTACT}}', '{{TIERS}}', '{{NOM_DOSSIER}}', '{{NUMERO_FACTURE}}', '{{DATE}}'],
+    defaultSubject: 'Votre facture ODP — {{NOM_DOSSIER}}',
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#333;line-height:1.6;margin:0;padding:0}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:white;padding:30px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px;font-weight:900}
+  .content{background:#f8fafc;padding:30px;border-radius:0 0 8px 8px;border:1px solid #e2e8f0}
+  .info-box{background:#eff6ff;border:1px solid #bfdbfe;padding:20px;border-radius:8px;margin:20px 0;color:#1e40af}
+  .footer{color:#94a3b8;font-size:11px;text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>Facture d'Occupation du Domaine Public</h1></div>
+  <div class="content">
+    <p>Bonjour <strong>{{CONTACT}}</strong>,</p>
+    <p>Veuillez trouver en pièce jointe la facture concernant l'occupation du domaine public pour le dossier <strong>{{NOM_DOSSIER}}</strong>.</p>
+    <div class="info-box">
+      <p style="margin:0"><strong>À noter :</strong> Vous allez prochainement recevoir un titre de recette de la part du Trésor Public pour le règlement de cette redevance.</p>
+    </div>
+    <p>Ce document est transmis à titre d'information avant la mise en recouvrement officielle.</p>
+    <div class="footer"><p>Ville d'Ivry-sur-Seine — Service Domaine Public</p><p>Document transmis le {{DATE}}</p></div>
+  </div>
+</div></body></html>`,
+  },
 };
 
 // ---------------------------------------------------------------------------

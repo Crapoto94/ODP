@@ -91,6 +91,9 @@ export default function OccupationDetailPage({ params }: Props) {
     isPublishingAot,
     handleDeleteAotFinal,
     handleSaveObservations,
+    isSendingEmail,
+    sendInvoiceByEmail,
+    noteKey,
   } = useOccupationLogic(paramId);
 
   // Load TLPE config when needed (for enseigne exemption display)
@@ -209,6 +212,7 @@ export default function OccupationDetailPage({ params }: Props) {
               />
             )}
             <OccupationNotes 
+              key={noteKey}
               occupationId={occ.id} 
               currentUser={currentUser} 
             />
@@ -224,6 +228,8 @@ export default function OccupationDetailPage({ params }: Props) {
             onDeletePhoto={handleDeletePhoto}
             onDeleteAotFinal={handleDeleteAotFinal}
             onSaveObservations={handleSaveObservations}
+            onSendInvoice={sendInvoiceByEmail}
+            isSendingInvoice={isSendingEmail}
           />
         </div>
       </div>

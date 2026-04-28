@@ -45,6 +45,8 @@ export function useOccupationLogic(occupationId: string) {
   const [isAotFinalModalOpen, setIsAotFinalModalOpen] = useState(false);
   const [isUploadingAotFinal, setIsUploadingAotFinal] = useState(false);
   const [isPublishingAot, setIsPublishingAot] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [noteKey, setNoteKey] = useState(0);
 
   const fetchOccupation = async () => {
     try {
@@ -467,6 +469,24 @@ export function useOccupationLogic(occupationId: string) {
     }
   };
 
+  const sendInvoiceByEmail = async () => {
+    if (!occ) return;
+    setIsSendingEmail(true);
+    try {
+      const res = await axios.post(`/api/occupations/${occ.id}/send-invoice`);
+      if (res.data.success) {
+        alert(`Facture envoyée avec succès à ${res.data.sentTo}`);
+        setNoteKey(prev => prev + 1);
+        fetchOccupation();
+      }
+    } catch (err: any) {
+      console.error('[Send Invoice] Error:', err);
+      alert(err.response?.data?.error || "Erreur lors de l'envoi de l'e-mail");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
   const statusInfo = occ ? getStatusConfig(occ.type, occ.statut) : null;
   const typeInfo = occ ? TYPE_MAP[occ.type] || { label: occ.type, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' } : null;
   const isLocked = occ ? ['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) : false;
@@ -523,5 +543,25 @@ export function useOccupationLogic(occupationId: string) {
     isPublishingAot,
     handleDeleteAotFinal,
     handleSaveObservations,
+    isSendingEmail,
+    sendInvoiceByEmail,
+    noteKey,
   };
 }
+
+const sendInvoiceByEmailImpl = async (occ: any, setIsSendingEmail: any, fetchOccupation: any) => {
+  if (!occ) return;
+  setIsSendingEmail(true);
+  try {
+    const res = await axios.post(`/api/occupations/${occ.id}/send-invoice`);
+    if (res.data.success) {
+      alert(`Facture envoyée avec succès à ${res.data.sentTo}`);
+      fetchOccupation();
+    }
+  } catch (err: any) {
+    console.error('[Send Invoice] Error:', err);
+    alert(err.response?.data?.error || "Erreur lors de l'envoi de l'e-mail");
+  } finally {
+    setIsSendingEmail(false);
+  }
+};
