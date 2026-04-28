@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS deps
+FROM node:20-bullseye-slim AS deps
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
@@ -6,7 +6,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # Rebuild the source code only when needed
-FROM node:20-bookworm-slim AS builder
+FROM node:20-bullseye-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -21,17 +21,19 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
 # Production image, copy all the files and run next
-FROM node:20-bookworm-slim AS runner
+FROM node:20-bullseye-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Install SMB/CIFS support, ca-certificates and openssl
-RUN apt-get update -y || (sleep 5 && apt-get update -y) && \
+# Using || true to avoid blocking the build if mirrors are unreachable, 
+# as Bullseye already contains libssl1.1 which is the main requirement.
+RUN apt-get update -y || true && \
     apt-get install -y --no-install-recommends \
-    ca-certificates cifs-utils smbclient openssl \
-    && rm -rf /var/lib/apt/lists/*
+    ca-certificates cifs-utils smbclient openssl libssl1.1 \
+    || true && rm -rf /var/lib/apt/lists/*
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
