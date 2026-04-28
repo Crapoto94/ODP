@@ -107,13 +107,13 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string,
         const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
         const isExempt = mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt;
         lineVal = isExempt ? 0 : (pu * (ligne.quantite1 || 0) * prorata);
-        detailStr = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (${daysActive}j)` : ''}${isExempt ? ' (Exonéré)' : ''} soit ${lineVal.toFixed(2)} €`;
+        detailStr = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (prorata ${daysActive}j/${daysInYear}j)` : ''}${isExempt ? ' (Exonéré)' : ''}`;
       } else {
         detailStr = `${ligne.quantite1} ${unit}`;
-        if (ligne.quantite2 > 1) {
+        if (ligne.quantite2 > 0) {
           detailStr += ` x ${ligne.quantite2} ${timeUnit}`;
         }
-        detailStr += ` à ${pu.toFixed(2)}€ soit ${lineVal.toFixed(2)} €`;
+        detailStr += ` à ${pu.toFixed(2)}€`;
       }
 
       replacements['{article.details}'] = detailStr;

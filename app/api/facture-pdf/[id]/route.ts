@@ -177,13 +177,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
             const isExempt = mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt;
             lineVal = isExempt ? 0 : (pu * (ligne.quantite1 || 0) * prorata);
-            details = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (${daysActive}j)` : ''}${isExempt ? ' (Exonéré)' : ''} soit ${lineVal.toFixed(2)} €`;
+            details = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (prorata ${daysActive}j/${daysInYear}j)` : ''}${isExempt ? ' (Exonéré)' : ''}`;
           } else {
             details = `${ligne.quantite1} ${unit}`;
-            if (ligne.quantite2 > 1) {
+            if (ligne.quantite2 > 0) {
               details += ` x ${ligne.quantite2} ${timeUnit}`;
             }
-            details += ` à ${pu.toFixed(2)}€ soit ${lineVal.toFixed(2)} €`;
+            details += ` à ${pu.toFixed(2)}€`;
           }
           replacements['{article.details}'] = details;
           replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
