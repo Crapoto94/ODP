@@ -101,6 +101,8 @@ function OccupationsPageContent() {
   const [tiersFilter, setTiersFilter] = useState<string | null>(null);
   const [tiersSearchQuery, setTiersSearchQuery] = useState('');
   const [isTiersDropdownOpen, setIsTiersDropdownOpen] = useState(false);
+  const [agissantPourSearchQuery, setAgissantPourSearchQuery] = useState('');
+  const [isAgissantPourDropdownOpen, setIsAgissantPourDropdownOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   
@@ -127,7 +129,8 @@ function OccupationsPageContent() {
     description: '',
     statut: 'EN_ATTENTE',
     isCourtMetrage: false,
-    agissantPour: ''
+    agissantPour: '',
+    agissantPourId: '' // ID du tiers "Agissant pour le compte de"
   });
 
   const isEditing = !!formData.id;
@@ -265,11 +268,13 @@ function OccupationsPageContent() {
         }
       }
 
-      const payload = { 
-        ...formData, 
+      const payload = {
+        ...formData,
         latitude: finalLat,
         longitude: finalLng,
-        photos: uploadedPhotos.join(',') 
+        photos: uploadedPhotos.join(','),
+        // Send only the ID for agissantPour, not the name
+        agissantPour: formData.agissantPourId || ''
       };
       if (isEditing) {
         await axios.patch(`/api/occupations/${formData.id}`, payload);
@@ -297,6 +302,10 @@ function OccupationsPageContent() {
   };
 
   const handleEdit = (occ: Occupation) => {
+    // Parse agissantPour as ID if it exists (stored as string ID)
+    const agissantPourId = occ.agissantPour || '';
+    const agissantPourTiers = agissantPourId ? tiers.find(t => t.id === Number(agissantPourId)) : null;
+
     setFormData({
       id: occ.id,
       nom: occ.nom || '',
@@ -306,12 +315,13 @@ function OccupationsPageContent() {
       dateDebut: occ.dateDebut ? format(new Date(occ.dateDebut), 'yyyy-MM-dd') : '',
       dateFin: occ.dateFin ? format(new Date(occ.dateFin), 'yyyy-MM-dd') : '',
       adresse: occ.adresse,
-      latitude: '', 
+      latitude: '',
       longitude: '',
       description: occ.description || '',
       statut: occ.statut,
       isCourtMetrage: !!occ.isCourtMetrage,
-      agissantPour: occ.agissantPour || ''
+      agissantPour: agissantPourTiers?.nom || '',
+      agissantPourId: agissantPourId
     });
     setAddressQuery(occ.adresse);
     setUploadedPhotos(occ.photos ? occ.photos.split(',') : []);
@@ -320,22 +330,24 @@ function OccupationsPageContent() {
 
   const resetForm = () => {
     setFormData({
-      id: null, 
+      id: null,
       nom: '',
       tiersId: '',
       type: 'COMMERCE',
       anneeTaxation: lockedYear || (yearFilter !== 'ALL' ? yearFilter : new Date().getFullYear().toString()),
       dateDebut: '',
       dateFin: '',
-      adresse: '', 
-      latitude: '', 
-      longitude: '', 
-      description: '', 
+      adresse: '',
+      latitude: '',
+      longitude: '',
+      description: '',
       statut: 'EN_ATTENTE',
       isCourtMetrage: false,
-      agissantPour: ''
+      agissantPour: '',
+      agissantPourId: ''
     });
     setAddressQuery('');
+    setAgissantPourSearchQuery('');
     setUploadedPhotos([]);
   };
 
@@ -985,17 +997,104 @@ function OccupationsPageContent() {
                     )}
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
                       Agissant pour le compte de (Optionnel)
                     </label>
-                    <input 
-                      type="text" 
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" 
-                      placeholder="Ex: Entreprise Vinci..." 
-                      value={formData.agissantPour || ''} 
-                      onChange={e => setFormData({...formData, agissantPour: e.target.value})} 
-                    />
+
+                    {!formData.agissantPourId ? (
+                      <div className="relative">
+                        <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                        <input
+                          type="text"
+                          placeholder="Chercher un tiers par nom ou code SEDIT..."
+                          className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all font-bold"
+                          value={agissantPourSearchQuery}
+                          onChange={(e) => {
+                            setAgissantPourSearchQuery(e.target.value);
+                            setIsAgissantPourDropdownOpen(true);
+                          }}
+                          onFocus={() => setIsAgissantPourDropdownOpen(true)}
+                        />
+
+                        {isAgissantPourDropdownOpen && (agissantPourSearchQuery.length > 0 || tiers.length > 0) && (
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[150] overflow-hidden divide-y divide-slate-50 max-h-60 overflow-y-auto">
+                            {tiers
+                              .filter(t =>
+                                t.nom.toLowerCase().includes(agissantPourSearchQuery.toLowerCase()) ||
+                                (t as any).code_sedit?.includes(agissantPourSearchQuery)
+                              )
+                              .slice(0, 15)
+                              .map(t => (
+                                <button
+                                  key={t.id}
+                                  type="button"
+                                  className="w-full px-6 py-4 text-left hover:bg-emerald-50 transition-colors flex items-center justify-between group"
+                                  onClick={() => {
+                                    setFormData({...formData, agissantPourId: t.id.toString(), agissantPour: t.nom});
+                                    setAgissantPourSearchQuery('');
+                                    setIsAgissantPourDropdownOpen(false);
+                                  }}
+                                >
+                                  <div className="flex-1">
+                                     <div className="flex items-center gap-2 mb-1">
+                                       <p className="font-bold text-slate-900 group-hover:text-emerald-600 uppercase text-xs">{t.nom}</p>
+                                       {(t as any).etatAdministratif === 'Cessée' && (
+                                         <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest border border-rose-200">
+                                           <AlertTriangle size={8} />
+                                           Fermé
+                                         </div>
+                                       )}
+                                     </div>
+                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                        {(t as any).code_sedit || 'SANS CODE SEDIT'}
+                                        {t.statut === 'PROVISOIRE' && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
+                                     </p>
+                                  </div>
+                                  <ChevronRight size={14} className="text-slate-300" />
+                                </button>
+                              ))}
+                            {agissantPourSearchQuery.length > 0 && tiers.filter(t => t.nom.toLowerCase().includes(agissantPourSearchQuery.toLowerCase()) || (t as any).code_sedit?.includes(agissantPourSearchQuery)).length === 0 && (
+                              <div className="p-8 text-center text-[10px] font-black text-slate-400 uppercase italic tracking-widest">Aucun tiers trouvé</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                            <Users size={18} />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="font-black text-emerald-900 uppercase text-xs">
+                                {tiers.find(t => t.id === Number(formData.agissantPourId))?.nom}
+                              </p>
+                              {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.etatAdministratif === 'Cessée' && (
+                                <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
+                                  <AlertTriangle size={10} />
+                                  Fermé
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">
+                              ID #{formData.agissantPourId} — {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.code_sedit || 'SANS CODE'}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData({...formData, agissantPourId: '', agissantPour: ''});
+                            setAgissantPourSearchQuery('');
+                          }}
+                          className="p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-all border border-emerald-100"
+                        >
+                          <X size={18} />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
