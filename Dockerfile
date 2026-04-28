@@ -21,15 +21,16 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
 # Production image, copy all the files and run next
-FROM node:20-bullseye-slim AS runner
+FROM node:20-bookworm-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Install OpenSSL 1.1, SMB/CIFS support, and LibreOffice for DOCX→PDF conversion
-RUN apt-get update && apt-get install -y \
-    libssl1.1 ca-certificates cifs-utils smbclient \
+# Install SMB/CIFS support and LibreOffice for DOCX→PDF conversion
+# Note: OpenSSL 3.x is already included in bookworm
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates cifs-utils smbclient \
     libreoffice-writer libreoffice-common \
     && rm -rf /var/lib/apt/lists/*
 
