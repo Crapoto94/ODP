@@ -8,7 +8,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     
     const { buffer, filename } = await generateInvoicePdfBuffer(id);
 
-    return new Response(buffer, {
+    return new Response(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
