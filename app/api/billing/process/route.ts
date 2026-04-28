@@ -109,7 +109,7 @@ async function generateInvoicePdf(occ: any, gabarit: any, invoiceNumber: string,
       replacements['{article.dates}'] = dateStr;
       
       const pu = occ.type === 'TLPE' ? (ligne.montant || 0) : (ligne.article.montant || 0);
-      let lineVal = (ligne.montant || 0) * (ligne.quantite1 || 0);
+      let lineVal = (ligne.montant || 0); // Corrected: ligne.montant is already the total
       let detailStr = '';
 
       if (occ.type === 'TLPE') {
