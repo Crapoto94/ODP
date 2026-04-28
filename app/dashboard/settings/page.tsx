@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import './settings.css';
 import axios from 'axios';
 import {
   LayoutGrid,
@@ -120,20 +121,20 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex gap-0 min-h-[calc(100vh-80px)] animate-in fade-in duration-500">
+    <div className="flex gap-0 h-[calc(100vh-80px)] animate-in fade-in duration-500">
 
       {/* ── Sidebar ── */}
-      <aside className="w-64 shrink-0 bg-white border-r border-slate-100 flex flex-col pt-6 pb-8 gap-6">
-        <div className="px-5">
+      <aside className="w-64 shrink-0 bg-white border-r border-slate-100 flex flex-col overflow-hidden">
+        <div className="px-5 py-6 flex-shrink-0 border-b border-slate-100">
           <VersionHeader compact />
         </div>
 
-        <nav className="flex-1 px-3 space-y-6 overflow-y-auto">
+        <nav className="settings-nav flex-1 px-3 py-2 space-y-3 overflow-y-auto">
           {groups.map(group => {
             const groupTabs = tabs.filter(t => t.group === group);
             return (
               <div key={group}>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] px-3 mb-2">{group}</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] px-3 mb-1">{group}</p>
                 <div className="space-y-0.5">
                   {groupTabs.map(tab => {
                     const Icon = tab.icon;
@@ -142,7 +143,7 @@ export default function SettingsPage() {
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-left group ${
+                        className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-xl transition-all duration-150 text-left group ${
                           isActive
                             ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                             : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
@@ -155,7 +156,7 @@ export default function SettingsPage() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className={`text-[11px] font-black leading-tight truncate`}>{tab.label}</p>
-                          <p className={`text-[9px] leading-tight truncate mt-0.5 ${isActive ? 'text-blue-100' : 'text-slate-400'}`}>{tab.description}</p>
+                          <p className={`text-[9px] leading-tight truncate mt-0 ${isActive ? 'text-blue-100' : 'text-slate-400'}`}>{tab.description}</p>
                         </div>
                         {isActive && <ChevronRight size={12} className="shrink-0 text-blue-200" />}
                       </button>
