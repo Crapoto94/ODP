@@ -78,7 +78,14 @@ export default function OccupationHero({ occupation, statusInfo, typeInfo, lates
               <div className="min-w-0">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Demandeur</p>
                 <p className="text-sm font-black text-slate-900 leading-none truncate">{occupation.tiers?.nom || 'N/A'}</p>
-                <p className="text-[8px] font-bold text-slate-400 mt-1 uppercase">Sedit : {occupation.tiers?.code_sedit || '-'}</p>
+                {occupation.agissantPourTier ? (
+                  <p className="text-[9px] font-black text-blue-600 mt-2 flex items-center gap-1.5 uppercase bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/50">
+                    <ArrowRight size={10} />
+                    Pour : {occupation.agissantPourTier.nom}
+                  </p>
+                ) : (
+                  <p className="text-[8px] font-bold text-slate-400 mt-1 uppercase">Sedit : {occupation.tiers?.code_sedit || '-'}</p>
+                )}
               </div>
             </div>
             

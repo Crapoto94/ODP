@@ -19,6 +19,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     if (!occupation) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
+    // 1.5 Fetch agissantPour tier if exists
+    if (occupation.agissantPour) {
+      const apId = parseInt(occupation.agissantPour);
+      if (!isNaN(apId)) {
+        occupation.agissantPourTier = await prisma.tiers.findUnique({ 
+          where: { id: apId } 
+        });
+      }
+    }
+
     // 2. Parse meta for articles
     if (occupation.lignes) {
       occupation.lignes = occupation.lignes.map((l: any) => {
