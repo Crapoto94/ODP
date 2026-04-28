@@ -27,11 +27,12 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Install ca-certificates (critical for HTTPS)
+# Install SMB/CIFS support and ca-certificates
 # Note: OpenSSL 3.x is already included in bookworm
-# LibreOffice and SMB support can be added later when package servers are available
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
+# Retry logic to handle temporary package server unavailability
+RUN apt-get update || apt-get update || true && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates cifs-utils smbclient \
     && rm -rf /var/lib/apt/lists/* || true
 
 RUN addgroup --system --gid 1001 nodejs
