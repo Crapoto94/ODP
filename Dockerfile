@@ -51,6 +51,7 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules ./node_modules
 RUN chown -R nextjs:nodejs /app/prisma
 
 # Run as root to avoid host volume permission issues (SQLite & Uploads)
@@ -64,6 +65,9 @@ ENV HOSTNAME "0.0.0.0"
 # Enable legacy OpenSSL provider for SMB2 compatibility
 ENV NODE_OPTIONS="--openssl-legacy-provider"
 
+# Create startup script that runs migrations then starts the app
+RUN echo '#!/bin/sh\nset -e\necho "Running Prisma migrations..."\nnpx prisma migrate deploy || npx prisma db push || true\necho "Starting application..."\nexec node server.js' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"]
+CMD ["/app/entrypoint.sh"]
