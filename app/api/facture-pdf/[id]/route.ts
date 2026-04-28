@@ -154,8 +154,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
           const d2 = new Date(ligne.dateFin);
           const dateStr = `${format(d1, 'dd/MM/yyyy')} - ${format(d2, 'dd/MM/yyyy')}`;
 
+          const occD1 = occ.dateDebut ? new Date(occ.dateDebut) : null;
+          const occD2 = occ.dateFin ? new Date(occ.dateFin) : null;
+          const isDifferentDates = !occD1 || !occD2 || 
+            format(d1, 'yyyy-MM-dd') !== format(occD1, 'yyyy-MM-dd') || 
+            format(d2, 'yyyy-MM-dd') !== format(occD2, 'yyyy-MM-dd');
+
           replacements['{article.designation}'] = ligne.article.designation || '';
-          replacements['{article.designationcomplete}'] = `${ligne.article.designation || ''} du ${dateStr}`;
+          replacements['{article.designationcomplete}'] = isDifferentDates 
+            ? `${ligne.article.designation || ''} du ${dateStr}` 
+            : (ligne.article.designation || '');
           replacements['{article.note}'] = ligne.note || '';
           
           // Handle Units and Quantities
