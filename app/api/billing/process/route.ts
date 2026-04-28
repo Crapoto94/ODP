@@ -353,9 +353,7 @@ export async function POST(req: NextRequest) {
 
     const { prepareFilienMovements, exportToUnc, generateFilienFile } = require('@/lib/billing-service');
     
-    // runName will be the subfolder name
-    const runName = timestampStr; 
-
+    // runName will be the subfolder name (already defined above)
     const movements = prepareFilienMovements(results, dossiers, appSettings, tlpeConfig, year, runName);
 
     const filienContent = generateFilienFile(filienParams, movements);
