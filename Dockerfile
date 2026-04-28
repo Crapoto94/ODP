@@ -27,12 +27,10 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Install SMB/CIFS support and ca-certificates
-# Note: OpenSSL 3.x is already included in bookworm
-# Retry logic to handle temporary package server unavailability
-RUN apt-get update && \
+# Install SMB/CIFS support, ca-certificates and openssl
+RUN apt-get update -y || (sleep 5 && apt-get update -y) && \
     apt-get install -y --no-install-recommends \
-    ca-certificates cifs-utils smbclient openssl libssl-dev \
+    ca-certificates cifs-utils smbclient openssl \
     && rm -rf /var/lib/apt/lists/*
 
 RUN addgroup --system --gid 1001 nodejs
