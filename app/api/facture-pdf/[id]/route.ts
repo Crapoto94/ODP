@@ -19,15 +19,27 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const [occ, settings] = await Promise.all([
       prisma.occupation.findUnique({
         where: { id },
-        include: { 
+        include: {
           tiers: true,
           lignes: { include: { article: { include: { modeTaxation: true } } } }
         }
       }),
       prisma.appSettings.findFirst()
     ]);
-    
+
     if (!occ) return NextResponse.json({ error: 'Occupation non trouvée' }, { status: 404 });
+
+    // Get the billing tiers: use "Agissant pour" if defined, otherwise use "Demandeur"
+    let tierFacturable = occ.tiers;
+    if (occ.agissantPour) {
+      // agissantPour stores the ID of the tier
+      const tierAgissantPourId = parseInt(occ.agissantPour);
+      if (!isNaN(tierAgissantPourId)) {
+        tierFacturable = await prisma.tiers.findUnique({
+          where: { id: tierAgissantPourId }
+        }) || occ.tiers;
+      }
+    }
     // Load TypeDossierConfig for the specific type
     const typeConfig = await (prisma as any).typeDossierConfig.findUnique({
       where: { type: occ.type }
@@ -60,6 +72,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     const { elements } = JSON.parse(gabarit.contenu);
     const doc = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
+    const watermark = (settings as any)?.watermark || 'BROUILLON';
 
     const fromBuffer = (ab: ArrayBuffer) => {
       const buf = Buffer.alloc(ab.byteLength);
@@ -67,6 +80,22 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       for (let i = 0; i < buf.length; ++i) buf[i] = view[i];
       return buf;
     };
+
+    // Add watermark in background if not a final invoice
+    if (!occ.numeroFacture) {
+      const pageWidth = (doc as any).internal.pageSize.getWidth();
+      const pageHeight = (doc as any).internal.pageSize.getHeight();
+
+      doc.setTextColor(220, 220, 220);
+      doc.setFontSize(70);
+      doc.setFont(undefined, 'bold');
+
+      doc.text(watermark.toUpperCase(), pageWidth / 2, (pageHeight * 2) / 3, {
+        align: 'center',
+        baseline: 'middle',
+        angle: 45
+      });
+    }
 
     const replaceVars = (val: string, ligne?: any) => {
         if (!val) return val;
@@ -100,11 +129,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         const replacements: Record<string, string> = {
           '{id}': occ.id.toString(),
           '{nom}': occ.nom || '',
-          '{tiers.nom}': occ.tiers?.nom || '',
+          '{tiers.nom}': tierFacturable?.nom || '',
           '{adresse}': (occ.adresse || '').replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
           '{dateDebut}': occ.dateDebut ? format(new Date(occ.dateDebut), 'dd/MM/yyyy') : '',
           '{dateFin}': occ.dateFin ? format(new Date(occ.dateFin), 'dd/MM/yyyy') : '',
-          '{numeroFacture}': (occ as any).numeroFacture || 'Brouillon',
+          '{numeroFacture}': (occ as any).numeroFacture || watermark,
           '{periode}': taxYear.toString(),
           '{totalTTC}': `${totalSum.toFixed(2)} €`,
           '{today}': format(new Date(), 'dd/MM/yyyy'),
