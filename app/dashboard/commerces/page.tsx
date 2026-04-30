@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart } from 'lucide-react';
+import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Article {
   id: number;
@@ -109,8 +110,18 @@ export default function CommercesPage() {
                 <div className="flex items-center justify-between gap-6">
                 {/* Left: Avatar and Name and Address */}
                 <div className="flex items-start gap-3 min-w-0" style={{ flex: '0 0 25%' }}>
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shrink-0">
-                    {commerce.nom.substring(0, 2).toUpperCase()}
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shrink-0 overflow-hidden relative">
+                    <img
+                      src={`https://logo.clearbit.com/${encodeURIComponent(commerce.nom.toLowerCase().trim())}.com?size=64`}
+                      alt={commerce.nom}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                    <span className="text-white font-black text-sm">
+                      {commerce.nom.substring(0, 2).toUpperCase()}
+                    </span>
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate">
