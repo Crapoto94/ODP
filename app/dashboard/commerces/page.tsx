@@ -105,67 +105,82 @@ export default function CommercesPage() {
                 href={`/dashboard/tiers/${commerce.id}`}
                 className="group block bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 p-4"
               >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors">
-                      {commerce.nom}
-                    </h3>
-                    {commerce.articles.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-1.5">
-                        {commerce.articles.slice(0, 5).map((article) => (
-                          <span
-                            key={article.id}
-                            className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-slate-100 text-slate-700"
-                          >
-                            {article.nom}
-                          </span>
-                        ))}
-                        {commerce.articles.length > 5 && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-slate-100 text-slate-700">
-                            +{commerce.articles.length - 5}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                    {commerce.adresse && (
-                      <p className="text-xs text-slate-500 mt-1">{commerce.adresse}</p>
-                    )}
-                  </div>
+                <div className="flex items-center justify-between gap-6">
+                {/* Left: Name and Address */}
+                <div className="min-w-0" style={{ flex: '0 0 25%' }}>
+                  <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate">
+                    {commerce.nom}
+                  </h3>
+                  {commerce.adresse && (
+                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{commerce.adresse}</p>
+                  )}
+                </div>
 
-                  <div className="flex items-center gap-6 shrink-0">
-                    {commerce.tlpeCount > 0 && (
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">TLPE</p>
-                        <p className="text-sm font-black text-slate-900">
-                          {commerce.tlpeCount} dossier{commerce.tlpeCount !== 1 ? 's' : ''}
-                        </p>
-                        {commerce.tlpeYears.length > 0 && (
-                          <p className="text-xs text-slate-500 mt-0.5">
-                            {Math.min(...commerce.tlpeYears)} à {Math.max(...commerce.tlpeYears)}
-                          </p>
-                        )}
-                      </div>
+                {/* Middle: Dispositifs */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    {commerce.articles.length > 0 ? (
+                      <>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-slate-100 text-slate-700 shrink-0">
+                          {commerce.articles.length}
+                        </span>
+                        <div className="flex flex-wrap gap-1 min-w-0">
+                          {commerce.articles.slice(0, 3).map((article) => (
+                            <span
+                              key={article.id}
+                              className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 truncate"
+                            >
+                              {article.nom}
+                            </span>
+                          ))}
+                          {commerce.articles.length > 3 && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 shrink-0">
+                              +{commerce.articles.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <span className="text-xs text-slate-400">—</span>
                     )}
-
-                    {commerce.commerceCount > 0 && (
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">Commerce</p>
-                        <p className="text-sm font-black text-slate-900">
-                          {commerce.commerceCount} dossier{commerce.commerceCount !== 1 ? 's' : ''}
-                        </p>
-                        {commerce.commerceYears.length > 0 && (
-                          <p className="text-xs text-slate-500 mt-0.5">
-                            {Math.min(...commerce.commerceYears)} à {Math.max(...commerce.commerceYears)}
-                          </p>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <Store size={18} />
-                    </div>
                   </div>
                 </div>
+
+                {/* Right: Dossiers */}
+                <div className="flex items-center gap-4 shrink-0">
+                  {commerce.tlpeCount > 0 && (
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">TLPE</p>
+                      <p className="text-sm font-black text-slate-900">
+                        {commerce.tlpeCount}
+                      </p>
+                      {commerce.tlpeYears.length > 0 && (
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {Math.min(...commerce.tlpeYears)}–{Math.max(...commerce.tlpeYears)}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {commerce.commerceCount > 0 && (
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">Cmce</p>
+                      <p className="text-sm font-black text-slate-900">
+                        {commerce.commerceCount}
+                      </p>
+                      {commerce.commerceYears.length > 0 && (
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {Math.min(...commerce.commerceYears)}–{Math.max(...commerce.commerceYears)}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <Store size={18} />
+                  </div>
+                </div>
+              </div>
               </Link>
             );
           })}
