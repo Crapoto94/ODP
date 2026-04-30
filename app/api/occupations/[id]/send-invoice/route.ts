@@ -71,12 +71,18 @@ export async function POST(
     const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
     const contactNom = [primaryContact.prenom, primaryContact.nom].filter(Boolean).join(' ') || primaryContact.email;
-    
+
+    // Determine redevance and activity types based on dossier type
+    const redevanceType = occ.type === 'TLPE' ? 'Droits de Voirie/de la TLPE' : 'Droits de Voirie';
+    const activityType = occ.type === 'TLPE' ? 'commerce' : occ.type === 'CHANTIER' ? 'chantier' : occ.type === 'TOURNAGE' ? 'tournage' : 'occupation';
+
     const { html, subject } = await getContextualMessageData('MSG_INVOICE_DEBTOR', {
       CONTACT: contactNom,
       TIERS: tiersNom,
       NOM_DOSSIER: occ.nom || tiersNom,
       DATE: date,
+      REDEVANCE_TYPE: redevanceType,
+      ACTIVITE_TYPE: activityType,
     });
 
     if (!html) {
