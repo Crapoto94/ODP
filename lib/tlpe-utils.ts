@@ -1,5 +1,31 @@
 import { prisma } from './prisma';
-import { differenceInDays, isLeapYear } from 'date-fns';
+
+function getDaysInMonth(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}
+
+function calculateMonthlyProrata(startDate: Date, endDate: Date): number {
+  // Déterminer le premier jour complet (1er du mois suivant si on ne commence pas le 1er)
+  let fullStartDate = new Date(startDate);
+  if (fullStartDate.getDate() !== 1) {
+    fullStartDate = new Date(fullStartDate.getFullYear(), fullStartDate.getMonth() + 1, 1);
+  }
+
+  // Déterminer le dernier jour complet (dernier du mois si on finit le dernier jour)
+  let fullEndDate = new Date(endDate);
+  if (fullEndDate.getDate() !== getDaysInMonth(fullEndDate)) {
+    fullEndDate = new Date(fullEndDate.getFullYear(), fullEndDate.getMonth(), 0); // Dernier jour du mois précédent
+  }
+
+  // Si le dernier jour complet est avant le premier jour complet, pas de facturation
+  if (fullEndDate < fullStartDate) return 0;
+
+  // Compter les mois (inclusive du mois de fin)
+  const months = (fullEndDate.getFullYear() - fullStartDate.getFullYear()) * 12
+                 + (fullEndDate.getMonth() - fullStartDate.getMonth()) + 1;
+
+  return months / 12;
+}
 
 /**
  * Recalcule le montant total d'une occupation en tenant compte des règles spécifiques du TLPE
@@ -66,17 +92,15 @@ export async function updateOccupationTotal(occupationId: number) {
     const netTotal = occupation.lignes.reduce((sum: number, l: any) => {
       let tlpeType = '';
       try { tlpeType = JSON.parse(l.article?.notes || '{}').tlpeType; } catch(e){}
-      
+
       const d1 = new Date(l.dateDebut || `${anneeTaxation}-01-01`);
       const d2 = new Date(l.dateFin || `${anneeTaxation}-12-31`);
-      const daysInYear = isLeapYear(new Date(anneeTaxation, 0, 1)) ? 366 : 365;
-      const daysActive = differenceInDays(d2, d1) + 1;
-      const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
+      const prorata = calculateMonthlyProrata(d1, d2);
 
       // Si c'est une enseigne et qu'on est sous le seuil -> 0€
       if (tlpeType === 'ENSEIGNE' && isEnseigneExempt) return sum;
 
-      // Sinon : Tarif * Surface * Prorata
+      // Sinon : Tarif * Surface * Prorata (basé sur les mois pleins)
       return sum + ((l.montant || 0) * (l.quantite1 || 0) * prorata);
     }, 0);
 
