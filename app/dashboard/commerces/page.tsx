@@ -118,32 +118,30 @@ export default function CommercesPage() {
 
                 {/* Middle: Dispositifs */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    {commerce.articles.length > 0 ? (
-                      <>
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-slate-100 text-slate-700 shrink-0">
-                          {commerce.articles.length}
-                        </span>
-                        <div className="flex flex-wrap gap-1 min-w-0">
-                          {commerce.articles.slice(0, 3).map((article) => (
-                            <span
-                              key={article.id}
-                              className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 truncate"
-                            >
-                              {article.nom}
-                            </span>
-                          ))}
-                          {commerce.articles.length > 3 && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 shrink-0">
-                              +{commerce.articles.length - 3}
-                            </span>
-                          )}
-                        </div>
-                      </>
-                    ) : (
-                      <span className="text-xs text-slate-400">—</span>
-                    )}
-                  </div>
+                  {commerce.articles.length > 0 ? (
+                    <div className="space-y-1">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-slate-100 text-slate-700">
+                        {commerce.articles.length}
+                      </span>
+                      <div className="space-y-1">
+                        {commerce.articles.slice(0, 4).map((article) => (
+                          <div
+                            key={article.id}
+                            className="text-xs font-bold text-slate-700 truncate"
+                          >
+                            {article.nom}
+                          </div>
+                        ))}
+                        {commerce.articles.length > 4 && (
+                          <div className="text-xs font-bold text-slate-700">
+                            +{commerce.articles.length - 4} autres
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-slate-400">—</span>
+                  )}
                 </div>
 
                 {/* Right: Dossiers */}
