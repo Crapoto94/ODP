@@ -34,8 +34,7 @@ import {
   Unlock,
   Lock,
   LockOpen,
-  AlertTriangle,
-  DollarSign
+  AlertTriangle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -967,6 +966,22 @@ function OccupationsPageContent() {
                     ) : (
                       <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-2xl p-4">
                         <div className="flex items-center gap-4">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (formData.isAgissantPourBillable) {
+                                setFormData({...formData, isAgissantPourBillable: false});
+                              }
+                            }}
+                            className={`flex items-center justify-center w-8 h-8 rounded-full shadow-lg transition-all cursor-pointer flex-shrink-0 ${
+                              !formData.isAgissantPourBillable
+                                ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30'
+                                : 'bg-slate-300 hover:bg-slate-400 text-white'
+                            }`}
+                            title="Entité facturée"
+                          >
+                            <Euro size={16} className="font-black" />
+                          </button>
                           <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
                             <Users size={18} />
                           </div>
@@ -975,21 +990,6 @@ function OccupationsPageContent() {
                               <p className="font-black text-blue-900 uppercase text-xs">
                                 {tiers.find(t => t.id === Number(formData.tiersId))?.nom}
                               </p>
-                              {!formData.agissantPourId && (
-                                <div className="flex items-center justify-center w-6 h-6 bg-amber-500 text-white rounded-full shadow-lg shadow-amber-500/30" title="Entité facturée">
-                                  <DollarSign size={14} className="font-black" />
-                                </div>
-                              )}
-                              {formData.agissantPourId && !formData.isAgissantPourBillable && (
-                                <button
-                                  type="button"
-                                  onClick={() => setFormData({...formData, isAgissantPourBillable: true})}
-                                  className="flex items-center justify-center w-6 h-6 bg-slate-300 hover:bg-amber-500 text-white rounded-full shadow-lg hover:shadow-amber-500/30 transition-all cursor-pointer"
-                                  title="Cliquer pour facturer cette entité"
-                                >
-                                  <DollarSign size={14} className="font-black" />
-                                </button>
-                              )}
                               {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.etatAdministratif === 'Cessée' && (
                                 <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
                                   <AlertTriangle size={10} />
@@ -1080,53 +1080,68 @@ function OccupationsPageContent() {
                         )}
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-                            <Users size={18} />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <p className="font-black text-emerald-900 uppercase text-xs">
-                                {tiers.find(t => t.id === Number(formData.agissantPourId))?.nom}
-                              </p>
-                              {formData.isAgissantPourBillable && (
-                                <div className="flex items-center justify-center w-6 h-6 bg-amber-500 text-white rounded-full shadow-lg shadow-amber-500/30" title="Entité facturée">
-                                  <DollarSign size={14} className="font-black" />
-                                </div>
-                              )}
-                              {!formData.isAgissantPourBillable && (
-                                <button
-                                  type="button"
-                                  onClick={() => setFormData({...formData, isAgissantPourBillable: true})}
-                                  className="flex items-center justify-center w-6 h-6 bg-slate-300 hover:bg-amber-500 text-white rounded-full shadow-lg hover:shadow-amber-500/30 transition-all cursor-pointer"
-                                  title="Cliquer pour facturer cette entité"
-                                >
-                                  <DollarSign size={14} className="font-black" />
-                                </button>
-                              )}
-                              {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.etatAdministratif === 'Cessée' && (
-                                <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
-                                  <AlertTriangle size={10} />
-                                  Fermé
-                                </div>
-                              )}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                          <div className="flex items-center gap-4">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (formData.isAgissantPourBillable) {
+                                  setFormData({...formData, isAgissantPourBillable: false});
+                                } else {
+                                  setFormData({...formData, isAgissantPourBillable: true});
+                                }
+                              }}
+                              className={`flex items-center justify-center w-8 h-8 rounded-full shadow-lg transition-all cursor-pointer flex-shrink-0 ${
+                                formData.isAgissantPourBillable
+                                  ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30'
+                                  : 'bg-slate-300 hover:bg-slate-400 text-white'
+                              }`}
+                              title="Entité facturée"
+                            >
+                              <Euro size={16} className="font-black" />
+                            </button>
+                            <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                              <Users size={18} />
                             </div>
-                            <p className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">
-                              ID #{formData.agissantPourId} — {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.code_sedit || 'SANS CODE'}
-                            </p>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <p className="font-black text-emerald-900 uppercase text-xs">
+                                  {tiers.find(t => t.id === Number(formData.agissantPourId))?.nom}
+                                </p>
+                                {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.etatAdministratif === 'Cessée' && (
+                                  <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
+                                    <AlertTriangle size={10} />
+                                    Fermé
+                                  </div>
+                                )}
+                              </div>
+                              <p className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">
+                                ID #{formData.agissantPourId} — {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.code_sedit || 'SANS CODE'}
+                              </p>
+                            </div>
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData({...formData, agissantPourId: '', agissantPour: '', isAgissantPourBillable: false});
+                              setAgissantPourSearchQuery('');
+                            }}
+                            className="p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-all border border-emerald-100"
+                          >
+                            <X size={18} />
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData({...formData, agissantPourId: '', agissantPour: '', isAgissantPourBillable: false});
-                            setAgissantPourSearchQuery('');
-                          }}
-                          className="p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-all border border-emerald-100"
-                        >
-                          <X size={18} />
-                        </button>
+
+                        {formData.isAgissantPourBillable && !(tiers.find(t => t.id === Number(formData.agissantPourId))?.contacts?.some((c: any) => c.role === 'CONTACT_PRINCIPAL')) && (
+                          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
+                            <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                              <p className="text-xs font-black text-amber-900 uppercase tracking-tight mb-1">Contact principal requis</p>
+                              <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Il faut créer un contact principal pour cette entité avant de la facturer</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
