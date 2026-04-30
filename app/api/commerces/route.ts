@@ -73,9 +73,9 @@ export async function GET() {
           articles.forEach((article: any) => {
             const existing = commerce.articles.find((a: any) => a.nom === article.nom);
             if (existing) {
-              existing.count += article.count;
+              existing.count = (existing.count || 0) + (article.count || 0);
             } else {
-              commerce.articles.push(article);
+              commerce.articles.push({ ...article, count: article.count || 1 });
             }
           });
         } else {
