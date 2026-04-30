@@ -16,6 +16,7 @@ model BacklogItem {
   type        String   @default("FEATURE")
   priority    String   @default("MEDIUM")
   status      String   @default("OPEN")
+  requestedBy String?
   versionId   Int?
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt

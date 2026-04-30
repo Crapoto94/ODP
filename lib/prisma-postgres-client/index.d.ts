@@ -1105,6 +1105,7 @@ export namespace Prisma {
     type: string | null
     priority: string | null
     status: string | null
+    requestedBy: string | null
     versionId: number | null
     created_at: Date | null
     updated_at: Date | null
@@ -1117,6 +1118,7 @@ export namespace Prisma {
     type: string | null
     priority: string | null
     status: string | null
+    requestedBy: string | null
     versionId: number | null
     created_at: Date | null
     updated_at: Date | null
@@ -1129,6 +1131,7 @@ export namespace Prisma {
     type: number
     priority: number
     status: number
+    requestedBy: number
     versionId: number
     created_at: number
     updated_at: number
@@ -1153,6 +1156,7 @@ export namespace Prisma {
     type?: true
     priority?: true
     status?: true
+    requestedBy?: true
     versionId?: true
     created_at?: true
     updated_at?: true
@@ -1165,6 +1169,7 @@ export namespace Prisma {
     type?: true
     priority?: true
     status?: true
+    requestedBy?: true
     versionId?: true
     created_at?: true
     updated_at?: true
@@ -1177,6 +1182,7 @@ export namespace Prisma {
     type?: true
     priority?: true
     status?: true
+    requestedBy?: true
     versionId?: true
     created_at?: true
     updated_at?: true
@@ -1276,6 +1282,7 @@ export namespace Prisma {
     type: string
     priority: string
     status: string
+    requestedBy: string | null
     versionId: number | null
     created_at: Date
     updated_at: Date
@@ -1307,6 +1314,7 @@ export namespace Prisma {
     type?: boolean
     priority?: boolean
     status?: boolean
+    requestedBy?: boolean
     versionId?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -1322,6 +1330,7 @@ export namespace Prisma {
     type?: boolean
     priority?: boolean
     status?: boolean
+    requestedBy?: boolean
     versionId?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -1335,6 +1344,7 @@ export namespace Prisma {
     type?: boolean
     priority?: boolean
     status?: boolean
+    requestedBy?: boolean
     versionId?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -1362,6 +1372,7 @@ export namespace Prisma {
       type: string
       priority: string
       status: string
+      requestedBy: string | null
       versionId: number | null
       created_at: Date
       updated_at: Date
@@ -1766,6 +1777,7 @@ export namespace Prisma {
     readonly type: FieldRef<"BacklogItem", 'String'>
     readonly priority: FieldRef<"BacklogItem", 'String'>
     readonly status: FieldRef<"BacklogItem", 'String'>
+    readonly requestedBy: FieldRef<"BacklogItem", 'String'>
     readonly versionId: FieldRef<"BacklogItem", 'Int'>
     readonly created_at: FieldRef<"BacklogItem", 'DateTime'>
     readonly updated_at: FieldRef<"BacklogItem", 'DateTime'>
@@ -4110,6 +4122,7 @@ export namespace Prisma {
     type: 'type',
     priority: 'priority',
     status: 'status',
+    requestedBy: 'requestedBy',
     versionId: 'versionId',
     created_at: 'created_at',
     updated_at: 'updated_at'
@@ -4238,6 +4251,7 @@ export namespace Prisma {
     type?: StringFilter<"BacklogItem"> | string
     priority?: StringFilter<"BacklogItem"> | string
     status?: StringFilter<"BacklogItem"> | string
+    requestedBy?: StringNullableFilter<"BacklogItem"> | string | null
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
@@ -4252,6 +4266,7 @@ export namespace Prisma {
     type?: SortOrder
     priority?: SortOrder
     status?: SortOrder
+    requestedBy?: SortOrderInput | SortOrder
     versionId?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -4269,6 +4284,7 @@ export namespace Prisma {
     type?: StringFilter<"BacklogItem"> | string
     priority?: StringFilter<"BacklogItem"> | string
     status?: StringFilter<"BacklogItem"> | string
+    requestedBy?: StringNullableFilter<"BacklogItem"> | string | null
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
@@ -4283,6 +4299,7 @@ export namespace Prisma {
     type?: SortOrder
     priority?: SortOrder
     status?: SortOrder
+    requestedBy?: SortOrderInput | SortOrder
     versionId?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -4303,6 +4320,7 @@ export namespace Prisma {
     type?: StringWithAggregatesFilter<"BacklogItem"> | string
     priority?: StringWithAggregatesFilter<"BacklogItem"> | string
     status?: StringWithAggregatesFilter<"BacklogItem"> | string
+    requestedBy?: StringNullableWithAggregatesFilter<"BacklogItem"> | string | null
     versionId?: IntNullableWithAggregatesFilter<"BacklogItem"> | number | null
     created_at?: DateTimeWithAggregatesFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"BacklogItem"> | Date | string
@@ -4428,6 +4446,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     version?: VersionReleaseCreateNestedOneWithoutBacklogItemsInput
@@ -4441,6 +4460,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     versionId?: number | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -4453,6 +4473,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: VersionReleaseUpdateOneWithoutBacklogItemsNestedInput
@@ -4466,6 +4487,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     versionId?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4479,6 +4501,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     versionId?: number | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -4490,6 +4513,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4501,6 +4525,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     versionId?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4705,6 +4730,7 @@ export namespace Prisma {
     type?: SortOrder
     priority?: SortOrder
     status?: SortOrder
+    requestedBy?: SortOrder
     versionId?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -4722,6 +4748,7 @@ export namespace Prisma {
     type?: SortOrder
     priority?: SortOrder
     status?: SortOrder
+    requestedBy?: SortOrder
     versionId?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -4734,6 +4761,7 @@ export namespace Prisma {
     type?: SortOrder
     priority?: SortOrder
     status?: SortOrder
+    requestedBy?: SortOrder
     versionId?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -5314,6 +5342,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     version?: VersionReleaseCreateNestedOneWithoutBacklogItemsInput
@@ -5326,6 +5355,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     versionId?: number | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -5353,6 +5383,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: VersionReleaseUpdateOneWithoutBacklogItemsNestedInput
@@ -5365,6 +5396,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     versionId?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5376,6 +5408,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentCreateNestedManyWithoutBacklogItemInput
@@ -5388,6 +5421,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentUncheckedCreateNestedManyWithoutBacklogItemInput
@@ -5429,6 +5463,7 @@ export namespace Prisma {
     type?: StringFilter<"BacklogItem"> | string
     priority?: StringFilter<"BacklogItem"> | string
     status?: StringFilter<"BacklogItem"> | string
+    requestedBy?: StringNullableFilter<"BacklogItem"> | string | null
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
@@ -5468,6 +5503,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -5478,6 +5514,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUpdateManyWithoutBacklogItemNestedInput
@@ -5490,6 +5527,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUncheckedUpdateManyWithoutBacklogItemNestedInput
@@ -5502,6 +5540,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
