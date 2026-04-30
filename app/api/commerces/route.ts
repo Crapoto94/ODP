@@ -9,9 +9,13 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    // Get all TLPE occupations with their tiers
+    // Get all TLPE and COMMERCE occupations with their tiers
     const occupations = await (prisma as any).occupation.findMany({
-      where: { type: 'TLPE' },
+      where: {
+        type: {
+          in: ['TLPE', 'COMMERCE']
+        }
+      },
       include: {
         tiers: {
           select: {
