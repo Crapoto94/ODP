@@ -126,16 +126,18 @@ export default function CommercesPage() {
                 <div className="flex-1 min-w-0">
                   {commerce.articles.length > 0 ? (
                     <div className="space-y-1">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-slate-100 text-slate-700">
-                        {commerce.articles.reduce((sum, a) => sum + a.count, 0)}
-                      </span>
                       <div className="space-y-1">
                         {commerce.articles.slice(0, 4).map((article) => (
                           <div
                             key={article.id}
-                            className="text-xs font-bold text-slate-700 truncate"
+                            className="flex items-center gap-2"
                           >
-                            {article.nom} {article.count > 1 && `x${article.count}`}
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 shrink-0">
+                              {article.count || 1}
+                            </span>
+                            <span className="text-xs font-bold text-slate-700 truncate">
+                              {article.nom}
+                            </span>
                           </div>
                         ))}
                         {commerce.articles.length > 4 && (
