@@ -166,6 +166,7 @@ export default function OccupationDetailPage({ params }: Props) {
             statusInfo={statusInfo}
             typeInfo={typeInfo}
             latestSignatureRequest={latestSignatureRequest}
+            onTierClick={(tierId) => router.push(`/dashboard/occupations?tierId=${tierId}`)}
           />
           {!(occ.type === 'CHANTIER' && (occ.statut === 'INIT' || occ.statut === 'INITIALISATION' || occ.statut === 'EN_ATTENTE')) && (
             <OccupationFinancialCard

@@ -9,6 +9,7 @@ interface Props {
   statusInfo: StatusConfig;
   typeInfo: TypeConfig;
   latestSignatureRequest?: any;
+  onTierClick?: (tierId: number) => void;
 }
 
 function SignatureStatusBadge({ request }: { request: any }) {
@@ -45,7 +46,7 @@ function SignatureStatusBadge({ request }: { request: any }) {
   );
 }
 
-export default function OccupationHero({ occupation, statusInfo, typeInfo, latestSignatureRequest }: Props) {
+export default function OccupationHero({ occupation, statusInfo, typeInfo, latestSignatureRequest, onTierClick }: Props) {
   return (
     <div className="relative group/hero">
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/10 to-emerald-600/10 rounded-xl blur-xl opacity-25 group-hover/hero:opacity-50 transition duration-1000"></div>
@@ -71,15 +72,23 @@ export default function OccupationHero({ occupation, statusInfo, typeInfo, lates
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-50/50 border border-transparent hover:bg-white hover:border-slate-100 transition-all">
-              <div className="w-11 h-11 rounded-xl bg-blue-100/50 text-blue-600 flex items-center justify-center border border-blue-200/50 shrink-0">
+            <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-50/50 border border-transparent hover:bg-white hover:border-slate-100 transition-all cursor-pointer group">
+              <div className="w-11 h-11 rounded-xl bg-blue-100/50 text-blue-600 flex items-center justify-center border border-blue-200/50 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                 <User size={18} />
               </div>
               <div className="min-w-0">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Demandeur</p>
-                <p className="text-sm font-black text-slate-900 leading-none truncate">{occupation.tiers?.nom || 'N/A'}</p>
+                <p
+                  onClick={() => occupation.tiers?.id && onTierClick?.(occupation.tiers.id)}
+                  className="text-sm font-black text-slate-900 leading-none truncate underline decoration-blue-200 decoration-2 underline-offset-2 group-hover:text-blue-600 transition-colors cursor-pointer"
+                >
+                  {occupation.tiers?.nom || 'N/A'}
+                </p>
                 {occupation.agissantPourTier ? (
-                  <p className="text-[9px] font-black text-blue-600 mt-2 flex items-center gap-1.5 uppercase bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/50">
+                  <p
+                    onClick={() => occupation.agissantPourTier?.id && onTierClick?.(occupation.agissantPourTier.id)}
+                    className="text-[9px] font-black text-blue-600 mt-2 flex items-center gap-1.5 uppercase bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/50 cursor-pointer hover:bg-blue-100 transition-colors"
+                  >
                     <ArrowRight size={10} />
                     Pour : {occupation.agissantPourTier.nom}
                   </p>
