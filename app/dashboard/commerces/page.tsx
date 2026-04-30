@@ -10,7 +10,10 @@ interface Commerce {
   nom: string;
   adresse?: string;
   email: string;
-  occupationCount: number;
+  tlpeYears: number[];
+  commerceYears: number[];
+  tlpeCount: number;
+  commerceCount: number;
 }
 
 export default function CommercesPage() {
@@ -80,48 +83,69 @@ export default function CommercesPage() {
           <p className="text-slate-500 font-medium">Aucun commerce trouvé</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredCommerces.map((commerce) => (
-            <Link
-              key={commerce.id}
-              href={`/dashboard/tiers/${commerce.id}`}
-              className="group relative bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-300 overflow-hidden"
-            >
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div className="space-y-3">
+          {filteredCommerces.map((commerce) => {
+            const minYear = Math.min(
+              ...[...commerce.tlpeYears, ...commerce.commerceYears].filter(y => y)
+            );
+            const maxYear = Math.max(
+              ...[...commerce.tlpeYears, ...commerce.commerceYears].filter(y => y)
+            );
+            const totalCount = commerce.tlpeCount + commerce.commerceCount;
 
-              <div className="p-6 space-y-4">
-                <div className="flex items-start justify-between gap-4">
+            return (
+              <Link
+                key={commerce.id}
+                href={`/dashboard/tiers/${commerce.id}`}
+                className="group block bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 p-4"
+              >
+                <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-black text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors">
                       {commerce.nom}
                     </h3>
-                    <div className="flex items-center gap-2 mt-2 text-blue-600 font-bold text-sm">
-                      <ShoppingCart size={14} />
-                      {commerce.occupationCount} dossier{commerce.occupationCount !== 1 ? 's' : ''}
-                    </div>
+                    {commerce.adresse && (
+                      <p className="text-xs text-slate-500 mt-0.5">{commerce.adresse}</p>
+                    )}
                   </div>
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                    <Store size={18} />
-                  </div>
-                </div>
 
-                <div className="space-y-2">
-                  {commerce.adresse && (
-                    <div className="flex items-start gap-3 text-sm">
-                      <MapPin size={16} className="text-emerald-600 mt-0.5 shrink-0" />
-                      <span className="text-slate-600">{commerce.adresse}</span>
+                  <div className="flex items-center gap-6 shrink-0">
+                    {commerce.tlpeCount > 0 && (
+                      <div className="text-right">
+                        <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">TLPE</p>
+                        <p className="text-sm font-black text-slate-900">
+                          {commerce.tlpeCount} dossier{commerce.tlpeCount !== 1 ? 's' : ''}
+                        </p>
+                        {commerce.tlpeYears.length > 0 && (
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {Math.min(...commerce.tlpeYears)} à {Math.max(...commerce.tlpeYears)}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    {commerce.commerceCount > 0 && (
+                      <div className="text-right">
+                        <p className="text-xs font-bold text-blue-600 uppercase tracking-widest">Commerce</p>
+                        <p className="text-sm font-black text-slate-900">
+                          {commerce.commerceCount} dossier{commerce.commerceCount !== 1 ? 's' : ''}
+                        </p>
+                        {commerce.commerceYears.length > 0 && (
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {Math.min(...commerce.commerceYears)} à {Math.max(...commerce.commerceYears)}
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <Store size={18} />
                     </div>
-                  )}
-                  {commerce.email && (
-                    <div className="flex items-start gap-3 text-sm">
-                      <Mail size={16} className="text-emerald-600 mt-0.5 shrink-0" />
-                      <span className="text-slate-600 break-all">{commerce.email}</span>
-                    </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
