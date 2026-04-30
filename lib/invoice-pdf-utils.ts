@@ -1,9 +1,32 @@
 import { prisma } from './prisma';
 import jsPDF from 'jspdf';
-import { format, differenceInDays, isLeapYear } from 'date-fns';
+import { format } from 'date-fns';
 import { writeFile, readFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+
+function getDaysInMonth(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}
+
+function calculateMonthlyProrata(startDate: Date, endDate: Date): { months: number; ratio: number } {
+  let fullStartDate = new Date(startDate);
+  if (fullStartDate.getDate() !== 1) {
+    fullStartDate = new Date(fullStartDate.getFullYear(), fullStartDate.getMonth() + 1, 1);
+  }
+
+  let fullEndDate = new Date(endDate);
+  if (fullEndDate.getDate() !== getDaysInMonth(fullEndDate)) {
+    fullEndDate = new Date(fullEndDate.getFullYear(), fullEndDate.getMonth(), 0);
+  }
+
+  if (fullEndDate < fullStartDate) return { months: 0, ratio: 0 };
+
+  const months = (fullEndDate.getFullYear() - fullStartDate.getFullYear()) * 12
+                 + (fullEndDate.getMonth() - fullStartDate.getMonth()) + 1;
+
+  return { months, ratio: months / 12 };
+}
 
 export async function generateInvoicePdfBuffer(
   occupationId: number, 
@@ -105,10 +128,7 @@ export async function generateInvoicePdfBuffer(
               if (mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt) return sum;
               const d1 = new Date(l.dateDebut);
               const d2 = new Date(l.dateFin);
-              const year = (occ as any).anneeTaxation || d1.getFullYear();
-              const daysInYear = isLeapYear(new Date(year, 0, 1)) ? 366 : 365;
-              const daysActive = differenceInDays(d2, d1) + 1;
-              const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
+              const { ratio: prorata } = calculateMonthlyProrata(d1, d2);
               return sum + ((l.montant || 0) * (l.quantite1 || 0) * prorata);
           }
           return sum + (l.montant || 0);
@@ -166,8 +186,11 @@ export async function generateInvoicePdfBuffer(
           unit = 'unité';
         }
 
-        let qteFull = `${ligne.quantite1 || 0} ${unit}`;
-        if (ligne.quantite2 > 0) {
+        // Pour TLPE, afficher uniquement la surface en m²
+        let qteFull = occ.type === 'TLPE'
+          ? `${ligne.quantite1 || 0} m²`
+          : `${ligne.quantite1 || 0} ${unit}`;
+        if (occ.type !== 'TLPE' && ligne.quantite2 > 0) {
           qteFull += ` x ${ligne.quantite2} ${timeUnit}`;
         }
         replacements['{article.quantite}'] = qteFull;
@@ -178,13 +201,10 @@ export async function generateInvoicePdfBuffer(
         let details = '';
 
         if (occ.type === 'TLPE') {
-          const year = (occ as any).anneeTaxation || d1.getFullYear();
-          const daysInYear = isLeapYear(new Date(year, 0, 1)) ? 366 : 365;
-          const daysActive = differenceInDays(d2, d1) + 1;
-          const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
+          const { months, ratio: prorata } = calculateMonthlyProrata(d1, d2);
           const isExempt = mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt;
           lineVal = isExempt ? 0 : (pu * (ligne.quantite1 || 0) * prorata);
-          details = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (prorata ${daysActive}j/${daysInYear}j)` : ''}${isExempt ? ' (Exonéré)' : ''}`;
+          details = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (${months} mois)` : ''}${isExempt ? ' (Exonéré)' : ''}`;
         } else {
           details = `${ligne.quantite1} ${unit}`;
           if (ligne.quantite2 > 0) {
