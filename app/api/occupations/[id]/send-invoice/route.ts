@@ -73,7 +73,9 @@ export async function POST(
     const contactNom = [primaryContact.prenom, primaryContact.nom].filter(Boolean).join(' ') || primaryContact.email;
 
     // Determine redevance and activity types based on dossier type
-    const redevanceType = occ.type === 'TLPE' ? 'Droits de Voirie/de la TLPE' : 'Droits de Voirie';
+    const redevanceType = occ.type === 'TLPE'
+      ? 'de la Taxe Locale sur la Publicité Extérieure (TLPE)'
+      : 'des droits de voirie';
     const activityType = occ.type === 'TLPE' ? 'commerce' : occ.type === 'CHANTIER' ? 'chantier' : occ.type === 'TOURNAGE' ? 'tournage' : 'occupation';
 
     const { html, subject } = await getContextualMessageData('MSG_INVOICE_DEBTOR', {
