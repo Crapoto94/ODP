@@ -143,3 +143,34 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    const body = await req.json();
+    const { annee, deleteDelib, deleteTarifs } = body;
+
+    const anneeInt = parseInt(annee);
+    if (!anneeInt) return NextResponse.json({ error: "L'année est requise" }, { status: 400 });
+
+    if (deleteDelib) {
+      await prisma.$executeRaw`
+        UPDATE TlpeConfig
+        SET deliberationPath = NULL
+        WHERE annee = ${anneeInt}
+      `;
+    }
+
+    if (deleteTarifs) {
+      await prisma.$executeRaw`
+        UPDATE TlpeConfig
+        SET tarifsPath = NULL
+        WHERE annee = ${anneeInt}
+      `;
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('TLPE PATCH Error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

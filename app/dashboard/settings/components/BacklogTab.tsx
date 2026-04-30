@@ -84,6 +84,8 @@ export default function BacklogTab() {
         axios.get('/api/releases')
       ]);
 
+      const backlogData = Array.isArray(backlogRes.data) ? backlogRes.data : (backlogRes.data.items || []);
+
       // Define priority weights
       const weights: Record<string, number> = {
         'URGENT': 4,
@@ -93,7 +95,7 @@ export default function BacklogTab() {
       };
 
       // Sort items by priority desc, then by date desc
-      const sortedItems = backlogRes.data.sort((a: any, b: any) => {
+      const sortedItems = backlogData.sort((a: any, b: any) => {
         const weightA = weights[a.priority] || 0;
         const weightB = weights[b.priority] || 0;
         if (weightA !== weightB) return weightB - weightA;
@@ -101,9 +103,11 @@ export default function BacklogTab() {
       });
 
       setItems(sortedItems);
-      setReleases(releasesRes.data);
+      setReleases(releasesRes.data || []);
     } catch (e) {
       console.error(e);
+      setItems([]);
+      setReleases([]);
     } finally {
       setLoading(false);
     }

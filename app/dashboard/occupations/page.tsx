@@ -73,6 +73,7 @@ interface Tiers {
   latitude?: number | null;
   longitude?: number | null;
   statut?: string;
+  contacts?: Array<{ role: string }>;
 }
 
 // Local STATUS_MAP removed in favor of dynamic mapping from @/lib/status-utils

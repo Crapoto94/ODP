@@ -54,3 +54,42 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    const body = await req.json();
+    const { annee, deleteDelib, deleteTournages, deleteOdp } = body;
+
+    const anneeInt = parseInt(annee);
+    if (!anneeInt) return NextResponse.json({ error: "L'année est requise" }, { status: 400 });
+
+    if (deleteDelib) {
+      await prisma.$executeRaw`
+        UPDATE OdpConfig
+        SET deliberationPath = NULL
+        WHERE annee = ${anneeInt}
+      `;
+    }
+
+    if (deleteTournages) {
+      await prisma.$executeRaw`
+        UPDATE OdpConfig
+        SET tarifsTournagesPath = NULL
+        WHERE annee = ${anneeInt}
+      `;
+    }
+
+    if (deleteOdp) {
+      await prisma.$executeRaw`
+        UPDATE OdpConfig
+        SET tarifsOdpPath = NULL
+        WHERE annee = ${anneeInt}
+      `;
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('ODP Docs PATCH Error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

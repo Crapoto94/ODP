@@ -17,9 +17,10 @@ export async function GET() {
       orderBy: { created_at: 'desc' }
     });
     return NextResponse.json(items);
-  } catch (error) {
+  } catch (error: any) {
     console.error('[GET /api/backlog]', error);
-    return NextResponse.json({ error: 'Failed to fetch backlog' }, { status: 500 });
+    const message = error?.message || 'Failed to fetch backlog';
+    return NextResponse.json({ error: message, items: [] }, { status: 200 });
   }
 }
 
