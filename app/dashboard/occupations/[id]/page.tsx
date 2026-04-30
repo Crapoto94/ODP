@@ -27,7 +27,7 @@ import LigneArticleModal from '@/components/LigneArticleModal';
 import TlpeLigneArticleModal from '@/components/TlpeLigneArticleModal';
 import AotFinalModal from './components/AotFinalModal';
 import SignatureRequestModal from './components/SignatureRequestModal';
-import TierModal from './components/TierModal';
+import TiersModal from '@/components/TiersModal';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -42,7 +42,17 @@ export default function OccupationDetailPage({ params }: Props) {
   const [latestSignatureRequest, setLatestSignatureRequest] = useState<any>(null);
   const [tlpeExonerationThreshold, setTlpeExonerationThreshold] = useState<number>(12);
   const [isTierModalOpen, setIsTierModalOpen] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<any>(null);
+  const [tierSubmitting, setTierSubmitting] = useState(false);
+  const [tierFormData, setTierFormData] = useState({
+    id: null as number | null,
+    nom: '',
+    natureJuridique: '',
+    siret: '',
+    email: '',
+    adresse: '',
+    code_sedit: '',
+    isRhRequest: false
+  });
 
   const {
     occ,
@@ -129,10 +139,67 @@ export default function OccupationDetailPage({ params }: Props) {
   const handleTierClick = async (tierId: number) => {
     try {
       const res = await axios.get(`/api/tiers/${tierId}`);
-      setSelectedTier(res.data);
+      const tier = res.data;
+      setTierFormData({
+        id: tier.id,
+        nom: tier.nom || '',
+        natureJuridique: tier.natureJuridique || '',
+        siret: tier.siret || '',
+        email: tier.email || '',
+        adresse: tier.adresse || '',
+        code_sedit: tier.code_sedit || '',
+        isRhRequest: false
+      });
       setIsTierModalOpen(true);
     } catch (err) {
       console.error('Failed to fetch tier:', err);
+    }
+  };
+
+  const handleTierSiretSearch = async () => {
+    if (!tierFormData.siret || tierFormData.siret.trim() === '') return;
+    const cleanSiret = tierFormData.siret.replace(/\s+/g, '');
+    setTierSubmitting(true);
+    try {
+      const res = await axios.get(`/api/tiers/search?siret=${cleanSiret}`);
+      const data = res.data;
+      setTierFormData({
+        ...tierFormData,
+        nom: data.nom,
+        adresse: data.adresse,
+        natureJuridique: data.natureJuridique || tierFormData.natureJuridique,
+        siret: data.siret
+      });
+    } catch (err) {
+      alert('SIRET non trouvé ou erreur INSEE');
+    } finally {
+      setTierSubmitting(false);
+    }
+  };
+
+  const handleTierSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTierSubmitting(true);
+    try {
+      const payload = { ...tierFormData };
+      await axios.put('/api/tiers', payload);
+      setIsTierModalOpen(false);
+      setTierFormData({
+        id: null,
+        nom: '',
+        natureJuridique: '',
+        siret: '',
+        email: '',
+        adresse: '',
+        code_sedit: '',
+        isRhRequest: false
+      });
+      // Refresh occupation data if needed
+      fetchOccupation();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Erreur lors de l\'enregistrement du tiers');
+    } finally {
+      setTierSubmitting(false);
     }
   };
 
@@ -309,13 +376,27 @@ export default function OccupationDetailPage({ params }: Props) {
         />
       )}
 
-      <TierModal
+      <TiersModal
         isOpen={isTierModalOpen}
         onClose={() => {
           setIsTierModalOpen(false);
-          setSelectedTier(null);
+          setTierFormData({
+            id: null,
+            nom: '',
+            natureJuridique: '',
+            siret: '',
+            email: '',
+            adresse: '',
+            code_sedit: '',
+            isRhRequest: false
+          });
         }}
-        tier={selectedTier}
+        formData={tierFormData}
+        setFormData={setTierFormData}
+        submitting={tierSubmitting}
+        handleSubmit={handleTierSubmit}
+        handleSiretSearch={handleTierSiretSearch}
+        isEditing={!!tierFormData.id}
       />
     </div>
   );
