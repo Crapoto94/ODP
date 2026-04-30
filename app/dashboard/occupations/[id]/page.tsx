@@ -27,6 +27,7 @@ import LigneArticleModal from '@/components/LigneArticleModal';
 import TlpeLigneArticleModal from '@/components/TlpeLigneArticleModal';
 import AotFinalModal from './components/AotFinalModal';
 import SignatureRequestModal from './components/SignatureRequestModal';
+import TierModal from './components/TierModal';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -40,6 +41,8 @@ export default function OccupationDetailPage({ params }: Props) {
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
   const [latestSignatureRequest, setLatestSignatureRequest] = useState<any>(null);
   const [tlpeExonerationThreshold, setTlpeExonerationThreshold] = useState<number>(12);
+  const [isTierModalOpen, setIsTierModalOpen] = useState(false);
+  const [selectedTier, setSelectedTier] = useState<any>(null);
 
   const {
     occ,
@@ -123,6 +126,16 @@ export default function OccupationDetailPage({ params }: Props) {
       });
   }, [paramId]);
 
+  const handleTierClick = async (tierId: number) => {
+    try {
+      const res = await axios.get(`/api/tiers/${tierId}`);
+      setSelectedTier(res.data);
+      setIsTierModalOpen(true);
+    } catch (err) {
+      console.error('Failed to fetch tier:', err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -166,7 +179,7 @@ export default function OccupationDetailPage({ params }: Props) {
             statusInfo={statusInfo}
             typeInfo={typeInfo}
             latestSignatureRequest={latestSignatureRequest}
-            onTierClick={(tierId) => router.push(`/dashboard/tiers?tierId=${tierId}`)}
+            onTierClick={handleTierClick}
           />
           {!(occ.type === 'CHANTIER' && (occ.statut === 'INIT' || occ.statut === 'INITIALISATION' || occ.statut === 'EN_ATTENTE')) && (
             <OccupationFinancialCard
@@ -295,6 +308,15 @@ export default function OccupationDetailPage({ params }: Props) {
           occupationId={occ.id}
         />
       )}
+
+      <TierModal
+        isOpen={isTierModalOpen}
+        onClose={() => {
+          setIsTierModalOpen(false);
+          setSelectedTier(null);
+        }}
+        tier={selectedTier}
+      />
     </div>
   );
 }
