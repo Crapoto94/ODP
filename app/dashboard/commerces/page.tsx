@@ -10,8 +10,6 @@ interface Commerce {
   nom: string;
   adresse?: string;
   email: string;
-  codePostal?: string;
-  ville?: string;
   occupationCount: number;
 }
 
@@ -111,10 +109,7 @@ export default function CommercesPage() {
                   {commerce.adresse && (
                     <div className="flex items-start gap-3 text-sm">
                       <MapPin size={16} className="text-emerald-600 mt-0.5 shrink-0" />
-                      <span className="text-slate-600">
-                        {commerce.adresse}
-                        {commerce.codePostal && ` - ${commerce.codePostal} ${commerce.ville || ''}`}
-                      </span>
+                      <span className="text-slate-600">{commerce.adresse}</span>
                     </div>
                   )}
                   {commerce.email && (

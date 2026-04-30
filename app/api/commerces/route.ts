@@ -16,21 +16,16 @@ export async function GET() {
           in: ['TLPE', 'COMMERCE']
         }
       },
-      include: {
+      select: {
+        id: true,
         tiers: {
           select: {
             id: true,
             nom: true,
             adresse: true,
             email: true,
-            codePostal: true,
-            ville: true,
           }
         }
-      },
-      select: {
-        id: true,
-        tiers: true,
       }
     });
 
@@ -48,8 +43,6 @@ export async function GET() {
             nom: occ.tiers.nom,
             adresse: occ.tiers.adresse,
             email: occ.tiers.email,
-            codePostal: occ.tiers.codePostal,
-            ville: occ.tiers.ville,
             occupationCount: 1
           });
         }
