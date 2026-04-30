@@ -1,5 +1,28 @@
 import { Plus, Package, Clock, Maximize2, Pencil, Trash2, Euro, Calendar } from 'lucide-react';
-import { format, differenceInDays, isLeapYear } from 'date-fns';
+import { format } from 'date-fns';
+
+function getDaysInMonth(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}
+
+function calculateMonthlyProrata(startDate: Date, endDate: Date): { months: number; ratio: number } {
+  let fullStartDate = new Date(startDate);
+  if (fullStartDate.getDate() !== 1) {
+    fullStartDate = new Date(fullStartDate.getFullYear(), fullStartDate.getMonth() + 1, 1);
+  }
+
+  let fullEndDate = new Date(endDate);
+  if (fullEndDate.getDate() !== getDaysInMonth(fullEndDate)) {
+    fullEndDate = new Date(fullEndDate.getFullYear(), fullEndDate.getMonth(), 0);
+  }
+
+  if (fullEndDate < fullStartDate) return { months: 0, ratio: 0 };
+
+  const months = (fullEndDate.getFullYear() - fullStartDate.getFullYear()) * 12
+                 + (fullEndDate.getMonth() - fullStartDate.getMonth()) + 1;
+
+  return { months, ratio: months / 12 };
+}
 
 interface TlpeLigne {
   id: number;
@@ -75,15 +98,13 @@ export default function TlpeArticles({
               try {
                 const d1 = new Date(ligne.dateDebut);
                 const d2 = new Date(ligne.dateFin);
-                if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return { ratio: 1, days: 365 };
-                const year = anneeTaxation || new Date().getFullYear();
-                const daysInYear = isLeapYear(new Date(year, 0, 1)) ? 366 : 365;
-                const daysActive = differenceInDays(d2, d1) + 1;
-                return { ratio: Math.min(1, Math.max(0, daysActive / daysInYear)), days: daysActive };
-              } catch (e) { return { ratio: 1, days: 365 }; }
+                if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return { ratio: 1, months: 12 };
+                const { months, ratio } = calculateMonthlyProrata(d1, d2);
+                return { ratio: Math.min(1, Math.max(0, ratio)), months };
+              } catch (e) { return { ratio: 1, months: 12 }; }
             };
 
-            const { ratio: prorata, days } = getProrata();
+            const { ratio: prorata, months } = getProrata();
             const totalAnnuel = unitPrice * surface;
             const tlpeType = ligne.article?.meta?.tlpeType;
             
@@ -146,7 +167,7 @@ export default function TlpeArticles({
                       <div className="flex items-center gap-3 p-2.5 bg-purple-50/50 rounded-xl border border-purple-100/50 w-fit">
                         <Calendar size={12} className="text-purple-400" />
                         <span className="text-[9px] font-black text-purple-600 uppercase tracking-widest leading-none">
-                          Période : {format(new Date(ligne.dateDebut), 'dd/MM/yyyy')} au {format(new Date(ligne.dateFin), 'dd/MM/yyyy')} — {days} j. ({Math.round(prorata * 100)}%)
+                          Période : {format(new Date(ligne.dateDebut), 'dd/MM/yyyy')} au {format(new Date(ligne.dateFin), 'dd/MM/yyyy')} — {months} mois{months > 1 ? ' pleins' : ' plein'}
                         </span>
                       </div>
                     )}
