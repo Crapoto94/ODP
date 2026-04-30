@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { format } from 'date-fns';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
+import { cookies } from 'next/headers';
+import { decrypt } from '@/lib/auth';
 
 // Dynamic import for jszip
 let JSZip: any = null;
@@ -27,6 +29,10 @@ const replaceVariablesInDocx = async (docxBuffer: Buffer, variables: Record<stri
     return match.replace(/<[^>]+>/g, '');
   });
 
+  // STEP 1.5: Handle conditional blocks {IF variableName|conditionalText}
+  // This allows text to appear only if a variable has a value
+  documentXml = processConditionals(documentXml, variables);
+
   // STEP 2: Replace variables in the cleaned XML
   let modifiedXml = documentXml;
   Object.entries(variables)
@@ -44,6 +50,50 @@ const replaceVariablesInDocx = async (docxBuffer: Buffer, variables: Record<stri
   return await zip.generateAsync({ type: 'nodebuffer' });
 };
 
+const processConditionals = (xml: string, variables: Record<string, string>): string => {
+  let result = xml;
+
+  // Match {IF variableName|conditionalText}
+  // The closing } is found by counting nested braces
+  const ifRegex = /\{IF\s+(\w+(?:\.\w+)*)\|/g;
+
+  const matches: Array<{ index: number; length: number; variableKey: string; conditionalText: string }> = [];
+
+  let match;
+  while ((match = ifRegex.exec(xml)) !== null) {
+    const startIndex = match.index;
+    const variableKey = match[1];
+    const textStartIndex = match.index + match[0].length;
+
+    // Find the closing } by counting nested braces
+    let braceCount = 1;
+    let endIndex = textStartIndex;
+    while (endIndex < xml.length && braceCount > 0) {
+      if (xml[endIndex] === '{') braceCount++;
+      if (xml[endIndex] === '}') braceCount--;
+      endIndex++;
+    }
+
+    const conditionalText = xml.substring(textStartIndex, endIndex - 1);
+    matches.push({
+      index: startIndex,
+      length: endIndex - startIndex,
+      variableKey,
+      conditionalText,
+    });
+  }
+
+  // Process matches in reverse order to maintain indices
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const m = matches[i];
+    const variableValue = variables[`{${m.variableKey}}`];
+    const replacement = variableValue && variableValue.trim() !== '' ? m.conditionalText : '';
+    result = result.substring(0, m.index) + replacement + result.substring(m.index + m.length);
+  }
+
+  return result;
+};
+
 const escapeXml = (str: string) => {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -58,12 +108,30 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const { id: rawId } = await params;
     const id = parseInt(rawId);
 
+    // 0. Get current user from session
+    let currentUser = { prenom: '', nom: '' };
+    try {
+      const cookieStore = await cookies();
+      const sessionToken = cookieStore.get('session')?.value;
+      if (sessionToken) {
+        const session = await decrypt(sessionToken);
+        if (session) {
+          currentUser = {
+            prenom: session.prenom || '',
+            nom: session.nom || ''
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('[AOT DOCX] Could not retrieve current user session');
+    }
+
     // 1. Fetch occupation and settings
     const [occ, settings] = await Promise.all([
       prisma.occupation.findUnique({
         where: { id },
         include: {
-          tiers: true,
+          tiers: { include: { contacts: true } },
           lignes: { include: { article: { include: { modeTaxation: true } } } }
         }
       }),
@@ -148,10 +216,25 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const agissant = (occ as any).agissantPour ? `, agissant pour le compte de ${(occ as any).agissantPour}` : '';
     const demandeurComplet = `Vu la pétition par laquelle ${nature}${tiersNom}${agissant}, demande l'autorisation d'occuper le domaine public à Ivry-sur-Seine par :`;
 
+    // Get contact principal if exists
+    const contactPrincipal = (occ.tiers as any)?.contacts?.find((c: any) => c.role === 'Contact principal');
+
+    // Get agissant pour tier if exists
+    let agissantPourTier: any = null;
+    if ((occ as any).agissantPour) {
+      const apId = parseInt((occ as any).agissantPour);
+      if (!isNaN(apId)) {
+        agissantPourTier = await prisma.tiers.findUnique({
+          where: { id: apId }
+        });
+      }
+    }
+
     const variables: Record<string, string> = {
       '{id}': occ.id.toString(),
       '{nom}': occ.nom || '',
       '{tiers.nom}': occ.tiers?.nom || '',
+      '{tiers.adresse}': (occ.tiers as any)?.adresse || '',
       '{demandeurComplet}': demandeurComplet,
       '{adresse}': occ.adresse || '',
       '{dateDebut}': occ.dateDebut ? format(new Date(occ.dateDebut), 'dd/MM/yyyy') : '',
@@ -161,6 +244,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       '{signataireRole}': settings?.signataireRole || '',
       '{signataireDelegation}': settings?.signataireDelegation || '',
       '{signataireNom}': settings?.signataireNom || '',
+      '{contact.prenom}': contactPrincipal?.prenom || '',
+      '{contact.nom}': contactPrincipal?.nom || '',
+      '{contact.email}': contactPrincipal?.email || '',
+      '{contact.telephone}': contactPrincipal?.telephone || '',
+      '{contact.titre}': contactPrincipal?.titre || '',
+      '{contact.entreprise}': contactPrincipal?.entreprise || '',
+      '{technicien.prenom}': currentUser.prenom,
+      '{technicien.nom}': currentUser.nom,
+      '{agissantPourTier.nom}': agissantPourTier?.nom || '',
+      '{agissantPourTier.adresse}': agissantPourTier?.adresse || '',
     };
 
     // Add article variables for each ligne

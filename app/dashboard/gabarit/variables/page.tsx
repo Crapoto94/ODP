@@ -87,6 +87,9 @@ export default function AotVariablesPage() {
           <li>
             <strong>3.</strong> Lors de la génération de l'AOT, toutes les variables seront remplacées automatiquement
           </li>
+          <li>
+            <strong>4.</strong> Pour du texte conditionnel, utilisez la syntaxe : <code className="bg-white px-2 py-1 rounded border border-blue-200 font-mono">{'{'}<strong>IF</strong> variableName<strong>|</strong>texte à afficher{'}'})</code>
+          </li>
         </ol>
       </div>
 
@@ -134,6 +137,10 @@ export default function AotVariablesPage() {
           { name: '{contact.email}', description: 'Email du contact principal' },
           { name: '{contact.telephone}', description: 'Téléphone du contact principal' },
           { name: '{contact.role}', description: 'Rôle du contact principal' },
+          { name: '{contact.titre}', description: 'Titre/fonction du contact principal' },
+          { name: '{contact.entreprise}', description: 'Entreprise du contact principal' },
+          { name: '{agissantPourTier.nom}', description: 'Nom du tiers agissant pour le compte de (si applicable)' },
+          { name: '{agissantPourTier.adresse}', description: 'Adresse du tiers agissant pour le compte de (si applicable)' },
         ]}
       />
 
@@ -148,6 +155,16 @@ export default function AotVariablesPage() {
             name: '{signataireDelegation}',
             description: 'Délégation ou pouvoirs du signataire',
           },
+        ]}
+      />
+
+      {/* Technicien section */}
+      <VariableSection
+        title="👨‍💼 Informations du Technicien"
+        description="Variables relatives à l'utilisateur qui génère l'AOT"
+        variables={[
+          { name: '{technicien.nom}', description: 'Nom de famille de l\'utilisateur qui génère l\'AOT' },
+          { name: '{technicien.prenom}', description: 'Prénom de l\'utilisateur qui génère l\'AOT' },
         ]}
       />
 
@@ -201,6 +218,56 @@ export default function AotVariablesPage() {
           Chaque variable avec un numéro sera remplacée par les données correspondantes, ou laissée vide s'il n'y a pas
           cet article.
         </p>
+      </div>
+
+      {/* Conditional text section */}
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-lg font-black text-slate-950">🔄 Texte Conditionnel</h3>
+          <p className="text-sm text-slate-500 mt-1">Afficher du texte seulement si une variable a une valeur</p>
+        </div>
+        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8">
+          <h4 className="font-black text-slate-950 mb-4">Syntaxe</h4>
+          <code className="block bg-white px-4 py-3 rounded border border-slate-200 font-mono text-sm mb-4">
+            {'{'}IF nomVariable<strong>|</strong>Texte à afficher si la variable existe{'}'}
+          </code>
+
+          <h4 className="font-black text-slate-950 mb-2 mt-6">Exemples</h4>
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs font-bold text-slate-500 uppercase mb-2">Exemple 1 : Texte simple</p>
+              <code className="block bg-white px-4 py-3 rounded border border-slate-200 font-mono text-sm">
+                {'{'}IF agissantPourTier.nom<strong>|</strong>Agissant pour le compte de{'}'}
+              </code>
+              <p className="text-xs text-slate-600 mt-2">
+                ✓ S'affiche seulement si un tiers est sélectionné dans "Agissant pour"
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold text-slate-500 uppercase mb-2">Exemple 2 : Avec variables imbriquées</p>
+              <code className="block bg-white px-4 py-3 rounded border border-slate-200 font-mono text-sm">
+                {'{'}IF agissantPourTier.nom<strong>|</strong>Adresse de représentation : {'{'}agissantPourTier.adresse{'}'}{'}'}
+              </code>
+              <p className="text-xs text-slate-600 mt-2">
+                ✓ Le texte ET la variable seront affichés seulement si le tiers existe
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold text-slate-500 uppercase mb-2">Exemple 3 : Avec plusieurs informations</p>
+              <code className="block bg-white px-4 py-3 rounded border border-slate-200 font-mono text-sm">
+                {'{'}IF agissantPourTier.nom<strong>|</strong>Représenté par {'{'}agissantPourTier.nom{'}'}, à {'{'}agissantPourTier.adresse{'}'}{'}'}
+              </code>
+            </div>
+          </div>
+
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-6">
+            <p className="text-xs text-green-900">
+              <strong>💡 Conseil:</strong> Utile pour les sections qui ne concernent que certains dossiers (ex: agissant pour, document signé, etc.)
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Example */}
