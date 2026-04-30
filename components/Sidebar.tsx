@@ -5,24 +5,26 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  LayoutDashboard, 
-  Users, 
-  FileText, 
-  Map as MapIcon, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Users,
+  FileText,
+  Map as MapIcon,
+  Settings,
   LogOut,
   Euro,
   ClipboardCheck,
   LayoutTemplate,
   CopyPlus,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Store
 } from 'lucide-react';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard' },
   { icon: FileText, label: 'Dossiers', href: '/dashboard/occupations' },
+  { icon: Store, label: 'Commerces', href: '/dashboard/commerces', adminOnly: true },
   { icon: Users, label: 'Gestion des Tiers', href: '/dashboard/tiers' },
   { icon: Euro, label: 'Tarifs & Articles', href: '/dashboard/tarifs' },
   { icon: LayoutTemplate, label: 'Gabarits', href: '/dashboard/gabarit' },
@@ -103,15 +105,16 @@ export default function Sidebar() {
       </div>
 
       <nav className={`flex-1 p-4 space-y-1 overflow-hidden ${isCollapsed ? 'items-center' : ''}`}>
-        {menuItems.map((item) => {
+        {menuItems.map((item: any) => {
           const isActive = pathname === item.href;
 
           // Access controls - more robust with href checks
+          if (item.adminOnly && user?.role && user.role !== 'ADMIN') return null;
           if (item.href === '/dashboard/settings' && user?.role && user.role !== 'ADMIN') return null;
           if (item.href === '/dashboard/facturation' && user?.role && (user.role !== 'ADMIN' && user.role !== 'AGENT_COMPTABLE')) return null;
 
           // Hide until user is loaded for sensitive menus to avoid flicker, or show if user is likely admin
-          if (item.href === '/dashboard/settings' && !user) return null;
+          if ((item.adminOnly || item.href === '/dashboard/settings') && !user) return null;
 
           return (
             <Link
