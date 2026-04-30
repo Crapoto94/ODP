@@ -107,14 +107,19 @@ export default function CommercesPage() {
                 className="group block bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 p-4"
               >
                 <div className="flex items-center justify-between gap-6">
-                {/* Left: Name and Address */}
-                <div className="min-w-0" style={{ flex: '0 0 25%' }}>
-                  <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate">
-                    {commerce.nom}
-                  </h3>
-                  {commerce.adresse && (
-                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{commerce.adresse}</p>
-                  )}
+                {/* Left: Avatar and Name and Address */}
+                <div className="flex items-start gap-3 min-w-0" style={{ flex: '0 0 25%' }}>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shrink-0">
+                    {commerce.nom.substring(0, 2).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate">
+                      {commerce.nom}
+                    </h3>
+                    {commerce.adresse && (
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">{commerce.adresse}</p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Middle: Dispositifs */}
