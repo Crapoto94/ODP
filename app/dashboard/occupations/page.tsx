@@ -34,7 +34,8 @@ import {
   Unlock,
   Lock,
   LockOpen,
-  AlertTriangle
+  AlertTriangle,
+  DollarSign
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -974,6 +975,21 @@ function OccupationsPageContent() {
                               <p className="font-black text-blue-900 uppercase text-xs">
                                 {tiers.find(t => t.id === Number(formData.tiersId))?.nom}
                               </p>
+                              {!formData.agissantPourId && (
+                                <div className="flex items-center justify-center w-6 h-6 bg-amber-500 text-white rounded-full shadow-lg shadow-amber-500/30" title="Entité facturée">
+                                  <DollarSign size={14} className="font-black" />
+                                </div>
+                              )}
+                              {formData.agissantPourId && !formData.isAgissantPourBillable && (
+                                <button
+                                  type="button"
+                                  onClick={() => setFormData({...formData, isAgissantPourBillable: true})}
+                                  className="flex items-center justify-center w-6 h-6 bg-slate-300 hover:bg-amber-500 text-white rounded-full shadow-lg hover:shadow-amber-500/30 transition-all cursor-pointer"
+                                  title="Cliquer pour facturer cette entité"
+                                >
+                                  <DollarSign size={14} className="font-black" />
+                                </button>
+                              )}
                               {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.etatAdministratif === 'Cessée' && (
                                 <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
                                   <AlertTriangle size={10} />
@@ -986,7 +1002,7 @@ function OccupationsPageContent() {
                             </p>
                           </div>
                         </div>
-                        <button 
+                        <button
                           type="button"
                           onClick={() => {
                             setFormData({...formData, tiersId: ''});
@@ -1074,6 +1090,21 @@ function OccupationsPageContent() {
                               <p className="font-black text-emerald-900 uppercase text-xs">
                                 {tiers.find(t => t.id === Number(formData.agissantPourId))?.nom}
                               </p>
+                              {formData.isAgissantPourBillable && (
+                                <div className="flex items-center justify-center w-6 h-6 bg-amber-500 text-white rounded-full shadow-lg shadow-amber-500/30" title="Entité facturée">
+                                  <DollarSign size={14} className="font-black" />
+                                </div>
+                              )}
+                              {!formData.isAgissantPourBillable && (
+                                <button
+                                  type="button"
+                                  onClick={() => setFormData({...formData, isAgissantPourBillable: true})}
+                                  className="flex items-center justify-center w-6 h-6 bg-slate-300 hover:bg-amber-500 text-white rounded-full shadow-lg hover:shadow-amber-500/30 transition-all cursor-pointer"
+                                  title="Cliquer pour facturer cette entité"
+                                >
+                                  <DollarSign size={14} className="font-black" />
+                                </button>
+                              )}
                               {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.etatAdministratif === 'Cessée' && (
                                 <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
                                   <AlertTriangle size={10} />
@@ -1089,7 +1120,7 @@ function OccupationsPageContent() {
                         <button
                           type="button"
                           onClick={() => {
-                            setFormData({...formData, agissantPourId: '', agissantPour: ''});
+                            setFormData({...formData, agissantPourId: '', agissantPour: '', isAgissantPourBillable: false});
                             setAgissantPourSearchQuery('');
                           }}
                           className="p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-all border border-emerald-100"
@@ -1099,23 +1130,6 @@ function OccupationsPageContent() {
                       </div>
                     )}
                   </div>
-
-                  {formData.agissantPourId && (
-                    <div className="pt-2">
-                      <label className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl cursor-pointer hover:bg-emerald-100 transition-all group">
-                        <input
-                          type="checkbox"
-                          className="w-5 h-5 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                          checked={formData.isAgissantPourBillable}
-                          onChange={e => setFormData({...formData, isAgissantPourBillable: e.target.checked})}
-                        />
-                        <div className="flex flex-col">
-                          <span className="text-xs font-black text-emerald-900 uppercase tracking-tight">Facturer l'entité sélectionnée</span>
-                          <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5">La facture sera établie au nom de cette entité</span>
-                        </div>
-                      </label>
-                    </div>
-                  )}
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Statut du dossier</label>
