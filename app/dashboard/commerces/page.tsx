@@ -5,6 +5,11 @@ import axios from 'axios';
 import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 
+interface Article {
+  id: number;
+  nom: string;
+}
+
 interface Commerce {
   id: number;
   nom: string;
@@ -14,6 +19,7 @@ interface Commerce {
   commerceYears: number[];
   tlpeCount: number;
   commerceCount: number;
+  articles: Article[];
 }
 
 export default function CommercesPage() {
@@ -104,8 +110,25 @@ export default function CommercesPage() {
                     <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors">
                       {commerce.nom}
                     </h3>
+                    {commerce.articles.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        {commerce.articles.slice(0, 5).map((article) => (
+                          <span
+                            key={article.id}
+                            className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-slate-100 text-slate-700"
+                          >
+                            {article.nom}
+                          </span>
+                        ))}
+                        {commerce.articles.length > 5 && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-slate-100 text-slate-700">
+                            +{commerce.articles.length - 5}
+                          </span>
+                        )}
+                      </div>
+                    )}
                     {commerce.adresse && (
-                      <p className="text-xs text-slate-500 mt-0.5">{commerce.adresse}</p>
+                      <p className="text-xs text-slate-500 mt-1">{commerce.adresse}</p>
                     )}
                   </div>
 

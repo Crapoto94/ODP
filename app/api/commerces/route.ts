@@ -16,24 +16,17 @@ export async function GET() {
           in: ['TLPE', 'COMMERCE']
         }
       },
-      select: {
-        id: true,
-        type: true,
-        anneeTaxation: true,
-        dateDebut: true,
-        dateFin: true,
-        tiers: {
-          select: {
-            id: true,
-            nom: true,
-            adresse: true,
-            email: true,
+      include: {
+        tiers: true,
+        lignes: {
+          include: {
+            article: true
           }
         }
       }
     });
 
-    // Deduplicate commerces and collect years by type
+    // Deduplicate commerces and collect years and articles by type
     const commercesMap = new Map<number, any>();
 
     occupations.forEach(occ => {
@@ -42,6 +35,13 @@ export async function GET() {
         const year = occ.type === 'TLPE' || occ.type === 'COMMERCE'
           ? occ.anneeTaxation
           : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : null);
+
+        // Extract unique articles from this occupation
+        const articles = occ.lignes
+          .map((l: any) => l.article)
+          .filter((a: any) => a && a.id)
+          .filter((a: any, i: number, arr: any[]) => arr.findIndex(x => x.id === a.id) === i)
+          .map((a: any) => ({ id: a.id, nom: a.designation }));
 
         if (commercesMap.has(tierId)) {
           const commerce = commercesMap.get(tierId);
@@ -56,6 +56,12 @@ export async function GET() {
             }
             commerce.commerceCount++;
           }
+          // Add articles (deduplicate)
+          articles.forEach((article: any) => {
+            if (!commerce.articles.find((a: any) => a.id === article.id)) {
+              commerce.articles.push(article);
+            }
+          });
         } else {
           const tlpeYears = occ.type === 'TLPE' ? [year] : [];
           const commerceYears = occ.type === 'COMMERCE' ? [year] : [];
@@ -67,7 +73,8 @@ export async function GET() {
             tlpeYears: tlpeYears.filter(Boolean),
             commerceYears: commerceYears.filter(Boolean),
             tlpeCount: occ.type === 'TLPE' ? 1 : 0,
-            commerceCount: occ.type === 'COMMERCE' ? 1 : 0
+            commerceCount: occ.type === 'COMMERCE' ? 1 : 0,
+            articles: articles
           });
         }
       }
