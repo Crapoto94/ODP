@@ -28,38 +28,39 @@ model Tiers {
 }
 
 model Occupation {
-  id               Int                @id @default(autoincrement())
-  nom              String?
-  tiersId          Int
-  type             String
-  statut           String
-  dateDebut        DateTime?
-  dateFin          DateTime?
-  anneeTaxation    Int?
-  adresse          String
-  latitude         Float?
-  longitude        Float?
-  description      String?
-  observations     String?
-  photos           String?
-  montantCalcule   Float              @default(0)
-  facturePath      String?
-  created_at       DateTime           @default(now())
-  updated_at       DateTime           @updatedAt
-  numeroFacture    String?
-  dossierParentId  Int?
-  isCourtMetrage   Boolean            @default(false)
-  agissantPour     String?
-  aotGabaritId     Int?
-  aotFinalPath     String?
-  aotSigned        Boolean            @default(false)
-  datePaiement     DateTime?
-  contacts         Contact[]
-  dispositifs      Dispositif[]
-  lignes           LigneOccupation[]
-  notes            Note[]
-  signatureRequests SignatureRequest[]
-  tiers            Tiers              @relation(fields: [tiersId], references: [id])
+  id                        Int                @id @default(autoincrement())
+  nom                       String?
+  tiersId                   Int
+  type                      String
+  statut                    String
+  dateDebut                 DateTime?
+  dateFin                   DateTime?
+  anneeTaxation             Int?
+  adresse                   String
+  latitude                  Float?
+  longitude                 Float?
+  description               String?
+  observations              String?
+  photos                    String?
+  montantCalcule            Float              @default(0)
+  facturePath               String?
+  created_at                DateTime           @default(now())
+  updated_at                DateTime           @updatedAt
+  numeroFacture             String?
+  dossierParentId           Int?
+  isCourtMetrage            Boolean            @default(false)
+  agissantPour              String?
+  isAgissantPourBillable    Boolean            @default(false)
+  aotGabaritId              Int?
+  aotFinalPath              String?
+  aotSigned                 Boolean            @default(false)
+  datePaiement              DateTime?
+  contacts                  Contact[]
+  dispositifs               Dispositif[]
+  lignes                    LigneOccupation[]
+  notes                     Note[]
+  signatureRequests         SignatureRequest[]
+  tiers                     Tiers              @relation(fields: [tiersId], references: [id])
 }
 
 model Contact {

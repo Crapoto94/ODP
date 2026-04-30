@@ -4607,6 +4607,7 @@ export namespace Prisma {
     dossierParentId: number | null
     isCourtMetrage: boolean | null
     agissantPour: string | null
+    isAgissantPourBillable: boolean | null
     aotGabaritId: number | null
     aotFinalPath: string | null
     aotSigned: boolean | null
@@ -4636,6 +4637,7 @@ export namespace Prisma {
     dossierParentId: number | null
     isCourtMetrage: boolean | null
     agissantPour: string | null
+    isAgissantPourBillable: boolean | null
     aotGabaritId: number | null
     aotFinalPath: string | null
     aotSigned: boolean | null
@@ -4665,6 +4667,7 @@ export namespace Prisma {
     dossierParentId: number
     isCourtMetrage: number
     agissantPour: number
+    isAgissantPourBillable: number
     aotGabaritId: number
     aotFinalPath: number
     aotSigned: number
@@ -4718,6 +4721,7 @@ export namespace Prisma {
     dossierParentId?: true
     isCourtMetrage?: true
     agissantPour?: true
+    isAgissantPourBillable?: true
     aotGabaritId?: true
     aotFinalPath?: true
     aotSigned?: true
@@ -4747,6 +4751,7 @@ export namespace Prisma {
     dossierParentId?: true
     isCourtMetrage?: true
     agissantPour?: true
+    isAgissantPourBillable?: true
     aotGabaritId?: true
     aotFinalPath?: true
     aotSigned?: true
@@ -4776,6 +4781,7 @@ export namespace Prisma {
     dossierParentId?: true
     isCourtMetrage?: true
     agissantPour?: true
+    isAgissantPourBillable?: true
     aotGabaritId?: true
     aotFinalPath?: true
     aotSigned?: true
@@ -4892,6 +4898,7 @@ export namespace Prisma {
     dossierParentId: number | null
     isCourtMetrage: boolean
     agissantPour: string | null
+    isAgissantPourBillable: boolean
     aotGabaritId: number | null
     aotFinalPath: string | null
     aotSigned: boolean
@@ -4940,6 +4947,7 @@ export namespace Prisma {
     dossierParentId?: boolean
     isCourtMetrage?: boolean
     agissantPour?: boolean
+    isAgissantPourBillable?: boolean
     aotGabaritId?: boolean
     aotFinalPath?: boolean
     aotSigned?: boolean
@@ -4976,6 +4984,7 @@ export namespace Prisma {
     dossierParentId?: boolean
     isCourtMetrage?: boolean
     agissantPour?: boolean
+    isAgissantPourBillable?: boolean
     aotGabaritId?: boolean
     aotFinalPath?: boolean
     aotSigned?: boolean
@@ -5006,6 +5015,7 @@ export namespace Prisma {
     dossierParentId?: boolean
     isCourtMetrage?: boolean
     agissantPour?: boolean
+    isAgissantPourBillable?: boolean
     aotGabaritId?: boolean
     aotFinalPath?: boolean
     aotSigned?: boolean
@@ -5058,6 +5068,7 @@ export namespace Prisma {
       dossierParentId: number | null
       isCourtMetrage: boolean
       agissantPour: string | null
+      isAgissantPourBillable: boolean
       aotGabaritId: number | null
       aotFinalPath: string | null
       aotSigned: boolean
@@ -5483,6 +5494,7 @@ export namespace Prisma {
     readonly dossierParentId: FieldRef<"Occupation", 'Int'>
     readonly isCourtMetrage: FieldRef<"Occupation", 'Boolean'>
     readonly agissantPour: FieldRef<"Occupation", 'String'>
+    readonly isAgissantPourBillable: FieldRef<"Occupation", 'Boolean'>
     readonly aotGabaritId: FieldRef<"Occupation", 'Int'>
     readonly aotFinalPath: FieldRef<"Occupation", 'String'>
     readonly aotSigned: FieldRef<"Occupation", 'Boolean'>
@@ -31456,6 +31468,7 @@ export namespace Prisma {
     dossierParentId: 'dossierParentId',
     isCourtMetrage: 'isCourtMetrage',
     agissantPour: 'agissantPour',
+    isAgissantPourBillable: 'isAgissantPourBillable',
     aotGabaritId: 'aotGabaritId',
     aotFinalPath: 'aotFinalPath',
     aotSigned: 'aotSigned',
@@ -32048,6 +32061,7 @@ export namespace Prisma {
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
     agissantPour?: StringNullableFilter<"Occupation"> | string | null
+    isAgissantPourBillable?: BoolFilter<"Occupation"> | boolean
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
@@ -32083,6 +32097,7 @@ export namespace Prisma {
     dossierParentId?: SortOrderInput | SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrderInput | SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrderInput | SortOrder
     aotFinalPath?: SortOrderInput | SortOrder
     aotSigned?: SortOrder
@@ -32121,6 +32136,7 @@ export namespace Prisma {
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
     agissantPour?: StringNullableFilter<"Occupation"> | string | null
+    isAgissantPourBillable?: BoolFilter<"Occupation"> | boolean
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
@@ -32156,6 +32172,7 @@ export namespace Prisma {
     dossierParentId?: SortOrderInput | SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrderInput | SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrderInput | SortOrder
     aotFinalPath?: SortOrderInput | SortOrder
     aotSigned?: SortOrder
@@ -32193,6 +32210,7 @@ export namespace Prisma {
     dossierParentId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
     isCourtMetrage?: BoolWithAggregatesFilter<"Occupation"> | boolean
     agissantPour?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
+    isAgissantPourBillable?: BoolWithAggregatesFilter<"Occupation"> | boolean
     aotGabaritId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     aotSigned?: BoolWithAggregatesFilter<"Occupation"> | boolean
@@ -34372,6 +34390,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -34407,6 +34426,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -34439,6 +34459,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -34474,6 +34495,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -34508,6 +34530,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -34535,6 +34558,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -34564,6 +34588,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -37115,6 +37140,7 @@ export namespace Prisma {
     dossierParentId?: SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
@@ -37155,6 +37181,7 @@ export namespace Prisma {
     dossierParentId?: SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
@@ -37184,6 +37211,7 @@ export namespace Prisma {
     dossierParentId?: SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
@@ -39869,6 +39897,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -39902,6 +39931,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -39999,6 +40029,7 @@ export namespace Prisma {
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
     agissantPour?: StringNullableFilter<"Occupation"> | string | null
+    isAgissantPourBillable?: BoolFilter<"Occupation"> | boolean
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
@@ -40468,6 +40499,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -40502,6 +40534,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -40593,6 +40626,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -40627,6 +40661,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -40658,6 +40693,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -40692,6 +40728,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -40739,6 +40776,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -40773,6 +40811,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -41370,6 +41409,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -41404,6 +41444,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -41503,6 +41544,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -41537,6 +41579,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -41568,6 +41611,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -41602,6 +41646,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -41649,6 +41694,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -41683,6 +41729,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -42106,6 +42153,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -42140,6 +42188,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -42221,6 +42270,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -42255,6 +42305,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -42342,6 +42393,7 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
@@ -42413,6 +42465,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -42446,6 +42499,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
@@ -42479,6 +42533,7 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean

@@ -130,7 +130,8 @@ function OccupationsPageContent() {
     statut: 'EN_ATTENTE',
     isCourtMetrage: false,
     agissantPour: '',
-    agissantPourId: '' // ID du tiers "Agissant pour le compte de"
+    agissantPourId: '', // ID du tiers "Agissant pour le compte de"
+    isAgissantPourBillable: false
   });
 
   const isEditing = !!formData.id;
@@ -321,7 +322,8 @@ function OccupationsPageContent() {
       statut: occ.statut,
       isCourtMetrage: !!occ.isCourtMetrage,
       agissantPour: agissantPourTiers?.nom || '',
-      agissantPourId: agissantPourId
+      agissantPourId: agissantPourId,
+      isAgissantPourBillable: (occ as any).isAgissantPourBillable || false
     });
     setAddressQuery(occ.adresse);
     setUploadedPhotos(occ.photos ? occ.photos.split(',') : []);
@@ -344,7 +346,8 @@ function OccupationsPageContent() {
       statut: 'EN_ATTENTE',
       isCourtMetrage: false,
       agissantPour: '',
-      agissantPourId: ''
+      agissantPourId: '',
+      isAgissantPourBillable: false
     });
     setAddressQuery('');
     setAgissantPourSearchQuery('');
@@ -1096,6 +1099,23 @@ function OccupationsPageContent() {
                       </div>
                     )}
                   </div>
+
+                  {formData.agissantPourId && (
+                    <div className="pt-2">
+                      <label className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl cursor-pointer hover:bg-emerald-100 transition-all group">
+                        <input
+                          type="checkbox"
+                          className="w-5 h-5 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                          checked={formData.isAgissantPourBillable}
+                          onChange={e => setFormData({...formData, isAgissantPourBillable: e.target.checked})}
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-xs font-black text-emerald-900 uppercase tracking-tight">Facturer l'entité sélectionnée</span>
+                          <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5">La facture sera établie au nom de cette entité</span>
+                        </div>
+                      </label>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Statut du dossier</label>
