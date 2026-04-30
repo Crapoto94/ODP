@@ -29,6 +29,7 @@ export async function GET() {
     const tiers = await (prisma as any).tiers.findMany({
       orderBy: { nom: 'asc' },
       include: {
+        contacts: true,
         _count: {
           select: { occupations: true }
         }

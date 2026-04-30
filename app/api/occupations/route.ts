@@ -94,6 +94,7 @@ export async function POST(req: Request) {
       description,
       photos,
       isCourtMetrage,
+      isAgissantPourBillable,
       agissantPour
     } = body;
 
@@ -124,7 +125,8 @@ export async function POST(req: Request) {
         description,
         photos,
         montantCalcule: 0,
-        agissantPour
+        agissantPour,
+        isAgissantPourBillable: !!isAgissantPourBillable
       }
     });
 

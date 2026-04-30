@@ -41,6 +41,7 @@ import { fr } from 'date-fns/locale';
 import LigneArticleModal from '@/components/LigneArticleModal';
 import FilienGenerationModal from '@/components/FilienGenerationModal';
 import OdpDocsBanner from '@/components/OdpDocsBanner';
+import ContactModal from '@/components/ContactModal';
 import { getStatusConfig, getAvailableStatuses } from '@/lib/status-utils';
 import { useLockedYear } from './hooks/useLockedYear';
 
@@ -112,6 +113,10 @@ function OccupationsPageContent() {
   const [editingLigne, setEditingLigne] = useState<any>(null);
   const [isFilienModalOpen, setIsFilienModalOpen] = useState(false);
   const [odpConfig, setOdpConfig] = useState<any>(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [contactModalFor, setContactModalFor] = useState<'demandeur' | 'agissantPour' | null>(null);
+  const [newContact, setNewContact] = useState<any>({ prenom: '', nom: '', email: '', telephone: '', titre: '', role: 'CONTACT_PRINCIPAL', pjPath: '' });
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
 
   const router = useRouter();
 
@@ -300,6 +305,51 @@ function OccupationsPageContent() {
     } catch (err) {
       alert('Erreur lors de la suppression');
     }
+  };
+
+  const handleAddContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactModalFor) return;
+
+    setIsSubmittingContact(true);
+    try {
+      const tiersIdStr = contactModalFor === 'demandeur' ? formData.tiersId : formData.agissantPourId;
+      const tiersId = Number(tiersIdStr);
+
+      if (!tiersIdStr || isNaN(tiersId)) {
+        alert('Entité non sélectionnée');
+        return;
+      }
+
+      await axios.post(`/api/tiers/${tiersId}/contacts`, {
+        nom: newContact.nom,
+        prenom: newContact.prenom,
+        email: newContact.email,
+        telephone: newContact.telephone,
+        titre: newContact.titre,
+        role: 'Contact principal'
+      });
+
+      setIsContactModalOpen(false);
+      setNewContact({ prenom: '', nom: '', email: '', telephone: '', titre: '', role: 'CONTACT_PRINCIPAL', pjPath: '' });
+      setContactModalFor(null);
+      await fetchTiers();
+      alert('Contact créé avec succès');
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Erreur lors de la création du contact');
+    } finally {
+      setIsSubmittingContact(false);
+    }
+  };
+
+  const handlePhotoContact = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Photo upload not implemented for simple contact creation
+  };
+
+  const openContactModal = (type: 'demandeur' | 'agissantPour') => {
+    setContactModalFor(type);
+    setNewContact({ prenom: '', nom: '', email: '', telephone: '', titre: '', role: 'CONTACT_PRINCIPAL', pjPath: '' });
+    setIsContactModalOpen(true);
   };
 
   const handleEdit = (occ: Occupation) => {
@@ -998,6 +1048,15 @@ function OccupationsPageContent() {
                                   </div>
                                 )}
                               </div>
+                              {(() => {
+                                const tier = tiers.find(t => t.id === Number(formData.tiersId));
+                                const contactPrincipal = (tier as any)?.contacts?.find((c: any) => c.role === 'Contact principal');
+                                return contactPrincipal ? (
+                                  <p className="text-[9px] font-bold text-blue-600 mb-1">
+                                    {contactPrincipal.prenom} {contactPrincipal.nom}
+                                  </p>
+                                ) : null;
+                              })()}
                               <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest">
                                 ID #{formData.tiersId} — {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.code_sedit || 'SANS CODE'}
                               </p>
@@ -1015,12 +1074,20 @@ function OccupationsPageContent() {
                           </button>
                         </div>
 
-                        {!formData.isAgissantPourBillable && !(tiers.find(t => t.id === Number(formData.tiersId))?.contacts?.some((c: any) => c.role === 'CONTACT_PRINCIPAL')) && (
+                        {!formData.isAgissantPourBillable && !(tiers.find(t => t.id === Number(formData.tiersId))?.contacts?.some((c: any) => c.role === 'Contact principal')) && (
                           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
                             <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
                             <div className="flex-1">
                               <p className="text-xs font-black text-amber-900 uppercase tracking-tight mb-1">Contact principal requis</p>
-                              <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Il faut créer un contact principal pour cette entité avant de la facturer</p>
+                              <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-3">Il faut créer un contact principal pour cette entité avant de la facturer</p>
+                              <button
+                                type="button"
+                                onClick={() => openContactModal('demandeur')}
+                                className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
+                              >
+                                <Plus size={14} />
+                                Ajouter un contact
+                              </button>
                             </div>
                           </div>
                         )}
@@ -1128,6 +1195,15 @@ function OccupationsPageContent() {
                                   </div>
                                 )}
                               </div>
+                              {(() => {
+                                const tier = tiers.find(t => t.id === Number(formData.agissantPourId));
+                                const contactPrincipal = (tier as any)?.contacts?.find((c: any) => c.role === 'Contact principal');
+                                return contactPrincipal ? (
+                                  <p className="text-[9px] font-bold text-emerald-600 mb-1">
+                                    {contactPrincipal.prenom} {contactPrincipal.nom}
+                                  </p>
+                                ) : null;
+                              })()}
                               <p className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">
                                 ID #{formData.agissantPourId} — {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.code_sedit || 'SANS CODE'}
                               </p>
@@ -1145,12 +1221,20 @@ function OccupationsPageContent() {
                           </button>
                         </div>
 
-                        {formData.isAgissantPourBillable && !(tiers.find(t => t.id === Number(formData.agissantPourId))?.contacts?.some((c: any) => c.role === 'CONTACT_PRINCIPAL')) && (
+                        {formData.isAgissantPourBillable && !(tiers.find(t => t.id === Number(formData.agissantPourId))?.contacts?.some((c: any) => c.role === 'Contact principal')) && (
                           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
                             <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
                             <div className="flex-1">
                               <p className="text-xs font-black text-amber-900 uppercase tracking-tight mb-1">Contact principal requis</p>
-                              <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Il faut créer un contact principal pour cette entité avant de la facturer</p>
+                              <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-3">Il faut créer un contact principal pour cette entité avant de la facturer</p>
+                              <button
+                                type="button"
+                                onClick={() => openContactModal('agissantPour')}
+                                className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
+                              >
+                                <Plus size={14} />
+                                Ajouter un contact
+                              </button>
                             </div>
                           </div>
                         )}
@@ -1302,10 +1386,25 @@ function OccupationsPageContent() {
       )}
 
       {isFilienModalOpen && (
-        <FilienGenerationModal 
+        <FilienGenerationModal
           isOpen={isFilienModalOpen}
           onClose={() => setIsFilienModalOpen(false)}
           occupations={occupations}
+        />
+      )}
+
+      {isContactModalOpen && contactModalFor && (
+        <ContactModal
+          isOpen={isContactModalOpen}
+          onClose={() => {
+            setIsContactModalOpen(false);
+            setContactModalFor(null);
+          }}
+          onAddContact={handleAddContact}
+          newContact={newContact}
+          setNewContact={setNewContact}
+          isSubmittingContact={isSubmittingContact}
+          onPhotoContact={handlePhotoContact}
         />
       )}
     </div>
