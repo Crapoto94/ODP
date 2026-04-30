@@ -36,12 +36,25 @@ export async function GET() {
           ? occ.anneeTaxation
           : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : null);
 
-        // Extract unique articles from this occupation
-        const articles = occ.lignes
-          .map((l: any) => l.article)
-          .filter((a: any) => a && a.id)
-          .filter((a: any, i: number, arr: any[]) => arr.findIndex(x => x.id === a.id) === i)
-          .map((a: any) => ({ id: a.id, nom: a.designation }));
+        // Count articles by designation
+        const articleCounts = new Map<string, number>();
+        const articleMap = new Map<string, any>();
+
+        occ.lignes.forEach((l: any) => {
+          if (l.article) {
+            const nom = l.article.designation;
+            const count = articleCounts.get(nom) || 0;
+            articleCounts.set(nom, count + 1);
+            if (!articleMap.has(nom)) {
+              articleMap.set(nom, { id: l.article.id, nom });
+            }
+          }
+        });
+
+        const articles = Array.from(articleMap.values()).map(a => ({
+          ...a,
+          count: articleCounts.get(a.nom) || 1
+        }));
 
         if (commercesMap.has(tierId)) {
           const commerce = commercesMap.get(tierId);
@@ -56,9 +69,12 @@ export async function GET() {
             }
             commerce.commerceCount++;
           }
-          // Add articles (deduplicate)
+          // Add articles (deduplicate and accumulate counts)
           articles.forEach((article: any) => {
-            if (!commerce.articles.find((a: any) => a.id === article.id)) {
+            const existing = commerce.articles.find((a: any) => a.nom === article.nom);
+            if (existing) {
+              existing.count += article.count;
+            } else {
               commerce.articles.push(article);
             }
           });

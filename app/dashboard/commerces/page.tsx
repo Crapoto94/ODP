@@ -8,6 +8,7 @@ import Link from 'next/link';
 interface Article {
   id: number;
   nom: string;
+  count: number;
 }
 
 interface Commerce {
@@ -121,7 +122,7 @@ export default function CommercesPage() {
                   {commerce.articles.length > 0 ? (
                     <div className="space-y-1">
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-slate-100 text-slate-700">
-                        {commerce.articles.length}
+                        {commerce.articles.reduce((sum, a) => sum + a.count, 0)}
                       </span>
                       <div className="space-y-1">
                         {commerce.articles.slice(0, 4).map((article) => (
@@ -129,7 +130,7 @@ export default function CommercesPage() {
                             key={article.id}
                             className="text-xs font-bold text-slate-700 truncate"
                           >
-                            {article.nom}
+                            {article.nom} {article.count > 1 && `x${article.count}`}
                           </div>
                         ))}
                         {commerce.articles.length > 4 && (
