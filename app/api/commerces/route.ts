@@ -36,7 +36,7 @@ export async function GET() {
           ? occ.anneeTaxation
           : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : null);
 
-        // Count articles by designation
+        // Count articles by designation, tracking year
         const articleCounts = new Map<string, number>();
         const articleMap = new Map<string, any>();
 
@@ -46,7 +46,7 @@ export async function GET() {
             const count = articleCounts.get(nom) || 0;
             articleCounts.set(nom, count + 1);
             if (!articleMap.has(nom)) {
-              articleMap.set(nom, { id: l.article.id, nom });
+              articleMap.set(nom, { id: l.article.id, nom, year });
             }
           }
         });
@@ -73,7 +73,14 @@ export async function GET() {
           articles.forEach((article: any) => {
             const existing = commerce.articles.find((a: any) => a.nom === article.nom);
             if (existing) {
-              existing.count = (existing.count || 0) + (article.count || 0);
+              // Only accumulate counts if from the same year, otherwise replace with newer year
+              if (existing.year === article.year) {
+                existing.count = (existing.count || 0) + (article.count || 0);
+              } else if (article.year && (!existing.year || article.year > existing.year)) {
+                // Replace with newer year version
+                existing.count = article.count || 1;
+                existing.year = article.year;
+              }
             } else {
               commerce.articles.push({ ...article, count: article.count || 1 });
             }
@@ -96,9 +103,23 @@ export async function GET() {
       }
     });
 
-    // Convert to array and sort by name
-    const commerces = Array.from(commercesMap.values())
-      .sort((a, b) => a.nom.localeCompare(b.nom));
+    // Convert to array, sort by name, and filter articles to last year only
+    const commerces = Array.from(commercesMap.values()).map(commerce => {
+      // Find the latest year across all dossiers
+      const allYears = [...commerce.tlpeYears, ...commerce.commerceYears].filter(y => y);
+      const lastYear = allYears.length > 0 ? Math.max(...allYears) : null;
+
+      // Filter articles to only those from the last year
+      const filteredArticles = lastYear
+        ? commerce.articles.filter((a: any) => a.year === lastYear)
+        : commerce.articles;
+
+      return {
+        ...commerce,
+        articles: filteredArticles,
+        lastYear
+      };
+    }).sort((a, b) => a.nom.localeCompare(b.nom));
 
     return NextResponse.json(commerces);
   } catch (err: any) {

@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     console.log('[GET Occupations] Filter:', where);
 
     // Fetch occupations with minimal includes
-    console.log('[GET Occupations] Fetching occupations with tiers only...');
+    console.log('[GET Occupations] Fetching occupations with tiers and lignes...');
     const occupations = await (prisma as any).occupation.findMany({
       where,
       include: {
@@ -28,6 +28,12 @@ export async function GET(req: Request) {
             nom: true,
             code_sedit: true,
             etatAdministratif: true
+          }
+        },
+        lignes: true,
+        _count: {
+          select: {
+            notes: true
           }
         }
       },

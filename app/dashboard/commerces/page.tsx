@@ -45,8 +45,10 @@ export default function CommercesPage() {
   };
 
   const filteredCommerces = commerces.filter(commerce =>
-    commerce.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    commerce.adresse?.toLowerCase().includes(searchTerm.toLowerCase())
+    commerce.commerceCount > 0 && (
+      commerce.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      commerce.adresse?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
   if (loading) {
@@ -104,7 +106,7 @@ export default function CommercesPage() {
             return (
               <Link
                 key={commerce.id}
-                href={`/dashboard/tiers/${commerce.id}`}
+                href={`/dashboard/commerces/${commerce.id}`}
                 className="group block bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 p-4"
               >
                 <div className="flex items-center justify-between gap-6">

@@ -18,13 +18,16 @@ import {
   CopyPlus,
   ChevronLeft,
   ChevronRight,
-  Store
+  Store,
+  ShoppingBag,
+  HardHat
 } from 'lucide-react';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard' },
-  { icon: FileText, label: 'Dossiers', href: '/dashboard/occupations' },
+  { icon: HardHat, label: 'Chantiers et tournages', href: '/dashboard/occupations' },
   { icon: Store, label: 'Commerces', href: '/dashboard/commerces', adminOnly: true },
+  { icon: ShoppingBag, label: 'T.L.P.E.', href: '/dashboard/tlpe', adminOnly: true },
   { icon: Users, label: 'Gestion des Tiers', href: '/dashboard/tiers' },
   { icon: Euro, label: 'Tarifs & Articles', href: '/dashboard/tarifs' },
   { icon: LayoutTemplate, label: 'Gabarits', href: '/dashboard/gabarit' },

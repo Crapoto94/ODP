@@ -44,6 +44,7 @@ import OdpDocsBanner from '@/components/OdpDocsBanner';
 import ContactModal from '@/components/ContactModal';
 import { getStatusConfig, getAvailableStatuses } from '@/lib/status-utils';
 import { useLockedYear } from './hooks/useLockedYear';
+import { isMixedOccupation, getOccupationTypes } from '@/lib/mixed-occupation-utils';
 
 interface Occupation {
   id: number;
@@ -125,7 +126,7 @@ function OccupationsPageContent() {
     id: null as number | null,
     nom: '',
     tiersId: '',
-    type: 'COMMERCE',
+    type: 'CHANTIER',
     anneeTaxation: new Date().getFullYear().toString(),
     dateDebut: '',
     dateFin: '',
@@ -495,11 +496,14 @@ function OccupationsPageContent() {
   };
 
   const filtered = occupations.filter(o => {
-    const matchesSearch = (o.tiers?.nom || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+    // Only show CHANTIER and TOURNAGE types
+    if (o.type !== 'CHANTIER' && o.type !== 'TOURNAGE') return false;
+
+    const matchesSearch = (o.tiers?.nom || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                           o.adresse.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'ALL' || o.type === typeFilter;
     const matchesStatus = statusFilter === 'ALL' || o.statut === statusFilter;
-    const dossierAnnee = (o.type === 'COMMERCE' || o.type === 'TLPE') ? o.anneeTaxation : (o.dateDebut ? new Date(o.dateDebut).getFullYear() : null);
+    const dossierAnnee = o.dateDebut ? new Date(o.dateDebut).getFullYear() : null;
     const matchesYear = yearFilter === 'ALL' || (dossierAnnee && dossierAnnee.toString() === yearFilter.toString());
     const matchesTiers = !tiersFilter || o.tiersId.toString() === tiersFilter;
     return matchesSearch && matchesType && matchesStatus && matchesYear && matchesTiers;
@@ -511,20 +515,25 @@ function OccupationsPageContent() {
   )).sort((a, b) => (b as number) - (a as number));
 
   const totalsByType = occupations.reduce((acc, o) => {
-    if (!acc[o.type]) {
-      acc[o.type] = { total: 0, enCours: 0, aFacturer: 0, facture: 0 };
-    }
+    // Only count CHANTIER and TOURNAGE types
+    if (o.type !== 'CHANTIER' && o.type !== 'TOURNAGE') return acc;
+
+    const type = o.type;
     const amount = o.montantCalcule || 0;
-    acc[o.type].total += amount;
-    
-    if (['EN_COURS', 'EN_ATTENTE', 'TERMINE'].includes(o.statut)) {
-      acc[o.type].enCours += amount;
-    } else if (o.statut === 'VERIFIE') {
-      acc[o.type].aFacturer += amount;
-    } else if (['FACTURE', 'PAYE', 'INVOICED'].includes(o.statut)) {
-      acc[o.type].facture += amount;
+
+    if (!acc[type]) {
+      acc[type] = { total: 0, enCours: 0, aFacturer: 0, facture: 0 };
     }
-    
+    acc[type].total += amount;
+
+    if (['EN_COURS', 'EN_ATTENTE', 'TERMINE'].includes(o.statut)) {
+      acc[type].enCours += amount;
+    } else if (o.statut === 'VERIFIE') {
+      acc[type].aFacturer += amount;
+    } else if (['FACTURE', 'PAYE', 'INVOICED'].includes(o.statut)) {
+      acc[type].facture += amount;
+    }
+
     return acc;
   }, {} as Record<string, { total: number; enCours: number; aFacturer: number; facture: number }>);
 
@@ -551,14 +560,28 @@ function OccupationsPageContent() {
               >
                 <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
               </button>
-              <button 
+              <button
                 onClick={() => { resetForm(); setIsModalOpen(true); }}
                 className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95"
               >
                 <Plus size={18} />
                 Nouveau Dossier
               </button>
-              <button 
+              <button
+                onClick={() => { resetForm(); setFormData(prev => ({ ...prev, type: 'TLPE' })); setIsModalOpen(true); }}
+                className="flex items-center gap-3 bg-purple-600 hover:bg-purple-500 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-purple-500/20 transition-all active:scale-95"
+              >
+                <Plus size={18} />
+                Nouveau TLPE
+              </button>
+              <button
+                onClick={() => { resetForm(); setFormData(prev => ({ ...prev, type: 'COMMERCE' })); setIsModalOpen(true); }}
+                className="flex items-center gap-3 bg-blue-400 hover:bg-blue-300 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-400/20 transition-all active:scale-95"
+              >
+                <Plus size={18} />
+                Nouveau Commerce
+              </button>
+              <button
                 onClick={() => setIsFilienModalOpen(true)}
                 className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95"
               >
@@ -569,12 +592,10 @@ function OccupationsPageContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
         {[
-          { type: 'COMMERCE', label: 'Commerces', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
           { type: 'CHANTIER', label: 'Chantiers', icon: MapPin, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           { type: 'TOURNAGE', label: 'Tournages', icon: Info, color: 'text-amber-600', bg: 'bg-amber-50' },
-          { type: 'TLPE', label: 'T.L.P.E.', icon: Euro, color: 'text-purple-600', bg: 'bg-purple-50' },
         ].map((cat) => (
           <button
             key={cat.type}
@@ -777,9 +798,23 @@ function OccupationsPageContent() {
                          {(occ.montantCalcule || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € <span className="text-[9px] text-slate-400">TTC</span>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black">
-                        <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest ${TYPE_MAP[occ.type]?.bg || 'bg-slate-50'} ${TYPE_MAP[occ.type]?.color || 'text-slate-600'} ${TYPE_MAP[occ.type]?.bg.replace('bg-', 'border-') || 'border-slate-100'}`}>
-                          {TYPE_MAP[occ.type]?.label || occ.type}
-                        </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest ${TYPE_MAP[occ.type]?.bg || 'bg-slate-50'} ${TYPE_MAP[occ.type]?.color || 'text-slate-600'} ${TYPE_MAP[occ.type]?.bg.replace('bg-', 'border-') || 'border-slate-100'}`}>
+                            {TYPE_MAP[occ.type]?.label || occ.type}
+                          </span>
+                          {isMixedOccupation(occ) && (
+                            <>
+                              <span className="text-slate-300 text-[10px]">+</span>
+                              <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest text-[10px] ${
+                                occ.type === 'TLPE'
+                                  ? 'bg-blue-50 text-blue-600 border-blue-100'
+                                  : 'bg-purple-50 text-purple-600 border-purple-100'
+                              }`}>
+                                {occ.type === 'TLPE' ? 'Commerce' : 'TLPE'}
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black text-slate-400">
                          <div className="flex items-center gap-2">
@@ -928,22 +963,17 @@ function OccupationsPageContent() {
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Type d'occupation</label>
-                    <select 
+                    <select
                       disabled={isEditing}
-                      required 
-                      className={`w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none transition-all font-bold appearance-none ${isEditing ? 'cursor-not-allowed opacity-60' : 'cursor-pointer focus:border-blue-500'}`} 
-                      value={formData.type} 
+                      required
+                      className={`w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none transition-all font-bold appearance-none ${isEditing ? 'cursor-not-allowed opacity-60' : 'cursor-pointer focus:border-blue-500'}`}
+                      value={formData.type}
                       onChange={e => {
-                        const newType = e.target.value;
-                        const selectedTier = tiers.find(t => t.id === Number(formData.tiersId));
-                        const newNom = (newType === 'COMMERCE' && selectedTier) ? selectedTier.nom : formData.nom;
-                        setFormData({...formData, type: newType, nom: newNom});
+                        setFormData({...formData, type: e.target.value});
                       }}
                     >
-                      <option value="COMMERCE">Terrasse / Commerce</option>
                       <option value="CHANTIER">Echafaudage / Chantier</option>
                       <option value="TOURNAGE">Tournage / Événement</option>
-                      <option value="TLPE">T.L.P.E. Dossier</option>
                     </select>
                   </div>
                   <div className="space-y-2">
