@@ -218,6 +218,14 @@ function OccupationsPageContent() {
     }
   }, [searchParams, occupations]);
 
+  useEffect(() => {
+    const type = searchParams.get('type');
+    if (type && (type === 'COMMERCE' || type === 'TLPE')) {
+      resetForm(type);
+      setIsModalOpen(true);
+    }
+  }, [searchParams]);
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -382,12 +390,12 @@ function OccupationsPageContent() {
     setIsModalOpen(true);
   };
 
-  const resetForm = () => {
+  const resetForm = (defaultType = 'CHANTIER') => {
     setFormData({
       id: null,
       nom: '',
       tiersId: '',
-      type: 'COMMERCE',
+      type: defaultType,
       anneeTaxation: lockedYear || (yearFilter !== 'ALL' ? yearFilter : new Date().getFullYear().toString()),
       dateDebut: '',
       dateFin: '',
@@ -960,6 +968,8 @@ function OccupationsPageContent() {
                     >
                       <option value="CHANTIER">Echafaudage / Chantier</option>
                       <option value="TOURNAGE">Tournage / Événement</option>
+                      <option value="TLPE">T.L.P.E.</option>
+                      <option value="COMMERCE">Commerce</option>
                     </select>
                   </div>
                   <div className="space-y-2">

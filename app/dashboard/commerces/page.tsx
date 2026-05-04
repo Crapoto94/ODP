@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle, X, Plus } from 'lucide-react';
+import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle, Plus } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface Article {
   id: number;
@@ -24,24 +25,14 @@ interface Commerce {
   articles: Article[];
 }
 
-interface Tiers {
-  id: number;
-  nom: string;
-}
-
 export default function CommercesPage() {
+  const router = useRouter();
   const [commerces, setCommerces] = useState<Commerce[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tiers, setTiers] = useState<Tiers[]>([]);
-  const [selectedTiersId, setSelectedTiersId] = useState('');
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchCommerces();
-    fetchTiers();
   }, []);
 
   const fetchCommerces = async () => {
@@ -52,35 +43,6 @@ export default function CommercesPage() {
       console.error('Failed to fetch commerces:', err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchTiers = async () => {
-    try {
-      const res = await axios.get('/api/tiers');
-      setTiers(res.data);
-    } catch (err) {
-      console.error('Failed to fetch tiers:', err);
-    }
-  };
-
-  const handleCreateCommerce = async () => {
-    if (!selectedTiersId) return;
-    try {
-      setIsSubmitting(true);
-      await axios.post('/api/occupations', {
-        tiersId: selectedTiersId,
-        type: 'COMMERCE',
-        anneeTaxation: selectedYear
-      });
-      setIsModalOpen(false);
-      setSelectedTiersId('');
-      setSelectedYear(new Date().getFullYear());
-      fetchCommerces();
-    } catch (err) {
-      console.error('Failed to create commerce:', err);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -113,7 +75,7 @@ export default function CommercesPage() {
           </div>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => router.push('/dashboard/occupations?type=COMMERCE')}
           className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-colors flex items-center gap-2"
         >
           <Plus size={18} />
@@ -250,66 +212,6 @@ export default function CommercesPage() {
               </Link>
             );
           })}
-        </div>
-      )}
-
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-black text-slate-900">Nouveau Commerce</h2>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
-              >
-                <X size={20} className="text-slate-600" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Tiers</label>
-                <select
-                  value={selectedTiersId}
-                  onChange={(e) => setSelectedTiersId(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Sélectionner un tiers...</option>
-                  {tiers.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.nom}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Année de taxation</label>
-                <input
-                  type="number"
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-3 pt-4">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleCreateCommerce}
-                disabled={!selectedTiersId || isSubmitting}
-                className="flex-1 px-4 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Création...' : 'Créer'}
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>
