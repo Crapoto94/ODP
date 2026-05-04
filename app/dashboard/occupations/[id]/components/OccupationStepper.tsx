@@ -22,6 +22,7 @@ const PROCESS_STEPS = [
   { id: 'EN_COURS', label: 'En cours', icon: PlayCircle },
   { id: 'VALIDE', label: 'Validé', icon: CheckCircle2 },
   { id: 'FACTURE', label: 'Facturé', icon: CreditCard },
+  { id: 'TITRE', label: 'Titré', icon: CheckCircle2 },
   { id: 'CLOS', label: 'Clos', icon: Lock },
 ];
 
@@ -43,7 +44,8 @@ export default function OccupationStepper({ type, currentStatus }: Props) {
     (currentStatus === 'INITIALISATION' && s.id === 'INIT') ||
     (currentStatus === 'EN_ATTENTE' && s.id === 'INIT') ||
     (currentStatus === 'VERIFIE' && s.id === 'VALIDE') ||
-    (currentStatus === 'PAYE' && s.id === 'CLOS')
+    (currentStatus === 'PAYE' && s.id === 'CLOS') ||
+    (currentStatus === 'TITRÉ' && s.id === 'TITRE')
   );
 
   const title = TITLES[type as keyof typeof TITLES] || 'Flux Dossier';
@@ -115,51 +117,6 @@ export default function OccupationStepper({ type, currentStatus }: Props) {
                 </div>
               );
             })}
-          </div>
-
-          {/* Fil d'Ariane / Breadcrumb */}
-          <div className="mt-12 pt-8 border-t border-slate-100">
-            <div className="flex items-center gap-2 flex-wrap">
-              <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mr-4">Parcours :</p>
-              {PROCESS_STEPS.map((step, idx) => {
-                const isPast = idx < currentIdx;
-                const isCurrent = idx === currentIdx;
-
-                return (
-                  <div key={step.id} className="flex items-center gap-2">
-                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
-                      isPast ? 'bg-emerald-50 border border-emerald-200' :
-                      isCurrent ? 'bg-blue-50 border border-blue-300 font-black' :
-                      'bg-slate-50 border border-slate-200'
-                    }`}>
-                      <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        isPast ? 'bg-emerald-600 text-white' :
-                        isCurrent ? 'bg-blue-600 text-white' :
-                        'bg-slate-300'
-                      }`}>
-                        {isPast ? (
-                          <CheckCircle2 size={12} />
-                        ) : isCurrent ? (
-                          <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
-                        ) : null}
-                      </div>
-                      <span className={`text-[7px] font-black uppercase tracking-widest whitespace-nowrap ${
-                        isPast ? 'text-emerald-700' :
-                        isCurrent ? 'text-blue-700' :
-                        'text-slate-500'
-                      }`}>
-                        {step.label}
-                      </span>
-                    </div>
-                    {idx < PROCESS_STEPS.length - 1 && (
-                      <div className={`w-1.5 h-1.5 rounded-full ${
-                        idx < currentIdx ? 'bg-emerald-400' : 'bg-slate-300'
-                      }`}></div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
           </div>
         </div>
       </div>

@@ -16,13 +16,19 @@ interface BillingRun {
   invoices?: any[];
 }
 
+interface TokenPayload {
+  billingRunId: string;
+  agentEmail: string;
+  agentName: string;
+  dossiersCount: number;
+}
+
 export default function SeditValidationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [billingRunId, setBillingRunId] = useState<string | null>(null);
-  const [agentEmail, setAgentEmail] = useState<string | null>(null);
-  const [agentName, setAgentName] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenData, setTokenData] = useState<TokenPayload | null>(null);
   const [billingRun, setBillingRun] = useState<BillingRun | null>(null);
   const [loading, setLoading] = useState(true);
   const [validating, setValidating] = useState(false);
@@ -30,23 +36,43 @@ export default function SeditValidationPage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const runId = searchParams.get('runId');
-    const email = searchParams.get('agentEmail');
-    const name = searchParams.get('agentName');
+    const validationToken = searchParams.get('token');
 
-    if (!runId || !email || !name) {
-      setError('Paramètres manquants');
+    if (!validationToken) {
+      setError('Token de validation manquant');
       setLoading(false);
       return;
     }
 
-    setBillingRunId(runId);
-    setAgentEmail(email);
-    setAgentName(decodeURIComponent(name));
+    setToken(validationToken);
 
-    // Fetch billing run details
-    fetchBillingRunDetails(runId);
+    // Validate token and fetch billing run details
+    validateAndFetch(validationToken);
   }, [searchParams]);
+
+  const validateAndFetch = async (validationToken: string) => {
+    try {
+      // Validate token and get data
+      const tokenRes = await axios.post('/api/billing/sedit-validation/verify-token', {
+        token: validationToken
+      });
+
+      if (!tokenRes.data.valid) {
+        setError('Token invalide ou expiré');
+        setLoading(false);
+        return;
+      }
+
+      const data: TokenPayload = tokenRes.data.data;
+      setTokenData(data);
+
+      // Fetch billing run details
+      fetchBillingRunDetails(data.billingRunId);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Erreur lors de la validation du token');
+      setLoading(false);
+    }
+  };
 
   const fetchBillingRunDetails = async (runId: string) => {
     try {
@@ -65,26 +91,14 @@ export default function SeditValidationPage() {
   };
 
   const handleValidateIntegration = async () => {
-    if (!billingRunId || !agentEmail || !agentName || !billingRun) return;
+    if (!token || !tokenData || !billingRun) return;
 
     setValidating(true);
     setError(null);
 
     try {
-      // Count dossiers by type
-      const dossiersByType: Record<string, number> = {};
-      if (billingRun.invoices) {
-        // We need to count by type, but since we don't have type in invoices, we'll estimate
-        // Based on the billing run type
-        dossiersByType[billingRun.type || 'Dossier'] = billingRun.count;
-      }
-
       const response = await axios.post('/api/billing/sedit-validation', {
-        billingRunId,
-        agentEmail,
-        agentName,
-        dossiersCount: billingRun.count,
-        dossierTypes: dossiersByType,
+        token,
       });
 
       if (response.data.success) {
@@ -121,7 +135,7 @@ export default function SeditValidationPage() {
             L'intégration SEDIT a été confirmée avec succès.
           </p>
           <p className="text-sm text-emerald-600">
-            Le train {billingRunId} passera à l'état "Titré" et une confirmation a été envoyée à {agentName}.
+            Le train {tokenData?.billingRunId} passera à l'état "Titré" et une confirmation a été envoyée à {tokenData?.agentName}.
           </p>
           <p className="text-xs text-emerald-500 mt-6">
             Redirection vers la page de facturation dans 3 secondes...
@@ -156,12 +170,12 @@ export default function SeditValidationPage() {
           </div>
         )}
 
-        {billingRun && (
+        {billingRun && tokenData && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white border border-slate-100 rounded-xl p-6">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Identifiant du train</p>
-                <p className="text-2xl font-black text-slate-900">{billingRunId}</p>
+                <p className="text-2xl font-black text-slate-900">{tokenData.billingRunId}</p>
               </div>
 
               <div className="bg-white border border-slate-100 rounded-xl p-6">
@@ -176,7 +190,7 @@ export default function SeditValidationPage() {
 
               <div className="bg-white border border-slate-100 rounded-xl p-6">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Demandé par</p>
-                <p className="text-lg font-black text-slate-900">{agentName}</p>
+                <p className="text-lg font-black text-slate-900">{tokenData.agentName}</p>
               </div>
             </div>
 

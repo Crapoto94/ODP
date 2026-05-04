@@ -120,6 +120,13 @@ function OccupationsPageContent() {
   const [newContact, setNewContact] = useState<any>({ prenom: '', nom: '', email: '', telephone: '', titre: '', role: 'CONTACT_PRINCIPAL', pjPath: '' });
   const [isSubmittingContact, setIsSubmittingContact] = useState(false);
 
+  // État pour la modal d'avertissement du tiers
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+  const [warningMessage, setWarningMessage] = useState('');
+  const [warningTierName, setWarningTierName] = useState('');
+  const [warningOccupationId, setWarningOccupationId] = useState<number | null>(null);
+  const [warningAction, setWarningAction] = useState<() => void>(() => {});
+
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -449,14 +456,30 @@ function OccupationsPageContent() {
 
   const downloadFacture = async (id: number) => {
     try {
-      // Find the occupation to get the tiers
+      let tiersId: number | null = null;
+
+      // Try to find occupation in local state first
       const occupation = occupations.find(o => o.id === id);
-      if (!occupation || !(occupation as any).tiers?.id) {
+      if (occupation && (occupation as any).tiers?.id) {
+        tiersId = (occupation as any).tiers.id;
+      } else {
+        // If not found locally, fetch from API
+        try {
+          const occRes = await axios.get(`/api/occupations/${id}`);
+          const occ = occRes.data;
+          if (occ && (occ as any).tiers?.id) {
+            tiersId = (occ as any).tiers.id;
+          }
+        } catch (err) {
+          console.error('Could not fetch occupation data:', err);
+        }
+      }
+
+      // If still no tiersId, proceed without verification
+      if (!tiersId) {
         window.location.href = `/api/facture-pdf/${id}`;
         return;
       }
-
-      const tiersId = (occupation as any).tiers.id;
 
       // Verify the tiers status
       try {
@@ -465,14 +488,24 @@ function OccupationsPageContent() {
         const tier = tiersRes.data;
 
         if (tier && (tier.etatAdministratif === 'Fermée' || tier.etatAdministratif === 'Cessée')) {
-          if (!confirm(`Le redevable "${tier.nom}" est fermé ou cessé d'activité.\n\nVoulez-vous continuer la génération de facture ?`)) {
-            return;
-          }
-        }
-      } catch (err) {
-        if (!confirm('Impossible de vérifier l\'état du redevable.\n\nVoulez-vous continuer la génération de facture ?')) {
+          setWarningTierName(tier.nom);
+          setWarningMessage(`Le redevable est fermé ou cessé d'activité. Voulez-vous continuer la génération de facture ?`);
+          setWarningOccupationId(id);
+          setWarningAction(() => () => {
+            window.location.href = `/api/facture-pdf/${id}`;
+          });
+          setIsWarningModalOpen(true);
           return;
         }
+      } catch (err) {
+        setWarningTierName('État du redevable');
+        setWarningMessage('Impossible de vérifier l\'état du redevable. Voulez-vous continuer la génération de facture ?');
+        setWarningOccupationId(id);
+        setWarningAction(() => () => {
+          window.location.href = `/api/facture-pdf/${id}`;
+        });
+        setIsWarningModalOpen(true);
+        return;
       }
 
       window.location.href = `/api/facture-pdf/${id}`;
@@ -1464,6 +1497,44 @@ function OccupationsPageContent() {
           isSubmittingContact={isSubmittingContact}
           onPhotoContact={handlePhotoContact}
         />
+      )}
+
+      {isWarningModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-in fade-in scale-in duration-300">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle className="text-amber-600" size={24} />
+              <h2 className="text-lg font-black text-slate-900">Avertissement</h2>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-sm text-slate-700 mb-2">
+                <span className="font-bold text-amber-600">{warningTierName}</span>
+              </p>
+              <p className="text-sm text-slate-600">
+                {warningMessage}
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsWarningModalOpen(false)}
+                className="flex-1 px-4 py-3 text-slate-700 border border-slate-200 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => {
+                  setIsWarningModalOpen(false);
+                  warningAction();
+                }}
+                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors"
+              >
+                Continuer
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

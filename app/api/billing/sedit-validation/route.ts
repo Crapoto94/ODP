@@ -1,22 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
+import { validateSeditValidationToken } from '@/lib/sedit-validation-token';
 import { sendApmMail } from '@/lib/apm';
 import { generateSeditIntegrationConfirmationEmail } from '@/lib/billing-email-templates';
 import { format } from 'date-fns';
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+    const { token } = await req.json();
+
+    if (!token) {
+      return NextResponse.json({ error: 'Token manquant' }, { status: 400 });
     }
 
-    const { billingRunId, agentEmail, agentName, dossiersCount, dossierTypes } = await req.json();
-
-    if (!billingRunId || !agentEmail) {
-      return NextResponse.json({ error: 'Données manquantes' }, { status: 400 });
+    // Validate the token
+    const payload = await validateSeditValidationToken(token);
+    if (!payload) {
+      return NextResponse.json({ error: 'Token invalide ou expiré' }, { status: 401 });
     }
+
+    const { billingRunId, agentEmail, agentName, dossiersCount } = payload;
 
     // 1. Get all invoices from this billing run
     const billingRun = await (prisma as any).billingRun.findFirst({
@@ -36,6 +39,10 @@ export async function POST(req: NextRequest) {
     });
 
     // 3. Send confirmation email to agent
+    // Build dossierTypes from the billing run type
+    const dossierTypes: Record<string, number> = {};
+    dossierTypes[billingRun.type || 'Dossier'] = billingRun.count;
+
     const confirmationEmail = generateSeditIntegrationConfirmationEmail({
       agentEmail,
       agentName,

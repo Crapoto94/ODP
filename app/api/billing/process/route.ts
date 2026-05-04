@@ -9,6 +9,7 @@ import { existsSync } from 'fs';
 import { generateInvoicePdfBuffer } from '@/lib/invoice-pdf-utils';
 import { sendApmMail } from '@/lib/apm';
 import { generateBillingNotificationEmail } from '@/lib/billing-email-templates';
+import { generateSeditValidationToken } from '@/lib/sedit-validation-token';
 
 export async function POST(req: NextRequest) {
   console.log('--- REFRESHED BILLING PROCESS ---');
@@ -261,8 +262,15 @@ export async function POST(req: NextRequest) {
           dossiersByType[docType] = (dossiersByType[docType] || 0) + 1;
         });
 
-        // Generate validation link (will be used on front-end)
-        const validationLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/facturation/sedit-validation?runId=${billingRunId}&agentEmail=${encodeURIComponent(agentEmail)}&agentName=${encodeURIComponent(agentName)}`;
+        // Generate SEDIT validation token
+        const validationToken = await generateSeditValidationToken(
+          billingRunId,
+          agentEmail,
+          agentName,
+          results.length
+        );
+
+        const validationLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/facturation/sedit-validation?token=${encodeURIComponent(validationToken)}`;
 
         const notificationEmail = generateBillingNotificationEmail({
           financeEmail: appSettings.financeEmail,

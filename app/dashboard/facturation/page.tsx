@@ -42,6 +42,12 @@ export default function FacturationPage() {
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<any>(null);
 
+  // État pour la modal d'avertissement du tiers
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+  const [warningMessage, setWarningMessage] = useState('');
+  const [warningDossiers, setWarningDossiers] = useState<any[]>([]);
+  const [warningAction, setWarningAction] = useState<() => void>(() => {});
+
   // Steps handling
   const nextStep = () => setStep(s => s + 1);
   const prevStep = () => setStep(s => s - 1);
@@ -163,11 +169,25 @@ export default function FacturationPage() {
       }
 
       if (problematicDossiers.length > 0) {
-        const message = `${problematicDossiers.length} dossier(s) ont un tiers inexistant ou fermé:\n\n${problematicDossiers.map(d => d.nom).join('\n')}\n\nVoulez-vous continuer malgré tout ?`;
-        if (!confirm(message)) {
-          setProcessing(false);
-          return;
-        }
+        setWarningMessage(`${problematicDossiers.length} dossier(s) ont un tiers inexistant ou fermé.`);
+        setWarningDossiers(problematicDossiers);
+        setWarningAction(() => async () => {
+          try {
+            const res = await axios.post('/api/billing/process', {
+              ids: selectedIds,
+              type: type
+            });
+            setResult(res.data);
+            setStep(4);
+          } catch (err: any) {
+            console.error('Billing error:', err);
+          } finally {
+            setProcessing(false);
+          }
+        });
+        setIsWarningModalOpen(true);
+        setProcessing(false);
+        return;
       }
 
       const res = await axios.post('/api/billing/process', {
@@ -614,6 +634,56 @@ export default function FacturationPage() {
               </div>
             </div>
           )}
+          </div>
+        </div>
+      )}
+
+      {isWarningModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-in fade-in scale-in duration-300 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertCircle className="text-amber-600" size={24} />
+              <h2 className="text-lg font-black text-slate-900">Avertissement</h2>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-sm text-slate-700 mb-4">
+                {warningMessage}
+              </p>
+              {warningDossiers.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+                  <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-2">Dossiers affectés :</p>
+                  <ul className="space-y-1">
+                    {warningDossiers.map((d) => (
+                      <li key={d.id} className="text-xs text-amber-700">
+                        • {d.nom}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <p className="text-xs text-slate-600">
+                Voulez-vous continuer malgré tout ?
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsWarningModalOpen(false)}
+                className="flex-1 px-4 py-3 text-slate-700 border border-slate-200 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => {
+                  setIsWarningModalOpen(false);
+                  warningAction();
+                }}
+                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors"
+              >
+                Continuer
+              </button>
+            </div>
           </div>
         </div>
       )}
