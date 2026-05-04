@@ -245,6 +245,15 @@ export async function POST(req: NextRequest) {
     // 8. Send notification email to finance team
     try {
       if (appSettings?.financeEmail) {
+        // Get agent email from session user
+        let agentEmail = '';
+        if (session?.id) {
+          const agentUser = await (prisma as any).$queryRaw`SELECT email FROM "User" WHERE id = ${session.id} LIMIT 1`;
+          if (agentUser && (agentUser as any[]).length > 0) {
+            agentEmail = (agentUser as any[])[0].email;
+          }
+        }
+
         // Count dossiers by type
         const dossiersByType: Record<string, number> = {};
         dossiers.forEach((d: any) => {
@@ -253,7 +262,7 @@ export async function POST(req: NextRequest) {
         });
 
         // Generate validation link (will be used on front-end)
-        const validationLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/facturation/sedit-validation?runId=${billingRunId}&agentEmail=${encodeURIComponent(session.email)}&agentName=${encodeURIComponent(agentName)}`;
+        const validationLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/facturation/sedit-validation?runId=${billingRunId}&agentEmail=${encodeURIComponent(agentEmail)}&agentName=${encodeURIComponent(agentName)}`;
 
         const notificationEmail = generateBillingNotificationEmail({
           financeEmail: appSettings.financeEmail,
