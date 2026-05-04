@@ -1028,7 +1028,7 @@ function OccupationsPageContent() {
                                      </div>
                                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                                         {(t as any).code_sedit || 'SANS CODE SEDIT'}
-                                        {t.statut === 'PROVISOIRE' && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
+                                        {t.statut === 'PROVISOIRE' && !(t as any).code_sedit && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
                                      </p>
                                   </div>
                                   <ChevronRight size={14} className="text-slate-300" />
@@ -1173,7 +1173,7 @@ function OccupationsPageContent() {
                                      </div>
                                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                                         {(t as any).code_sedit || 'SANS CODE SEDIT'}
-                                        {t.statut === 'PROVISOIRE' && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
+                                        {t.statut === 'PROVISOIRE' && !(t as any).code_sedit && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
                                      </p>
                                   </div>
                                   <ChevronRight size={14} className="text-slate-300" />
