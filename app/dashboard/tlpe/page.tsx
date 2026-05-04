@@ -6,6 +6,15 @@ import { Loader2, ShoppingBag, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+interface Ligne {
+  id: number;
+  articleId: number;
+  article?: {
+    id: number;
+    designation: string;
+  };
+}
+
 interface TLPEDossier {
   id: number;
   numero?: string;
@@ -18,6 +27,7 @@ interface TLPEDossier {
     prenom?: string;
     adresse?: string;
   };
+  lignes?: Ligne[];
 }
 
 export default function TLPEPage() {
@@ -119,7 +129,30 @@ export default function TLPEPage() {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-slate-500">{dossier.statut || '—'}</p>
+                  {dossier.lignes && dossier.lignes.length > 0 ? (
+                    <div className="space-y-1">
+                      {dossier.lignes.slice(0, 4).map((ligne, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-2"
+                        >
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 shrink-0">
+                            1
+                          </span>
+                          <span className="text-xs font-bold text-slate-700 truncate">
+                            {ligne.article?.designation || 'Article'}
+                          </span>
+                        </div>
+                      ))}
+                      {dossier.lignes.length > 4 && (
+                        <div className="text-xs font-bold text-slate-700">
+                          +{dossier.lignes.length - 4} autres
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-xs text-slate-400">—</span>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-4 shrink-0">
