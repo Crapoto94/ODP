@@ -447,8 +447,37 @@ function OccupationsPageContent() {
     } catch (err) { alert('Erreur lors de la mise à jour du statut'); }
   };
 
-  const downloadFacture = (id: number) => {
-    window.location.href = `/api/facture-pdf/${id}`;
+  const downloadFacture = async (id: number) => {
+    try {
+      // Find the occupation to get the tiers
+      const occupation = occupations.find(o => o.id === id);
+      if (!occupation || !occupation.tiersId) {
+        window.location.href = `/api/facture-pdf/${id}`;
+        return;
+      }
+
+      // Verify the tiers status
+      try {
+        await axios.post(`/api/admin/verify-tiers/${occupation.tiersId}`);
+        const tiersRes = await axios.get(`/api/tiers/${occupation.tiersId}`);
+        const tier = tiersRes.data;
+
+        if (tier && (tier.etatAdministratif === 'Fermée' || tier.etatAdministratif === 'Cessée')) {
+          if (!confirm(`Le redevable "${tier.nom}" est fermé ou cessé d'activité.\n\nVoulez-vous continuer la génération de facture ?`)) {
+            return;
+          }
+        }
+      } catch (err) {
+        if (!confirm('Impossible de vérifier l\'état du redevable.\n\nVoulez-vous continuer la génération de facture ?')) {
+          return;
+        }
+      }
+
+      window.location.href = `/api/facture-pdf/${id}`;
+    } catch (err) {
+      console.error('Error in downloadFacture:', err);
+      window.location.href = `/api/facture-pdf/${id}`;
+    }
   };
 
   const handleUnlock = async (id: number) => {

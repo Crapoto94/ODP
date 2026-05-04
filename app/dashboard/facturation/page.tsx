@@ -130,9 +130,45 @@ export default function FacturationPage() {
     .filter(d => selectedIds.includes(d.id))
     .reduce((sum, d) => sum + (d.montantCalcule || d.lignes?.reduce((s: number, l: any) => s + l.montant, 0) || 0), 0);
 
+  const verifyTiersBeforeBilling = async (dossierId: number): Promise<boolean> => {
+    try {
+      const dossier = dossiers.find(d => d.id === dossierId);
+      if (!dossier || !dossier.tiersId) return true;
+
+      const res = await axios.post(`/api/admin/verify-tiers/${dossier.tiersId}`);
+      const status = res.data.status;
+
+      if (status === 'Fermée' || status === 'Cessée') {
+        return false;
+      }
+      return true;
+    } catch (err) {
+      return false;
+    }
+  };
+
   const handleStartBilling = async () => {
     setProcessing(true);
     try {
+      const selectedDossiers = dossiers.filter(d => selectedIds.includes(d.id));
+      const problematicDossiers = [];
+
+      // Verify all tiers before generating invoices
+      for (const dossier of selectedDossiers) {
+        const isValid = await verifyTiersBeforeBilling(dossier.id);
+        if (!isValid) {
+          problematicDossiers.push(dossier);
+        }
+      }
+
+      if (problematicDossiers.length > 0) {
+        const message = `${problematicDossiers.length} dossier(s) ont un tiers inexistant ou fermé:\n\n${problematicDossiers.map(d => d.nom).join('\n')}\n\nVoulez-vous continuer malgré tout ?`;
+        if (!confirm(message)) {
+          setProcessing(false);
+          return;
+        }
+      }
+
       const res = await axios.post('/api/billing/process', {
         ids: selectedIds,
         type: type
