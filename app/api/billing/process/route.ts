@@ -7,6 +7,8 @@ import { writeFile, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { generateInvoicePdfBuffer } from '@/lib/invoice-pdf-utils';
+import { sendApmMail } from '@/lib/apm';
+import { generateBillingNotificationEmail } from '@/lib/billing-email-templates';
 
 export async function POST(req: NextRequest) {
   console.log('--- REFRESHED BILLING PROCESS ---');
@@ -212,10 +214,11 @@ export async function POST(req: NextRequest) {
     }
 
     // 7. Record run in DB for history and deletion support
+    const billingRunId = `FACT-${timestampStr}`;
     try {
       await (prisma as any).billingRun.create({
         data: {
-          id: `FACT-${timestampStr}`,
+          id: billingRunId,
           type: type || 'Facturation',
           date: now,
           count: results.length,
@@ -239,12 +242,48 @@ export async function POST(req: NextRequest) {
       // Don't fail the whole process if DB recording fails
     }
 
+    // 8. Send notification email to finance team
+    try {
+      if (appSettings?.financeEmail) {
+        // Count dossiers by type
+        const dossiersByType: Record<string, number> = {};
+        dossiers.forEach((d: any) => {
+          const docType = d.type || 'INCONNU';
+          dossiersByType[docType] = (dossiersByType[docType] || 0) + 1;
+        });
+
+        // Generate validation link (will be used on front-end)
+        const validationLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/facturation/sedit-validation?runId=${billingRunId}&agentEmail=${encodeURIComponent(session.email)}&agentName=${encodeURIComponent(agentName)}`;
+
+        const notificationEmail = generateBillingNotificationEmail({
+          financeEmail: appSettings.financeEmail,
+          billingRunId,
+          dossiersCount: results.length,
+          dossierTypes: dossiersByType,
+          agentName,
+          timestamp: format(now, 'dd/MM/yyyy HH:mm'),
+          validationLink,
+        });
+
+        await sendApmMail(
+          appSettings.financeEmail,
+          `[ODP] Nouveau train de facturation prêt - ${billingRunId}`,
+          notificationEmail,
+          'ODP Console'
+        );
+      }
+    } catch (mailErr) {
+      console.error('[BILLING NOTIFICATION EMAIL ERROR]', mailErr);
+      // Don't fail the whole process if email fails
+    }
+
     return NextResponse.json({
       success: true,
       count: results.length,
       total: grandTotal,
       recapPdf: `/Factures/${runName}/${recapFilename}`,
       filienPath: `/Factures/${runName}/${filienFilename}`,
+      billingRunId,
       invoices: results.map((r: any) => ({ id: r.id, numero: r.numero, path: r.path, tiers: r.tiers }))
     });
 

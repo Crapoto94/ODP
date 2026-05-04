@@ -1,10 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { unlink, readdir, readFile } from 'fs/promises';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const idFilter = searchParams.get('id');
   try {
     // 1. Fetch from Database
     const dbRuns = await (prisma as any).billingRun.findMany({
@@ -111,6 +113,12 @@ export async function GET() {
       return b.id.localeCompare(a.id);
     });
 
+    // 4. Filter by ID if requested
+    if (idFilter) {
+      const filtered = combined.filter(run => run.id === idFilter);
+      return NextResponse.json(filtered);
+    }
+
     return NextResponse.json(combined);
   } catch (error: any) {
     console.error('[HISTORY ERROR]', error);
@@ -118,10 +126,10 @@ export async function GET() {
   }
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE(req: NextRequest) {
   try {
-    const url = new URL(req.url);
-    const id = url.searchParams.get('id');
+    const searchParams = req.nextUrl.searchParams;
+    const id = searchParams.get('id');
     
     if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
 
