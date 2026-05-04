@@ -568,20 +568,6 @@ function OccupationsPageContent() {
                 Nouveau Dossier
               </button>
               <button
-                onClick={() => { resetForm(); setFormData(prev => ({ ...prev, type: 'TLPE' })); setIsModalOpen(true); }}
-                className="flex items-center gap-3 bg-purple-600 hover:bg-purple-500 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-purple-500/20 transition-all active:scale-95"
-              >
-                <Plus size={18} />
-                Nouveau TLPE
-              </button>
-              <button
-                onClick={() => { resetForm(); setFormData(prev => ({ ...prev, type: 'COMMERCE' })); setIsModalOpen(true); }}
-                className="flex items-center gap-3 bg-blue-400 hover:bg-blue-300 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-400/20 transition-all active:scale-95"
-              >
-                <Plus size={18} />
-                Nouveau Commerce
-              </button>
-              <button
                 onClick={() => setIsFilienModalOpen(true)}
                 className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95"
               >
