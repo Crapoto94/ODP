@@ -133,9 +133,10 @@ export default function FacturationPage() {
   const verifyTiersBeforeBilling = async (dossierId: number): Promise<boolean> => {
     try {
       const dossier = dossiers.find(d => d.id === dossierId);
-      if (!dossier || !dossier.tiersId) return true;
+      if (!dossier || !(dossier as any).tiers?.id) return true;
 
-      const res = await axios.post(`/api/admin/verify-tiers/${dossier.tiersId}`);
+      const tiersId = (dossier as any).tiers.id;
+      const res = await axios.post(`/api/admin/verify-tiers/${tiersId}`);
       const status = res.data.status;
 
       if (status === 'Fermée' || status === 'Cessée') {

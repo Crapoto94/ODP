@@ -451,15 +451,17 @@ function OccupationsPageContent() {
     try {
       // Find the occupation to get the tiers
       const occupation = occupations.find(o => o.id === id);
-      if (!occupation || !occupation.tiersId) {
+      if (!occupation || !(occupation as any).tiers?.id) {
         window.location.href = `/api/facture-pdf/${id}`;
         return;
       }
 
+      const tiersId = (occupation as any).tiers.id;
+
       // Verify the tiers status
       try {
-        await axios.post(`/api/admin/verify-tiers/${occupation.tiersId}`);
-        const tiersRes = await axios.get(`/api/tiers/${occupation.tiersId}`);
+        await axios.post(`/api/admin/verify-tiers/${tiersId}`);
+        const tiersRes = await axios.get(`/api/tiers/${tiersId}`);
         const tier = tiersRes.data;
 
         if (tier && (tier.etatAdministratif === 'Fermée' || tier.etatAdministratif === 'Cessée')) {
