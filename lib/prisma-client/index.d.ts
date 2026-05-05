@@ -3081,11 +3081,13 @@ export namespace Prisma {
   export type TiersCountOutputType = {
     contacts: number
     occupations: number
+    notes: number
   }
 
   export type TiersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     contacts?: boolean | TiersCountOutputTypeCountContactsArgs
     occupations?: boolean | TiersCountOutputTypeCountOccupationsArgs
+    notes?: boolean | TiersCountOutputTypeCountNotesArgs
   }
 
   // Custom InputTypes
@@ -3111,6 +3113,13 @@ export namespace Prisma {
    */
   export type TiersCountOutputTypeCountOccupationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OccupationWhereInput
+  }
+
+  /**
+   * TiersCountOutputType without action
+   */
+  export type TiersCountOutputTypeCountNotesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NoteWhereInput
   }
 
 
@@ -3714,6 +3723,7 @@ export namespace Prisma {
     etatAdministratif?: boolean
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
     occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
+    notes?: boolean | Tiers$notesArgs<ExtArgs>
     _count?: boolean | TiersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tiers"]>
 
@@ -3752,6 +3762,7 @@ export namespace Prisma {
   export type TiersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
     occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
+    notes?: boolean | Tiers$notesArgs<ExtArgs>
     _count?: boolean | TiersCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TiersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3761,6 +3772,7 @@ export namespace Prisma {
     objects: {
       contacts: Prisma.$ContactPayload<ExtArgs>[]
       occupations: Prisma.$OccupationPayload<ExtArgs>[]
+      notes: Prisma.$NotePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -4142,6 +4154,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     contacts<T extends Tiers$contactsArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$contactsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findMany"> | Null>
     occupations<T extends Tiers$occupationsArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$occupationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findMany"> | Null>
+    notes<T extends Tiers$notesArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$notesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4533,6 +4546,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: OccupationScalarFieldEnum | OccupationScalarFieldEnum[]
+  }
+
+  /**
+   * Tiers.notes
+   */
+  export type Tiers$notesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Note
+     */
+    select?: NoteSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NoteInclude<ExtArgs> | null
+    where?: NoteWhereInput
+    orderBy?: NoteOrderByWithRelationInput | NoteOrderByWithRelationInput[]
+    cursor?: NoteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NoteScalarFieldEnum | NoteScalarFieldEnum[]
   }
 
   /**
@@ -7049,16 +7082,19 @@ export namespace Prisma {
   export type NoteAvgAggregateOutputType = {
     id: number | null
     occupationId: number | null
+    tiersId: number | null
   }
 
   export type NoteSumAggregateOutputType = {
     id: number | null
     occupationId: number | null
+    tiersId: number | null
   }
 
   export type NoteMinAggregateOutputType = {
     id: number | null
     occupationId: number | null
+    tiersId: number | null
     content: string | null
     author: string | null
     pjPath: string | null
@@ -7075,6 +7111,7 @@ export namespace Prisma {
   export type NoteMaxAggregateOutputType = {
     id: number | null
     occupationId: number | null
+    tiersId: number | null
     content: string | null
     author: string | null
     pjPath: string | null
@@ -7091,6 +7128,7 @@ export namespace Prisma {
   export type NoteCountAggregateOutputType = {
     id: number
     occupationId: number
+    tiersId: number
     content: number
     author: number
     pjPath: number
@@ -7109,16 +7147,19 @@ export namespace Prisma {
   export type NoteAvgAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
   }
 
   export type NoteSumAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
   }
 
   export type NoteMinAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
     content?: true
     author?: true
     pjPath?: true
@@ -7135,6 +7176,7 @@ export namespace Prisma {
   export type NoteMaxAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
     content?: true
     author?: true
     pjPath?: true
@@ -7151,6 +7193,7 @@ export namespace Prisma {
   export type NoteCountAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
     content?: true
     author?: true
     pjPath?: true
@@ -7253,7 +7296,8 @@ export namespace Prisma {
 
   export type NoteGroupByOutputType = {
     id: number
-    occupationId: number
+    occupationId: number | null
+    tiersId: number | null
     content: string
     author: string | null
     pjPath: string | null
@@ -7289,6 +7333,7 @@ export namespace Prisma {
   export type NoteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     occupationId?: boolean
+    tiersId?: boolean
     content?: boolean
     author?: boolean
     pjPath?: boolean
@@ -7300,12 +7345,14 @@ export namespace Prisma {
     toEmail?: boolean
     origin?: boolean
     created_at?: boolean
-    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    occupation?: boolean | Note$occupationArgs<ExtArgs>
+    tiers?: boolean | Note$tiersArgs<ExtArgs>
   }, ExtArgs["result"]["note"]>
 
   export type NoteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     occupationId?: boolean
+    tiersId?: boolean
     content?: boolean
     author?: boolean
     pjPath?: boolean
@@ -7317,12 +7364,14 @@ export namespace Prisma {
     toEmail?: boolean
     origin?: boolean
     created_at?: boolean
-    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    occupation?: boolean | Note$occupationArgs<ExtArgs>
+    tiers?: boolean | Note$tiersArgs<ExtArgs>
   }, ExtArgs["result"]["note"]>
 
   export type NoteSelectScalar = {
     id?: boolean
     occupationId?: boolean
+    tiersId?: boolean
     content?: boolean
     author?: boolean
     pjPath?: boolean
@@ -7337,20 +7386,24 @@ export namespace Prisma {
   }
 
   export type NoteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    occupation?: boolean | Note$occupationArgs<ExtArgs>
+    tiers?: boolean | Note$tiersArgs<ExtArgs>
   }
   export type NoteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    occupation?: boolean | Note$occupationArgs<ExtArgs>
+    tiers?: boolean | Note$tiersArgs<ExtArgs>
   }
 
   export type $NotePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Note"
     objects: {
-      occupation: Prisma.$OccupationPayload<ExtArgs>
+      occupation: Prisma.$OccupationPayload<ExtArgs> | null
+      tiers: Prisma.$TiersPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      occupationId: number
+      occupationId: number | null
+      tiersId: number | null
       content: string
       author: string | null
       pjPath: string | null
@@ -7726,7 +7779,8 @@ export namespace Prisma {
    */
   export interface Prisma__NoteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    occupation<T extends OccupationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OccupationDefaultArgs<ExtArgs>>): Prisma__OccupationClient<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    occupation<T extends Note$occupationArgs<ExtArgs> = {}>(args?: Subset<T, Note$occupationArgs<ExtArgs>>): Prisma__OccupationClient<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    tiers<T extends Note$tiersArgs<ExtArgs> = {}>(args?: Subset<T, Note$tiersArgs<ExtArgs>>): Prisma__TiersClient<$Result.GetResult<Prisma.$TiersPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7758,6 +7812,7 @@ export namespace Prisma {
   interface NoteFieldRefs {
     readonly id: FieldRef<"Note", 'Int'>
     readonly occupationId: FieldRef<"Note", 'Int'>
+    readonly tiersId: FieldRef<"Note", 'Int'>
     readonly content: FieldRef<"Note", 'String'>
     readonly author: FieldRef<"Note", 'String'>
     readonly pjPath: FieldRef<"Note", 'String'>
@@ -8082,6 +8137,36 @@ export namespace Prisma {
      * Filter which Notes to delete
      */
     where?: NoteWhereInput
+  }
+
+  /**
+   * Note.occupation
+   */
+  export type Note$occupationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Occupation
+     */
+    select?: OccupationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OccupationInclude<ExtArgs> | null
+    where?: OccupationWhereInput
+  }
+
+  /**
+   * Note.tiers
+   */
+  export type Note$tiersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tiers
+     */
+    select?: TiersSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TiersInclude<ExtArgs> | null
+    where?: TiersWhereInput
   }
 
   /**
@@ -31512,6 +31597,7 @@ export namespace Prisma {
   export const NoteScalarFieldEnum: {
     id: 'id',
     occupationId: 'occupationId',
+    tiersId: 'tiersId',
     content: 'content',
     author: 'author',
     pjPath: 'pjPath',
@@ -31967,6 +32053,7 @@ export namespace Prisma {
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
+    notes?: NoteListRelationFilter
   }
 
   export type TiersOrderByWithRelationInput = {
@@ -31985,6 +32072,7 @@ export namespace Prisma {
     etatAdministratif?: SortOrderInput | SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     occupations?: OccupationOrderByRelationAggregateInput
+    notes?: NoteOrderByRelationAggregateInput
   }
 
   export type TiersWhereUniqueInput = Prisma.AtLeast<{
@@ -32006,6 +32094,7 @@ export namespace Prisma {
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
+    notes?: NoteListRelationFilter
   }, "id" | "siret" | "code_sedit">
 
   export type TiersOrderByWithAggregationInput = {
@@ -32335,7 +32424,8 @@ export namespace Prisma {
     OR?: NoteWhereInput[]
     NOT?: NoteWhereInput | NoteWhereInput[]
     id?: IntFilter<"Note"> | number
-    occupationId?: IntFilter<"Note"> | number
+    occupationId?: IntNullableFilter<"Note"> | number | null
+    tiersId?: IntNullableFilter<"Note"> | number | null
     content?: StringFilter<"Note"> | string
     author?: StringNullableFilter<"Note"> | string | null
     pjPath?: StringNullableFilter<"Note"> | string | null
@@ -32347,12 +32437,14 @@ export namespace Prisma {
     toEmail?: StringNullableFilter<"Note"> | string | null
     origin?: StringNullableFilter<"Note"> | string | null
     created_at?: DateTimeFilter<"Note"> | Date | string
-    occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
+    occupation?: XOR<OccupationNullableRelationFilter, OccupationWhereInput> | null
+    tiers?: XOR<TiersNullableRelationFilter, TiersWhereInput> | null
   }
 
   export type NoteOrderByWithRelationInput = {
     id?: SortOrder
-    occupationId?: SortOrder
+    occupationId?: SortOrderInput | SortOrder
+    tiersId?: SortOrderInput | SortOrder
     content?: SortOrder
     author?: SortOrderInput | SortOrder
     pjPath?: SortOrderInput | SortOrder
@@ -32365,6 +32457,7 @@ export namespace Prisma {
     origin?: SortOrderInput | SortOrder
     created_at?: SortOrder
     occupation?: OccupationOrderByWithRelationInput
+    tiers?: TiersOrderByWithRelationInput
   }
 
   export type NoteWhereUniqueInput = Prisma.AtLeast<{
@@ -32372,7 +32465,8 @@ export namespace Prisma {
     AND?: NoteWhereInput | NoteWhereInput[]
     OR?: NoteWhereInput[]
     NOT?: NoteWhereInput | NoteWhereInput[]
-    occupationId?: IntFilter<"Note"> | number
+    occupationId?: IntNullableFilter<"Note"> | number | null
+    tiersId?: IntNullableFilter<"Note"> | number | null
     content?: StringFilter<"Note"> | string
     author?: StringNullableFilter<"Note"> | string | null
     pjPath?: StringNullableFilter<"Note"> | string | null
@@ -32384,12 +32478,14 @@ export namespace Prisma {
     toEmail?: StringNullableFilter<"Note"> | string | null
     origin?: StringNullableFilter<"Note"> | string | null
     created_at?: DateTimeFilter<"Note"> | Date | string
-    occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
+    occupation?: XOR<OccupationNullableRelationFilter, OccupationWhereInput> | null
+    tiers?: XOR<TiersNullableRelationFilter, TiersWhereInput> | null
   }, "id">
 
   export type NoteOrderByWithAggregationInput = {
     id?: SortOrder
-    occupationId?: SortOrder
+    occupationId?: SortOrderInput | SortOrder
+    tiersId?: SortOrderInput | SortOrder
     content?: SortOrder
     author?: SortOrderInput | SortOrder
     pjPath?: SortOrderInput | SortOrder
@@ -32413,7 +32509,8 @@ export namespace Prisma {
     OR?: NoteScalarWhereWithAggregatesInput[]
     NOT?: NoteScalarWhereWithAggregatesInput | NoteScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Note"> | number
-    occupationId?: IntWithAggregatesFilter<"Note"> | number
+    occupationId?: IntNullableWithAggregatesFilter<"Note"> | number | null
+    tiersId?: IntNullableWithAggregatesFilter<"Note"> | number | null
     content?: StringWithAggregatesFilter<"Note"> | string
     author?: StringNullableWithAggregatesFilter<"Note"> | string | null
     pjPath?: StringNullableWithAggregatesFilter<"Note"> | string | null
@@ -34285,6 +34382,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     occupations?: OccupationCreateNestedManyWithoutTiersInput
+    notes?: NoteCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateInput = {
@@ -34303,6 +34401,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
+    notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUpdateInput = {
@@ -34320,6 +34419,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
+    notes?: NoteUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateInput = {
@@ -34338,6 +34438,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersCreateManyInput = {
@@ -34732,12 +34833,14 @@ export namespace Prisma {
     toEmail?: string | null
     origin?: string | null
     created_at?: Date | string
-    occupation: OccupationCreateNestedOneWithoutNotesInput
+    occupation?: OccupationCreateNestedOneWithoutNotesInput
+    tiers?: TiersCreateNestedOneWithoutNotesInput
   }
 
   export type NoteUncheckedCreateInput = {
     id?: number
-    occupationId: number
+    occupationId?: number | null
+    tiersId?: number | null
     content: string
     author?: string | null
     pjPath?: string | null
@@ -34763,12 +34866,14 @@ export namespace Prisma {
     toEmail?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    occupation?: OccupationUpdateOneRequiredWithoutNotesNestedInput
+    occupation?: OccupationUpdateOneWithoutNotesNestedInput
+    tiers?: TiersUpdateOneWithoutNotesNestedInput
   }
 
   export type NoteUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    occupationId?: IntFieldUpdateOperationsInput | number
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    tiersId?: NullableIntFieldUpdateOperationsInput | number | null
     content?: StringFieldUpdateOperationsInput | string
     author?: NullableStringFieldUpdateOperationsInput | string | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34784,7 +34889,8 @@ export namespace Prisma {
 
   export type NoteCreateManyInput = {
     id?: number
-    occupationId: number
+    occupationId?: number | null
+    tiersId?: number | null
     content: string
     author?: string | null
     pjPath?: string | null
@@ -34814,7 +34920,8 @@ export namespace Prisma {
 
   export type NoteUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    occupationId?: IntFieldUpdateOperationsInput | number
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    tiersId?: NullableIntFieldUpdateOperationsInput | number | null
     content?: StringFieldUpdateOperationsInput | string
     author?: NullableStringFieldUpdateOperationsInput | string | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36906,6 +37013,12 @@ export namespace Prisma {
     none?: OccupationWhereInput
   }
 
+  export type NoteListRelationFilter = {
+    every?: NoteWhereInput
+    some?: NoteWhereInput
+    none?: NoteWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -36916,6 +37029,10 @@ export namespace Prisma {
   }
 
   export type OccupationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NoteOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -37109,12 +37226,6 @@ export namespace Prisma {
     none?: LigneOccupationWhereInput
   }
 
-  export type NoteListRelationFilter = {
-    every?: NoteWhereInput
-    some?: NoteWhereInput
-    none?: NoteWhereInput
-  }
-
   export type SignatureRequestListRelationFilter = {
     every?: SignatureRequestWhereInput
     some?: SignatureRequestWhereInput
@@ -37131,10 +37242,6 @@ export namespace Prisma {
   }
 
   export type LigneOccupationOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type NoteOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -37378,14 +37485,10 @@ export namespace Prisma {
     tiersId?: SortOrder
   }
 
-  export type OccupationRelationFilter = {
-    is?: OccupationWhereInput
-    isNot?: OccupationWhereInput
-  }
-
   export type NoteCountOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
     content?: SortOrder
     author?: SortOrder
     pjPath?: SortOrder
@@ -37402,11 +37505,13 @@ export namespace Prisma {
   export type NoteAvgOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
   }
 
   export type NoteMaxOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
     content?: SortOrder
     author?: SortOrder
     pjPath?: SortOrder
@@ -37423,6 +37528,7 @@ export namespace Prisma {
   export type NoteMinOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
     content?: SortOrder
     author?: SortOrder
     pjPath?: SortOrder
@@ -37439,6 +37545,7 @@ export namespace Prisma {
   export type NoteSumOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
   }
 
   export type O365MessageCountOrderByAggregateInput = {
@@ -37952,6 +38059,11 @@ export namespace Prisma {
   export type ArticleRelationFilter = {
     is?: ArticleWhereInput
     isNot?: ArticleWhereInput
+  }
+
+  export type OccupationRelationFilter = {
+    is?: OccupationWhereInput
+    isNot?: OccupationWhereInput
   }
 
   export type LigneOccupationCountOrderByAggregateInput = {
@@ -38668,6 +38780,13 @@ export namespace Prisma {
     connect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
   }
 
+  export type NoteCreateNestedManyWithoutTiersInput = {
+    create?: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput> | NoteCreateWithoutTiersInput[] | NoteUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: NoteCreateOrConnectWithoutTiersInput | NoteCreateOrConnectWithoutTiersInput[]
+    createMany?: NoteCreateManyTiersInputEnvelope
+    connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+  }
+
   export type ContactUncheckedCreateNestedManyWithoutTiersInput = {
     create?: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput> | ContactCreateWithoutTiersInput[] | ContactUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutTiersInput | ContactCreateOrConnectWithoutTiersInput[]
@@ -38680,6 +38799,13 @@ export namespace Prisma {
     connectOrCreate?: OccupationCreateOrConnectWithoutTiersInput | OccupationCreateOrConnectWithoutTiersInput[]
     createMany?: OccupationCreateManyTiersInputEnvelope
     connect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
+  }
+
+  export type NoteUncheckedCreateNestedManyWithoutTiersInput = {
+    create?: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput> | NoteCreateWithoutTiersInput[] | NoteUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: NoteCreateOrConnectWithoutTiersInput | NoteCreateOrConnectWithoutTiersInput[]
+    createMany?: NoteCreateManyTiersInputEnvelope
+    connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -38730,6 +38856,20 @@ export namespace Prisma {
     deleteMany?: OccupationScalarWhereInput | OccupationScalarWhereInput[]
   }
 
+  export type NoteUpdateManyWithoutTiersNestedInput = {
+    create?: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput> | NoteCreateWithoutTiersInput[] | NoteUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: NoteCreateOrConnectWithoutTiersInput | NoteCreateOrConnectWithoutTiersInput[]
+    upsert?: NoteUpsertWithWhereUniqueWithoutTiersInput | NoteUpsertWithWhereUniqueWithoutTiersInput[]
+    createMany?: NoteCreateManyTiersInputEnvelope
+    set?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    disconnect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    delete?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    update?: NoteUpdateWithWhereUniqueWithoutTiersInput | NoteUpdateWithWhereUniqueWithoutTiersInput[]
+    updateMany?: NoteUpdateManyWithWhereWithoutTiersInput | NoteUpdateManyWithWhereWithoutTiersInput[]
+    deleteMany?: NoteScalarWhereInput | NoteScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -38764,6 +38904,20 @@ export namespace Prisma {
     update?: OccupationUpdateWithWhereUniqueWithoutTiersInput | OccupationUpdateWithWhereUniqueWithoutTiersInput[]
     updateMany?: OccupationUpdateManyWithWhereWithoutTiersInput | OccupationUpdateManyWithWhereWithoutTiersInput[]
     deleteMany?: OccupationScalarWhereInput | OccupationScalarWhereInput[]
+  }
+
+  export type NoteUncheckedUpdateManyWithoutTiersNestedInput = {
+    create?: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput> | NoteCreateWithoutTiersInput[] | NoteUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: NoteCreateOrConnectWithoutTiersInput | NoteCreateOrConnectWithoutTiersInput[]
+    upsert?: NoteUpsertWithWhereUniqueWithoutTiersInput | NoteUpsertWithWhereUniqueWithoutTiersInput[]
+    createMany?: NoteCreateManyTiersInputEnvelope
+    set?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    disconnect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    delete?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    update?: NoteUpdateWithWhereUniqueWithoutTiersInput | NoteUpdateWithWhereUniqueWithoutTiersInput[]
+    updateMany?: NoteUpdateManyWithWhereWithoutTiersInput | NoteUpdateManyWithWhereWithoutTiersInput[]
+    deleteMany?: NoteScalarWhereInput | NoteScalarWhereInput[]
   }
 
   export type ContactCreateNestedManyWithoutOccupationInput = {
@@ -39052,12 +39206,30 @@ export namespace Prisma {
     connect?: OccupationWhereUniqueInput
   }
 
-  export type OccupationUpdateOneRequiredWithoutNotesNestedInput = {
+  export type TiersCreateNestedOneWithoutNotesInput = {
+    create?: XOR<TiersCreateWithoutNotesInput, TiersUncheckedCreateWithoutNotesInput>
+    connectOrCreate?: TiersCreateOrConnectWithoutNotesInput
+    connect?: TiersWhereUniqueInput
+  }
+
+  export type OccupationUpdateOneWithoutNotesNestedInput = {
     create?: XOR<OccupationCreateWithoutNotesInput, OccupationUncheckedCreateWithoutNotesInput>
     connectOrCreate?: OccupationCreateOrConnectWithoutNotesInput
     upsert?: OccupationUpsertWithoutNotesInput
+    disconnect?: OccupationWhereInput | boolean
+    delete?: OccupationWhereInput | boolean
     connect?: OccupationWhereUniqueInput
     update?: XOR<XOR<OccupationUpdateToOneWithWhereWithoutNotesInput, OccupationUpdateWithoutNotesInput>, OccupationUncheckedUpdateWithoutNotesInput>
+  }
+
+  export type TiersUpdateOneWithoutNotesNestedInput = {
+    create?: XOR<TiersCreateWithoutNotesInput, TiersUncheckedCreateWithoutNotesInput>
+    connectOrCreate?: TiersCreateOrConnectWithoutNotesInput
+    upsert?: TiersUpsertWithoutNotesInput
+    disconnect?: TiersWhereInput | boolean
+    delete?: TiersWhereInput | boolean
+    connect?: TiersWhereUniqueInput
+    update?: XOR<XOR<TiersUpdateToOneWithWhereWithoutNotesInput, TiersUpdateWithoutNotesInput>, TiersUncheckedUpdateWithoutNotesInput>
   }
 
   export type ArticleCreateNestedManyWithoutCategorieInput = {
@@ -39980,6 +40152,46 @@ export namespace Prisma {
     data: OccupationCreateManyTiersInput | OccupationCreateManyTiersInput[]
   }
 
+  export type NoteCreateWithoutTiersInput = {
+    content: string
+    author?: string | null
+    pjPath?: string | null
+    pjName?: string | null
+    pjThumb?: string | null
+    isEmail?: boolean
+    externalId?: string | null
+    fromEmail?: string | null
+    toEmail?: string | null
+    origin?: string | null
+    created_at?: Date | string
+    occupation?: OccupationCreateNestedOneWithoutNotesInput
+  }
+
+  export type NoteUncheckedCreateWithoutTiersInput = {
+    id?: number
+    occupationId?: number | null
+    content: string
+    author?: string | null
+    pjPath?: string | null
+    pjName?: string | null
+    pjThumb?: string | null
+    isEmail?: boolean
+    externalId?: string | null
+    fromEmail?: string | null
+    toEmail?: string | null
+    origin?: string | null
+    created_at?: Date | string
+  }
+
+  export type NoteCreateOrConnectWithoutTiersInput = {
+    where: NoteWhereUniqueInput
+    create: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput>
+  }
+
+  export type NoteCreateManyTiersInputEnvelope = {
+    data: NoteCreateManyTiersInput | NoteCreateManyTiersInput[]
+  }
+
   export type ContactUpsertWithWhereUniqueWithoutTiersInput = {
     where: ContactWhereUniqueInput
     update: XOR<ContactUpdateWithoutTiersInput, ContactUncheckedUpdateWithoutTiersInput>
@@ -40062,6 +40274,42 @@ export namespace Prisma {
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+  }
+
+  export type NoteUpsertWithWhereUniqueWithoutTiersInput = {
+    where: NoteWhereUniqueInput
+    update: XOR<NoteUpdateWithoutTiersInput, NoteUncheckedUpdateWithoutTiersInput>
+    create: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput>
+  }
+
+  export type NoteUpdateWithWhereUniqueWithoutTiersInput = {
+    where: NoteWhereUniqueInput
+    data: XOR<NoteUpdateWithoutTiersInput, NoteUncheckedUpdateWithoutTiersInput>
+  }
+
+  export type NoteUpdateManyWithWhereWithoutTiersInput = {
+    where: NoteScalarWhereInput
+    data: XOR<NoteUpdateManyMutationInput, NoteUncheckedUpdateManyWithoutTiersInput>
+  }
+
+  export type NoteScalarWhereInput = {
+    AND?: NoteScalarWhereInput | NoteScalarWhereInput[]
+    OR?: NoteScalarWhereInput[]
+    NOT?: NoteScalarWhereInput | NoteScalarWhereInput[]
+    id?: IntFilter<"Note"> | number
+    occupationId?: IntNullableFilter<"Note"> | number | null
+    tiersId?: IntNullableFilter<"Note"> | number | null
+    content?: StringFilter<"Note"> | string
+    author?: StringNullableFilter<"Note"> | string | null
+    pjPath?: StringNullableFilter<"Note"> | string | null
+    pjName?: StringNullableFilter<"Note"> | string | null
+    pjThumb?: StringNullableFilter<"Note"> | string | null
+    isEmail?: BoolFilter<"Note"> | boolean
+    externalId?: StringNullableFilter<"Note"> | string | null
+    fromEmail?: StringNullableFilter<"Note"> | string | null
+    toEmail?: StringNullableFilter<"Note"> | string | null
+    origin?: StringNullableFilter<"Note"> | string | null
+    created_at?: DateTimeFilter<"Note"> | Date | string
   }
 
   export type ContactCreateWithoutOccupationInput = {
@@ -40180,10 +40428,12 @@ export namespace Prisma {
     toEmail?: string | null
     origin?: string | null
     created_at?: Date | string
+    tiers?: TiersCreateNestedOneWithoutNotesInput
   }
 
   export type NoteUncheckedCreateWithoutOccupationInput = {
     id?: number
+    tiersId?: number | null
     content: string
     author?: string | null
     pjPath?: string | null
@@ -40254,6 +40504,7 @@ export namespace Prisma {
     natureJuridique?: string | null
     etatAdministratif?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
+    notes?: NoteCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateWithoutOccupationsInput = {
@@ -40271,6 +40522,7 @@ export namespace Prisma {
     natureJuridique?: string | null
     etatAdministratif?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
+    notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersCreateOrConnectWithoutOccupationsInput = {
@@ -40375,25 +40627,6 @@ export namespace Prisma {
     data: XOR<NoteUpdateManyMutationInput, NoteUncheckedUpdateManyWithoutOccupationInput>
   }
 
-  export type NoteScalarWhereInput = {
-    AND?: NoteScalarWhereInput | NoteScalarWhereInput[]
-    OR?: NoteScalarWhereInput[]
-    NOT?: NoteScalarWhereInput | NoteScalarWhereInput[]
-    id?: IntFilter<"Note"> | number
-    occupationId?: IntFilter<"Note"> | number
-    content?: StringFilter<"Note"> | string
-    author?: StringNullableFilter<"Note"> | string | null
-    pjPath?: StringNullableFilter<"Note"> | string | null
-    pjName?: StringNullableFilter<"Note"> | string | null
-    pjThumb?: StringNullableFilter<"Note"> | string | null
-    isEmail?: BoolFilter<"Note"> | boolean
-    externalId?: StringNullableFilter<"Note"> | string | null
-    fromEmail?: StringNullableFilter<"Note"> | string | null
-    toEmail?: StringNullableFilter<"Note"> | string | null
-    origin?: StringNullableFilter<"Note"> | string | null
-    created_at?: DateTimeFilter<"Note"> | Date | string
-  }
-
   export type SignatureRequestUpsertWithWhereUniqueWithoutOccupationInput = {
     where: SignatureRequestWhereUniqueInput
     update: XOR<SignatureRequestUpdateWithoutOccupationInput, SignatureRequestUncheckedUpdateWithoutOccupationInput>
@@ -40452,6 +40685,7 @@ export namespace Prisma {
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
+    notes?: NoteUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateWithoutOccupationsInput = {
@@ -40469,6 +40703,7 @@ export namespace Prisma {
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersCreateWithoutContactsInput = {
@@ -40485,6 +40720,7 @@ export namespace Prisma {
     natureJuridique?: string | null
     etatAdministratif?: string | null
     occupations?: OccupationCreateNestedManyWithoutTiersInput
+    notes?: NoteCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateWithoutContactsInput = {
@@ -40502,6 +40738,7 @@ export namespace Prisma {
     natureJuridique?: string | null
     etatAdministratif?: string | null
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
+    notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersCreateOrConnectWithoutContactsInput = {
@@ -40606,6 +40843,7 @@ export namespace Prisma {
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
+    notes?: NoteUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateWithoutContactsInput = {
@@ -40623,6 +40861,7 @@ export namespace Prisma {
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type OccupationUpsertWithoutContactsInput = {
@@ -40775,6 +41014,46 @@ export namespace Prisma {
     create: XOR<OccupationCreateWithoutNotesInput, OccupationUncheckedCreateWithoutNotesInput>
   }
 
+  export type TiersCreateWithoutNotesInput = {
+    nom: string
+    siret?: string | null
+    email?: string | null
+    adresse?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    code_sedit?: string | null
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    natureJuridique?: string | null
+    etatAdministratif?: string | null
+    contacts?: ContactCreateNestedManyWithoutTiersInput
+    occupations?: OccupationCreateNestedManyWithoutTiersInput
+  }
+
+  export type TiersUncheckedCreateWithoutNotesInput = {
+    id?: number
+    nom: string
+    siret?: string | null
+    email?: string | null
+    adresse?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    code_sedit?: string | null
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    natureJuridique?: string | null
+    etatAdministratif?: string | null
+    contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
+    occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
+  }
+
+  export type TiersCreateOrConnectWithoutNotesInput = {
+    where: TiersWhereUniqueInput
+    create: XOR<TiersCreateWithoutNotesInput, TiersUncheckedCreateWithoutNotesInput>
+  }
+
   export type OccupationUpsertWithoutNotesInput = {
     update: XOR<OccupationUpdateWithoutNotesInput, OccupationUncheckedUpdateWithoutNotesInput>
     create: XOR<OccupationCreateWithoutNotesInput, OccupationUncheckedCreateWithoutNotesInput>
@@ -40851,6 +41130,52 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
+  }
+
+  export type TiersUpsertWithoutNotesInput = {
+    update: XOR<TiersUpdateWithoutNotesInput, TiersUncheckedUpdateWithoutNotesInput>
+    create: XOR<TiersCreateWithoutNotesInput, TiersUncheckedCreateWithoutNotesInput>
+    where?: TiersWhereInput
+  }
+
+  export type TiersUpdateToOneWithWhereWithoutNotesInput = {
+    where?: TiersWhereInput
+    data: XOR<TiersUpdateWithoutNotesInput, TiersUncheckedUpdateWithoutNotesInput>
+  }
+
+  export type TiersUpdateWithoutNotesInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    siret?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    code_sedit?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
+    etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    contacts?: ContactUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUpdateManyWithoutTiersNestedInput
+  }
+
+  export type TiersUncheckedUpdateWithoutNotesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    siret?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    code_sedit?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
+    etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type ArticleCreateWithoutCategorieInput = {
@@ -42433,6 +42758,22 @@ export namespace Prisma {
     datePaiement?: Date | string | null
   }
 
+  export type NoteCreateManyTiersInput = {
+    id?: number
+    occupationId?: number | null
+    content: string
+    author?: string | null
+    pjPath?: string | null
+    pjName?: string | null
+    pjThumb?: string | null
+    isEmail?: boolean
+    externalId?: string | null
+    fromEmail?: string | null
+    toEmail?: string | null
+    origin?: string | null
+    created_at?: Date | string
+  }
+
   export type ContactUpdateWithoutTiersInput = {
     nom?: NullableStringFieldUpdateOperationsInput | string | null
     prenom?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42573,6 +42914,53 @@ export namespace Prisma {
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type NoteUpdateWithoutTiersInput = {
+    content?: StringFieldUpdateOperationsInput | string
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    pjPath?: NullableStringFieldUpdateOperationsInput | string | null
+    pjName?: NullableStringFieldUpdateOperationsInput | string | null
+    pjThumb?: NullableStringFieldUpdateOperationsInput | string | null
+    isEmail?: BoolFieldUpdateOperationsInput | boolean
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    fromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    toEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    occupation?: OccupationUpdateOneWithoutNotesNestedInput
+  }
+
+  export type NoteUncheckedUpdateWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    content?: StringFieldUpdateOperationsInput | string
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    pjPath?: NullableStringFieldUpdateOperationsInput | string | null
+    pjName?: NullableStringFieldUpdateOperationsInput | string | null
+    pjThumb?: NullableStringFieldUpdateOperationsInput | string | null
+    isEmail?: BoolFieldUpdateOperationsInput | boolean
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    fromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    toEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NoteUncheckedUpdateManyWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    content?: StringFieldUpdateOperationsInput | string
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    pjPath?: NullableStringFieldUpdateOperationsInput | string | null
+    pjName?: NullableStringFieldUpdateOperationsInput | string | null
+    pjThumb?: NullableStringFieldUpdateOperationsInput | string | null
+    isEmail?: BoolFieldUpdateOperationsInput | boolean
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    fromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    toEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ContactCreateManyOccupationInput = {
     id?: number
     nom?: string | null
@@ -42615,6 +43003,7 @@ export namespace Prisma {
 
   export type NoteCreateManyOccupationInput = {
     id?: number
+    tiersId?: number | null
     content: string
     author?: string | null
     pjPath?: string | null
@@ -42770,10 +43159,12 @@ export namespace Prisma {
     toEmail?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tiers?: TiersUpdateOneWithoutNotesNestedInput
   }
 
   export type NoteUncheckedUpdateWithoutOccupationInput = {
     id?: IntFieldUpdateOperationsInput | number
+    tiersId?: NullableIntFieldUpdateOperationsInput | number | null
     content?: StringFieldUpdateOperationsInput | string
     author?: NullableStringFieldUpdateOperationsInput | string | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -42789,6 +43180,7 @@ export namespace Prisma {
 
   export type NoteUncheckedUpdateManyWithoutOccupationInput = {
     id?: IntFieldUpdateOperationsInput | number
+    tiersId?: NullableIntFieldUpdateOperationsInput | number | null
     content?: StringFieldUpdateOperationsInput | string
     author?: NullableStringFieldUpdateOperationsInput | string | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null

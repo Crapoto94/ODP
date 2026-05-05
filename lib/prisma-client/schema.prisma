@@ -25,6 +25,7 @@ model Tiers {
   etatAdministratif String?
   contacts          Contact[]
   occupations       Occupation[]
+  notes             Note[]
 }
 
 model Occupation {
@@ -82,20 +83,25 @@ model Contact {
 }
 
 model Note {
-  id           Int        @id @default(autoincrement())
-  occupationId Int
+  id           Int         @id @default(autoincrement())
+  occupationId Int?
+  tiersId      Int?
   content      String
   author       String?
   pjPath       String?
   pjName       String?
   pjThumb      String?
-  isEmail      Boolean    @default(false)
+  isEmail      Boolean     @default(false)
   externalId   String?
   fromEmail    String?
   toEmail      String?
-  origin       String?    @default("desktop")
-  created_at   DateTime   @default(now())
-  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  origin       String?     @default("desktop")
+  created_at   DateTime    @default(now())
+  occupation   Occupation? @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  tiers        Tiers?      @relation(fields: [tiersId], references: [id], onDelete: Cascade)
+
+  @@index([occupationId])
+  @@index([tiersId])
 }
 
 model O365Message {
