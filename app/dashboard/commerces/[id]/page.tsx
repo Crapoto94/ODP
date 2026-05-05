@@ -7,6 +7,7 @@ import axios from 'axios';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import CommerceDispositivesManager from '@/components/CommerceDispositivesManager';
 import LigneArticleModal from '@/components/LigneArticleModal';
+import CommerceStepper from './components/CommerceStepper';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -92,6 +93,20 @@ export default function CommerceDetailPage({ params }: Props) {
       });
     });
     return total;
+  };
+
+  const getStepperState = () => {
+    const totalAmount = occupations.reduce((sum: number, occ: any) => {
+      const occAmount = (occ.lignes || []).filter((l: any) => !l.deletedAt).reduce((s: number, l: any) => s + (l.quantite1 * (l.article?.montant || 0)), 0);
+      return sum + occAmount;
+    }, 0);
+
+    const hasArticles = occupations.length > 0 && occupations.some((occ: any) => (occ.lignes?.length || 0) > 0);
+    const isValidated = occupations.length > 0 && occupations.some((occ: any) => occ.statut === 'VALIDÉ');
+    const isFactured = occupations.some((occ: any) => occ.statut === 'FACTURÉ');
+    const isPaid = occupations.some((occ: any) => occ.datePaiement || occ.statut === 'PAYÉ');
+
+    return { totalAmount, hasArticles, isValidated, isFactured, isPaid };
   };
 
   useEffect(() => {
@@ -189,6 +204,12 @@ export default function CommerceDetailPage({ params }: Props) {
           </div>
         )}
       </div>
+
+      {/* Commerce Workflow Stepper */}
+      {(() => {
+        const state = getStepperState();
+        return <CommerceStepper {...state} />;
+      })()}
 
       {/* Year Selector */}
       {years.length > 0 && (
