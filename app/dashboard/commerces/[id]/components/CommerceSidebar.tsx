@@ -1,6 +1,7 @@
 import React from 'react';
-import { FileArchive, Pencil, Clock, Plus } from 'lucide-react';
+import { Pencil, Clock, Plus } from 'lucide-react';
 import CommerceContacts from './CommerceContacts';
+import DocumentList from './DocumentList';
 
 interface Contact {
   id: number;
@@ -52,49 +53,12 @@ export default function CommerceSidebar({
   return (
     <aside className="lg:col-span-4 space-y-12">
       {/* Documents Section */}
-      <section className="space-y-8">
-        <div className="flex items-center justify-between">
-          <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
-            <FileArchive size={16} className="text-blue-500" /> Documents & PJ ({documents.length})
-          </h3>
-          {!isFactured && onAddDocument && (
-            <button
-              onClick={onAddDocument}
-              className="w-8 h-8 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center"
-              title="Ajouter un document"
-            >
-              <Plus size={14} />
-            </button>
-          )}
-        </div>
-        {documents.length > 0 ? (
-          <div className="space-y-2">
-            {documents.map((doc) => (
-              <a
-                key={doc.id}
-                href={doc.path}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-white rounded-lg border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all group"
-              >
-                <FileArchive size={16} className="text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-slate-900 truncate">{doc.description}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5">{doc.name}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">
-                    {new Date(doc.created_at).toLocaleDateString('fr-FR')}
-                  </p>
-                </div>
-              </a>
-            ))}
-          </div>
-        ) : (
-          <div className="py-12 bg-white rounded-2xl border border-dashed border-slate-200 text-center flex flex-col items-center">
-            <FileArchive size={20} className="text-slate-300 mb-4" />
-            <p className="text-[10px] font-black text-slate-300 uppercase italic tracking-widest">Aucun document joint</p>
-          </div>
-        )}
-      </section>
+      <DocumentList
+        documents={documents}
+        docCount={documents.length}
+        isFactured={isFactured}
+        onOpenUploadModal={onAddDocument}
+      />
 
       {/* Contacts Section */}
       <CommerceContacts
