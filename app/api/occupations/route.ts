@@ -30,7 +30,11 @@ export async function GET(req: Request) {
             etatAdministratif: true
           }
         },
-        lignes: true,
+        lignes: {
+          include: {
+            article: true
+          }
+        },
         _count: {
           select: {
             notes: true

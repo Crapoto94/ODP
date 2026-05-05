@@ -16611,6 +16611,7 @@ export namespace Prisma {
     montant: number | null
     created_at: Date | null
     updated_at: Date | null
+    deletedAt: Date | null
     photos: string | null
     note: string | null
   }
@@ -16628,6 +16629,7 @@ export namespace Prisma {
     montant: number | null
     created_at: Date | null
     updated_at: Date | null
+    deletedAt: Date | null
     photos: string | null
     note: string | null
   }
@@ -16645,6 +16647,7 @@ export namespace Prisma {
     montant: number
     created_at: number
     updated_at: number
+    deletedAt: number
     photos: number
     note: number
     _all: number
@@ -16682,6 +16685,7 @@ export namespace Prisma {
     montant?: true
     created_at?: true
     updated_at?: true
+    deletedAt?: true
     photos?: true
     note?: true
   }
@@ -16699,6 +16703,7 @@ export namespace Prisma {
     montant?: true
     created_at?: true
     updated_at?: true
+    deletedAt?: true
     photos?: true
     note?: true
   }
@@ -16716,6 +16721,7 @@ export namespace Prisma {
     montant?: true
     created_at?: true
     updated_at?: true
+    deletedAt?: true
     photos?: true
     note?: true
     _all?: true
@@ -16820,6 +16826,7 @@ export namespace Prisma {
     montant: number
     created_at: Date
     updated_at: Date
+    deletedAt: Date | null
     photos: string | null
     note: string | null
     _count: LigneOccupationCountAggregateOutputType | null
@@ -16856,6 +16863,7 @@ export namespace Prisma {
     montant?: boolean
     created_at?: boolean
     updated_at?: boolean
+    deletedAt?: boolean
     photos?: boolean
     note?: boolean
     article?: boolean | ArticleDefaultArgs<ExtArgs>
@@ -16875,6 +16883,7 @@ export namespace Prisma {
     montant?: boolean
     created_at?: boolean
     updated_at?: boolean
+    deletedAt?: boolean
     photos?: boolean
     note?: boolean
     article?: boolean | ArticleDefaultArgs<ExtArgs>
@@ -16894,6 +16903,7 @@ export namespace Prisma {
     montant?: boolean
     created_at?: boolean
     updated_at?: boolean
+    deletedAt?: boolean
     photos?: boolean
     note?: boolean
   }
@@ -16926,6 +16936,7 @@ export namespace Prisma {
       montant: number
       created_at: Date
       updated_at: Date
+      deletedAt: Date | null
       photos: string | null
       note: string | null
     }, ExtArgs["result"]["ligneOccupation"]>
@@ -17335,6 +17346,7 @@ export namespace Prisma {
     readonly montant: FieldRef<"LigneOccupation", 'Float'>
     readonly created_at: FieldRef<"LigneOccupation", 'DateTime'>
     readonly updated_at: FieldRef<"LigneOccupation", 'DateTime'>
+    readonly deletedAt: FieldRef<"LigneOccupation", 'DateTime'>
     readonly photos: FieldRef<"LigneOccupation", 'String'>
     readonly note: FieldRef<"LigneOccupation", 'String'>
   }
@@ -31679,6 +31691,7 @@ export namespace Prisma {
     montant: 'montant',
     created_at: 'created_at',
     updated_at: 'updated_at',
+    deletedAt: 'deletedAt',
     photos: 'photos',
     note: 'note'
   };
@@ -33197,6 +33210,7 @@ export namespace Prisma {
     montant?: FloatFilter<"LigneOccupation"> | number
     created_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeFilter<"LigneOccupation"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"LigneOccupation"> | Date | string | null
     photos?: StringNullableFilter<"LigneOccupation"> | string | null
     note?: StringNullableFilter<"LigneOccupation"> | string | null
     article?: XOR<ArticleRelationFilter, ArticleWhereInput>
@@ -33216,6 +33230,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     photos?: SortOrderInput | SortOrder
     note?: SortOrderInput | SortOrder
     article?: ArticleOrderByWithRelationInput
@@ -33238,6 +33253,7 @@ export namespace Prisma {
     montant?: FloatFilter<"LigneOccupation"> | number
     created_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeFilter<"LigneOccupation"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"LigneOccupation"> | Date | string | null
     photos?: StringNullableFilter<"LigneOccupation"> | string | null
     note?: StringNullableFilter<"LigneOccupation"> | string | null
     article?: XOR<ArticleRelationFilter, ArticleWhereInput>
@@ -33257,6 +33273,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     photos?: SortOrderInput | SortOrder
     note?: SortOrderInput | SortOrder
     _count?: LigneOccupationCountOrderByAggregateInput
@@ -33282,6 +33299,7 @@ export namespace Prisma {
     montant?: FloatWithAggregatesFilter<"LigneOccupation"> | number
     created_at?: DateTimeWithAggregatesFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"LigneOccupation"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"LigneOccupation"> | Date | string | null
     photos?: StringNullableWithAggregatesFilter<"LigneOccupation"> | string | null
     note?: StringNullableWithAggregatesFilter<"LigneOccupation"> | string | null
   }
@@ -35697,6 +35715,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
     article: ArticleCreateNestedOneWithoutLignesInput
@@ -35716,6 +35735,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -35730,6 +35750,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
     article?: ArticleUpdateOneRequiredWithoutLignesNestedInput
@@ -35749,6 +35770,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -35766,6 +35788,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -35780,6 +35803,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -35797,6 +35821,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -37942,6 +37967,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrder
     photos?: SortOrder
     note?: SortOrder
   }
@@ -37968,6 +37994,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrder
     photos?: SortOrder
     note?: SortOrder
   }
@@ -37985,6 +38012,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrder
     photos?: SortOrder
     note?: SortOrder
   }
@@ -40108,6 +40136,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
     article: ArticleCreateNestedOneWithoutLignesInput
@@ -40125,6 +40154,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -40324,6 +40354,7 @@ export namespace Prisma {
     montant?: FloatFilter<"LigneOccupation"> | number
     created_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeFilter<"LigneOccupation"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"LigneOccupation"> | Date | string | null
     photos?: StringNullableFilter<"LigneOccupation"> | string | null
     note?: StringNullableFilter<"LigneOccupation"> | string | null
   }
@@ -41127,6 +41158,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
     occupation: OccupationCreateNestedOneWithoutLignesInput
@@ -41144,6 +41176,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -42575,6 +42608,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -42684,6 +42718,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
     article?: ArticleUpdateOneRequiredWithoutLignesNestedInput
@@ -42701,6 +42736,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -42717,6 +42753,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -43008,6 +43045,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -43022,6 +43060,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
     occupation?: OccupationUpdateOneRequiredWithoutLignesNestedInput
@@ -43039,6 +43078,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -43055,6 +43095,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }

@@ -246,6 +246,7 @@ model LigneOccupation {
   montant            Float      @default(0)
   created_at         DateTime   @default(now())
   updated_at         DateTime   @updatedAt
+  deletedAt          DateTime?
   photos             String?
   note               String?
   article            Article    @relation(fields: [articleId], references: [id])

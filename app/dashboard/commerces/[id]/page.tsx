@@ -58,6 +58,32 @@ export default function CommerceDetailPage({ params }: Props) {
     }
   };
 
+  const getDispositivesTimeline = () => {
+    const timelineByYear: Record<number, any[]> = {};
+
+    years.forEach(year => {
+      timelineByYear[year] = [];
+      occupations.forEach((occ: any) => {
+        (occ.lignes || []).forEach((ligne: any) => {
+          const status = ligne.deletedAt ? 'supprimé' :
+            (ligne.dateDebut && new Date(ligne.dateDebut).getFullYear() === year) ? 'nouveau' :
+            'reconduit';
+
+          timelineByYear[year].push({
+            id: ligne.id,
+            designation: ligne.article?.designation,
+            status,
+            date: ligne.deletedAt || ligne.dateDebut,
+            quantite: ligne.quantite1,
+            montant: ligne.quantite1 * (ligne.article?.montant || 0)
+          });
+        });
+      });
+    });
+
+    return timelineByYear;
+  };
+
   useEffect(() => {
     if (paramId) {
       fetchCommerceDetails();
@@ -167,84 +193,68 @@ export default function CommerceDetailPage({ params }: Props) {
         </div>
       )}
 
-      {/* Timeline Horizontal */}
-      {timeline.length > 0 && (
-        <div className="space-y-4">
+      {/* Timeline par année */}
+      {years.length > 0 && (
+        <div className="space-y-6">
           <div>
             <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
               <Clock size={20} />
-              Historique des modifications
+              Chronologie des dispositifs par année
             </h2>
-            <p className="text-sm font-medium text-slate-500 mt-1">
-              {timeline.length} événement{timeline.length !== 1 ? 's' : ''}
-            </p>
+            <div className="text-sm text-slate-500 mt-2 flex gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span>Nouveau</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <span>Supprimé</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-slate-500 rounded-full"></div>
+                <span>Reconduit</span>
+              </div>
+            </div>
           </div>
 
-          <div className="overflow-x-auto pb-4">
-            <div className="flex gap-4 min-w-min relative pt-8 pb-4">
-              {/* Timeline line */}
-              <div className="absolute top-4 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-blue-500 to-slate-300 rounded-full"></div>
+          <div className="space-y-4">
+            {Array.from(getDispositivesTimeline()).reverse().map(([year, items]) => (
+              <div key={year} className="bg-white rounded-xl border border-slate-100 p-6">
+                <h3 className="text-lg font-black text-slate-900 mb-4">Année {year}</h3>
+                {items.length === 0 ? (
+                  <p className="text-slate-500 text-sm">Aucun dispositif pour cette année</p>
+                ) : (
+                  <div className="space-y-2">
+                    {items.map((item: any) => {
+                      const statusColors = {
+                        nouveau: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', dot: 'bg-green-500' },
+                        supprimé: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', dot: 'bg-red-500' },
+                        reconduit: { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', dot: 'bg-slate-500' }
+                      };
+                      const colors = statusColors[item.status as keyof typeof statusColors];
 
-              {/* Timeline events */}
-              {timeline.map((event, idx) => {
-                const eventDate = new Date(event.date);
-                const formattedDate = eventDate.toLocaleDateString('fr-FR', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                });
-
-                const typeColors = {
-                  TLPE: { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-300', dot: 'border-purple-500 bg-purple-500' },
-                  COMMERCE: { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-300', dot: 'border-blue-500 bg-blue-500' }
-                };
-                const colors = typeColors[event.type as keyof typeof typeColors] || typeColors.TLPE;
-
-                return (
-                  <div key={event.id} className="flex flex-col items-center flex-shrink-0 w-72">
-                    {/* Timeline dot */}
-                    <div className={`absolute top-0 w-10 h-10 rounded-full border-4 ${colors.dot} shadow-lg flex items-center justify-center z-10`}>
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-
-                    {/* Event card */}
-                    <div className={`rounded-xl border-2 ${colors.border} ${colors.bg} p-4 space-y-3 mt-12 h-full`}>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-bold ${colors.text}`}>
-                            {event.type}
-                          </span>
-                          <span className="text-xs font-bold text-slate-600 bg-white/60 px-2 py-1 rounded">'{String(event.year).slice(-2)}</span>
+                      return (
+                        <div key={item.id} className={`rounded-lg border-2 ${colors.border} ${colors.bg} p-3 flex items-center justify-between`}>
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className={`w-3 h-3 rounded-full ${colors.dot}`}></div>
+                            <div className="flex-1">
+                              <p className="font-bold text-slate-900">{item.designation}</p>
+                              <div className="flex gap-4 mt-1 text-xs">
+                                <span className="text-slate-600">Quantité: <span className="font-bold">{item.quantite}</span></span>
+                                <span className="text-slate-600">Montant: <span className="font-bold">{item.montant.toFixed(2)} €</span></span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className={`px-3 py-1 rounded-full text-xs font-bold ${colors.text} bg-white`}>
+                            {item.status === 'nouveau' ? 'Ajouté' : item.status === 'supprimé' ? 'Supprimé' : 'Reconduit'}
+                          </div>
                         </div>
-                        <p className="text-xs text-slate-500">{formattedDate}</p>
-                      </div>
-
-                      {/* Dispositifs count */}
-                      {event.dispositifs.length > 0 && (
-                        <div className="bg-white/60 rounded-lg p-3 space-y-2">
-                          <p className="text-xs font-bold text-slate-700">
-                            {event.dispositifs.length} dispositif{event.dispositifs.length !== 1 ? '' : ''}
-                          </p>
-                          <ul className="space-y-1">
-                            {event.dispositifs.slice(0, 2).map((disp: any, dispIdx: number) => (
-                              <li key={dispIdx} className="flex items-start gap-2 text-xs text-slate-700">
-                                <Plus size={12} className="text-green-600 shrink-0 mt-0.5" />
-                                <span className="font-medium line-clamp-2">{disp.nom}</span>
-                              </li>
-                            ))}
-                            {event.dispositifs.length > 2 && (
-                              <li className="text-xs font-bold text-slate-600 pt-1">
-                                +{event.dispositifs.length - 2}
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -411,11 +421,15 @@ export default function CommerceDetailPage({ params }: Props) {
                         <Pencil size={18} />
                       </button>
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           if (confirm('Supprimer ce dispositif?')) {
-                            axios.delete(`/api/occupations/${occ.id}/lignes/${ligne.id}`).then(() => {
-                              fetchOccupations(selectedYear);
-                            });
+                            try {
+                              await axios.delete(`/api/occupations/${occ.id}/lignes/${ligne.id}`);
+                              await fetchOccupations(selectedYear);
+                            } catch (err) {
+                              console.error('Erreur suppression:', err);
+                              alert('Erreur lors de la suppression du dispositif');
+                            }
                           }
                         }}
                         className="p-2 hover:bg-rose-50 rounded-lg text-rose-600 transition-colors"
