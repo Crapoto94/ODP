@@ -1,11 +1,12 @@
 "use client";
 
 import React, { use, useState, useEffect } from 'react';
-import { Loader2, Store, MapPin, Mail, Phone, ArrowLeft, Calendar, Clock, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Store, MapPin, Mail, Phone, ArrowLeft, Calendar, Clock, Plus, Trash2, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import axios from 'axios';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import CommerceDispositivesManager from '@/components/CommerceDispositivesManager';
+import LigneArticleModal from '@/components/LigneArticleModal';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -20,6 +21,9 @@ export default function CommerceDetailPage({ params }: Props) {
   const [chartData, setChartData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [occupations, setOccupations] = useState<any[]>([]);
+  const [editingLigne, setEditingLigne] = useState<any>(null);
+  const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
 
   const fetchCommerceDetails = async () => {
     try {
@@ -39,11 +43,32 @@ export default function CommerceDetailPage({ params }: Props) {
     }
   };
 
+  const fetchOccupations = async (year: number) => {
+    try {
+      const res = await axios.get('/api/occupations', {
+        params: {
+          type: 'COMMERCE',
+          anneeTaxation: year
+        }
+      });
+      const commerceOccs = (res.data || []).filter((occ: any) => occ.tiersId === parseInt(paramId));
+      setOccupations(commerceOccs);
+    } catch (err) {
+      console.error('Failed to fetch occupations:', err);
+    }
+  };
+
   useEffect(() => {
     if (paramId) {
       fetchCommerceDetails();
     }
   }, [paramId]);
+
+  useEffect(() => {
+    if (selectedYear) {
+      fetchOccupations(selectedYear);
+    }
+  }, [selectedYear]);
 
   if (loading) {
     return (
@@ -342,6 +367,70 @@ export default function CommerceDetailPage({ params }: Props) {
           )}
         </div>
 
+        {/* Détail des lignes par occupation */}
+        {selectedYear && occupations.length > 0 && (
+          <div className="space-y-4 bg-slate-50 rounded-xl p-6">
+            <h3 className="text-lg font-black text-slate-900">Détail des dispositifs</h3>
+            <div className="space-y-3">
+              {occupations.flatMap((occ: any) =>
+                (occ.lignes || []).filter((ligne: any) => !ligne.deletedAt).map((ligne: any) => (
+                  <div
+                    key={ligne.id}
+                    className="bg-white rounded-lg border border-slate-200 p-4 flex items-center justify-between"
+                  >
+                    <div className="flex-1">
+                      <p className="font-bold text-slate-900">{ligne.article?.designation}</p>
+                      <div className="grid grid-cols-3 gap-4 mt-2 text-sm text-slate-600">
+                        <div>
+                          <span className="text-xs font-bold text-slate-400">Quantité</span>
+                          <p className="font-bold text-slate-900">{ligne.quantite1}</p>
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-slate-400">Montant</span>
+                          <p className="font-bold text-slate-900">{(ligne.quantite1 * (ligne.article?.montant || 0)).toFixed(2)} €</p>
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-slate-400">Période</span>
+                          <p className="font-bold text-slate-900">
+                            {ligne.dateDebut ? new Date(ligne.dateDebut).toLocaleDateString('fr-FR') : '-'}
+                            {' à '}
+                            {ligne.dateFin ? new Date(ligne.dateFin).toLocaleDateString('fr-FR') : '-'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setEditingLigne(ligne);
+                          setIsLigneModalOpen(true);
+                        }}
+                        className="p-2 hover:bg-blue-50 rounded-lg text-blue-600 transition-colors"
+                        title="Éditer"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm('Supprimer ce dispositif?')) {
+                            axios.delete(`/api/occupations/${occ.id}/lignes/${ligne.id}`).then(() => {
+                              fetchOccupations(selectedYear);
+                            });
+                          }
+                        }}
+                        className="p-2 hover:bg-rose-50 rounded-lg text-rose-600 transition-colors"
+                        title="Supprimer"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
         {displayedDispositions.length === 0 ? (
           <div className="text-center py-12">
             <Store size={48} className="mx-auto text-slate-300 mb-4" />
@@ -379,6 +468,30 @@ export default function CommerceDetailPage({ params }: Props) {
               </div>
             ))}
           </div>
+        )}
+
+        {/* Modal for editing ligne */}
+        {editingLigne && selectedYear && (
+          <LigneArticleModal
+            isOpen={isLigneModalOpen}
+            onClose={() => {
+              setIsLigneModalOpen(false);
+              setEditingLigne(null);
+            }}
+            onSave={() => {
+              setIsLigneModalOpen(false);
+              setEditingLigne(null);
+              fetchOccupations(selectedYear);
+            }}
+            occupationId={editingLigne.occupationId}
+            annee={selectedYear}
+            defaultDates={{
+              start: new Date(selectedYear, 0, 1).toISOString().split('T')[0],
+              end: new Date(selectedYear, 11, 31).toISOString().split('T')[0]
+            }}
+            initialData={editingLigne}
+            occupationType="COMMERCE"
+          />
         )}
       </div>
     </div>

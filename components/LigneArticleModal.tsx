@@ -374,34 +374,32 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
             )}
           </div>
 
-          {occupationType !== 'COMMERCE' && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1">
-                  <Calendar size={12} /> Début Prévu
-                </label>
-                <input
-                  type="date"
-                  required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
-                  value={formData.dateDebut}
-                  onChange={e => setFormData({ ...formData, dateDebut: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1">
-                  <Calendar size={12} /> Fin Prévue
-                </label>
-                <input
-                  type="date"
-                  required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
-                  value={formData.dateFin}
-                  onChange={e => setFormData({ ...formData, dateFin: e.target.value })}
-                />
-              </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                <Calendar size={12} /> Début Prévu
+              </label>
+              <input
+                type="date"
+                required
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
+                value={formData.dateDebut}
+                onChange={e => setFormData({ ...formData, dateDebut: e.target.value })}
+              />
             </div>
-          )}
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1">
+                <Calendar size={12} /> Fin Prévue
+              </label>
+              <input
+                type="date"
+                required
+                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
+                value={formData.dateFin}
+                onChange={e => setFormData({ ...formData, dateFin: e.target.value })}
+              />
+            </div>
+          </div>
 
           {occupationType !== 'COMMERCE' && (
             <div className="p-6 bg-amber-50/50 rounded-[2rem] border border-amber-100/50 space-y-4">
