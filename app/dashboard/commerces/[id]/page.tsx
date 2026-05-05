@@ -218,7 +218,7 @@ export default function CommerceDetailPage({ params }: Props) {
           </div>
 
           <div className="space-y-4">
-            {Array.from(getDispositivesTimeline()).reverse().map(([year, items]) => (
+            {Object.entries(getDispositivesTimeline()).reverse().map(([year, items]) => (
               <div key={year} className="bg-white rounded-xl border border-slate-100 p-6">
                 <h3 className="text-lg font-black text-slate-900 mb-4">Année {year}</h3>
                 {items.length === 0 ? (
@@ -445,44 +445,6 @@ export default function CommerceDetailPage({ params }: Props) {
           </div>
         )}
 
-        {displayedDispositions.length === 0 ? (
-          <div className="text-center py-12">
-            <Store size={48} className="mx-auto text-slate-300 mb-4" />
-            <p className="text-slate-500 font-medium">Aucun dispositif pour cette année</p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {displayedDispositions.map((disp: any, idx: number) => (
-              <div
-                key={idx}
-                className="bg-white rounded-lg border border-slate-100 p-4 flex items-center justify-between hover:border-blue-200 transition-colors"
-              >
-                <div className="flex-1">
-                  <p className="font-bold text-slate-900">{disp.nom}</p>
-                  <div className="flex gap-2 mt-2">
-                    {disp.occupationTypes?.map((type: string) => (
-                      <span
-                        key={type}
-                        className={`text-xs font-bold px-2 py-1 rounded-full ${
-                          type === 'TLPE'
-                            ? 'bg-purple-100 text-purple-700'
-                            : 'bg-blue-100 text-blue-700'
-                        }`}
-                      >
-                        {type}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-black bg-slate-100 text-slate-700">
-                    {disp.count}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* Modal for editing ligne */}
         {editingLigne && selectedYear && (
