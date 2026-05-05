@@ -5,6 +5,7 @@ import { Loader2, Store, MapPin, Mail, Phone, ArrowLeft, Calendar, Clock, Plus, 
 import Link from 'next/link';
 import axios from 'axios';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import CommerceDispositivesManager from '@/components/CommerceDispositivesManager';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -20,25 +21,25 @@ export default function CommerceDetailPage({ params }: Props) {
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
-  useEffect(() => {
-    const fetchCommerceDetails = async () => {
-      try {
-        const res = await axios.get(`/api/commerces/${paramId}`);
-        setCommerce(res.data.commerce);
-        setDisposifsByYear(res.data.dispositifsByYear);
-        setYears(res.data.years);
-        setTimeline(res.data.timeline || []);
-        setChartData(res.data.chartData || []);
-        if (res.data.years.length > 0) {
-          setSelectedYear(res.data.years[0]);
-        }
-      } catch (err) {
-        console.error('Failed to fetch commerce details:', err);
-      } finally {
-        setLoading(false);
+  const fetchCommerceDetails = async () => {
+    try {
+      const res = await axios.get(`/api/commerces/${paramId}`);
+      setCommerce(res.data.commerce);
+      setDisposifsByYear(res.data.dispositifsByYear);
+      setYears(res.data.years);
+      setTimeline(res.data.timeline || []);
+      setChartData(res.data.chartData || []);
+      if (res.data.years.length > 0) {
+        setSelectedYear(res.data.years[0]);
       }
-    };
+    } catch (err) {
+      console.error('Failed to fetch commerce details:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (paramId) {
       fetchCommerceDetails();
     }
@@ -323,13 +324,22 @@ export default function CommerceDetailPage({ params }: Props) {
 
       {/* Dispositifs List */}
       <div className="space-y-4">
-        <div>
-          <h2 className="text-lg font-black text-slate-900">
-            Dispositifs {selectedYear && `(${selectedYear})`}
-          </h2>
-          <p className="text-sm font-medium text-slate-500 mt-1">
-            {displayedDispositions.length} dispositif{displayedDispositions.length !== 1 ? 's' : ''}
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-black text-slate-900">
+              Dispositifs {selectedYear && `(${selectedYear})`}
+            </h2>
+            <p className="text-sm font-medium text-slate-500 mt-1">
+              {displayedDispositions.length} dispositif{displayedDispositions.length !== 1 ? 's' : ''}
+            </p>
+          </div>
+          {selectedYear && (
+            <CommerceDispositivesManager
+              tiersId={parseInt(paramId)}
+              selectedYear={selectedYear}
+              onDispositivesAdded={fetchCommerceDetails}
+            />
+          )}
         </div>
 
         {displayedDispositions.length === 0 ? (
