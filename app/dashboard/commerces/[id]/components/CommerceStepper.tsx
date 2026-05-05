@@ -7,12 +7,17 @@ import {
   CheckCircle2,
   CreditCard,
   Lock,
-  Archive
+  Archive,
+  ChevronLeft,
+  ChevronRight,
+  Loader2
 } from 'lucide-react';
 
 interface Props {
   totalAmount: number;
   currentStatus: string;
+  onStatusChange?: (newStatus: string) => Promise<void>;
+  isUpdating?: boolean;
 }
 
 const PROCESS_STEPS = [
@@ -29,6 +34,8 @@ const PROCESS_STEPS = [
 export default function CommerceStepper({
   totalAmount,
   currentStatus,
+  onStatusChange,
+  isUpdating = false
 }: Props) {
   // Map commerce statuts to step IDs
   const currentIdx = PROCESS_STEPS.findIndex(s =>
@@ -41,6 +48,48 @@ export default function CommerceStepper({
     (currentStatus === 'PAYE' && s.id === 'CLOS') ||
     (currentStatus === 'TITRÉ' && s.id === 'TITRE')
   );
+
+  const mapIdToStatus = (id: string): string => {
+    const mapping: Record<string, string> = {
+      'INIT': 'INITIALISATION',
+      'INST': 'INSTRUCTION',
+      'PREP': 'PREPARATION_AOT',
+      'EN_COURS': 'EN_COURS',
+      'VALIDE': 'VALIDÉ',
+      'FACTURE': 'FACTURÉ',
+      'TITRE': 'TITRÉ',
+      'CLOS': 'CLOS'
+    };
+    return mapping[id] || id;
+  };
+
+  const handlePrevious = async () => {
+    if (currentIdx > 0 && onStatusChange) {
+      const prevStep = PROCESS_STEPS[currentIdx - 1];
+      const newStatus = mapIdToStatus(prevStep.id);
+      await onStatusChange(newStatus);
+    }
+  };
+
+  const handleNext = async () => {
+    if (currentIdx < PROCESS_STEPS.length - 1 && onStatusChange) {
+      const nextStep = PROCESS_STEPS[currentIdx + 1];
+      const newStatus = mapIdToStatus(nextStep.id);
+      await onStatusChange(newStatus);
+    }
+  };
+
+  const mapCurrentStatus = (status: string): string => {
+    if (status === 'INITIALISATION') return 'INIT';
+    if (status === 'INSTRUCTION') return 'INST';
+    if (status === 'PREPARATION_AOT') return 'PREP';
+    if (status === 'EN_COURS') return 'EN_COURS';
+    if (status === 'VALIDÉ') return 'VALIDE';
+    if (status === 'FACTURÉ') return 'FACTURE';
+    if (status === 'TITRÉ') return 'TITRE';
+    if (status === 'CLOS') return 'CLOS';
+    return status;
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4">
@@ -115,6 +164,30 @@ export default function CommerceStepper({
               );
             })}
           </div>
+
+          {/* Navigation Buttons */}
+          {onStatusChange && (
+            <div className="flex gap-3 mt-8 justify-center">
+              <button
+                onClick={handlePrevious}
+                disabled={currentIdx === 0 || isUpdating}
+                className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:bg-slate-100 disabled:opacity-50 text-slate-700 rounded-lg font-bold text-sm transition-all disabled:cursor-not-allowed"
+                title="Étape précédente"
+              >
+                <ChevronLeft size={18} />
+                Précédent
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={currentIdx === PROCESS_STEPS.length - 1 || isUpdating}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-bold text-sm transition-all disabled:cursor-not-allowed"
+                title="Étape suivante"
+              >
+                Suivant
+                {isUpdating ? <Loader2 size={18} className="animate-spin" /> : <ChevronRight size={18} />}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

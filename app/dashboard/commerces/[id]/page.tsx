@@ -8,6 +8,22 @@ import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 import CommerceDispositivesManager from '@/components/CommerceDispositivesManager';
 import LigneArticleModal from '@/components/LigneArticleModal';
 import CommerceStepper from './components/CommerceStepper';
+import CommerceNotes from './components/CommerceNotes';
+import CommerceSidebar from './components/CommerceSidebar';
+import CommerceContactModal from './components/CommerceContactModal';
+import CommerceUploadDocModal from './components/CommerceUploadDocModal';
+
+interface Contact {
+  id: number;
+  nom?: string;
+  prenom?: string;
+  email?: string;
+  telephone?: string;
+  titre?: string;
+  entreprise?: string;
+  role: string;
+  pjPath?: string;
+}
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -25,6 +41,28 @@ export default function CommerceDetailPage({ params }: Props) {
   const [occupations, setOccupations] = useState<any[]>([]);
   const [editingLigne, setEditingLigne] = useState<any>(null);
   const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
+
+  // Contact Management State
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
+  const [editingContactId, setEditingContactId] = useState<number | null>(null);
+  const [newContact, setNewContact] = useState<Partial<Contact>>({
+    nom: '',
+    prenom: '',
+    email: '',
+    telephone: '',
+    titre: '',
+    entreprise: '',
+    role: 'CONTACT_DIRECT',
+    pjPath: ''
+  });
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [noteKey, setNoteKey] = useState(0);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
   const fetchCommerceDetails = async () => {
     try {
@@ -140,6 +178,139 @@ export default function CommerceDetailPage({ params }: Props) {
     return { totalAmount, currentStatus };
   };
 
+  // Document & Contact Management Functions
+  const fetchDocuments = async () => {
+    try {
+      const res = await axios.get(`/api/commerces/${paramId}/notes`);
+      const docsFromNotes = (res.data || [])
+        .filter((note: any) => note.pjPath && note.pjName)
+        .map((note: any) => ({
+          id: note.id,
+          description: note.content,
+          name: note.pjName,
+          path: note.pjPath,
+          created_at: note.created_at
+        }));
+      setDocuments(docsFromNotes);
+    } catch (err) {
+      console.error('Failed to fetch documents:', err);
+    }
+  };
+
+  const fetchContacts = async () => {
+    try {
+      const res = await axios.get(`/api/commerces/${paramId}/contacts`);
+      setContacts(res.data);
+    } catch (err) {
+      console.error('Failed to fetch contacts:', err);
+    }
+  };
+
+  const handleAddContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingContact(true);
+    try {
+      if (editingContactId) {
+        await axios.patch(`/api/commerces/${paramId}/contacts/${editingContactId}`, newContact);
+      } else {
+        await axios.post(`/api/commerces/${paramId}/contacts`, newContact);
+      }
+      await fetchContacts();
+      setIsContactModalOpen(false);
+      setEditingContactId(null);
+      setNewContact({ nom: '', prenom: '', email: '', telephone: '', titre: '', entreprise: '', role: 'CONTACT_DIRECT', pjPath: '' });
+    } catch (err) {
+      console.error('Failed to save contact:', err);
+      alert('Erreur lors de l\'enregistrement du contact');
+    } finally {
+      setIsSubmittingContact(false);
+    }
+  };
+
+  const handleOpenEditContact = (contact: Contact) => {
+    setEditingContactId(contact.id);
+    setNewContact(contact);
+    setIsContactModalOpen(true);
+  };
+
+  const handleDeleteContact = async (id: number) => {
+    if (!confirm('Supprimer ce contact?')) return;
+    try {
+      await axios.delete(`/api/commerces/${paramId}/contacts/${id}`);
+      await fetchContacts();
+    } catch (err) {
+      console.error('Failed to delete contact:', err);
+      alert('Erreur lors de la suppression du contact');
+    }
+  };
+
+  const handlePhotoContact = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const res = await axios.post('/api/upload', formData);
+      setNewContact({ ...newContact, pjPath: res.data.url });
+    } catch (err) {
+      alert('Erreur lors de l\'upload de la photo');
+    }
+  };
+
+  const fetchCurrentUser = async () => {
+    try {
+      const res = await axios.get('/api/auth/me');
+      setCurrentUser(res.data);
+    } catch (e) {}
+  };
+
+  const handleStatusChange = async (newStatus: string) => {
+    setIsUpdatingStatus(true);
+    try {
+      await axios.patch(`/api/commerces/${paramId}/status`, {
+        statut: newStatus
+      });
+      // Refresh occupations to get updated status
+      if (selectedYear) {
+        await fetchOccupations(selectedYear);
+      }
+    } catch (err) {
+      console.error('Failed to update status:', err);
+      alert('Erreur lors de la mise à jour du statut');
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
+  const handleAddDocument = () => {
+    setIsDocModalOpen(true);
+  };
+
+  const handleUploadDocument = async (docName: string, file: File) => {
+    setIsUploadingDoc(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await axios.post('/api/upload', formData);
+      // Create a note with the document
+      await axios.post(`/api/commerces/${paramId}/notes`, {
+        content: docName,
+        pjPath: res.data.url,
+        pjName: file.name,
+        isEmail: false
+      });
+      // Refresh documents from the newly created note
+      await fetchDocuments();
+      setIsDocModalOpen(false);
+    } catch (err) {
+      console.error('Failed to upload document:', err);
+      alert('Erreur lors de l\'ajout du document');
+    } finally {
+      setIsUploadingDoc(false);
+    }
+  };
+
   useEffect(() => {
     if (paramId) {
       fetchCommerceDetails();
@@ -151,6 +322,14 @@ export default function CommerceDetailPage({ params }: Props) {
       fetchOccupations(selectedYear);
     }
   }, [selectedYear]);
+
+  useEffect(() => {
+    if (paramId) {
+      fetchContacts();
+      fetchDocuments();
+      fetchCurrentUser();
+    }
+  }, [paramId]);
 
   if (loading) {
     return (
@@ -239,7 +418,13 @@ export default function CommerceDetailPage({ params }: Props) {
       {/* Commerce Workflow Stepper */}
       {(() => {
         const state = getStepperState();
-        return <CommerceStepper {...state} />;
+        return (
+          <CommerceStepper
+            {...state}
+            onStatusChange={handleStatusChange}
+            isUpdating={isUpdatingStatus}
+          />
+        );
       })()}
 
       {/* Year Selector */}
@@ -418,119 +603,169 @@ export default function CommerceDetailPage({ params }: Props) {
         </div>
       )}
 
-      {/* Dispositifs List */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-black text-slate-900">
-              Dispositifs {selectedYear && `(${selectedYear})`}
-            </h2>
-            <p className="text-sm font-medium text-slate-500 mt-1">
-              {displayedDispositions.length} dispositif{displayedDispositions.length !== 1 ? 's' : ''}
-            </p>
+      {/* Main Content + Sidebar Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        {/* Main Content */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* Dispositifs List */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-black text-slate-900">
+                  Dispositifs {selectedYear && `(${selectedYear})`}
+                </h2>
+                <p className="text-sm font-medium text-slate-500 mt-1">
+                  {displayedDispositions.length} dispositif{displayedDispositions.length !== 1 ? 's' : ''}
+                </p>
+              </div>
+              {selectedYear && (
+                <CommerceDispositivesManager
+                  tiersId={parseInt(paramId)}
+                  selectedYear={selectedYear}
+                  onDispositivesAdded={fetchCommerceDetails}
+                />
+              )}
+            </div>
+
+            {/* Détail des lignes par occupation */}
+            {selectedYear && occupations.length > 0 && (
+              <div className="space-y-4 bg-slate-50 rounded-xl p-6">
+                <h3 className="text-lg font-black text-slate-900">Détail des dispositifs</h3>
+                <div className="space-y-3">
+                  {occupations.flatMap((occ: any) =>
+                    (occ.lignes || []).filter((ligne: any) => !ligne.deletedAt).map((ligne: any) => (
+                      <div
+                        key={ligne.id}
+                        className="bg-white rounded-lg border border-slate-200 p-4 flex items-center justify-between"
+                      >
+                        <div className="flex-1">
+                          <p className="font-bold text-slate-900">{ligne.article?.designation}</p>
+                          <div className="grid grid-cols-3 gap-4 mt-2 text-sm text-slate-600">
+                            <div>
+                              <span className="text-xs font-bold text-slate-400">Quantité</span>
+                              <p className="font-bold text-slate-900">{ligne.quantite1}</p>
+                            </div>
+                            <div>
+                              <span className="text-xs font-bold text-slate-400">Montant</span>
+                              <p className="font-bold text-slate-900">{(ligne.quantite1 * (ligne.article?.montant || 0)).toFixed(2)} €</p>
+                            </div>
+                            <div>
+                              <span className="text-xs font-bold text-slate-400">Période</span>
+                              <p className="font-bold text-slate-900">
+                                {ligne.dateDebut ? new Date(ligne.dateDebut).toLocaleDateString('fr-FR') : '-'}
+                                {' à '}
+                                {ligne.dateFin ? new Date(ligne.dateFin).toLocaleDateString('fr-FR') : '-'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingLigne(ligne);
+                              setIsLigneModalOpen(true);
+                            }}
+                            className="p-2 hover:bg-blue-50 rounded-lg text-blue-600 transition-colors"
+                            title="Éditer"
+                          >
+                            <Pencil size={18} />
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (confirm('Supprimer ce dispositif?')) {
+                                try {
+                                  await axios.delete(`/api/occupations/${occ.id}/lignes/${ligne.id}`);
+                                  await fetchOccupations(selectedYear);
+                                } catch (err) {
+                                  console.error('Erreur suppression:', err);
+                                  alert('Erreur lors de la suppression du dispositif');
+                                }
+                              }
+                            }}
+                            className="p-2 hover:bg-rose-50 rounded-lg text-rose-600 transition-colors"
+                            title="Supprimer"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Modal for editing ligne */}
+            {editingLigne && selectedYear && (
+              <LigneArticleModal
+                isOpen={isLigneModalOpen}
+                onClose={() => {
+                  setIsLigneModalOpen(false);
+                  setEditingLigne(null);
+                }}
+                onSave={() => {
+                  setIsLigneModalOpen(false);
+                  setEditingLigne(null);
+                  fetchOccupations(selectedYear);
+                }}
+                occupationId={editingLigne.occupationId}
+                annee={selectedYear}
+                defaultDates={{
+                  start: new Date(selectedYear, 0, 1).toISOString().split('T')[0],
+                  end: new Date(selectedYear, 11, 31).toISOString().split('T')[0]
+                }}
+                initialData={editingLigne}
+                occupationType="COMMERCE"
+              />
+            )}
           </div>
-          {selectedYear && (
-            <CommerceDispositivesManager
+
+          {/* Discussion Thread */}
+          {currentUser && (
+            <CommerceNotes
+              key={noteKey}
               tiersId={parseInt(paramId)}
-              selectedYear={selectedYear}
-              onDispositivesAdded={fetchCommerceDetails}
+              currentUser={currentUser}
             />
           )}
         </div>
 
-        {/* Détail des lignes par occupation */}
-        {selectedYear && occupations.length > 0 && (
-          <div className="space-y-4 bg-slate-50 rounded-xl p-6">
-            <h3 className="text-lg font-black text-slate-900">Détail des dispositifs</h3>
-            <div className="space-y-3">
-              {occupations.flatMap((occ: any) =>
-                (occ.lignes || []).filter((ligne: any) => !ligne.deletedAt).map((ligne: any) => (
-                  <div
-                    key={ligne.id}
-                    className="bg-white rounded-lg border border-slate-200 p-4 flex items-center justify-between"
-                  >
-                    <div className="flex-1">
-                      <p className="font-bold text-slate-900">{ligne.article?.designation}</p>
-                      <div className="grid grid-cols-3 gap-4 mt-2 text-sm text-slate-600">
-                        <div>
-                          <span className="text-xs font-bold text-slate-400">Quantité</span>
-                          <p className="font-bold text-slate-900">{ligne.quantite1}</p>
-                        </div>
-                        <div>
-                          <span className="text-xs font-bold text-slate-400">Montant</span>
-                          <p className="font-bold text-slate-900">{(ligne.quantite1 * (ligne.article?.montant || 0)).toFixed(2)} €</p>
-                        </div>
-                        <div>
-                          <span className="text-xs font-bold text-slate-400">Période</span>
-                          <p className="font-bold text-slate-900">
-                            {ligne.dateDebut ? new Date(ligne.dateDebut).toLocaleDateString('fr-FR') : '-'}
-                            {' à '}
-                            {ligne.dateFin ? new Date(ligne.dateFin).toLocaleDateString('fr-FR') : '-'}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setEditingLigne(ligne);
-                          setIsLigneModalOpen(true);
-                        }}
-                        className="p-2 hover:bg-blue-50 rounded-lg text-blue-600 transition-colors"
-                        title="Éditer"
-                      >
-                        <Pencil size={18} />
-                      </button>
-                      <button
-                        onClick={async () => {
-                          if (confirm('Supprimer ce dispositif?')) {
-                            try {
-                              await axios.delete(`/api/occupations/${occ.id}/lignes/${ligne.id}`);
-                              await fetchOccupations(selectedYear);
-                            } catch (err) {
-                              console.error('Erreur suppression:', err);
-                              alert('Erreur lors de la suppression du dispositif');
-                            }
-                          }
-                        }}
-                        className="p-2 hover:bg-rose-50 rounded-lg text-rose-600 transition-colors"
-                        title="Supprimer"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
-
-        {/* Modal for editing ligne */}
-        {editingLigne && selectedYear && (
-          <LigneArticleModal
-            isOpen={isLigneModalOpen}
-            onClose={() => {
-              setIsLigneModalOpen(false);
-              setEditingLigne(null);
-            }}
-            onSave={() => {
-              setIsLigneModalOpen(false);
-              setEditingLigne(null);
-              fetchOccupations(selectedYear);
-            }}
-            occupationId={editingLigne.occupationId}
-            annee={selectedYear}
-            defaultDates={{
-              start: new Date(selectedYear, 0, 1).toISOString().split('T')[0],
-              end: new Date(selectedYear, 11, 31).toISOString().split('T')[0]
-            }}
-            initialData={editingLigne}
-            occupationType="COMMERCE"
-          />
-        )}
+        {/* Sidebar */}
+        <CommerceSidebar
+          tiersId={parseInt(paramId)}
+          contacts={contacts}
+          documents={documents}
+          isFactured={commerce?.isFactured}
+          onOpenContactModal={() => setIsContactModalOpen(true)}
+          onDeleteContact={handleDeleteContact}
+          onEditContact={handleOpenEditContact}
+          isContactsLoading={false}
+          onAddDocument={handleAddDocument}
+        />
       </div>
+
+      {/* Contact Modal */}
+      <CommerceContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => {
+          setIsContactModalOpen(false);
+          setEditingContactId(null);
+          setNewContact({ nom: '', prenom: '', email: '', telephone: '', titre: '', entreprise: '', role: 'CONTACT_DIRECT', pjPath: '' });
+        }}
+        newContact={newContact}
+        setNewContact={setNewContact}
+        isSubmittingContact={isSubmittingContact}
+        onAddContact={handleAddContact}
+        onPhotoContact={handlePhotoContact}
+      />
+
+      {/* Document Upload Modal */}
+      <CommerceUploadDocModal
+        isOpen={isDocModalOpen}
+        onClose={() => setIsDocModalOpen(false)}
+        onUpload={handleUploadDocument}
+        isUploading={isUploadingDoc}
+      />
     </div>
   );
 }

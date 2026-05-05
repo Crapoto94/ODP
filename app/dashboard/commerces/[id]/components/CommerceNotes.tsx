@@ -29,43 +29,46 @@ export default function CommerceNotes({ tiersId, currentUser }: Props) {
           <div className="flex items-center justify-center h-full py-10 opacity-30">
             <Loader2 className="animate-spin" size={24} />
           </div>
-        ) : notes.length === 0 ? (
-          <div className="text-center py-20 opacity-20">
-            <MessageSquare size={40} className="mx-auto mb-2" />
-            <p className="text-[10px] font-black uppercase tracking-widest italic">Aucun message pour le moment</p>
-          </div>
-        ) : (
-          notes.map((note: any) => {
-            const isMe = note.author === 'Conseiller' || note.author === "Mairie d'Ivry-sur-Seine" || (currentUser && note.author === `${currentUser.prenom} ${currentUser.nom}`);
-            const isReceived = note.isEmail && !isMe;
-            const bgColor = isMe ? (note.isEmail ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-800 border-slate-700') : (isReceived ? 'bg-emerald-50 border-emerald-100' : 'bg-white border-slate-100');
-            const textColor = isMe ? 'text-white' : (isReceived ? 'text-emerald-900' : 'text-slate-800');
+        ) : (() => {
+          const filteredNotes = notes.filter((note: any) => !(note.pjPath && note.pjName));
+          return filteredNotes.length === 0 ? (
+            <div className="text-center py-20 opacity-20">
+              <MessageSquare size={40} className="mx-auto mb-2" />
+              <p className="text-[10px] font-black uppercase tracking-widest italic">Aucun message pour le moment</p>
+            </div>
+          ) : (
+            filteredNotes.map((note: any) => {
+              const isMe = note.author === 'Conseiller' || note.author === "Mairie d'Ivry-sur-Seine" || (currentUser && note.author === `${currentUser.prenom} ${currentUser.nom}`);
+              const isReceived = note.isEmail && !isMe;
+              const bgColor = isMe ? (note.isEmail ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-800 border-slate-700') : (isReceived ? 'bg-emerald-50 border-emerald-100' : 'bg-white border-slate-100');
+              const textColor = isMe ? 'text-white' : (isReceived ? 'text-emerald-900' : 'text-slate-800');
 
-            return (
-              <div key={note.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-2xl p-5 border ${bgColor} ${textColor}`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[8px] font-black uppercase">{note.author}</span>
-                    {note.isEmail && <span className="text-[7px] font-black uppercase px-2 py-1 bg-white/20 rounded-full"><Mail size={8} /></span>}
-                  </div>
-                  <p className="text-sm font-medium mb-2">{note.content}</p>
-                  {note.pjPath && (
-                    <div className="mt-3 pt-3 border-t border-white/10">
-                      {note.pjPath.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) ? (
-                        <img src={note.pjPath} alt="Attachment" className="max-w-sm rounded-lg" />
-                      ) : (
-                        <a href={note.pjPath} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs hover:opacity-80">
-                          <FileText size={12} /> {note.pjName || 'Document'}
-                        </a>
-                      )}
+              return (
+                <div key={note.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] rounded-2xl p-5 border ${bgColor} ${textColor}`}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[8px] font-black uppercase">{note.author}</span>
+                      {note.isEmail && <span className="text-[7px] font-black uppercase px-2 py-1 bg-white/20 rounded-full"><Mail size={8} /></span>}
                     </div>
-                  )}
-                  <div className="text-[8px] font-bold mt-2">{format(new Date(note.created_at), 'dd MMM HH:mm', { locale: fr })}</div>
+                    <p className="text-sm font-medium mb-2">{note.content}</p>
+                    {note.pjPath && (
+                      <div className="mt-3 pt-3 border-t border-white/10">
+                        {note.pjPath.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) ? (
+                          <img src={note.pjPath} alt="Attachment" className="max-w-sm rounded-lg" />
+                        ) : (
+                          <a href={note.pjPath} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs hover:opacity-80">
+                            <FileText size={12} /> {note.pjName || 'Document'}
+                          </a>
+                        )}
+                      </div>
+                    )}
+                    <div className="text-[8px] font-bold mt-2">{format(new Date(note.created_at), 'dd MMM HH:mm', { locale: fr })}</div>
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        )}
+              );
+            })
+          );
+        })()}
       </div>
 
       <form onSubmit={handleSubmit} className="border-t border-slate-200 pt-6 space-y-4">
