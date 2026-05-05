@@ -101,12 +101,43 @@ export default function CommerceDetailPage({ params }: Props) {
       return sum + occAmount;
     }, 0);
 
-    const hasArticles = occupations.length > 0 && occupations.some((occ: any) => (occ.lignes?.length || 0) > 0);
-    const isValidated = occupations.length > 0 && occupations.some((occ: any) => occ.statut === 'VALIDÉ');
-    const isFactured = occupations.some((occ: any) => occ.statut === 'FACTURÉ');
-    const isPaid = occupations.some((occ: any) => occ.datePaiement || occ.statut === 'PAYÉ');
+    // Get the most advanced status from all occupations
+    let currentStatus = 'EN_ATTENTE';
+    if (occupations.length > 0) {
+      // Find the highest step among all occupations
+      occupations.forEach((occ: any) => {
+        const status = occ.statut || 'EN_ATTENTE';
+        // Map to step IDs for comparison
+        const statusPriority: Record<string, number> = {
+          'EN_ATTENTE': 0,
+          'INITIALISATION': 0,
+          'INST': 1,
+          'INSTRUCTION': 1,
+          'PREP': 2,
+          'PREPARATION_AOT': 2,
+          'EN_COURS': 3,
+          'VALIDE': 4,
+          'VALIDÉ': 4,
+          'VERIFIE': 4,
+          'FACTURE': 5,
+          'FACTURÉ': 5,
+          'TITRE': 6,
+          'TITRÉ': 6,
+          'CLOS': 7,
+          'PAYÉ': 7,
+          'PAYE': 7
+        };
 
-    return { totalAmount, hasArticles, isValidated, isFactured, isPaid };
+        const currentPriority = statusPriority[currentStatus] ?? 0;
+        const occPriority = statusPriority[status] ?? 0;
+
+        if (occPriority > currentPriority) {
+          currentStatus = status;
+        }
+      });
+    }
+
+    return { totalAmount, currentStatus };
   };
 
   useEffect(() => {
