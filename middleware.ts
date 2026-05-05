@@ -4,10 +4,12 @@ import { decrypt } from '@/lib/auth';
 
 const protectedRoutes = ['/dashboard'];
 const publicRoutes = ['/login', '/api/auth/login', '/api/auth/setup'];
+const unprotectedDashboardRoutes = ['/dashboard/facturation/sedit-validation'];
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
+  const isUnprotectedDashboard = unprotectedDashboardRoutes.some(route => path.startsWith(route));
+  const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route)) && !isUnprotectedDashboard;
   const isPublicRoute = publicRoutes.some(route => path.startsWith(route));
 
   // Access session cookie

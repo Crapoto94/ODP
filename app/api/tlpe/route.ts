@@ -19,7 +19,7 @@ export async function GET() {
     });
     console.log('[tlpe] Found', occupations.length, 'dossiers');
 
-    const dossiers = occupations.map(occ => {
+    const dossiers = occupations.map((occ: any) => {
       const articleMap = new Map<string, { id: number; count: number }>();
 
       (occ.lignes || []).forEach((ligne: any) => {

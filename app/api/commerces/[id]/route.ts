@@ -59,7 +59,7 @@ export async function GET(
     const dispositifsMap = new Map<string, any>();
     const yearsSet = new Set<number>();
 
-    occupations.forEach(occ => {
+    occupations.forEach((occ: any) => {
       const year = occ.type === 'TLPE' || occ.type === 'COMMERCE'
         ? occ.anneeTaxation
         : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : null);

@@ -29,7 +29,7 @@ export async function GET() {
     // Deduplicate commerces and collect years and articles by type
     const commercesMap = new Map<number, any>();
 
-    occupations.forEach(occ => {
+    occupations.forEach((occ: any) => {
       if (occ.tiers) {
         const tierId = occ.tiers.id;
         const year = occ.type === 'TLPE' || occ.type === 'COMMERCE'
