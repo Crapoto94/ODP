@@ -33,6 +33,7 @@ interface Props {
   onEditContact?: (contact: Contact) => void;
   isContactsLoading?: boolean;
   onAddDocument?: () => void;
+  onDeleteDocument?: (id: number) => Promise<void>;
 }
 
 export default function CommerceSidebar({
@@ -44,7 +45,8 @@ export default function CommerceSidebar({
   onDeleteContact,
   onEditContact,
   isContactsLoading,
-  onAddDocument
+  onAddDocument,
+  onDeleteDocument
 }: Props) {
   const [isEditingObs, setIsEditingObs] = React.useState(false);
   const [obsValue, setObsValue] = React.useState('');
@@ -58,6 +60,7 @@ export default function CommerceSidebar({
         docCount={documents.length}
         isFactured={isFactured}
         onOpenUploadModal={onAddDocument}
+        onDeleteDocument={onDeleteDocument}
       />
 
       {/* Contacts Section */}

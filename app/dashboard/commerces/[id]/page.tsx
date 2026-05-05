@@ -311,6 +311,17 @@ export default function CommerceDetailPage({ params }: Props) {
     }
   };
 
+  const handleDeleteDocument = async (docId: number) => {
+    if (!confirm('Supprimer ce document ?')) return;
+    try {
+      await axios.delete(`/api/commerces/${paramId}/notes/${docId}`);
+      await fetchDocuments();
+    } catch (err) {
+      console.error('Failed to delete document:', err);
+      alert('Erreur lors de la suppression du document');
+    }
+  };
+
   useEffect(() => {
     if (paramId) {
       fetchCommerceDetails();
@@ -741,6 +752,7 @@ export default function CommerceDetailPage({ params }: Props) {
           onEditContact={handleOpenEditContact}
           isContactsLoading={false}
           onAddDocument={handleAddDocument}
+          onDeleteDocument={handleDeleteDocument}
         />
       </div>
 
