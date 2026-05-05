@@ -84,6 +84,16 @@ export default function CommerceDetailPage({ params }: Props) {
     return timelineByYear;
   };
 
+  const getTotalAmountForYear = (year: number) => {
+    let total = 0;
+    occupations.forEach((occ: any) => {
+      (occ.lignes || []).filter((ligne: any) => !ligne.deletedAt).forEach((ligne: any) => {
+        total += ligne.quantite1 * (ligne.article?.montant || 0);
+      });
+    });
+    return total;
+  };
+
   useEffect(() => {
     if (paramId) {
       fetchCommerceDetails();
@@ -168,6 +178,16 @@ export default function CommerceDetailPage({ params }: Props) {
             </div>
           </div>
         )}
+
+        {selectedYear && (
+          <div className="flex items-start gap-3 border-t border-slate-200 pt-4">
+            <Calendar size={20} className="text-blue-600 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <p className="text-xs font-bold text-slate-500 uppercase">Montant à facturer ({selectedYear})</p>
+              <p className="text-2xl font-black text-blue-600">{getTotalAmountForYear(selectedYear).toFixed(2)} €</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Year Selector */}
@@ -217,44 +237,33 @@ export default function CommerceDetailPage({ params }: Props) {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {Object.entries(getDispositivesTimeline()).reverse().map(([year, items]) => (
-              <div key={year} className="bg-white rounded-xl border border-slate-100 p-6">
-                <h3 className="text-lg font-black text-slate-900 mb-4">Année {year}</h3>
-                {items.length === 0 ? (
-                  <p className="text-slate-500 text-sm">Aucun dispositif pour cette année</p>
-                ) : (
-                  <div className="space-y-2">
-                    {items.map((item: any) => {
-                      const statusColors = {
-                        nouveau: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', dot: 'bg-green-500' },
-                        supprimé: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', dot: 'bg-red-500' },
-                        reconduit: { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', dot: 'bg-slate-500' }
-                      };
-                      const colors = statusColors[item.status as keyof typeof statusColors];
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Object.entries(getDispositivesTimeline()).reverse().map(([year, items]) => {
+              const nouveau = items.filter((i: any) => i.status === 'nouveau').length;
+              const supprime = items.filter((i: any) => i.status === 'supprimé').length;
+              const reconduit = items.filter((i: any) => i.status === 'reconduit').length;
+              const totalMontant = items.filter((i: any) => i.status !== 'supprimé').reduce((sum: number, i: any) => sum + i.montant, 0);
 
-                      return (
-                        <div key={item.id} className={`rounded-lg border-2 ${colors.border} ${colors.bg} p-3 flex items-center justify-between`}>
-                          <div className="flex items-center gap-3 flex-1">
-                            <div className={`w-3 h-3 rounded-full ${colors.dot}`}></div>
-                            <div className="flex-1">
-                              <p className="font-bold text-slate-900">{item.designation}</p>
-                              <div className="flex gap-4 mt-1 text-xs">
-                                <span className="text-slate-600">Quantité: <span className="font-bold">{item.quantite}</span></span>
-                                <span className="text-slate-600">Montant: <span className="font-bold">{item.montant.toFixed(2)} €</span></span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className={`px-3 py-1 rounded-full text-xs font-bold ${colors.text} bg-white`}>
-                            {item.status === 'nouveau' ? 'Ajouté' : item.status === 'supprimé' ? 'Supprimé' : 'Reconduit'}
-                          </div>
-                        </div>
-                      );
-                    })}
+              return (
+                <div key={year} className="bg-white rounded-xl border-2 border-blue-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="text-center">
+                    <h3 className="text-3xl font-black text-blue-600 mb-2">{year}</h3>
+                    <p className="text-xs font-bold text-slate-500 mb-4">{items.length} dispositif{items.length !== 1 ? 's' : ''}</p>
+
+                    <div className="space-y-2 mb-4 text-sm">
+                      {nouveau > 0 && <div className="flex items-center justify-center gap-2"><div className="w-2 h-2 bg-green-500 rounded-full"></div><span className="text-slate-700">{nouveau} nouveau{nouveau !== 1 ? 'x' : ''}</span></div>}
+                      {reconduit > 0 && <div className="flex items-center justify-center gap-2"><div className="w-2 h-2 bg-slate-500 rounded-full"></div><span className="text-slate-700">{reconduit} reconduit{reconduit !== 1 ? 's' : ''}</span></div>}
+                      {supprime > 0 && <div className="flex items-center justify-center gap-2"><div className="w-2 h-2 bg-red-500 rounded-full"></div><span className="text-slate-700">{supprime} supprimé{supprime !== 1 ? 's' : ''}</span></div>}
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-200">
+                      <p className="text-xs font-bold text-slate-500">Montant total</p>
+                      <p className="text-xl font-black text-slate-900">{totalMontant.toFixed(2)} €</p>
+                    </div>
                   </div>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
