@@ -53,7 +53,7 @@ export default function OccupationHeader({
         </Link>
 
         <div className="flex items-center gap-4">
-          {!isFactured && !isLocked && (
+          {(!isFactured && !isLocked || occupation.anneeTaxation === 2019) && (
             <button
               onClick={() => router.push(resolvedEditLink)}
               className="px-6 py-3 bg-white border border-slate-200 text-slate-600 hover:text-blue-600 rounded-xl transition-all shadow-sm font-black text-[10px] uppercase tracking-widest flex items-center gap-2 active:scale-95"

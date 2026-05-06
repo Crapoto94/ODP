@@ -5,6 +5,8 @@ import {
   FileText,
   FileArchive,
   Trash2,
+  Send,
+  Loader2,
 } from 'lucide-react';
 
 interface Document {
@@ -21,20 +23,30 @@ interface Props {
   isFactured?: boolean;
   onDeleteDocument?: (id: number) => void;
   onOpenUploadModal?: () => void;
+  occupation?: any;
+  onSendAot?: () => void;
+  isSendingAot?: boolean;
+  aotSentMsg?: string | null;
 }
 
-export default function DocumentList({
-  documents,
+export default function DocumentList({  documents,
   docCount,
   isFactured,
   onDeleteDocument,
   onOpenUploadModal,
+  occupation,
+  onSendAot,
+  isSendingAot,
+  aotSentMsg,
 }: Props) {
+  const showInvoiceBlock = occupation && (!!occupation.facturePath || occupation.statut === 'VERIFIE' || occupation.statut === 'FACTURE' || occupation.statut === 'PAYE');
+  const totalCount = docCount + (showInvoiceBlock ? 1 : 0) + (occupation?.aotFinalPath ? 1 : 0);
+
   return (
     <section className="space-y-8">
       <div className="flex items-center justify-between group/title">
         <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
-          <ImageIcon size={16} className="text-blue-500" /> Documents & PJ ({docCount})
+          <ImageIcon size={16} className="text-blue-500" /> Documents & PJ ({totalCount})
         </h3>
         {!isFactured && onOpenUploadModal && (
           <button
@@ -91,7 +103,98 @@ export default function DocumentList({
           );
         })}
 
-        {docCount === 0 && (
+        {occupation && showInvoiceBlock && (() => {
+          const isDefinitive = ['FACTURE', 'FACTURÉ', 'TITRE', 'TITRÉ', 'CLOS', 'PAYÉ', 'PAYE'].includes(occupation.statut);
+          return (
+            <div className="space-y-1.5">
+              <a
+                href={occupation.facturePath || `/api/commerces/${occupation.tiersId}/facture-pdf?annee=${occupation.anneeTaxation}`}
+                target="_blank"
+                rel="noreferrer"
+                className={`group flex items-center gap-4 p-4 ${isDefinitive ? 'bg-rose-50/50 border-rose-100 hover:border-rose-400' : 'bg-blue-50/50 border-blue-100 hover:border-blue-400'} rounded-2xl border-2 shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5`}
+              >
+                <div className={`w-12 h-12 rounded-xl shrink-0 ${isDefinitive ? 'bg-rose-600' : 'bg-blue-600'} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                  <FileText size={20} />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <p className={`text-[10px] font-black ${isDefinitive ? 'text-rose-700' : 'text-blue-700'} uppercase tracking-widest truncate`}>
+                    Détails de facture ({occupation.anneeTaxation})
+                  </p>
+                  <p className={`text-[8px] font-black ${isDefinitive ? 'text-rose-400/70' : 'text-blue-400/70'} uppercase tracking-tighter mt-1`}>
+                    {isDefinitive ? 'Document Définitif' : 'Brouillon Provisoire'} • PDF
+                  </p>
+                </div>
+              </a>
+            </div>
+          );
+        })()}
+
+        {occupation && occupation.aotFinalPath && occupation.aotSigned && (
+          <div className="space-y-1.5">
+            <a
+              href={occupation.aotFinalPath}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-center gap-4 p-4 bg-emerald-50/50 rounded-2xl border-2 border-emerald-100 shadow-sm transition-all hover:border-emerald-400 hover:shadow-lg hover:-translate-y-0.5"
+            >
+              <div className="w-12 h-12 rounded-xl shrink-0 bg-emerald-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <FileText size={20} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest truncate">AOT Final — Signé</p>
+                <p className="text-[8px] font-black text-emerald-400/70 uppercase tracking-tighter mt-1">Document Finalisé</p>
+              </div>
+              <button
+                type="button"
+                onClick={e => { e.preventDefault(); if(onSendAot) onSendAot(); }}
+                disabled={isSendingAot}
+                title="Envoyer au demandeur"
+                className="h-8 px-3 rounded-lg bg-white border border-emerald-200 flex items-center gap-1.5 text-emerald-600 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 disabled:opacity-40 transition-all shrink-0 text-[9px] font-black uppercase tracking-wider"
+              >
+                {isSendingAot ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                Envoyer
+              </button>
+            </a>
+            {aotSentMsg && (
+              <p className={`text-[9px] font-black px-2 ${aotSentMsg.startsWith('Erreur') ? 'text-rose-500' : 'text-emerald-600'}`}>{aotSentMsg}</p>
+            )}
+          </div>
+        )}
+
+        {occupation && occupation.aotFinalPath && !occupation.aotSigned && (
+          <div className="space-y-1.5">
+            <a
+              href={occupation.aotFinalPath}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-center gap-4 p-4 bg-amber-50/50 rounded-2xl border-2 border-amber-100 shadow-sm transition-all hover:border-amber-400 hover:shadow-lg hover:-translate-y-0.5"
+            >
+              <div className="w-12 h-12 rounded-xl shrink-0 bg-amber-500 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <FileText size={20} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest truncate">AOT Final — Non signé</p>
+                <p className="text-[8px] font-black text-amber-400/70 uppercase tracking-tighter mt-1">En attente de signature</p>
+              </div>
+              <button
+                type="button"
+                onClick={e => { e.preventDefault(); if(onSendAot) onSendAot(); }}
+                disabled={isSendingAot}
+                title="Envoyer au demandeur"
+                className="h-8 px-3 rounded-lg bg-white border border-amber-200 flex items-center gap-1.5 text-amber-600 hover:bg-amber-500 hover:text-white hover:border-amber-500 disabled:opacity-40 transition-all shrink-0 text-[9px] font-black uppercase tracking-wider"
+              >
+                {isSendingAot ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                Envoyer
+              </button>
+            </a>
+            {aotSentMsg && (
+              <p className={`text-[9px] font-black px-2 ${aotSentMsg.startsWith('Erreur') ? 'text-rose-500' : 'text-emerald-600'}`}>{aotSentMsg}</p>
+            )}
+          </div>
+        )}
+
+        {totalCount === 0 && (
           <div className="py-12 bg-white rounded-2xl border border-dashed border-slate-200 text-center flex flex-col items-center">
             <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-4">
               <FileArchive size={20} className="text-slate-300" />

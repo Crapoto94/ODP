@@ -55,7 +55,7 @@ export default function ReportAnneePage() {
     try {
       // Just fetch eligible dossiers first to see if anything to check
       setLoadingEligible(true);
-      const res = await axios.get(`/api/occupations?status=FACTURE&type=${type}&anneeTaxation=${fromYear}`);
+      const res = await axios.get(`/api/occupations?status=FACTURE&type=${type}&anneeTaxation=${fromYear}&excludeArchived=true`);
       const data = res.data;
       setDossiers(data);
       setSelectedIds(data.map((d: any) => d.id));

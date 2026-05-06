@@ -47,8 +47,8 @@ export default function CommerceDispositivesManager({
   };
 
   const defaultDates = {
-    start: new Date(selectedYear, 0, 1).toISOString().split('T')[0],
-    end: new Date(selectedYear, 11, 31).toISOString().split('T')[0]
+    start: `${selectedYear}-01-01`,
+    end: `${selectedYear}-12-31`
   };
 
   if (creatingOccupation) {

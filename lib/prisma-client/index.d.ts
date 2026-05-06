@@ -3489,6 +3489,8 @@ export namespace Prisma {
     updated_at: Date | null
     natureJuridique: string | null
     etatAdministratif: string | null
+    observations: string | null
+    photo: string | null
   }
 
   export type TiersMaxAggregateOutputType = {
@@ -3505,6 +3507,8 @@ export namespace Prisma {
     updated_at: Date | null
     natureJuridique: string | null
     etatAdministratif: string | null
+    observations: string | null
+    photo: string | null
   }
 
   export type TiersCountAggregateOutputType = {
@@ -3521,6 +3525,8 @@ export namespace Prisma {
     updated_at: number
     natureJuridique: number
     etatAdministratif: number
+    observations: number
+    photo: number
     _all: number
   }
 
@@ -3551,6 +3557,8 @@ export namespace Prisma {
     updated_at?: true
     natureJuridique?: true
     etatAdministratif?: true
+    observations?: true
+    photo?: true
   }
 
   export type TiersMaxAggregateInputType = {
@@ -3567,6 +3575,8 @@ export namespace Prisma {
     updated_at?: true
     natureJuridique?: true
     etatAdministratif?: true
+    observations?: true
+    photo?: true
   }
 
   export type TiersCountAggregateInputType = {
@@ -3583,6 +3593,8 @@ export namespace Prisma {
     updated_at?: true
     natureJuridique?: true
     etatAdministratif?: true
+    observations?: true
+    photo?: true
     _all?: true
   }
 
@@ -3686,6 +3698,8 @@ export namespace Prisma {
     updated_at: Date
     natureJuridique: string | null
     etatAdministratif: string | null
+    observations: string | null
+    photo: string | null
     _count: TiersCountAggregateOutputType | null
     _avg: TiersAvgAggregateOutputType | null
     _sum: TiersSumAggregateOutputType | null
@@ -3721,6 +3735,8 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
+    observations?: boolean
+    photo?: boolean
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
     occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
     notes?: boolean | Tiers$notesArgs<ExtArgs>
@@ -3741,6 +3757,8 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
+    observations?: boolean
+    photo?: boolean
   }, ExtArgs["result"]["tiers"]>
 
   export type TiersSelectScalar = {
@@ -3757,6 +3775,8 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
+    observations?: boolean
+    photo?: boolean
   }
 
   export type TiersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3788,6 +3808,8 @@ export namespace Prisma {
       updated_at: Date
       natureJuridique: string | null
       etatAdministratif: string | null
+      observations: string | null
+      photo: string | null
     }, ExtArgs["result"]["tiers"]>
     composites: {}
   }
@@ -4197,6 +4219,8 @@ export namespace Prisma {
     readonly updated_at: FieldRef<"Tiers", 'DateTime'>
     readonly natureJuridique: FieldRef<"Tiers", 'String'>
     readonly etatAdministratif: FieldRef<"Tiers", 'String'>
+    readonly observations: FieldRef<"Tiers", 'String'>
+    readonly photo: FieldRef<"Tiers", 'String'>
   }
     
 
@@ -4645,6 +4669,14 @@ export namespace Prisma {
     aotFinalPath: string | null
     aotSigned: boolean | null
     datePaiement: Date | null
+    dateINIT: Date | null
+    dateINST: Date | null
+    datePREP: Date | null
+    dateEN_COURS: Date | null
+    dateVALIDE: Date | null
+    dateFACTURE: Date | null
+    dateTITRE: Date | null
+    dateCLOS: Date | null
   }
 
   export type OccupationMaxAggregateOutputType = {
@@ -4675,6 +4707,14 @@ export namespace Prisma {
     aotFinalPath: string | null
     aotSigned: boolean | null
     datePaiement: Date | null
+    dateINIT: Date | null
+    dateINST: Date | null
+    datePREP: Date | null
+    dateEN_COURS: Date | null
+    dateVALIDE: Date | null
+    dateFACTURE: Date | null
+    dateTITRE: Date | null
+    dateCLOS: Date | null
   }
 
   export type OccupationCountAggregateOutputType = {
@@ -4705,6 +4745,14 @@ export namespace Prisma {
     aotFinalPath: number
     aotSigned: number
     datePaiement: number
+    dateINIT: number
+    dateINST: number
+    datePREP: number
+    dateEN_COURS: number
+    dateVALIDE: number
+    dateFACTURE: number
+    dateTITRE: number
+    dateCLOS: number
     _all: number
   }
 
@@ -4759,6 +4807,14 @@ export namespace Prisma {
     aotFinalPath?: true
     aotSigned?: true
     datePaiement?: true
+    dateINIT?: true
+    dateINST?: true
+    datePREP?: true
+    dateEN_COURS?: true
+    dateVALIDE?: true
+    dateFACTURE?: true
+    dateTITRE?: true
+    dateCLOS?: true
   }
 
   export type OccupationMaxAggregateInputType = {
@@ -4789,6 +4845,14 @@ export namespace Prisma {
     aotFinalPath?: true
     aotSigned?: true
     datePaiement?: true
+    dateINIT?: true
+    dateINST?: true
+    datePREP?: true
+    dateEN_COURS?: true
+    dateVALIDE?: true
+    dateFACTURE?: true
+    dateTITRE?: true
+    dateCLOS?: true
   }
 
   export type OccupationCountAggregateInputType = {
@@ -4819,6 +4883,14 @@ export namespace Prisma {
     aotFinalPath?: true
     aotSigned?: true
     datePaiement?: true
+    dateINIT?: true
+    dateINST?: true
+    datePREP?: true
+    dateEN_COURS?: true
+    dateVALIDE?: true
+    dateFACTURE?: true
+    dateTITRE?: true
+    dateCLOS?: true
     _all?: true
   }
 
@@ -4936,6 +5008,14 @@ export namespace Prisma {
     aotFinalPath: string | null
     aotSigned: boolean
     datePaiement: Date | null
+    dateINIT: Date | null
+    dateINST: Date | null
+    datePREP: Date | null
+    dateEN_COURS: Date | null
+    dateVALIDE: Date | null
+    dateFACTURE: Date | null
+    dateTITRE: Date | null
+    dateCLOS: Date | null
     _count: OccupationCountAggregateOutputType | null
     _avg: OccupationAvgAggregateOutputType | null
     _sum: OccupationSumAggregateOutputType | null
@@ -4985,6 +5065,14 @@ export namespace Prisma {
     aotFinalPath?: boolean
     aotSigned?: boolean
     datePaiement?: boolean
+    dateINIT?: boolean
+    dateINST?: boolean
+    datePREP?: boolean
+    dateEN_COURS?: boolean
+    dateVALIDE?: boolean
+    dateFACTURE?: boolean
+    dateTITRE?: boolean
+    dateCLOS?: boolean
     contacts?: boolean | Occupation$contactsArgs<ExtArgs>
     dispositifs?: boolean | Occupation$dispositifsArgs<ExtArgs>
     lignes?: boolean | Occupation$lignesArgs<ExtArgs>
@@ -5022,6 +5110,14 @@ export namespace Prisma {
     aotFinalPath?: boolean
     aotSigned?: boolean
     datePaiement?: boolean
+    dateINIT?: boolean
+    dateINST?: boolean
+    datePREP?: boolean
+    dateEN_COURS?: boolean
+    dateVALIDE?: boolean
+    dateFACTURE?: boolean
+    dateTITRE?: boolean
+    dateCLOS?: boolean
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["occupation"]>
 
@@ -5053,6 +5149,14 @@ export namespace Prisma {
     aotFinalPath?: boolean
     aotSigned?: boolean
     datePaiement?: boolean
+    dateINIT?: boolean
+    dateINST?: boolean
+    datePREP?: boolean
+    dateEN_COURS?: boolean
+    dateVALIDE?: boolean
+    dateFACTURE?: boolean
+    dateTITRE?: boolean
+    dateCLOS?: boolean
   }
 
   export type OccupationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5106,6 +5210,14 @@ export namespace Prisma {
       aotFinalPath: string | null
       aotSigned: boolean
       datePaiement: Date | null
+      dateINIT: Date | null
+      dateINST: Date | null
+      datePREP: Date | null
+      dateEN_COURS: Date | null
+      dateVALIDE: Date | null
+      dateFACTURE: Date | null
+      dateTITRE: Date | null
+      dateCLOS: Date | null
     }, ExtArgs["result"]["occupation"]>
     composites: {}
   }
@@ -5532,6 +5644,14 @@ export namespace Prisma {
     readonly aotFinalPath: FieldRef<"Occupation", 'String'>
     readonly aotSigned: FieldRef<"Occupation", 'Boolean'>
     readonly datePaiement: FieldRef<"Occupation", 'DateTime'>
+    readonly dateINIT: FieldRef<"Occupation", 'DateTime'>
+    readonly dateINST: FieldRef<"Occupation", 'DateTime'>
+    readonly datePREP: FieldRef<"Occupation", 'DateTime'>
+    readonly dateEN_COURS: FieldRef<"Occupation", 'DateTime'>
+    readonly dateVALIDE: FieldRef<"Occupation", 'DateTime'>
+    readonly dateFACTURE: FieldRef<"Occupation", 'DateTime'>
+    readonly dateTITRE: FieldRef<"Occupation", 'DateTime'>
+    readonly dateCLOS: FieldRef<"Occupation", 'DateTime'>
   }
     
 
@@ -5978,12 +6098,14 @@ export namespace Prisma {
     id: number | null
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
   }
 
   export type ContactSumAggregateOutputType = {
     id: number | null
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
   }
 
   export type ContactMinAggregateOutputType = {
@@ -5996,6 +6118,7 @@ export namespace Prisma {
     role: string | null
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
     pjPath: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -6012,6 +6135,7 @@ export namespace Prisma {
     role: string | null
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
     pjPath: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -6028,6 +6152,7 @@ export namespace Prisma {
     role: number
     occupationId: number
     tiersId: number
+    commerceId: number
     pjPath: number
     created_at: number
     updated_at: number
@@ -6040,12 +6165,14 @@ export namespace Prisma {
     id?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
   }
 
   export type ContactSumAggregateInputType = {
     id?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
   }
 
   export type ContactMinAggregateInputType = {
@@ -6058,6 +6185,7 @@ export namespace Prisma {
     role?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
     pjPath?: true
     created_at?: true
     updated_at?: true
@@ -6074,6 +6202,7 @@ export namespace Prisma {
     role?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
     pjPath?: true
     created_at?: true
     updated_at?: true
@@ -6090,6 +6219,7 @@ export namespace Prisma {
     role?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
     pjPath?: true
     created_at?: true
     updated_at?: true
@@ -6193,6 +6323,7 @@ export namespace Prisma {
     role: string
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
     pjPath: string | null
     created_at: Date
     updated_at: Date
@@ -6228,6 +6359,7 @@ export namespace Prisma {
     role?: boolean
     occupationId?: boolean
     tiersId?: boolean
+    commerceId?: boolean
     pjPath?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -6246,6 +6378,7 @@ export namespace Prisma {
     role?: boolean
     occupationId?: boolean
     tiersId?: boolean
+    commerceId?: boolean
     pjPath?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -6264,6 +6397,7 @@ export namespace Prisma {
     role?: boolean
     occupationId?: boolean
     tiersId?: boolean
+    commerceId?: boolean
     pjPath?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -6295,6 +6429,7 @@ export namespace Prisma {
       role: string
       occupationId: number | null
       tiersId: number | null
+      commerceId: number | null
       pjPath: string | null
       created_at: Date
       updated_at: Date
@@ -6703,6 +6838,7 @@ export namespace Prisma {
     readonly role: FieldRef<"Contact", 'String'>
     readonly occupationId: FieldRef<"Contact", 'Int'>
     readonly tiersId: FieldRef<"Contact", 'Int'>
+    readonly commerceId: FieldRef<"Contact", 'Int'>
     readonly pjPath: FieldRef<"Contact", 'String'>
     readonly created_at: FieldRef<"Contact", 'DateTime'>
     readonly updated_at: FieldRef<"Contact", 'DateTime'>
@@ -31536,7 +31672,9 @@ export namespace Prisma {
     created_at: 'created_at',
     updated_at: 'updated_at',
     natureJuridique: 'natureJuridique',
-    etatAdministratif: 'etatAdministratif'
+    etatAdministratif: 'etatAdministratif',
+    observations: 'observations',
+    photo: 'photo'
   };
 
   export type TiersScalarFieldEnum = (typeof TiersScalarFieldEnum)[keyof typeof TiersScalarFieldEnum]
@@ -31569,7 +31707,15 @@ export namespace Prisma {
     aotGabaritId: 'aotGabaritId',
     aotFinalPath: 'aotFinalPath',
     aotSigned: 'aotSigned',
-    datePaiement: 'datePaiement'
+    datePaiement: 'datePaiement',
+    dateINIT: 'dateINIT',
+    dateINST: 'dateINST',
+    datePREP: 'datePREP',
+    dateEN_COURS: 'dateEN_COURS',
+    dateVALIDE: 'dateVALIDE',
+    dateFACTURE: 'dateFACTURE',
+    dateTITRE: 'dateTITRE',
+    dateCLOS: 'dateCLOS'
   };
 
   export type OccupationScalarFieldEnum = (typeof OccupationScalarFieldEnum)[keyof typeof OccupationScalarFieldEnum]
@@ -31585,6 +31731,7 @@ export namespace Prisma {
     role: 'role',
     occupationId: 'occupationId',
     tiersId: 'tiersId',
+    commerceId: 'commerceId',
     pjPath: 'pjPath',
     created_at: 'created_at',
     updated_at: 'updated_at',
@@ -32051,6 +32198,8 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
+    observations?: StringNullableFilter<"Tiers"> | string | null
+    photo?: StringNullableFilter<"Tiers"> | string | null
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
     notes?: NoteListRelationFilter
@@ -32070,6 +32219,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrderInput | SortOrder
     etatAdministratif?: SortOrderInput | SortOrder
+    observations?: SortOrderInput | SortOrder
+    photo?: SortOrderInput | SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     occupations?: OccupationOrderByRelationAggregateInput
     notes?: NoteOrderByRelationAggregateInput
@@ -32092,6 +32243,8 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
+    observations?: StringNullableFilter<"Tiers"> | string | null
+    photo?: StringNullableFilter<"Tiers"> | string | null
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
     notes?: NoteListRelationFilter
@@ -32111,6 +32264,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrderInput | SortOrder
     etatAdministratif?: SortOrderInput | SortOrder
+    observations?: SortOrderInput | SortOrder
+    photo?: SortOrderInput | SortOrder
     _count?: TiersCountOrderByAggregateInput
     _avg?: TiersAvgOrderByAggregateInput
     _max?: TiersMaxOrderByAggregateInput
@@ -32135,6 +32290,8 @@ export namespace Prisma {
     updated_at?: DateTimeWithAggregatesFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
+    observations?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
+    photo?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
   }
 
   export type OccupationWhereInput = {
@@ -32168,6 +32325,14 @@ export namespace Prisma {
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINIT?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINST?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    datePREP?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateEN_COURS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateVALIDE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateFACTURE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateTITRE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateCLOS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -32204,6 +32369,14 @@ export namespace Prisma {
     aotFinalPath?: SortOrderInput | SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrderInput | SortOrder
+    dateINIT?: SortOrderInput | SortOrder
+    dateINST?: SortOrderInput | SortOrder
+    datePREP?: SortOrderInput | SortOrder
+    dateEN_COURS?: SortOrderInput | SortOrder
+    dateVALIDE?: SortOrderInput | SortOrder
+    dateFACTURE?: SortOrderInput | SortOrder
+    dateTITRE?: SortOrderInput | SortOrder
+    dateCLOS?: SortOrderInput | SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     dispositifs?: DispositifOrderByRelationAggregateInput
     lignes?: LigneOccupationOrderByRelationAggregateInput
@@ -32243,6 +32416,14 @@ export namespace Prisma {
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINIT?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINST?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    datePREP?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateEN_COURS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateVALIDE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateFACTURE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateTITRE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateCLOS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -32279,6 +32460,14 @@ export namespace Prisma {
     aotFinalPath?: SortOrderInput | SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrderInput | SortOrder
+    dateINIT?: SortOrderInput | SortOrder
+    dateINST?: SortOrderInput | SortOrder
+    datePREP?: SortOrderInput | SortOrder
+    dateEN_COURS?: SortOrderInput | SortOrder
+    dateVALIDE?: SortOrderInput | SortOrder
+    dateFACTURE?: SortOrderInput | SortOrder
+    dateTITRE?: SortOrderInput | SortOrder
+    dateCLOS?: SortOrderInput | SortOrder
     _count?: OccupationCountOrderByAggregateInput
     _avg?: OccupationAvgOrderByAggregateInput
     _max?: OccupationMaxOrderByAggregateInput
@@ -32317,6 +32506,14 @@ export namespace Prisma {
     aotFinalPath?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     aotSigned?: BoolWithAggregatesFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateINIT?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateINST?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    datePREP?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateEN_COURS?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateVALIDE?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateFACTURE?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateTITRE?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateCLOS?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
   }
 
   export type ContactWhereInput = {
@@ -32332,6 +32529,7 @@ export namespace Prisma {
     role?: StringFilter<"Contact"> | string
     occupationId?: IntNullableFilter<"Contact"> | number | null
     tiersId?: IntNullableFilter<"Contact"> | number | null
+    commerceId?: IntNullableFilter<"Contact"> | number | null
     pjPath?: StringNullableFilter<"Contact"> | string | null
     created_at?: DateTimeFilter<"Contact"> | Date | string
     updated_at?: DateTimeFilter<"Contact"> | Date | string
@@ -32350,6 +32548,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrderInput | SortOrder
     tiersId?: SortOrderInput | SortOrder
+    commerceId?: SortOrderInput | SortOrder
     pjPath?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -32371,6 +32570,7 @@ export namespace Prisma {
     role?: StringFilter<"Contact"> | string
     occupationId?: IntNullableFilter<"Contact"> | number | null
     tiersId?: IntNullableFilter<"Contact"> | number | null
+    commerceId?: IntNullableFilter<"Contact"> | number | null
     pjPath?: StringNullableFilter<"Contact"> | string | null
     created_at?: DateTimeFilter<"Contact"> | Date | string
     updated_at?: DateTimeFilter<"Contact"> | Date | string
@@ -32389,6 +32589,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrderInput | SortOrder
     tiersId?: SortOrderInput | SortOrder
+    commerceId?: SortOrderInput | SortOrder
     pjPath?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -32413,6 +32614,7 @@ export namespace Prisma {
     role?: StringWithAggregatesFilter<"Contact"> | string
     occupationId?: IntNullableWithAggregatesFilter<"Contact"> | number | null
     tiersId?: IntNullableWithAggregatesFilter<"Contact"> | number | null
+    commerceId?: IntNullableWithAggregatesFilter<"Contact"> | number | null
     pjPath?: StringNullableWithAggregatesFilter<"Contact"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"Contact"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Contact"> | Date | string
@@ -34380,6 +34582,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     occupations?: OccupationCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
@@ -34399,6 +34603,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
@@ -34417,6 +34623,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
@@ -34436,6 +34644,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
@@ -34455,6 +34665,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
   }
 
   export type TiersUpdateManyMutationInput = {
@@ -34470,6 +34682,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TiersUncheckedUpdateManyInput = {
@@ -34486,6 +34700,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OccupationCreateInput = {
@@ -34514,6 +34730,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -34550,6 +34774,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -34583,6 +34815,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -34619,6 +34859,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -34654,6 +34902,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
   }
 
   export type OccupationUpdateManyMutationInput = {
@@ -34682,6 +34938,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type OccupationUncheckedUpdateManyInput = {
@@ -34712,6 +34976,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ContactCreateInput = {
@@ -34721,6 +34993,7 @@ export namespace Prisma {
     telephone?: string | null
     titre?: string | null
     role?: string
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -34739,6 +35012,7 @@ export namespace Prisma {
     role?: string
     occupationId?: number | null
     tiersId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -34752,6 +35026,7 @@ export namespace Prisma {
     telephone?: NullableStringFieldUpdateOperationsInput | string | null
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34770,6 +35045,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     occupationId?: NullableIntFieldUpdateOperationsInput | number | null
     tiersId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34786,6 +35062,7 @@ export namespace Prisma {
     role?: string
     occupationId?: number | null
     tiersId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -34799,6 +35076,7 @@ export namespace Prisma {
     telephone?: NullableStringFieldUpdateOperationsInput | string | null
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34815,6 +35093,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     occupationId?: NullableIntFieldUpdateOperationsInput | number | null
     tiersId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37050,6 +37329,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrder
     etatAdministratif?: SortOrder
+    observations?: SortOrder
+    photo?: SortOrder
   }
 
   export type TiersAvgOrderByAggregateInput = {
@@ -37072,6 +37353,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrder
     etatAdministratif?: SortOrder
+    observations?: SortOrder
+    photo?: SortOrder
   }
 
   export type TiersMinOrderByAggregateInput = {
@@ -37088,6 +37371,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrder
     etatAdministratif?: SortOrder
+    observations?: SortOrder
+    photo?: SortOrder
   }
 
   export type TiersSumOrderByAggregateInput = {
@@ -37277,6 +37562,14 @@ export namespace Prisma {
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrder
+    dateINIT?: SortOrder
+    dateINST?: SortOrder
+    datePREP?: SortOrder
+    dateEN_COURS?: SortOrder
+    dateVALIDE?: SortOrder
+    dateFACTURE?: SortOrder
+    dateTITRE?: SortOrder
+    dateCLOS?: SortOrder
   }
 
   export type OccupationAvgOrderByAggregateInput = {
@@ -37318,6 +37611,14 @@ export namespace Prisma {
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrder
+    dateINIT?: SortOrder
+    dateINST?: SortOrder
+    datePREP?: SortOrder
+    dateEN_COURS?: SortOrder
+    dateVALIDE?: SortOrder
+    dateFACTURE?: SortOrder
+    dateTITRE?: SortOrder
+    dateCLOS?: SortOrder
   }
 
   export type OccupationMinOrderByAggregateInput = {
@@ -37348,6 +37649,14 @@ export namespace Prisma {
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrder
+    dateINIT?: SortOrder
+    dateINST?: SortOrder
+    datePREP?: SortOrder
+    dateEN_COURS?: SortOrder
+    dateVALIDE?: SortOrder
+    dateFACTURE?: SortOrder
+    dateTITRE?: SortOrder
+    dateCLOS?: SortOrder
   }
 
   export type OccupationSumOrderByAggregateInput = {
@@ -37435,6 +37744,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+    commerceId?: SortOrder
     pjPath?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -37445,6 +37755,7 @@ export namespace Prisma {
     id?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+    commerceId?: SortOrder
   }
 
   export type ContactMaxOrderByAggregateInput = {
@@ -37457,6 +37768,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+    commerceId?: SortOrder
     pjPath?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -37473,6 +37785,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+    commerceId?: SortOrder
     pjPath?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -37483,6 +37796,7 @@ export namespace Prisma {
     id?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+    commerceId?: SortOrder
   }
 
   export type NoteCountOrderByAggregateInput = {
@@ -40045,6 +40359,7 @@ export namespace Prisma {
     telephone?: string | null
     titre?: string | null
     role?: string
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -40061,6 +40376,7 @@ export namespace Prisma {
     titre?: string | null
     role?: string
     occupationId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -40102,6 +40418,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -40136,6 +40460,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -40221,6 +40553,7 @@ export namespace Prisma {
     role?: StringFilter<"Contact"> | string
     occupationId?: IntNullableFilter<"Contact"> | number | null
     tiersId?: IntNullableFilter<"Contact"> | number | null
+    commerceId?: IntNullableFilter<"Contact"> | number | null
     pjPath?: StringNullableFilter<"Contact"> | string | null
     created_at?: DateTimeFilter<"Contact"> | Date | string
     updated_at?: DateTimeFilter<"Contact"> | Date | string
@@ -40274,6 +40607,14 @@ export namespace Prisma {
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINIT?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINST?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    datePREP?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateEN_COURS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateVALIDE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateFACTURE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateTITRE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateCLOS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
   }
 
   export type NoteUpsertWithWhereUniqueWithoutTiersInput = {
@@ -40319,6 +40660,7 @@ export namespace Prisma {
     telephone?: string | null
     titre?: string | null
     role?: string
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -40335,6 +40677,7 @@ export namespace Prisma {
     titre?: string | null
     role?: string
     tiersId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -40503,6 +40846,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
   }
@@ -40521,6 +40866,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
   }
@@ -40684,6 +41031,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
   }
@@ -40702,6 +41051,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
   }
@@ -40719,6 +41070,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     occupations?: OccupationCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
   }
@@ -40737,6 +41090,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
   }
@@ -40772,6 +41127,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -40807,6 +41170,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -40842,6 +41213,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
   }
@@ -40860,6 +41233,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
   }
@@ -40901,6 +41276,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -40936,6 +41319,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -40968,6 +41359,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -41003,6 +41402,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -41027,6 +41434,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     occupations?: OccupationCreateNestedManyWithoutTiersInput
   }
@@ -41045,6 +41454,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
   }
@@ -41091,6 +41502,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -41126,6 +41545,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -41156,6 +41583,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
   }
@@ -41174,6 +41603,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
   }
@@ -41772,6 +42203,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -41807,6 +42246,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -41907,6 +42354,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -41942,6 +42397,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -41974,6 +42437,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -42009,6 +42480,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -42057,6 +42536,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -42092,6 +42579,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -42516,6 +43011,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -42551,6 +43054,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -42633,6 +43144,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -42668,6 +43187,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -42723,6 +43250,7 @@ export namespace Prisma {
     titre?: string | null
     role?: string
     occupationId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -42756,6 +43284,14 @@ export namespace Prisma {
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
   }
 
   export type NoteCreateManyTiersInput = {
@@ -42781,6 +43317,7 @@ export namespace Prisma {
     telephone?: NullableStringFieldUpdateOperationsInput | string | null
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42797,6 +43334,7 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42812,6 +43350,7 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42844,6 +43383,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -42878,6 +43425,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -42912,6 +43467,14 @@ export namespace Prisma {
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type NoteUpdateWithoutTiersInput = {
@@ -42970,6 +43533,7 @@ export namespace Prisma {
     titre?: string | null
     role?: string
     tiersId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -43037,6 +43601,7 @@ export namespace Prisma {
     telephone?: NullableStringFieldUpdateOperationsInput | string | null
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43053,6 +43618,7 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     tiersId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43068,6 +43634,7 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     tiersId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -18,6 +18,8 @@ interface Props {
   currentStatus: string;
   onStatusChange?: (newStatus: string) => Promise<void>;
   isUpdating?: boolean;
+  isReadOnly?: boolean;
+  stepDates?: Record<string, string | null>;
 }
 
 const PROCESS_STEPS = [
@@ -35,19 +37,23 @@ export default function CommerceStepper({
   totalAmount,
   currentStatus,
   onStatusChange,
-  isUpdating = false
+  isUpdating = false,
+  isReadOnly = false,
+  stepDates = {}
 }: Props) {
   // Map commerce statuts to step IDs
-  const currentIdx = PROCESS_STEPS.findIndex(s =>
-    s.id === currentStatus ||
-    (currentStatus === 'INITIALISATION' && s.id === 'INIT') ||
-    (currentStatus === 'EN_ATTENTE' && s.id === 'INIT') ||
-    (currentStatus === 'VERIFIE' && s.id === 'VALIDE') ||
-    (currentStatus === 'VALIDÉ' && s.id === 'VALIDE') ||
-    (currentStatus === 'PAYÉ' && s.id === 'CLOS') ||
-    (currentStatus === 'PAYE' && s.id === 'CLOS') ||
-    (currentStatus === 'TITRÉ' && s.id === 'TITRE')
-  );
+  const mapCurrentStatus = (status: string): string => {
+    if (!status) return 'INIT';
+    if (status === 'INITIALISATION' || status === 'EN_ATTENTE') return 'INIT';
+    if (status === 'INSTRUCTION' || status === 'INST') return 'INST';
+    if (status === 'PREPARATION_AOT' || status === 'PREP') return 'PREP';
+    if (status === 'EN_COURS') return 'EN_COURS';
+    if (status === 'VALIDÉ' || status === 'VALIDE' || status === 'VERIFIE') return 'VALIDE';
+    if (status === 'FACTURÉ' || status === 'FACTURE') return 'FACTURE';
+    if (status === 'TITRÉ' || status === 'TITRE') return 'TITRE';
+    if (status === 'CLOS' || status === 'PAYÉ' || status === 'PAYE') return 'CLOS';
+    return status;
+  };
 
   const mapIdToStatus = (id: string): string => {
     const mapping: Record<string, string> = {
@@ -61,6 +67,24 @@ export default function CommerceStepper({
       'CLOS': 'CLOS'
     };
     return mapping[id] || id;
+  };
+
+  const normalizedStatus = mapCurrentStatus(currentStatus);
+  const currentIdx = PROCESS_STEPS.findIndex(s => s.id === normalizedStatus);
+
+  const formatDate = (dateStr: string | null | undefined): string => {
+    if (!dateStr) return '';
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch {
+      return '';
+    }
+  };
+
+  const getStepDate = (stepId: string): string | null => {
+    const dateField = `date${stepId}`;
+    return stepDates[dateField] || null;
   };
 
   const handlePrevious = async () => {
@@ -77,18 +101,6 @@ export default function CommerceStepper({
       const newStatus = mapIdToStatus(nextStep.id);
       await onStatusChange(newStatus);
     }
-  };
-
-  const mapCurrentStatus = (status: string): string => {
-    if (status === 'INITIALISATION') return 'INIT';
-    if (status === 'INSTRUCTION') return 'INST';
-    if (status === 'PREPARATION_AOT') return 'PREP';
-    if (status === 'EN_COURS') return 'EN_COURS';
-    if (status === 'VALIDÉ') return 'VALIDE';
-    if (status === 'FACTURÉ') return 'FACTURE';
-    if (status === 'TITRÉ') return 'TITRE';
-    if (status === 'CLOS') return 'CLOS';
-    return status;
   };
 
   return (
@@ -146,6 +158,11 @@ export default function CommerceStepper({
                     <p className={`text-[9px] font-black uppercase tracking-widest whitespace-nowrap ${isCurrent ? 'text-blue-600' : 'text-slate-500'}`}>
                       {step.label}
                     </p>
+                    {getStepDate(step.id) && (
+                      <p className="text-[7px] text-slate-400 mt-1">
+                        {formatDate(getStepDate(step.id))}
+                      </p>
+                    )}
                     {isCurrent && (
                       <div className="mt-1 w-1.5 h-1.5 bg-blue-600 rounded-full mx-auto animate-bounce"></div>
                     )}
@@ -166,7 +183,7 @@ export default function CommerceStepper({
           </div>
 
           {/* Navigation Buttons */}
-          {onStatusChange && (
+          {onStatusChange && !isReadOnly && (
             <div className="flex gap-3 mt-8 justify-center">
               <button
                 onClick={handlePrevious}

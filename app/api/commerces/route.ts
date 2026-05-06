@@ -2,20 +2,34 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getSession();
     if (!session || session.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
+    const { searchParams } = new URL(request.url || '');
+    const status = searchParams.get('status') || 'ACTIVE'; // default to active ones
+
+    const where: any = {
+      type: 'COMMERCE'
+    };
+
+    if (status === 'ARCHIVE') {
+      where.tiers = { statut: 'ARCHIVE' };
+    } else {
+      where.tiers = { statut: { not: 'ARCHIVE' } };
+    }
+    
+    // Fetch TLPE configurations for thresholds
+    const tlpeConfigs = await (prisma as any).tlpeConfig.findMany();
+    const thresholdMap = new Map<number, number>();
+    tlpeConfigs.forEach((c: any) => thresholdMap.set(c.annee, c.exoneration));
+
     // Get all TLPE and COMMERCE occupations with their tiers
     const occupations = await (prisma as any).occupation.findMany({
-      where: {
-        type: {
-          in: ['TLPE', 'COMMERCE']
-        }
-      },
+      where,
       include: {
         tiers: true,
         lignes: {
@@ -46,7 +60,23 @@ export async function GET() {
             const count = articleCounts.get(nom) || 0;
             articleCounts.set(nom, count + 1);
             if (!articleMap.has(nom)) {
-              articleMap.set(nom, { id: l.article.id, nom, year });
+              articleMap.set(nom, { 
+                id: l.article.id, 
+                nom, 
+                year, 
+                unitPrice: l.article.montant, 
+                total: l.montant,
+                quantite1: l.quantite1,
+                notes_raw: l.article.notes,
+                notes: l.note ? [l.note] : []
+              });
+            } else {
+              const existing = articleMap.get(nom);
+              if (existing.year === year) {
+                existing.total += l.montant;
+                existing.quantite1 += l.quantite1;
+                if (l.note) existing.notes.push(l.note);
+              }
             }
           }
         });
@@ -69,6 +99,12 @@ export async function GET() {
             }
             commerce.commerceCount++;
           }
+          
+          if (year && (!commerce.lastYearForStatut || year > commerce.lastYearForStatut)) {
+            commerce.lastYearStatut = occ.statut;
+            commerce.lastYearForStatut = year;
+          }
+
           // Add articles (deduplicate and accumulate counts)
           articles.forEach((article: any) => {
             const existing = commerce.articles.find((a: any) => a.nom === article.nom);
@@ -97,7 +133,11 @@ export async function GET() {
             commerceYears: commerceYears.filter(Boolean),
             tlpeCount: occ.type === 'TLPE' ? 1 : 0,
             commerceCount: occ.type === 'COMMERCE' ? 1 : 0,
-            articles: articles
+            articles: articles,
+            etatAdministratif: occ.tiers.etatAdministratif,
+            statut: occ.tiers.statut,
+            lastYearStatut: occ.statut,
+            lastYearForStatut: year
           });
         }
       }
@@ -114,10 +154,27 @@ export async function GET() {
         ? commerce.articles.filter((a: any) => a.year === lastYear)
         : commerce.articles;
 
+      const lastYearTotal = filteredArticles.reduce((sum: number, a: any) => sum + (a.total || 0), 0);
+      
+      const enseigneSurface = filteredArticles.reduce((sum: number, a: any) => {
+        let artNotes: any = {};
+        try { artNotes = a.notes_raw ? JSON.parse(a.notes_raw) : {}; } catch(e){}
+        const isEnseigne = artNotes.tlpeType === 'ENSEIGNE' || (a.nom && a.nom.toLowerCase().startsWith('enseigne'));
+        if (isEnseigne) {
+          return sum + (a.quantite1 || 0);
+        }
+        return sum;
+      }, 0);
+
       return {
         ...commerce,
         articles: filteredArticles,
-        lastYear
+        lastYear,
+        lastYearTotal,
+        enseigneSurface,
+        threshold: lastYear ? (thresholdMap.get(lastYear) || 12) : 12,
+        isExonere: enseigneSurface > 0 && enseigneSurface <= (lastYear ? (thresholdMap.get(lastYear) || 12) : 12),
+        lastYearStatut: commerce.lastYearStatut
       };
     }).sort((a, b) => a.nom.localeCompare(b.nom));
 

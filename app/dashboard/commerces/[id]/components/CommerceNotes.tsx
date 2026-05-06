@@ -18,10 +18,6 @@ export default function CommerceNotes({ tiersId, currentUser }: Props) {
         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
           <MessageSquare size={14} /> Fil de discussion
         </h3>
-        <button onClick={handleHarvest} disabled={isHarvesting} className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 text-slate-500 hover:text-blue-600 rounded-lg font-bold text-[9px] uppercase tracking-tighter transition-all shadow-sm active:scale-95 disabled:opacity-50">
-          {isHarvesting ? <Loader2 size={12} className="animate-spin" /> : <Clock size={12} />}
-          Synchroniser mails
-        </button>
       </div>
 
       <div className="flex-1 space-y-4 max-h-[500px] overflow-y-auto px-2">

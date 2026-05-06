@@ -28,20 +28,25 @@ export async function GET(
     const occupations = await (prisma as any).occupation.findMany({
       where: {
         tiersId: tierId,
-        type: {
-          in: ['TLPE', 'COMMERCE']
-        }
+        type: 'COMMERCE'
       },
       include: {
         lignes: {
           select: {
             id: true,
             quantite1: true,
+            dateDebut: true,
+            dateFin: true,
             article: {
               select: {
                 id: true,
                 designation: true,
-                montant: true
+                montant: true,
+                modeTaxation: {
+                  select: {
+                    nom: true
+                  }
+                }
               }
             }
           }
@@ -109,6 +114,9 @@ export async function GET(
               nom,
               year,
               count: 0,
+              montant: ligne.article.montant || 0,
+              dateDebut: ligne.dateDebut,
+              dateFin: ligne.dateFin,
               occupationType: occ.type
             });
           }
@@ -124,17 +132,36 @@ export async function GET(
       });
     });
 
-    // Convert Set to Array and organize by year
+    // Group dispositifs by year individually (no grouping by designation for timeline precision)
     const years = Array.from(yearsSet).sort((a, b) => b - a);
     const dispositifsByYear = new Map<number, any[]>();
 
-    dispositifsMap.forEach(disp => {
-      if (!dispositifsByYear.has(disp.year)) {
-        dispositifsByYear.set(disp.year, []);
-      }
-      dispositifsByYear.get(disp.year)!.push({
-        ...disp,
-        occupationTypes: Array.from(disp.occupationTypes || [])
+    // Initialize all years
+    years.forEach(y => dispositifsByYear.set(y, []));
+
+    occupations.forEach((occ: any) => {
+      const year = occ.type === 'TLPE' || occ.type === 'COMMERCE'
+        ? occ.anneeTaxation
+        : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : null);
+
+      if (!year) return;
+
+      occ.lignes.forEach((ligne: any) => {
+        if (ligne.article && !ligne.deletedAt) {
+          const yearDisps = dispositifsByYear.get(year);
+          if (yearDisps) {
+            yearDisps.push({
+              id: ligne.id,
+              nom: ligne.article.designation,
+              montant: ligne.article.montant || 0,
+              unite: ligne.article.modeTaxation?.nom || '',
+              dateDebut: ligne.dateDebut,
+              dateFin: ligne.dateFin,
+              occupationType: occ.type,
+              count: ligne.quantite1 || 1
+            });
+          }
+        }
       });
     });
 
@@ -198,7 +225,10 @@ export async function GET(
         nom: tiers.nom,
         adresse: tiers.adresse,
         email: tiers.email,
-        telephone: tiers.telephone
+        telephone: tiers.telephone,
+        statut: tiers.statut,
+        observations: tiers.observations,
+        photo: tiers.photo
       },
       occupationsCount: occupations.length,
       years,
@@ -209,6 +239,35 @@ export async function GET(
     });
   } catch (err: any) {
     console.error('[commerce-detail]', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    console.log('[PATCH-COMMERCE] Start', params);
+    const session = await getSession();
+    if (!session) {
+      console.log('[PATCH-COMMERCE] No session');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const body = await request.json();
+    console.log('[PATCH-COMMERCE] Updating', id, body);
+
+    const updated = await (prisma as any).tiers.update({
+      where: { id: parseInt(id) },
+      data: body
+    });
+    console.log('[PATCH-COMMERCE] Success');
+
+    return NextResponse.json(updated);
+  } catch (err: any) {
+    console.error('[PATCH-COMMERCE] Error', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

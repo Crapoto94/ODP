@@ -5,6 +5,7 @@ interface Props {
   totalAmount: number;
   generatingPdf: boolean;
   onDownloadFacture: () => void;
+  taxationYear?: number | string | null;
 }
 
 export default function OccupationFinancialCard({
@@ -12,7 +13,8 @@ export default function OccupationFinancialCard({
   generatingPdf,
   onDownloadFacture,
   onSendEmail,
-  isSendingEmail
+  isSendingEmail,
+  taxationYear
 }: Props & { onSendEmail?: () => void; isSendingEmail?: boolean }) {
   return (
     <div className="w-full lg:w-[260px] shrink-0">
@@ -22,7 +24,9 @@ export default function OccupationFinancialCard({
         </div>
         <div className="relative z-10 flex flex-col gap-3">
           <div>
-            <p className="text-slate-500 font-black text-[8px] uppercase tracking-widest mb-1.5 opacity-80">Redevance Totale TTC</p>
+            <p className="text-slate-500 font-black text-[8px] uppercase tracking-widest mb-1.5 opacity-80">
+              Redevance Totale TTC {taxationYear && `(${taxationYear})`}
+            </p>
             <div className="flex items-baseline gap-1.5">
               <span className="text-2xl font-black tracking-tighter tabular-nums text-white">
                 {totalAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

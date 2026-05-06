@@ -19,7 +19,7 @@ export async function PATCH(
   try {
     const { id: paramId } = await params;
     const tiersId = parseInt(paramId);
-    const { statut } = await req.json();
+    const { statut, annee } = await req.json();
 
     if (!statut || !PROCESS_STEPS.includes(statut)) {
       return NextResponse.json(
@@ -28,11 +28,12 @@ export async function PATCH(
       );
     }
 
-    // Update all occupations of this commerce with the new status
+    // Update occupations of this commerce, optionally filtered by year
     const updated = await (prisma as any).occupation.updateMany({
       where: {
         tiersId,
-        type: 'COMMERCE'
+        type: 'COMMERCE',
+        ...(annee ? { anneeTaxation: parseInt(annee) } : {})
       },
       data: {
         statut

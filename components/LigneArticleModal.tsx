@@ -103,10 +103,11 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
       justOpened.current = true;
 
       if (initialData) {
+        const artId = initialData.articleId || initialData.article?.id;
         setFormData({
-          articleId: initialData.articleId.toString(),
-          quantite1: initialData.quantite1.toString(),
-          quantite2: initialData.quantite2.toString(),
+          articleId: artId ? artId.toString() : '',
+          quantite1: initialData.quantite1?.toString() || '1',
+          quantite2: initialData.quantite2?.toString() || '1',
           dateDebut: initialData.dateDebut?.split('T')[0] || defaultDates.start,
           dateFin: initialData.dateFin?.split('T')[0] || defaultDates.end,
           dateDebutConstatee: initialData.dateDebutConstatee ? initialData.dateDebutConstatee.split('T')[0] : '',
@@ -114,7 +115,9 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
           note: initialData.note || ''
         });
         setPhotos(initialData.photos ? initialData.photos.split(',').filter(Boolean) : []);
-        setFilterText(initialData.article?.numero ? `[${initialData.article.numero}] ${initialData.article.designation}` : initialData.article?.designation || '');
+        
+        const art = initialData.article;
+        setFilterText(art?.numero ? `[${art.numero}] ${art.designation}` : art?.designation || '');
       } else {
         setFormData({
           articleId: '',
@@ -179,21 +182,29 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
     }
   }, [formData.dateDebut, formData.dateFin, formData.dateDebutConstatee, formData.dateFinConstatee, labels.u2, occupationType, manualQ2]);
 
-  useEffect(() => {
-    if (!formData.dateDebut) return;
-    const year = new Date(formData.dateDebut).getFullYear();
-    if (year && year !== currentYear) {
-      if (justOpened.current) {
-        justOpened.current = false;
-        return;
-      }
+  const handleDateDebutChange = (newDate: string) => {
+    setFormData(prev => ({ ...prev, dateDebut: newDate }));
+    if (!newDate) return;
+    
+    const year = new Date(newDate).getFullYear();
+    if (year && year !== currentYear && !justOpened.current) {
       fetchArticles(year);
-      setFormData(prev => ({ ...prev, articleId: '' }));
+      setFormData(prev => ({ ...prev, articleId: '', dateDebut: newDate }));
       setFilterText('');
-    } else if (year) {
-      justOpened.current = false;
     }
-  }, [formData.dateDebut, currentYear]);
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      // Small delay to ensure initialization is finished before allowing year change resets
+      const timer = setTimeout(() => {
+        justOpened.current = false;
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  // Year change logic moved to onChange for better stability
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -384,7 +395,7 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
                 required
                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
                 value={formData.dateDebut}
-                onChange={e => setFormData({ ...formData, dateDebut: e.target.value })}
+                onChange={e => handleDateDebutChange(e.target.value)}
               />
             </div>
             <div className="space-y-2">

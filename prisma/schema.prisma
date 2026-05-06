@@ -23,6 +23,8 @@ model Tiers {
   updated_at        DateTime     @updatedAt
   natureJuridique   String?
   etatAdministratif String?
+  observations      String?
+  photo             String?
   contacts          Contact[]
   occupations       Occupation[]
   notes             Note[]
@@ -56,6 +58,14 @@ model Occupation {
   aotFinalPath              String?
   aotSigned                 Boolean            @default(false)
   datePaiement              DateTime?
+  dateINIT                  DateTime?
+  dateINST                  DateTime?
+  datePREP                  DateTime?
+  dateEN_COURS              DateTime?
+  dateVALIDE                DateTime?
+  dateFACTURE               DateTime?
+  dateTITRE                 DateTime?
+  dateCLOS                  DateTime?
   contacts                  Contact[]
   dispositifs               Dispositif[]
   lignes                    LigneOccupation[]
@@ -74,6 +84,7 @@ model Contact {
   role         String      @default("CONTACT_DIRECT")
   occupationId Int?
   tiersId      Int?
+  commerceId   Int?
   pjPath       String?
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt

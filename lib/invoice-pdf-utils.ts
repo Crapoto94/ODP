@@ -29,22 +29,70 @@ function calculateMonthlyProrata(startDate: Date, endDate: Date): { months: numb
 }
 
 export async function generateInvoicePdfBuffer(
-  occupationId: number, 
-  overrides?: { invoiceNumber?: string; tlpeConfig?: any }
+  occupationId: number | null, 
+  overrides?: { 
+    invoiceNumber?: string; 
+    tlpeConfig?: any; 
+    tiersId?: number; 
+    annee?: number;
+    occupationIds?: number[];
+  }
 ): Promise<{ buffer: Buffer; filename: string }> {
   // 1. Fetch data
-  const [occ, settings] = await Promise.all([
-    prisma.occupation.findUnique({
+  let occ: any = null;
+  let allLignes: any[] = [];
+  let facturableId: number;
+  let allOccIds: number[] = [];
+
+  if (occupationId) {
+    occ = await prisma.occupation.findUnique({
       where: { id: occupationId },
       include: {
         tiers: true,
         lignes: { include: { article: { include: { modeTaxation: true } } } }
       }
-    }),
-    prisma.appSettings.findFirst()
-  ]);
+    });
+    if (!occ) throw new Error('Occupation non trouvée');
+    allLignes = occ.lignes || [];
+    facturableId = occ.tiersId;
+    allOccIds = [occ.id];
+  } else if (overrides?.occupationIds && overrides.occupationIds.length > 0) {
+    const occs = await prisma.occupation.findMany({
+      where: { id: { in: overrides.occupationIds } },
+      include: {
+        tiers: true,
+        lignes: { include: { article: { include: { modeTaxation: true } } } }
+      }
+    });
+    if (occs.length === 0) throw new Error('Aucune occupation trouvée');
+    
+    occ = occs[0];
+    allLignes = occs.flatMap(o => o.lignes || []);
+    occ.lignes = allLignes;
+    facturableId = occ.tiersId;
+    allOccIds = occs.map(o => o.id);
+  } else if (overrides?.tiersId && overrides?.annee) {
+    const occs = await prisma.occupation.findMany({
+      where: { tiersId: overrides.tiersId, anneeTaxation: overrides.annee },
+      include: {
+        tiers: true,
+        lignes: { include: { article: { include: { modeTaxation: true } } } }
+      }
+    });
+    if (occs.length === 0) throw new Error('Aucune occupation trouvée pour cette année');
+    
+    // On utilise la première comme base pour le type et les paramètres
+    occ = occs[0];
+    // On regroupe toutes les lignes de tous les dispositifs
+    allLignes = occs.flatMap(o => o.lignes || []);
+    occ.lignes = allLignes; // On écrase pour le reste de la logique
+    facturableId = overrides.tiersId;
+    allOccIds = occs.map(o => o.id);
+  } else {
+    throw new Error('Paramètres manquants');
+  }
 
-  if (!occ) throw new Error('Occupation non trouvée');
+  const settings = await prisma.appSettings.findFirst();
 
   // Get the billing tiers: use "Agissant pour" if defined, otherwise use "Demandeur"
   let tierFacturable = occ.tiers;
@@ -131,14 +179,17 @@ export async function generateInvoicePdfBuffer(
               const { ratio: prorata } = calculateMonthlyProrata(d1, d2);
               return sum + ((l.montant || 0) * (l.quantite1 || 0) * prorata);
           }
-          return sum + (l.montant || 0);
+          const pu = l.article?.montant || 0;
+          return sum + (pu * (l.quantite1 || 0));
       }, 0) || 0;
 
       const replacements: Record<string, string> = {
+        'Détail de facture': `Détail de facture (${taxYear})`,
         '{id}': occ.id.toString(),
         '{nom}': occ.nom || '',
         '{tiers.nom}': tierFacturable?.nom || '',
-        '{adresse}': (occ.adresse || '').replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
+        '{tiers.adresse}': (tierFacturable?.adresse || '').replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
+        '{adresse}': (occ.adresse && occ.adresse !== 'À renseigner' ? occ.adresse : (tierFacturable?.adresse || '')).replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
         '{dateDebut}': occ.dateDebut ? format(new Date(occ.dateDebut), 'dd/MM/yyyy') : '',
         '{dateFin}': occ.dateFin ? format(new Date(occ.dateFin), 'dd/MM/yyyy') : '',
         '{numeroFacture}': currentInvoiceNumber || watermark,
@@ -190,9 +241,7 @@ export async function generateInvoicePdfBuffer(
         let qteFull = occ.type === 'TLPE'
           ? `${ligne.quantite1 || 0} m²`
           : `${ligne.quantite1 || 0} ${unit}`;
-        if (occ.type !== 'TLPE' && ligne.quantite2 > 0) {
-          qteFull += ` x ${ligne.quantite2} ${timeUnit}`;
-        }
+        
         replacements['{article.quantite}'] = qteFull;
         replacements['{article.dates}'] = dateStr;
         
@@ -206,11 +255,8 @@ export async function generateInvoicePdfBuffer(
           lineVal = isExempt ? 0 : (pu * (ligne.quantite1 || 0) * prorata);
           details = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (${months} mois)` : ''}${isExempt ? ' (Exonéré)' : ''}`;
         } else {
-          details = `${ligne.quantite1} ${unit}`;
-          if (ligne.quantite2 > 0) {
-            details += ` x ${ligne.quantite2} ${timeUnit}`;
-          }
-          details += ` à ${pu.toFixed(2)}€`;
+          lineVal = pu * (ligne.quantite1 || 0);
+          details = `${ligne.quantite1} ${unit} à ${pu.toFixed(2)}€`;
         }
         replacements['{article.details}'] = details;
         replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
@@ -238,7 +284,13 @@ export async function generateInvoicePdfBuffer(
               if (text) {
                 const fontSize = style.fontSize || 12;
                 doc.setFontSize(fontSize);
-                doc.setTextColor(style.color || '#000000');
+                
+                // Si forceRed est activé et que c'est le titre du document
+                if (overrides?.forceRed && (el.value === 'Détail de facture' || el.value?.includes('Détail de facture'))) {
+                  doc.setTextColor(255, 0, 0);
+                } else {
+                  doc.setTextColor(style.color || '#000000');
+                }
                 
                 const isItalic = style.italic || style.fontStyle === 'italic';
                 const weight = (style.fontWeight === 'bold' || style.fontWeight === 'black' || style.fontWeight >= 700) ? 'bold' : 'normal';
@@ -286,7 +338,7 @@ export async function generateInvoicePdfBuffer(
 
   const output = doc.output('arraybuffer');
   const buffer = Buffer.from(output);
-  const filename = `Facture-${occ.id}.pdf`;
+  const filename = occupationId ? `Facture-${occ.id}.pdf` : `Facture-Commerce-${overrides?.tiersId}-${overrides?.annee}.pdf`;
 
   // Save to disk as cache
   try {
@@ -294,7 +346,15 @@ export async function generateInvoicePdfBuffer(
       if (!existsSync(outDir)) await mkdir(outDir, { recursive: true });
       const outPath = join(outDir, filename);
       await writeFile(outPath, buffer);
-      await prisma.occupation.update({ where: { id: occ.id }, data: { facturePath: `/uploads/factures/${filename}` } });
+      
+      if (occupationId) {
+          await prisma.occupation.update({ where: { id: occ.id }, data: { facturePath: `/uploads/factures/${filename}` } });
+      } else if (allOccIds.length > 0) {
+          await prisma.occupation.updateMany({
+              where: { id: { in: allOccIds } },
+              data: { facturePath: `/uploads/factures/${filename}` }
+          });
+      }
   } catch (e) {}
 
   return { buffer, filename };

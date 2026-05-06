@@ -48,7 +48,15 @@ export default function OccupationArticles({
         <div>
           <h2 className="text-3xl font-black text-slate-950 tracking-tight">Détail des Articles</h2>
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">
-            {isFactured ? 'Consultation uniquement (Facture émise)' : isLocked ? 'Consultation uniquement (Dossier validé)' : isInit ? 'En attente de réception de la demande' : 'Articles taxables rattachés au dossier'}
+            {occupation.anneeTaxation === 2019 
+              ? 'Modification autorisée pour historique 2019' 
+              : isFactured 
+                ? 'Consultation uniquement (Facture émise)' 
+                : isLocked 
+                  ? 'Consultation uniquement (Dossier validé)' 
+                  : isInit 
+                    ? 'En attente de réception de la demande' 
+                    : 'Articles taxables rattachés au dossier'}
           </p>
         </div>
 
@@ -62,7 +70,7 @@ export default function OccupationArticles({
           </button>
         )}
 
-        {!isLocked && !isFactured && !isInit && (
+        {(!isLocked && !isFactured && !isInit || occupation.anneeTaxation === 2019) && (
           <button
             onClick={onAddArticle}
             className="flex items-center gap-3 bg-slate-950 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 group"
@@ -211,12 +219,42 @@ export default function OccupationArticles({
                           const u1 = parts[0] || 'unités';
                           const u2 = parts[1] || 'unités';
                           
+                          const unitPrice = ligne.article?.montant || 0;
+                          const subTotal = ligne.montant;
+
                           if (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') {
-                            return <span>{ligne.quantite1} {u1} x {ligne.quantite2} {u2} à {ligne.article?.montant}€</span>;
+                            return (
+                              <span className="flex items-center gap-1.5">
+                                <span className="text-blue-600">{ligne.quantite1} {u1}</span>
+                                <span className="text-slate-300">x</span>
+                                <span className="text-blue-600">{ligne.quantite2} {u2}</span>
+                                <span className="text-slate-300">à</span>
+                                <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
+                                <span className="text-slate-400 font-medium">=</span>
+                                <span className="text-slate-950 font-black">{subTotal.toLocaleString('fr-FR')}€</span>
+                              </span>
+                            );
                           }
-                          return <span>{ligne.quantite1} {u1} à {ligne.article?.montant}€</span>;
+                          return (
+                            <span className="flex items-center gap-1.5">
+                              <span className="text-blue-600">{ligne.quantite1} {u1}</span>
+                              <span className="text-slate-300">à</span>
+                              <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
+                              <span className="text-slate-400 font-medium">=</span>
+                              <span className="text-slate-950 font-black">{subTotal.toLocaleString('fr-FR')}€</span>
+                            </span>
+                          );
                         })()}
                       </div>
+
+                      {ligne.note && (
+                        <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mt-2">
+                          <p className="text-[10px] text-amber-800 leading-relaxed italic">
+                            <span className="font-black uppercase mr-2 tracking-tighter">Note :</span>
+                            {ligne.note}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -247,7 +285,7 @@ export default function OccupationArticles({
                   </p>
                 </div>
                 
-                {!isLocked && !isFactured && (
+                {(!isLocked && !isFactured || occupation.anneeTaxation === 2019) && (
                   <div className="flex gap-3">
                     <button 
                       onClick={() => onEditArticle(ligne)}

@@ -9,11 +9,20 @@ export async function GET(req: Request) {
     const status = searchParams.get('status');
     const type = searchParams.get('type');
     const anneeTaxation = searchParams.get('anneeTaxation');
+    const tiersId = searchParams.get('tiersId');
+    const excludeArchived = searchParams.get('excludeArchived') === 'true';
 
     const where: any = {};
     if (status) where.statut = status;
     if (type) where.type = type;
     if (anneeTaxation) where.anneeTaxation = parseInt(anneeTaxation);
+    if (tiersId) where.tiersId = parseInt(tiersId);
+    
+    if (excludeArchived) {
+      where.tiers = {
+        statut: { not: 'ARCHIVE' }
+      };
+    }
 
     console.log('[GET Occupations] Filter:', where);
 
@@ -27,7 +36,9 @@ export async function GET(req: Request) {
             id: true,
             nom: true,
             code_sedit: true,
-            etatAdministratif: true
+            etatAdministratif: true,
+            latitude: true,
+            longitude: true
           }
         },
         lignes: {
@@ -42,7 +53,7 @@ export async function GET(req: Request) {
         }
       },
       orderBy: { created_at: 'desc' },
-      take: 1000 // Limit to prevent huge responses
+      take: 5000 // Increased limit for map view
     });
 
     console.log('[GET Occupations] ✅ Success! Found:', occupations.length, 'occupations');

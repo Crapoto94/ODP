@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pencil, Clock, Plus } from 'lucide-react';
+import { Pencil, Clock, Plus, Loader2 } from 'lucide-react';
 import CommerceContacts from './CommerceContacts';
 import DocumentList from './DocumentList';
 
@@ -34,6 +34,12 @@ interface Props {
   isContactsLoading?: boolean;
   onAddDocument?: () => void;
   onDeleteDocument?: (id: number) => Promise<void>;
+  observations?: string | null;
+  onUpdateObservations?: (value: string) => Promise<void>;
+  occupation?: any;
+  onSendAot?: () => void;
+  isSendingAot?: boolean;
+  aotSentMsg?: string | null;
 }
 
 export default function CommerceSidebar({
@@ -46,11 +52,35 @@ export default function CommerceSidebar({
   onEditContact,
   isContactsLoading,
   onAddDocument,
-  onDeleteDocument
+  onDeleteDocument,
+  observations,
+  onUpdateObservations,
+  occupation,
+  onSendAot,
+  isSendingAot,
+  aotSentMsg,
 }: Props) {
   const [isEditingObs, setIsEditingObs] = React.useState(false);
-  const [obsValue, setObsValue] = React.useState('');
+  const [obsValue, setObsValue] = React.useState(observations || '');
   const [savingObs, setSavingObs] = React.useState(false);
+
+  React.useEffect(() => {
+    setObsValue(observations || '');
+  }, [observations]);
+
+  const handleSaveObs = async () => {
+    if (!onUpdateObservations) return;
+    setSavingObs(true);
+    try {
+      await onUpdateObservations(obsValue);
+      setIsEditingObs(false);
+    } catch (err) {
+      console.error('Failed to save observations:', err);
+      alert('Erreur lors de la sauvegarde des notes');
+    } finally {
+      setSavingObs(false);
+    }
+  };
 
   return (
     <aside className="lg:col-span-4 space-y-12">
@@ -61,6 +91,10 @@ export default function CommerceSidebar({
         isFactured={isFactured}
         onOpenUploadModal={onAddDocument}
         onDeleteDocument={onDeleteDocument}
+        occupation={occupation}
+        onSendAot={onSendAot}
+        isSendingAot={isSendingAot}
+        aotSentMsg={aotSentMsg}
       />
 
       {/* Contacts Section */}
@@ -114,18 +148,10 @@ export default function CommerceSidebar({
                 </button>
                 <button
                   disabled={savingObs}
-                  onClick={async () => {
-                    setSavingObs(true);
-                    try {
-                      // Save logic would go here
-                      setIsEditingObs(false);
-                    } finally {
-                      setSavingObs(false);
-                    }
-                  }}
+                  onClick={handleSaveObs}
                   className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-xs uppercase transition-all disabled:opacity-50"
                 >
-                  Enregistrer
+                  {savingObs ? <span className="flex items-center gap-2 justify-center"><Loader2 className="animate-spin" size={12} />...</span> : 'Enregistrer'}
                 </button>
               </div>
             </div>

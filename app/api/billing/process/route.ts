@@ -23,11 +23,38 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Fetch data
-    const [dossiers, gabarit, settingsRecords] = await Promise.all([
-      (prisma as any).occupation.findMany({
+    let dossiers;
+    if (type === 'COMMERCE') {
+      const occupations = await (prisma as any).occupation.findMany({
+        where: { tiersId: { in: ids }, type: 'COMMERCE', statut: { in: ['VERIFIE', 'VALIDE', 'VALIDÉ'] } },
+        include: { tiers: true, lignes: { include: { article: { include: { modeTaxation: true } } } } }
+      });
+      const grouped = new Map();
+      occupations.forEach((occ: any) => {
+         if (!grouped.has(occ.tiersId)) {
+             grouped.set(occ.tiersId, {
+                 id: occ.tiersId, // to be used for generateInvoicePdfBuffer(tiersId)
+                 isCommerceGroup: true,
+                 type: 'COMMERCE',
+                 tiers: occ.tiers,
+                 anneeTaxation: occ.anneeTaxation,
+                 occupationsIncluded: [occ],
+                 lignes: [...occ.lignes]
+             });
+         } else {
+             grouped.get(occ.tiersId).occupationsIncluded.push(occ);
+             grouped.get(occ.tiersId).lignes.push(...occ.lignes);
+         }
+      });
+      dossiers = Array.from(grouped.values());
+    } else {
+      dossiers = await (prisma as any).occupation.findMany({
         where: { id: { in: ids } },
         include: { tiers: true, lignes: { include: { article: { include: { modeTaxation: true } } } } }
-      }),
+      });
+    }
+
+    const [gabarit, settingsRecords] = await Promise.all([
       (prisma as any).gabarit.findFirst({ where: { isDefault: true } }),
       (prisma as any).$queryRaw`SELECT * FROM AppSettings WHERE id = 1`
     ]);
@@ -77,7 +104,23 @@ export async function POST(req: NextRequest) {
     // 3. Process each dossier
     for (const occ of dossiers) {
       const invoiceNumber = `${year}-ODP-${nextIndex++}`;
-      const { buffer: pdfBuffer } = await generateInvoicePdfBuffer(occ.id, { invoiceNumber, tlpeConfig });
+      
+      let pdfBuffer;
+      if (occ.isCommerceGroup) {
+         const annee = occ.anneeTaxation || year;
+         const occIds = occ.occupationsIncluded.map((o: any) => o.id);
+         const { buffer } = await generateInvoicePdfBuffer(null, { 
+             invoiceNumber, 
+             tlpeConfig, 
+             occupationIds: occIds,
+             annee,
+             forceRed: true
+         });
+         pdfBuffer = buffer;
+      } else {
+         const { buffer } = await generateInvoicePdfBuffer(occ.id, { invoiceNumber, tlpeConfig, forceRed: true });
+         pdfBuffer = buffer;
+      }
       
       const filename = `${invoiceNumber}.pdf`;
       const fullPath = join(facturesDir, filename);
@@ -121,17 +164,48 @@ export async function POST(req: NextRequest) {
       grandTotal += total;
 
       // Update dossier
-      await (prisma as any).occupation.update({
-        where: { id: occ.id },
-        data: {
-          statut: 'FACTURE',
-          numeroFacture: invoiceNumber,
-          facturePath: `/Factures/${runName}/${filename}`
+      if (occ.isCommerceGroup) {
+         const occIds = occ.occupationsIncluded.map((o: any) => o.id);
+         await (prisma as any).occupation.updateMany({
+           where: { id: { in: occIds } },
+           data: {
+             statut: 'FACTURE',
+             numeroFacture: invoiceNumber,
+             facturePath: `/Factures/${runName}/${filename}`
+           }
+         });
+      } else {
+         await (prisma as any).occupation.update({
+           where: { id: occ.id },
+           data: {
+             statut: 'FACTURE',
+             numeroFacture: invoiceNumber,
+             facturePath: `/Factures/${runName}/${filename}`
+           }
+         });
+      }
+
+      // Add invoice to commerce documents (notes)
+      const tId = occ.tiersId || occ.tiers?.id;
+      if (tId) {
+        try {
+          await (prisma as any).note.create({
+            data: {
+              tiersId: tId,
+              content: `Détail de facture n° ${invoiceNumber} (${year})`,
+              pjPath: `/Factures/${runName}/${filename}`,
+              pjName: `Detail-Facture-${invoiceNumber}.pdf`,
+              isEmail: false,
+              created_at: new Date()
+            }
+          });
+        } catch (noteErr) {
+          console.error('[NOTE CREATION ERROR]', noteErr);
         }
-      });
+      }
 
       results.push({ 
-        id: occ.id, 
+        id: occ.isCommerceGroup ? occ.occupationsIncluded[0].id : occ.id, 
         numero: invoiceNumber, 
         path: `/Factures/${runName}/${filename}`,
         tiers: occ.tiers.nom, 

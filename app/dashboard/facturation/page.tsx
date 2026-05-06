@@ -13,6 +13,7 @@ import {
   Download,
   FileBadge,
   AlertCircle,
+  AlertTriangle,
   Check,
   Info,
   Calendar,
@@ -120,8 +121,46 @@ export default function FacturationPage() {
   const fetchEligibleDossiers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/occupations?status=VERIFIE&type=${type}`);
-      const data = res.data;
+      let data: any[] = [];
+      if (type === 'COMMERCE') {
+        // Fetch all commerce occupations and filter client-side to be precise
+        const res = await axios.get(`/api/occupations?type=${type}`);
+        data = (res.data || []).filter((occ: any) => 
+          ['VERIFIE', 'VALIDE', 'VALIDÉ'].includes(occ.statut)
+        );
+      } else {
+        const res = await axios.get(`/api/occupations?status=VERIFIE&type=${type}`);
+        data = res.data;
+      }
+
+      if (type === 'COMMERCE') {
+        const grouped = new Map();
+        data.forEach((occ: any) => {
+          if (!occ.tiers) return;
+          const tId = occ.tiers.id;
+          const isClosed = ['Fermée', 'Cessée'].includes(occ.tiers.etatAdministratif);
+          
+          if (!grouped.has(tId)) {
+            grouped.set(tId, {
+              id: tId,
+              isCommerceGroup: true,
+              isClosed: isClosed,
+              nom: occ.tiers.nom, 
+              tiers: occ.tiers,
+              lignes: [...(occ.lignes || [])],
+              montantCalcule: occ.montantCalcule || 0
+            });
+          } else {
+            const g = grouped.get(tId);
+            g.lignes.push(...(occ.lignes || []));
+            g.montantCalcule += (occ.montantCalcule || 0);
+            // Si une des occupations appartient à un tiers fermé, le groupe est marqué fermé
+            if (isClosed) g.isClosed = true;
+          }
+        });
+        data = Array.from(grouped.values());
+      }
+
       setDossiers(data);
       setSelectedIds(data.map((d: any) => d.id));
     } catch (err) {
@@ -139,9 +178,9 @@ export default function FacturationPage() {
   const verifyTiersBeforeBilling = async (dossierId: number): Promise<boolean> => {
     try {
       const dossier = dossiers.find(d => d.id === dossierId);
-      if (!dossier || !(dossier as any).tiers?.id) return true;
-
-      const tiersId = (dossier as any).tiers.id;
+      if (!dossier) return true;
+      const tiersId = dossier.isCommerceGroup ? dossier.id : (dossier.tiers?.id);
+      if (!tiersId) return true;
       const res = await axios.post(`/api/admin/verify-tiers/${tiersId}`);
       const status = res.data.status;
 
@@ -393,8 +432,16 @@ export default function FacturationPage() {
               <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Dossiers éligibles ({type})</h2>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">État: VÉRIFIÉ uniquement</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                    État: VÉRIFIÉ / VALIDÉ ({dossiers.length} groupés)
+                  </p>
                 </div>
+                {dossiers.some(d => d.isClosed) && (
+                  <div className="flex items-center gap-2 bg-red-50 border border-red-100 px-4 py-2 rounded-xl text-red-600 animate-pulse">
+                    <AlertTriangle size={16} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Attention: Commerces fermés détectés</span>
+                  </div>
+                )}
                 <div className="sm:text-right">
                   <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Montant du train</p>
                   <p className="text-2xl font-black text-blue-700">{totalAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</p>
@@ -444,7 +491,14 @@ export default function FacturationPage() {
                             />
                           </td>
                           <td className="px-8 py-4 border-b border-slate-50">
-                            <p className="text-sm font-black text-slate-900">{d.nom || `Dossier #${d.id}`}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-black text-slate-900">{d.nom || `Dossier #${d.id}`}</p>
+                              {d.isClosed && (
+                                <div className="px-2 py-0.5 bg-red-100 text-red-600 rounded text-[8px] font-black uppercase tracking-tighter flex items-center gap-1">
+                                  <AlertCircle size={10} /> Fermé
+                                </div>
+                              )}
+                            </div>
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">ID {d.id}</p>
                           </td>
                           <td className="px-8 py-4 border-b border-slate-50 text-sm font-bold text-slate-600">
