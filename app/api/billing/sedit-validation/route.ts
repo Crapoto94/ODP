@@ -42,10 +42,12 @@ export async function POST(req: NextRequest) {
     // 2b. Add automatic notes for each occupation's status change
     const session = await getSession();
     const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Système';
-    const year = new Date().getFullYear();
 
     for (const occupationId of occupationIds) {
       try {
+        const occ = await (prisma as any).occupation.findUnique({ where: { id: occupationId } });
+        const year = occ?.anneeTaxation || new Date().getFullYear();
+
         await (prisma as any).$executeRawUnsafe(
           `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
           occupationId,

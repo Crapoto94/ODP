@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { validateSignatureToken } from '@/lib/signature-token';
 import { sendApmMail } from '@/lib/apm';
 import { getContextualMessageData } from '@/lib/contextual-messages';
+import { getSession } from '@/lib/auth';
 
 /**
  * POST /api/signature/[token]/reject
@@ -140,6 +141,23 @@ export async function POST(
       }
     } catch (notifErr) {
       console.warn('[Reject] Notification demandeur échouée:', notifErr);
+    }
+
+    // Add automatic note for signature rejection
+    try {
+      const year = signatureRequest.occupation.anneeTaxation || new Date().getFullYear();
+      const noteContent = `❌ Document refusé par ${signatureRequest.signatory.nom}${comment ? ' - Motif : ' + comment : ''} (${year})`;
+      await (prisma as any).$executeRawUnsafe(
+        `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+        signatureRequest.occupation.id,
+        noteContent,
+        'Système',
+        false,
+        'desktop',
+        now.toISOString()
+      );
+    } catch (noteError) {
+      console.error('[Reject] Failed to create note:', noteError);
     }
 
     return NextResponse.json({

@@ -117,6 +117,7 @@ export async function POST(
     });
 
     // Send email to signatory
+    let emailSent = false;
     try {
       const { html: emailHtml, subject: emailSubject } = await getContextualMessageData('MSG_SIGNATURE_REQUEST', {
         SIGNATAIRE: signatory.nom,
@@ -131,9 +132,29 @@ export async function POST(
         emailSubject || `Signature requise — AOT #${occupation.id}`,
         emailHtml
       );
+      emailSent = true;
     } catch (emailError) {
       console.error('[SignatureRequest] Email sending failed:', emailError);
       // Continue even if email fails - still create the signature request
+    }
+
+    // Add automatic note if email was sent
+    if (emailSent) {
+      try {
+        const year = occupation.anneeTaxation || new Date().getFullYear();
+        const noteContent = `📝 Demande de signature envoyée à ${signatory.nom} (${signatory.email}) - Expire le ${expirationDateStr} (${year})`;
+        await (prisma as any).$executeRawUnsafe(
+          `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+          occupationId,
+          noteContent,
+          'Système',
+          false,
+          'desktop',
+          new Date().toISOString()
+        );
+      } catch (noteError) {
+        console.error('[SignatureRequest] Failed to create note:', noteError);
+      }
     }
 
     return NextResponse.json({

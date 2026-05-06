@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { validateSignatureToken } from '@/lib/signature-token';
 import { sendApmMail } from '@/lib/apm';
 import { getContextualMessageData } from '@/lib/contextual-messages';
+import { getSession } from '@/lib/auth';
 import * as fs from 'fs';
 import * as path from 'path';
 import { spawnSync } from 'child_process';
@@ -380,6 +381,23 @@ export async function POST(
       }
     } catch (notifErr) {
       console.warn('[Accept] Notification demandeur échouée:', notifErr);
+    }
+
+    // Add automatic note for signature acceptance
+    try {
+      const year = signatureRequest.occupation.anneeTaxation || new Date().getFullYear();
+      const noteContent = `✅ Document signé par ${signatureRequest.signatory.nom} et statut avancé à ${nextStatut || signatureRequest.occupation.statut} (${year})`;
+      await (prisma as any).$executeRawUnsafe(
+        `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+        signatureRequest.occupation.id,
+        noteContent,
+        'Système',
+        false,
+        'desktop',
+        now.toISOString()
+      );
+    } catch (noteError) {
+      console.error('[Accept] Failed to create note:', noteError);
     }
 
     return NextResponse.json({

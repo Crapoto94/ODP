@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 
 const PROCESS_STEPS = [
   'INITIALISATION',
@@ -28,6 +29,16 @@ export async function PATCH(
       );
     }
 
+    // Fetch occupations before update to detect changes
+    const occupationsToUpdate = await (prisma as any).occupation.findMany({
+      where: {
+        tiersId,
+        type: 'COMMERCE',
+        ...(annee ? { anneeTaxation: parseInt(annee) } : {})
+      },
+      select: { id: true, statut: true }
+    });
+
     // Update occupations of this commerce, optionally filtered by year
     const updated = await (prisma as any).occupation.updateMany({
       where: {
@@ -39,6 +50,29 @@ export async function PATCH(
         statut
       }
     });
+
+    // Add automatic notes for changed occupations
+    if (updated.count > 0) {
+      const session = await getSession();
+      const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Conseiller';
+      const now = new Date().toISOString();
+
+      for (const occ of occupationsToUpdate) {
+        if (occ.statut !== statut) {
+          const year = occ.anneeTaxation || new Date().getFullYear();
+          const noteContent = `📊 Passage de statut : ${occ.statut} → ${statut} (${year})`;
+          await (prisma as any).$executeRawUnsafe(
+            `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+            occ.id,
+            noteContent,
+            author,
+            false,
+            'desktop',
+            now
+          );
+        }
+      }
+    }
 
     return NextResponse.json({
       success: true,

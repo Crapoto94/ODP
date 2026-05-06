@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { updateOccupationTotal } from '@/lib/tlpe-utils';
+import { getSession } from '@/lib/auth';
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -94,6 +95,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       observations
     } = body;
 
+    // Fetch old occupation to detect status change and AOT upload
+    const oldOccupation = await (prisma as any).occupation.findUnique({ where: { id } });
+    const statusChanged = statut && oldOccupation && oldOccupation.statut !== statut;
+    const aotUploaded = aotFinalPath && oldOccupation && !oldOccupation.aotFinalPath && aotFinalPath !== oldOccupation.aotFinalPath;
+    const aotNowSigned = aotSigned && oldOccupation && !oldOccupation.aotSigned;
+
     const updateData: any = {
       nom,
       tiersId: tiersId ? parseInt(tiersId) : undefined,
@@ -124,6 +131,38 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     if (isCourtMetrage !== undefined) {
       await (prisma as any).$executeRaw`UPDATE Occupation SET isCourtMetrage = ${!!isCourtMetrage} WHERE id = ${id}`;
+    }
+
+    // Add automatic notes for changes
+    const session = await getSession();
+    const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Conseiller';
+    const now = new Date().toISOString();
+    const year = oldOccupation.anneeTaxation || new Date().getFullYear();
+
+    if (statusChanged) {
+      const noteContent = `📊 Passage de statut : ${oldOccupation.statut} → ${statut} (${year})`;
+      await (prisma as any).$executeRawUnsafe(
+        `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+        id,
+        noteContent,
+        author,
+        false,
+        'desktop',
+        now
+      );
+    }
+
+    if (aotUploaded) {
+      const noteContent = `📄 Document AOT uploadé${aotNowSigned ? ' et signé' : ' (en brouillon)'} (${year})`;
+      await (prisma as any).$executeRawUnsafe(
+        `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+        id,
+        noteContent,
+        author,
+        false,
+        'desktop',
+        now
+      );
     }
 
     // Recalculer le montant net total (exonération globale, etc.)

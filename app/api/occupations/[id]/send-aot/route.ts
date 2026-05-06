@@ -27,20 +27,25 @@ export async function POST(
     if (!occ) return NextResponse.json({ error: 'Dossier introuvable' }, { status: 404 });
     if (!occ.aotFinalPath) return NextResponse.json({ error: 'Aucun document AOT' }, { status: 400 });
 
-    // Fetch roles marked as isSendAot
+    // Fetch roles marked as isSendAot, plus default roles
     const roleRows = await (prisma as any).$queryRaw`
       SELECT nom FROM ContactRoleConfig WHERE isSendAot = 1
     `;
     const sendAotRoles = new Set((roleRows as any[]).map((r: any) => r.nom.toLowerCase()));
+    // Always include CONTACT_DIRECT as a valid role for AOT sending
+    sendAotRoles.add('contact_direct');
+    console.log('[send-aot] Roles allowed for AOT send:', Array.from(sendAotRoles));
 
     const allContacts = [
       ...(occ.contacts || []),
       ...(occ.tiers?.contacts || []),
     ];
+    console.log('[send-aot] All contacts:', allContacts.map((c: any) => ({ nom: c.nom, email: c.email, role: c.role })));
 
     const recipients = allContacts.filter(
       (c: any) => c.email && c.role && sendAotRoles.has(c.role.toLowerCase())
     );
+    console.log('[send-aot] Recipients after filter:', recipients.map((c: any) => ({ nom: c.nom, email: c.email, role: c.role })));
 
     if (recipients.length === 0) {
       return NextResponse.json({ error: 'Aucun contact "Demandeur" ou "Contact principal" avec email trouvé' }, { status: 400 });
@@ -89,7 +94,8 @@ export async function POST(
     if (sent.length > 0) {
       const session = await getSession();
       const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Conseiller';
-      const noteContent = `📄 AOT envoyé en pièce jointe à : ${sent.join(', ')}`;
+      const year = occ.anneeTaxation || new Date().getFullYear();
+      const noteContent = `📄 AOT envoyé en pièce jointe à : ${sent.join(', ')} (${year})`;
       await (prisma as any).$executeRawUnsafe(
         `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
         occupationId,
@@ -103,7 +109,10 @@ export async function POST(
 
     return NextResponse.json({ success: true, sent });
   } catch (err: any) {
-    console.error('[send-aot]', err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('[send-aot] Error:', err.message, err.stack);
+    return NextResponse.json({
+      error: err.message || 'Erreur inconnue lors de l\'envoi de l\'AOT',
+      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    }, { status: 500 });
   }
 }

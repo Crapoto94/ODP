@@ -87,7 +87,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       // Add automatic note for device renewal
       const session = await getSession();
       const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Système';
-      const year = new Date().getFullYear();
+      const year = targetOccupation.anneeTaxation || new Date().getFullYear();
 
       try {
         await (prisma as any).$executeRawUnsafe(

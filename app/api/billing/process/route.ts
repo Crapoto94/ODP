@@ -185,20 +185,36 @@ export async function POST(req: NextRequest) {
          });
       }
 
-      // Add invoice to commerce documents (notes)
-      const tId = occ.tiersId || occ.tiers?.id;
-      if (tId) {
+      // Add automatic notes for facturation
+      if (occ.isCommerceGroup) {
+        for (const occupation of occ.occupationsIncluded) {
+          try {
+            const billYear = occupation.anneeTaxation || new Date().getFullYear();
+            await (prisma as any).$executeRawUnsafe(
+              `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+              occupation.id,
+              `💰 Facturé - Facture n° ${invoiceNumber} (${billYear})`,
+              agentName,
+              false,
+              'desktop',
+              new Date().toISOString()
+            );
+          } catch (noteErr) {
+            console.error('[NOTE CREATION ERROR]', noteErr);
+          }
+        }
+      } else {
         try {
-          await (prisma as any).note.create({
-            data: {
-              tiersId: tId,
-              content: `Détail de facture n° ${invoiceNumber} (${year})`,
-              pjPath: `/Factures/${runName}/${filename}`,
-              pjName: `Detail-Facture-${invoiceNumber}.pdf`,
-              isEmail: false,
-              created_at: new Date()
-            }
-          });
+          const billYear = occ.anneeTaxation || new Date().getFullYear();
+          await (prisma as any).$executeRawUnsafe(
+            `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+            occ.id,
+            `💰 Facturé - Facture n° ${invoiceNumber} (${billYear})`,
+            agentName,
+            false,
+            'desktop',
+            new Date().toISOString()
+          );
         } catch (noteErr) {
           console.error('[NOTE CREATION ERROR]', noteErr);
         }

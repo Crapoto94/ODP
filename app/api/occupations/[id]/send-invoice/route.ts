@@ -23,11 +23,11 @@ export async function POST(
 
     if (!occ) return NextResponse.json({ error: 'Dossier introuvable' }, { status: 404 });
 
-    // Ensure dossier is validated (statut VERIFIE, FACTURE or PAYE)
-    const allowedStatuts = ['VERIFIE', 'FACTURE', 'PAYE'];
+    // Ensure dossier is validated (statut VERIFIE or higher)
+    const allowedStatuts = ['VERIFIE', 'VALIDÉ', 'VALIDE', 'FACTURE', 'FACTURÉ', 'TITRE', 'TITRÉ', 'PAYE', 'PAYÉ', 'CLOS'];
     if (!allowedStatuts.includes(occ.statut)) {
-      return NextResponse.json({ 
-        error: "L'envoi de la facture n'est possible que si le dossier est validé (Vérifié ou Facturé)." 
+      return NextResponse.json({
+        error: "L'envoi de la facture n'est possible que si le dossier est validé (Vérifié ou plus)."
       }, { status: 400 });
     }
 
@@ -102,8 +102,9 @@ export async function POST(
     // Add note to discussion
     const session = await getSession();
     const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Conseiller';
-    const noteContent = `📧 Facture envoyée par e-mail au contact principal : ${primaryContact.email} (${contactNom})`;
-    
+    const year = occ.anneeTaxation || new Date().getFullYear();
+    const noteContent = `📧 Facture envoyée par e-mail au contact principal : ${primaryContact.email} (${contactNom}) (${year})`;
+
     await (prisma as any).$executeRawUnsafe(
       `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
       occupationId,
