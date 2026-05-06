@@ -97,9 +97,13 @@ export default function CommercesPage() {
         return { number, street, suffix, fullNumber: match[0] };
       }
 
-      // If no suffix found or suffix is not valid, treat whole thing as street
-      let fullStreet = (suffix ? (number ? number + ' ' + suffix : suffix) + ' ' : (number ? number + ' ' : '')) + match[3];
-      fullStreet = normalizeStreet(fullStreet.trim());
+      // If no suffix found or suffix is not valid, just treat number + street as street
+      let fullStreet = trimAddr;
+      if (number > 0) {
+        // Remove leading number if present
+        fullStreet = fullStreet.replace(/^\d+\s*/, '').trim();
+      }
+      fullStreet = normalizeStreet(fullStreet);
       return { number: 0, street: fullStreet, suffix: '', fullNumber: '' };
     }
 
