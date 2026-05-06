@@ -20,6 +20,8 @@ export default function CommerceYearTimeline({ years, getDispositivesTimeline, s
     return { year, totalMontant, items, activeItems };
   });
 
+  const maxAmount = Math.max(...sortedYearsData.map(d => d.totalMontant), 1);
+
   return (
     <div className="relative py-12">
       <div className="flex items-center gap-3 mb-12">
@@ -48,68 +50,49 @@ export default function CommerceYearTimeline({ years, getDispositivesTimeline, s
         </div>
       </div>
 
-      {/* Timeline Container */}
-      <div className="relative">
+      {/* Horizontal Timeline Container */}
+      <div className="relative pt-24 pb-24">
+        {/* Central Timeline Line */}
+        <div className="absolute left-0 right-0 top-1/2 h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 -translate-y-1/2 rounded-full"></div>
+
         {/* Timeline Items */}
-        <div className="space-y-8">
+        <div className="relative flex justify-between items-center gap-4">
           {sortedYearsData.map((data, idx) => {
             const { year, totalMontant, items, activeItems } = data;
             const isSelected = selectedYear === year;
 
             return (
-              <div key={year} className="relative group flex items-start gap-6">
-                {/* Timeline Line and Point */}
-                <div className="flex flex-col items-center">
-                  {/* Point */}
-                  <button
-                    onClick={() => onSelectYear?.(year)}
-                    className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center font-black text-base transition-all duration-300 border-4 cursor-pointer hover:scale-110 ${
-                      isSelected
-                        ? 'bg-blue-600 text-white border-blue-700 shadow-blue-500/30'
-                        : 'bg-white text-slate-900 border-slate-900 hover:border-blue-500 hover:shadow-blue-500/20'
-                    }`}
-                    title="Cliquer pour filtrer par année"
-                  >
-                    {year}
-                  </button>
-
-                  {/* Vertical line (not on last item) */}
-                  {idx < sortedYearsData.length - 1 && (
-                    <div className="w-1 h-12 bg-gradient-to-b from-slate-300 to-slate-200 mt-2"></div>
-                  )}
-                </div>
-
-                {/* Event Card */}
-                <div className="flex-1 pt-2">
-                  <div className="bg-white border-2 border-slate-200 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all hover:border-blue-400 cursor-default group/card">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Montant annuel</p>
-                        <p className="text-lg font-black text-slate-900">{totalMontant.toLocaleString('fr-FR')} €</p>
-                      </div>
-                      <Info size={18} className="text-slate-400 group-hover/card:text-blue-600 transition-colors" />
+              <div key={year} className="flex-1 flex flex-col items-center group">
+                {/* Top: Amount Card */}
+                <div className="mb-8 relative w-full flex justify-center">
+                  <div className="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all hover:border-blue-400 cursor-default max-w-[140px] group/card">
+                    <div className="text-center">
+                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Montant</p>
+                      <p className="text-sm font-black text-slate-900">{totalMontant.toLocaleString('fr-FR')} €</p>
+                      <p className="text-[9px] text-slate-400 font-medium mt-2">
+                        {(() => {
+                          const units = activeItems.reduce((acc: any, curr: any) => {
+                            const u = curr.unite || 'unité';
+                            acc[u] = (acc[u] || 0) + (curr.count || 0);
+                            return acc;
+                          }, {});
+                          const entries = Object.entries(units);
+                          if (entries.length === 0) return 'Dossier vide';
+                          if (entries.length === 1) return `${entries[0][1]} ${entries[0][0]}`;
+                          return `${activeItems.length} dispositifs`;
+                        })()}
+                      </p>
                     </div>
 
-                    <p className="text-[9px] text-slate-500 font-medium">
-                      {(() => {
-                        const units = activeItems.reduce((acc: any, curr: any) => {
-                          const u = curr.unite || 'unité';
-                          acc[u] = (acc[u] || 0) + (curr.count || 0);
-                          return acc;
-                        }, {});
-                        const entries = Object.entries(units);
-                        if (entries.length === 0) return 'Aucun dispositif';
-                        if (entries.length === 1) return `${entries[0][1]} ${entries[0][0]}`;
-                        return `${activeItems.length} dispositifs`;
-                      })()}
-                    </p>
+                    {/* Dropdown arrow down to timeline */}
+                    <div className="absolute bottom-[-16px] left-1/2 -translate-x-1/2 w-0.5 h-4 bg-slate-200"></div>
 
                     {/* Details on hover */}
                     <div className="max-h-0 overflow-hidden opacity-0 transition-all duration-300 group-hover/card:max-h-96 group-hover/card:opacity-100 mt-3 pt-3 border-t border-slate-200">
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Détails</p>
                       <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2">
                         {items.length === 0 ? (
-                          <p className="text-[9px] text-slate-500 italic">Aucun dispositif enregistré</p>
+                          <p className="text-[9px] text-slate-500 italic">Aucun dispositif</p>
                         ) : (
                           items.map((item, iidx) => (
                             <div key={iidx} className="flex items-start gap-2 py-1 text-[9px]">
@@ -127,6 +110,28 @@ export default function CommerceYearTimeline({ years, getDispositivesTimeline, s
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* Middle: Timeline Point */}
+                <div className="relative z-10">
+                  <button
+                    onClick={() => onSelectYear?.(year)}
+                    className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center font-black text-base transition-all duration-300 border-4 cursor-pointer hover:scale-110 ${
+                      isSelected
+                        ? 'bg-blue-600 text-white border-blue-700 shadow-blue-500/30'
+                        : 'bg-white text-slate-900 border-slate-900 hover:border-blue-500 hover:shadow-blue-500/20'
+                    }`}
+                    title="Cliquer pour filtrer par année"
+                  >
+                    {year}
+                  </button>
+                </div>
+
+                {/* Bottom: Year Label */}
+                <div className="mt-8 text-center">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Année {year}
+                  </p>
                 </div>
               </div>
             );
