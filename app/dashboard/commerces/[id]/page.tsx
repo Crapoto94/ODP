@@ -274,9 +274,11 @@ export default function CommerceDetailPage({ params }: Props) {
       )}
 
       {/* Timeline par année */}
-      <CommerceYearTimeline 
-        years={years} 
-        getDispositivesTimeline={getDispositivesTimeline} 
+      <CommerceYearTimeline
+        years={years}
+        getDispositivesTimeline={getDispositivesTimeline}
+        selectedYear={selectedYear}
+        onSelectYear={setSelectedYear}
       />
 
       {/* Main Content + Sidebar Grid */}

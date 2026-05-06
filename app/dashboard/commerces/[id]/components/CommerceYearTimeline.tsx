@@ -4,9 +4,11 @@ import { Clock, Info } from 'lucide-react';
 interface Props {
   years: number[];
   getDispositivesTimeline: () => Record<number, any[]>;
+  selectedYear?: number;
+  onSelectYear?: (year: number) => void;
 }
 
-export default function CommerceYearTimeline({ years, getDispositivesTimeline }: Props) {
+export default function CommerceYearTimeline({ years, getDispositivesTimeline, selectedYear, onSelectYear }: Props) {
   if (years.length === 0) return null;
   const timelineData = getDispositivesTimeline();
   const sortedYears = Object.keys(timelineData).map(Number).sort((a, b) => a - b);
@@ -47,122 +49,77 @@ export default function CommerceYearTimeline({ years, getDispositivesTimeline }:
       </div>
 
       {/* Timeline Container */}
-      <div className="relative pt-20 pb-20">
-        {/* Central Timeline Line */}
-        <div className="absolute left-0 right-0 top-1/2 h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 -translate-y-1/2 rounded-full"></div>
-
+      <div className="relative">
         {/* Timeline Items */}
-        <div className="relative flex justify-between items-center">
+        <div className="space-y-8">
           {sortedYearsData.map((data, idx) => {
             const { year, totalMontant, items, activeItems } = data;
-            const isAbove = idx % 2 === 0; // Alternate above/below
+            const isSelected = selectedYear === year;
 
             return (
-              <div key={year} className="flex flex-col items-center flex-1 group">
-                {/* Top Event (if above) */}
-                {isAbove && (
-                  <div className="mb-8 relative">
-                    <div className="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all hover:border-blue-400 cursor-default max-w-[140px]">
-                      <div className="text-center">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Montant</p>
-                        <p className="text-sm font-black text-slate-900">{totalMontant.toLocaleString('fr-FR')} €</p>
-                        <p className="text-[9px] text-slate-400 font-medium mt-2">
-                          {(() => {
-                            const units = activeItems.reduce((acc: any, curr: any) => {
-                              const u = curr.unite || 'unité';
-                              acc[u] = (acc[u] || 0) + (curr.count || 0);
-                              return acc;
-                            }, {});
-                            const entries = Object.entries(units);
-                            if (entries.length === 0) return 'Dossier vide';
-                            if (entries.length === 1) return `${entries[0][1]} ${entries[0][0]}`;
-                            return `${activeItems.length} dispositifs`;
-                          })()}
-                        </p>
-                      </div>
-                      {/* Arrow down to timeline */}
-                      <div className="absolute bottom-[-16px] left-1/2 -translate-x-1/2 w-0.5 h-4 bg-slate-200"></div>
-                    </div>
+              <div key={year} className="relative group flex items-start gap-6">
+                {/* Timeline Line and Point */}
+                <div className="flex flex-col items-center">
+                  {/* Point */}
+                  <button
+                    onClick={() => onSelectYear?.(year)}
+                    className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center font-black text-base transition-all duration-300 border-4 cursor-pointer hover:scale-110 ${
+                      isSelected
+                        ? 'bg-blue-600 text-white border-blue-700 shadow-blue-500/30'
+                        : 'bg-white text-slate-900 border-slate-900 hover:border-blue-500 hover:shadow-blue-500/20'
+                    }`}
+                    title="Cliquer pour filtrer par année"
+                  >
+                    {year}
+                  </button>
 
-                    {/* Tooltip on hover */}
-                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-80 bg-slate-950 rounded-2xl p-4 text-white shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-[100] border border-white/10">
-                      <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Année {year}</h4>
-                        <Info size={14} className="text-white" />
-                      </div>
-                      <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2 text-xs">
-                        {items.length === 0 ? (
-                          <p className="text-slate-500 italic">Aucun dispositif</p>
-                        ) : (
-                          items.map((item, iidx) => (
-                            <div key={iidx} className="flex items-start gap-2 py-1 border-b border-white/5 last:border-0">
-                              <div className={`w-1.5 h-1.5 rounded-full mt-1 shrink-0 ${
-                                item.status === 'nouveau' ? 'bg-green-500' :
-                                item.status === 'supprimé' ? 'bg-rose-500' : 'bg-slate-400'
-                              }`}></div>
-                              <div className="min-w-0">
-                                <p className="text-slate-200 font-bold">{item.designation || item.nom}</p>
-                                <p className="text-slate-400">{item.count} {item.unite}</p>
-                              </div>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Timeline Point */}
-                <div className="relative z-10 mb-8">
-                  <div className="w-16 h-16 bg-white border-4 border-slate-900 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:border-blue-500 group-hover:shadow-blue-500/30">
-                    <span className="text-base font-black text-slate-900 group-hover:text-blue-600">{year}</span>
-                  </div>
+                  {/* Vertical line (not on last item) */}
+                  {idx < sortedYearsData.length - 1 && (
+                    <div className="w-1 h-12 bg-gradient-to-b from-slate-300 to-slate-200 mt-2"></div>
+                  )}
                 </div>
 
-                {/* Bottom Event (if below) */}
-                {!isAbove && (
-                  <div className="mt-8 relative">
-                    <div className="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all hover:border-blue-400 cursor-default max-w-[140px]">
-                      <div className="text-center">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Montant</p>
-                        <p className="text-sm font-black text-slate-900">{totalMontant.toLocaleString('fr-FR')} €</p>
-                        <p className="text-[9px] text-slate-400 font-medium mt-2">
-                          {(() => {
-                            const units = activeItems.reduce((acc: any, curr: any) => {
-                              const u = curr.unite || 'unité';
-                              acc[u] = (acc[u] || 0) + (curr.count || 0);
-                              return acc;
-                            }, {});
-                            const entries = Object.entries(units);
-                            if (entries.length === 0) return 'Dossier vide';
-                            if (entries.length === 1) return `${entries[0][1]} ${entries[0][0]}`;
-                            return `${activeItems.length} dispositifs`;
-                          })()}
-                        </p>
+                {/* Event Card */}
+                <div className="flex-1 pt-2">
+                  <div className="bg-white border-2 border-slate-200 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all hover:border-blue-400 cursor-default group/card">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Montant annuel</p>
+                        <p className="text-lg font-black text-slate-900">{totalMontant.toLocaleString('fr-FR')} €</p>
                       </div>
-                      {/* Arrow up to timeline */}
-                      <div className="absolute top-[-16px] left-1/2 -translate-x-1/2 w-0.5 h-4 bg-slate-200"></div>
+                      <Info size={18} className="text-slate-400 group-hover/card:text-blue-600 transition-colors" />
                     </div>
 
-                    {/* Tooltip on hover */}
-                    <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-80 bg-slate-950 rounded-2xl p-4 text-white shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 -translate-y-2 group-hover:translate-y-0 z-[100] border border-white/10">
-                      <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Année {year}</h4>
-                        <Info size={14} className="text-white" />
-                      </div>
-                      <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2 text-xs">
+                    <p className="text-[9px] text-slate-500 font-medium">
+                      {(() => {
+                        const units = activeItems.reduce((acc: any, curr: any) => {
+                          const u = curr.unite || 'unité';
+                          acc[u] = (acc[u] || 0) + (curr.count || 0);
+                          return acc;
+                        }, {});
+                        const entries = Object.entries(units);
+                        if (entries.length === 0) return 'Aucun dispositif';
+                        if (entries.length === 1) return `${entries[0][1]} ${entries[0][0]}`;
+                        return `${activeItems.length} dispositifs`;
+                      })()}
+                    </p>
+
+                    {/* Details on hover */}
+                    <div className="max-h-0 overflow-hidden opacity-0 transition-all duration-300 group-hover/card:max-h-96 group-hover/card:opacity-100 mt-3 pt-3 border-t border-slate-200">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Détails</p>
+                      <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2">
                         {items.length === 0 ? (
-                          <p className="text-slate-500 italic">Aucun dispositif</p>
+                          <p className="text-[9px] text-slate-500 italic">Aucun dispositif enregistré</p>
                         ) : (
                           items.map((item, iidx) => (
-                            <div key={iidx} className="flex items-start gap-2 py-1 border-b border-white/5 last:border-0">
+                            <div key={iidx} className="flex items-start gap-2 py-1 text-[9px]">
                               <div className={`w-1.5 h-1.5 rounded-full mt-1 shrink-0 ${
                                 item.status === 'nouveau' ? 'bg-green-500' :
                                 item.status === 'supprimé' ? 'bg-rose-500' : 'bg-slate-400'
                               }`}></div>
                               <div className="min-w-0">
-                                <p className="text-slate-200 font-bold">{item.designation || item.nom}</p>
-                                <p className="text-slate-400">{item.count} {item.unite}</p>
+                                <p className="font-bold text-slate-900">{item.designation || item.nom}</p>
+                                <p className="text-slate-500">{item.count} {item.unite}</p>
                               </div>
                             </div>
                           ))
@@ -170,7 +127,7 @@ export default function CommerceYearTimeline({ years, getDispositivesTimeline }:
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
