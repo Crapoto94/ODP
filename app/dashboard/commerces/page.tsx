@@ -121,9 +121,11 @@ export default function CommercesPage() {
     const allYears = [...(commerce.tlpeYears || []), ...(commerce.commerceYears || [])].map(String);
     const matchesYear = yearFilter === 'ALL' || allYears.includes(yearFilter);
 
-    // Street filter
+    // Street filter - normalize both street and filter for comparison
     const { street } = parseAddress(commerce.adresse || '');
-    const matchesStreet = streetFilter === 'ALL' || street.toLowerCase() === streetFilter.toLowerCase();
+    const normalizedStreet = street.toLowerCase();
+    const normalizedFilter = streetFilter === 'ALL' ? 'ALL' : streetFilter.toLowerCase();
+    const matchesStreet = normalizedFilter === 'ALL' || normalizedStreet === normalizedFilter;
 
     // Filter by closed status if requested
     if (onlyClosed && !(commerce.etatAdministratif === 'Fermée' || commerce.etatAdministratif === 'Cessée')) {
