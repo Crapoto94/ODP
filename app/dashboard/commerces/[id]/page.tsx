@@ -132,9 +132,6 @@ export default function CommerceDetailPage({ params }: Props) {
   ].includes(currentOccupation.statut);
 
   const isReallyFactured = currentOccupation && [
-    'VERIFIE',
-    'VALIDÉ',
-    'VALIDE',
     'FACTURE',
     'FACTURÉ',
     'TITRE',
@@ -308,12 +305,12 @@ export default function CommerceDetailPage({ params }: Props) {
             fetchOccupations={fetchOccupations}
             setEditingLigne={setEditingLigne}
             setIsLigneModalOpen={setIsLigneModalOpen}
-            onRenew={isReadOnly ? undefined : () => setIsRenewModalOpen(true)}
+            onRenew={isArchived ? undefined : () => setIsRenewModalOpen(true)}
             dispositifsByYear={dispositifsByYear}
             isFactured={isReadOnly}
           />
 
-          {/* Discussion Thread */}
+          {/* Événements & Historique */}
           {currentUser && (
             <CommerceNotes
               key={noteKey}
