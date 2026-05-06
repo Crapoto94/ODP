@@ -243,7 +243,11 @@ export default function OccupationDetailPage({ params }: Props) {
             isOpen={isLigneModalOpen}
             onClose={() => setIsLigneModalOpen(false)}
             occupationId={occ.id}
-            annee={occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear())}
+            annee={
+              occ.type === 'TLPE' 
+                ? (occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear()))
+                : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear()))
+            }
             onSuccess={fetchOccupation}
             editingLigne={editingLigne}
           />
@@ -254,7 +258,11 @@ export default function OccupationDetailPage({ params }: Props) {
             occupationId={occ.id}
             onSave={() => fetchOccupation()}
             initialData={editingLigne}
-            annee={occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear())}
+            annee={
+              occ.type === 'TLPE' 
+                ? (occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear()))
+                : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear()))
+            }
             defaultDates={{ 
               start: occ.dateDebut?.split('T')[0] || new Date().toISOString().split('T')[0], 
               end: occ.dateFin?.split('T')[0] || new Date().toISOString().split('T')[0] 
