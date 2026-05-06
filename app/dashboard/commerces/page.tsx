@@ -89,21 +89,21 @@ export default function CommercesPage() {
       const suffix = match[2] ? match[2].toUpperCase() : '';
       let street = match[3].trim();
 
-      // Only treat as suffix if followed by a valid street (contains letters)
-      // This prevents treating streets like "B STREET" as having suffix "B"
+      // Case 1: Has suffix AND followed by a valid street
       if (suffix && street && street.match(/^[A-ZÀ-ÿ]/i)) {
-        // Normalize street (replace PLA with Place, etc.)
         street = normalizeStreet(street);
         return { number, street, suffix, fullNumber: match[0] };
       }
 
-      // If no suffix found or suffix is not valid, just treat number + street as street
-      let fullStreet = trimAddr;
-      if (number > 0) {
-        // Remove leading number if present
-        fullStreet = fullStreet.replace(/^\d+\s*/, '').trim();
+      // Case 2: Has number but no suffix - extract number and street
+      if (number > 0 && !suffix) {
+        street = normalizeStreet(street);
+        return { number, street, suffix: '', fullNumber: match[0] };
       }
-      fullStreet = normalizeStreet(fullStreet);
+
+      // Case 3: Suffix found but not valid (not followed by proper street)
+      // Treat entire address as street name without number or suffix
+      let fullStreet = normalizeStreet(trimAddr);
       return { number: 0, street: fullStreet, suffix: '', fullNumber: '' };
     }
 
