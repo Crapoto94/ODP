@@ -9,11 +9,35 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    const notes = await (prisma as any).note.findMany({
-      where: { tiersId: parseInt(id) },
+    const tiersId = parseInt(id);
+
+    // Get notes from tiers
+    const tiersNotes = await (prisma as any).note.findMany({
+      where: { tiersId },
       orderBy: { created_at: 'desc' }
     });
-    return NextResponse.json(notes);
+
+    // Get notes from all COMMERCE occupations of this tiers
+    const occupationNotes = await (prisma as any).note.findMany({
+      where: {
+        occupationId: {
+          in: await (prisma as any).occupation
+            .findMany({
+              where: { tiersId, type: 'COMMERCE' },
+              select: { id: true }
+            })
+            .then((occs: any[]) => occs.map((o: any) => o.id))
+        }
+      },
+      orderBy: { created_at: 'desc' }
+    });
+
+    // Combine and sort by date
+    const allNotes = [...tiersNotes, ...occupationNotes].sort(
+      (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    return NextResponse.json(allNotes);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

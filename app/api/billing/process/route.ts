@@ -260,33 +260,34 @@ export async function POST(req: NextRequest) {
     await writeFile(recapPath, Buffer.from(recapDoc.output('arraybuffer')));
 
     // 5. Generate .filien Flat File (Official Format)
-    const filienParams = {
-      orga: appSettings?.filienOrga || '01',
-      budget: appSettings?.filienBudget || 'BA',
-      exercice: appSettings?.filienExercice || year,
-      avancement: appSettings?.filienAvancement || '5',
-      rejetDispo: appSettings?.filienRejetDispo ?? true,
-      rejetCA: appSettings?.filienRejetCA ?? false,
-      rejetMarche: appSettings?.filienRejetMarche ?? false,
-      filienChapitre: appSettings?.filienChapitre || '',
-      filienNature: appSettings?.filienNature || '',
-      filienFonction: appSettings?.filienFonction || '',
-      filienCodeInterne: appSettings?.filienCodeInterne || '',
-      filienTypeMouvement: appSettings?.filienTypeMouvement || '',
-      filienSens: appSettings?.filienSens || '',
-      filienStructure: appSettings?.filienStructure || '',
-      filienGestionnaire: appSettings?.filienGestionnaire || '',
-    };
-
-    const { prepareFilienMovements, exportToUnc, generateFilienFile } = require('@/lib/billing-service');
+    const { getFullFilienContent, exportToUnc } = require('@/lib/billing-service');
     
-    // runName will be the subfolder name (already defined above)
-    const movements = prepareFilienMovements(results, dossiers, appSettings, tlpeConfig, year, runName);
+    // Fetch analytical overrides from TypeDossierConfig
+    const typeConfigs = await prisma.typeDossierConfig.findMany();
+    const typeConfigMap: Record<string, any> = {};
+    typeConfigs.forEach((tc: any) => {
+      if (tc.type) typeConfigMap[tc.type] = tc;
+    });
 
-    const filienContent = generateFilienFile(filienParams, movements);
-    const filienFilename = `FACT-${timestampStr}.filien`;
+    // Fetch regulatory paths (delib, tarifs) from OdpConfig
+    const odpConfig = await prisma.odpConfig.findFirst({
+      where: { annee: year }
+    });
+
+    const filienContent = getFullFilienContent(
+      results,
+      dossiers,
+      appSettings,
+      typeConfigMap,
+      null, // tlpeConfig (ignored for now)
+      odpConfig,
+      year,
+      runName
+    );
+
+    const filienFilename = `FACT-${timestampStr}.filien.txt`;
     const filienPath = join(facturesDir, filienFilename);
-    await writeFile(filienPath, filienContent);
+    await writeFile(filienPath, Buffer.from(filienContent, 'latin1'));
 
     // 6. Optional: Copy to UNC path if configured
     if (appSettings?.filienUncPj) {
@@ -296,11 +297,13 @@ export async function POST(req: NextRequest) {
         filienContent,
         filienFilename,
         results,
-        tlpeConfig,
+        tlpeConfig: null,
+        odpConfig,
         recapFilename,
         recapPath,
         facturesDir,
-        appSettings // Pass appSettings here
+        appSettings,
+        dossiers: dossiers
       });
     }
 

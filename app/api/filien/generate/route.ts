@@ -88,30 +88,21 @@ export async function POST(req: NextRequest) {
 
     const timestamp = format(new Date(), 'yyyy-MM-dd-HHmm');
     const runName = `EXPORT-${timestamp}`;
-    const filienFilename = `${runName}.filien`;
+    const filienFilename = `${runName}.filien.txt`;
     const facturesDir = join(process.cwd(), 'public', 'Factures');
 
-    const movements = prepareFilienMovements(results, occupations, settings, regulatoryConfig, currentYear, runName);
+    const { getFullFilienContent, exportToUnc } = require('@/lib/billing-service');
     
-    // Apply specific overrides from type configs if applicable
-    movements.forEach((mov: any, idx: number) => {
-      const occ = occupations[idx];
-      const tc = typeConfigMap[occ.type] || {};
-      if (tc.filienObjet) mov.objet = tc.filienObjet;
-      if (tc.filienPreBordereau) mov.preBordereau = tc.filienPreBordereau;
-      
-      // Analytical overrides
-      if (tc.filienChapitre) mov.lines.forEach((l: any) => l.chapitre = tc.filienChapitre);
-      if (tc.filienNature) mov.lines.forEach((l: any) => l.nature = tc.filienNature);
-      if (tc.filienFonction) mov.lines.forEach((l: any) => l.fonction = tc.filienFonction);
-      if (tc.filienCodeInterne) mov.lines.forEach((l: any) => l.codeInterne = tc.filienCodeInterne);
-      if (tc.filienTypeMouvement) mov.lines.forEach((l: any) => l.typeMouvement = tc.filienTypeMouvement);
-      if (tc.filienSens) mov.lines.forEach((l: any) => l.sens = tc.filienSens);
-      if (tc.filienStructure) mov.lines.forEach((l: any) => l.structure = tc.filienStructure);
-      if (tc.filienGestionnaire) mov.lines.forEach((l: any) => l.gestionnaire = tc.filienGestionnaire);
-    });
-
-    const fileContent = generateFilienFile(filienParams, movements);
+    const fileContent = getFullFilienContent(
+      results,
+      occupations,
+      settings,
+      typeConfigMap,
+      null, // tlpeConfig (ignored for now)
+      regulatoryConfig, // odpConfig
+      currentYear,
+      runName
+    );
 
     // Automatically copy to UNC if configured (Sync with main billing process)
     if ((settings as any).filienUncPj) {
@@ -122,7 +113,8 @@ export async function POST(req: NextRequest) {
           filienContent: fileContent,
           filienFilename,
           results,
-          tlpeConfig: regulatoryConfig,
+          tlpeConfig: null,
+          odpConfig: regulatoryConfig,
           facturesDir,
           appSettings: settings,
           dossiers: occupations
@@ -133,9 +125,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return new NextResponse(fileContent, {
+    return new NextResponse(Buffer.from(fileContent, 'latin1'), {
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
+        'Content-Type': 'text/plain; charset=iso-8859-1',
         'Content-Disposition': `attachment; filename="${filienFilename}"`
       }
     });

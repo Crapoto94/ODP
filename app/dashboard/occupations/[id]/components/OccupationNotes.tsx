@@ -51,7 +51,7 @@ export default function OccupationNotes({ occupationId, currentUser }: Props) {
     <div className="bg-slate-50/50 rounded-2xl border border-slate-100 p-8 flex flex-col gap-8 min-h-[400px]">
       <div className="flex items-center justify-between pb-2 border-b border-slate-200/50">
         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-          <MessageSquare size={14} /> Fil de discussion
+          <MessageSquare size={14} /> Fil d'événements
         </h3>
         <button 
           onClick={handleHarvest}

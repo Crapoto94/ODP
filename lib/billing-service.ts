@@ -16,6 +16,61 @@ export interface BillingResult {
 }
 
 /**
+ * Centralized function to generate Filien file content with all overrides and formatting rules.
+ */
+export function getFullFilienContent(
+  results: BillingResult[],
+  dossiers: any[],
+  appSettings: any,
+  typeConfigMap: Record<string, any>,
+  tlpeConfig: any,
+  odpConfig: any,
+  year: number,
+  runName: string
+): string {
+  const filienParams: FilienParams = {
+    orga: appSettings?.filienOrga || '01',
+    budget: appSettings?.filienBudget || 'BA',
+    exercice: appSettings?.filienExercice || year,
+    avancement: appSettings?.filienAvancement || '5',
+    rejetDispo: appSettings?.filienRejetDispo ?? true,
+    rejetCA: appSettings?.filienRejetCA ?? false,
+    rejetMarche: appSettings?.filienRejetMarche ?? false,
+    filienChapitre: appSettings?.filienChapitre || '',
+    filienNature: appSettings?.filienNature || '',
+    filienFonction: appSettings?.filienFonction || '',
+    filienCodeInterne: appSettings?.filienCodeInterne || '',
+    filienTypeMouvement: appSettings?.filienTypeMouvement || '',
+    filienSens: appSettings?.filienSens || '',
+    filienStructure: appSettings?.filienStructure || '',
+    filienGestionnaire: appSettings?.filienGestionnaire || '',
+  };
+
+  const movements = prepareFilienMovements(results, dossiers, appSettings, tlpeConfig, odpConfig, year, runName);
+
+  // Apply specific analytical overrides from typeConfigs
+  movements.forEach((mov, idx) => {
+    const occ = dossiers.find(d => d.id === results[idx].id);
+    const tc = typeConfigMap[occ?.type] || {};
+    
+    if (tc.filienObjet) mov.objet = tc.filienObjet;
+    if (tc.filienPreBordereau) mov.preBordereau = tc.filienPreBordereau;
+    
+    // Analytical overrides (Tags 541/542)
+    if (tc.filienChapitre) mov.lines.forEach((l: any) => l.chapitre = tc.filienChapitre);
+    if (tc.filienNature) mov.lines.forEach((l: any) => l.nature = tc.filienNature);
+    if (tc.filienFonction) mov.lines.forEach((l: any) => l.fonction = tc.filienFonction);
+    if (tc.filienCodeInterne) mov.lines.forEach((l: any) => l.codeInterne = tc.filienCodeInterne);
+    if (tc.filienTypeMouvement) mov.lines.forEach((l: any) => l.typeMouvement = tc.filienTypeMouvement);
+    if (tc.filienSens) mov.lines.forEach((l: any) => l.sens = tc.filienSens);
+    if (tc.filienStructure) mov.lines.forEach((l: any) => l.structure = tc.filienStructure);
+    if (tc.filienGestionnaire) mov.lines.forEach((l: any) => l.gestionnaire = tc.filienGestionnaire);
+  });
+
+  return generateFilienFile(filienParams, movements);
+}
+
+/**
  * Prepares the movement data structure for the Filien generation tool.
  */
 export function prepareFilienMovements(
@@ -23,11 +78,11 @@ export function prepareFilienMovements(
   dossiers: any[], 
   appSettings: any, 
   tlpeConfig: any,
+  odpConfig: any,
   year: number,
   runName: string
 ): FilienMovement[] {
   const uncBase = appSettings?.filienUncPj || '';
-  // Each run gets its own subfolder in the UNC root
   const runUncPath = uncBase ? join(uncBase, runName) : '';
 
   const rawStart = appSettings?.filienMouvement || '1';
@@ -39,22 +94,28 @@ export function prepareFilienMovements(
 
   return results.map((r, idx) => {
     const occ = dossiers.find((d: any) => d.id === r.id);
+    const isOdp = occ?.type === 'CHANTIER' || occ?.type === 'TOURNAGE';
+    const regConfig = isOdp ? odpConfig : tlpeConfig;
+    
     const attachments = [];
     const mouvementId = prefix + (startNum + idx).toString().padStart(padding, '0');
 
     // 1. Délibération (PJ1 - /26/)
-    if (tlpeConfig?.deliberationPath) {
-      const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
+    if (regConfig?.deliberationPath) {
+      const delibName = regConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
       attachments.push({
         name: 'Délibération',
         filename: delibName,
         supportType: '01',
-        path: runUncPath ? join(runUncPath, delibName) : tlpeConfig.deliberationPath,
+        path: runUncPath ? join(runUncPath, delibName) : regConfig.deliberationPath,
       });
     }
 
     // 2. Tarifs (PJ2 - /27/)
-    const tarifsPath = tlpeConfig?.tarifsOdpPath || tlpeConfig?.tarifsPath;
+    const tarifsPath = isOdp 
+      ? (occ?.type === 'TOURNAGE' ? regConfig?.tarifsTournagesPath : regConfig?.tarifsOdpPath)
+      : regConfig?.tarifsPath;
+
     if (tarifsPath) {
       const tarifsName = tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
       attachments.push({
@@ -87,6 +148,8 @@ export function prepareFilienMovements(
     return {
       id: mouvementId,
       type: appSettings?.filienType || 'R',
+      businessType: occ?.type,
+      year: occ?.dateDebut ? new Date(occ.dateDebut).getFullYear() : occ?.anneeTaxation,
       tiersCode: r.tiersCode || (occ?.debiteur || occ?.tiers)?.code_sedit || 'TIERS_INCONNU',
       libelle: `Chantier ${appSettings?.filienLibelle || occ?.nom || `Dossier #${occ?.id}`}`,
       calendrier: appSettings?.filienCalendrier || '01',
@@ -129,13 +192,14 @@ export async function exportToUnc(params: {
   filienFilename: string;
   results: BillingResult[];
   tlpeConfig: any;
+  odpConfig: any;
   recapFilename?: string;
   recapPath?: string;
   facturesDir: string;
   appSettings?: any;
   dossiers?: any[];
 }): Promise<boolean> {
-  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, recapFilename, recapPath, facturesDir, appSettings, dossiers } = params;
+  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, odpConfig, recapFilename, recapPath, facturesDir, appSettings, dossiers } = params;
   const publicPath = join(process.cwd(), 'public');
   
   try {
@@ -213,23 +277,44 @@ export async function exportToUnc(params: {
       }
       
       // 3. Copy Filien file
-      await smbWriteFile(join(targetSubDir, filienFilename), Buffer.from(filienContent));
+      await smbWriteFile(join(targetSubDir, filienFilename), Buffer.from(filienContent, 'latin1'));
 
-      // 4. Copy Regulatory documents
-      if (tlpeConfig?.deliberationPath) {
-        const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
-        const delibSrc = tlpeConfig.deliberationPath.startsWith('/') ? join(publicPath, tlpeConfig.deliberationPath) : tlpeConfig.deliberationPath;
-        if (existsSync(delibSrc)) {
-          await smbWriteFile(join(targetSubDir, delibName), await readFile(delibSrc));
+      // 4. Copy Regulatory documents (Deliberation and Tarifs)
+      // Since a run can have both ODP and TLPE, we try to copy both types of docs if configs are provided
+      const configsToProcess = [
+        { cfg: odpConfig, isOdp: true },
+        { cfg: tlpeConfig, isOdp: false }
+      ];
+
+      for (const { cfg, isOdp } of configsToProcess) {
+        if (!cfg) continue;
+
+        // Deliberation
+        if (cfg.deliberationPath) {
+          const delibName = cfg.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
+          const delibSrc = cfg.deliberationPath.startsWith('/') ? join(publicPath, cfg.deliberationPath) : cfg.deliberationPath;
+          if (existsSync(delibSrc)) {
+            await smbWriteFile(join(targetSubDir, delibName), await readFile(delibSrc));
+          }
         }
-      }
 
-      const tarifsPath = tlpeConfig?.tarifsOdpPath || tlpeConfig?.tarifsPath;
-      if (tarifsPath) {
-        const tarifsName = tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
-        const tarifsSrc = tarifsPath.startsWith('/') ? join(publicPath, tarifsPath) : tarifsPath;
-        if (existsSync(tarifsSrc)) {
-          await smbWriteFile(join(targetSubDir, tarifsName), await readFile(tarifsSrc));
+        // Tarifs
+        const tPath = isOdp ? cfg.tarifsOdpPath : cfg.tarifsPath;
+        if (tPath) {
+          const tarifsName = tPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
+          const tarifsSrc = tPath.startsWith('/') ? join(publicPath, tPath) : tPath;
+          if (existsSync(tarifsSrc)) {
+            await smbWriteFile(join(targetSubDir, tarifsName), await readFile(tarifsSrc));
+          }
+        }
+        
+        // Specifique Tournages
+        if (isOdp && cfg.tarifsTournagesPath) {
+          const ttName = cfg.tarifsTournagesPath.split(/[\\/]/).pop() || 'Tarifs_Tournages.pdf';
+          const ttSrc = cfg.tarifsTournagesPath.startsWith('/') ? join(publicPath, cfg.tarifsTournagesPath) : cfg.tarifsTournagesPath;
+          if (existsSync(ttSrc)) {
+            await smbWriteFile(join(targetSubDir, ttName), await readFile(ttSrc));
+          }
         }
       }
 
@@ -271,7 +356,7 @@ export async function exportToUnc(params: {
         await writeFile(join(targetDir, recapFilename), await readFile(recapPath));
       }
       
-      await writeFile(join(targetDir, filienFilename), filienContent);
+      await writeFile(join(targetDir, filienFilename), Buffer.from(filienContent, 'latin1'));
 
       if (tlpeConfig?.deliberationPath) {
         const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';

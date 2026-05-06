@@ -39,6 +39,20 @@ export async function PATCH(
       select: { id: true, statut: true }
     });
 
+    const statusDateMap: Record<string, string> = {
+      'INITIALISATION': 'dateINIT',
+      'INSTRUCTION': 'dateINST',
+      'PREPARATION_AOT': 'datePREP',
+      'EN_COURS': 'dateEN_COURS',
+      'VALIDÉ': 'dateVALIDE',
+      'FACTURÉ': 'dateFACTURE',
+      'TITRÉ': 'dateTITRE',
+      'CLOS': 'dateCLOS'
+    };
+
+    const dateField = statusDateMap[statut];
+    const now = new Date();
+
     // Update occupations of this commerce, optionally filtered by year
     const updated = await (prisma as any).occupation.updateMany({
       where: {
@@ -47,7 +61,8 @@ export async function PATCH(
         ...(annee ? { anneeTaxation: parseInt(annee) } : {})
       },
       data: {
-        statut
+        statut,
+        ...(dateField ? { [dateField]: now } : {})
       }
     });
 

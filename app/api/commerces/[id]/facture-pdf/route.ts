@@ -44,17 +44,17 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       });
     }
 
-    // Ajouter une note dans le fil de discussion
-    await (prisma as any).note.create({
-      data: {
-        tiersId: tiersId,
-        content: `Génération d'un détail de facture (${annee})`,
-        pjPath: publicPath,
-        pjName: filename,
-        isEmail: false,
-        created_at: new Date()
-      }
-    });
+    // Note: Automatic note creation disabled - users can manually add notes if needed
+    // await (prisma as any).note.create({
+    //   data: {
+    //     tiersId: tiersId,
+    //     content: `Génération d'un détail de facture (${annee})`,
+    //     pjPath: publicPath,
+    //     pjName: filename,
+    //     isEmail: false,
+    //     created_at: new Date()
+    //   }
+    // });
 
     return new Response(new Uint8Array(buffer), {
       headers: {

@@ -339,7 +339,9 @@ export function useCommerceLogic(paramId: string) {
       setAotSentMsg(`AOT envoyé à : ${res.data.sent?.join(', ') || 'Contact principal'}`);
       setTimeout(() => setAotSentMsg(null), 5000);
     } catch (e: any) {
-      setAotSentMsg(`Erreur lors de l'envoi de l'AOT`);
+      const errorMsg = e.response?.data?.error || e.message || 'Erreur inconnue';
+      console.error('[handleSendAot] Error:', errorMsg, e.response?.data?.details);
+      setAotSentMsg(`Erreur lors de l'envoi de l'AOT: ${errorMsg}`);
       setTimeout(() => setAotSentMsg(null), 5000);
     } finally {
       setIsSendingAot(false);

@@ -31,7 +31,10 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(node test-parse-address.js)",
+      "Bash(git diff *)",
+      "Bash(git commit *)"
     ]
   }
 }

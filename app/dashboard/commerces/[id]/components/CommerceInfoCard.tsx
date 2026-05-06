@@ -215,13 +215,32 @@ export default function CommerceInfoCard({
                   <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
                     <Building2 size={16} />
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-black text-slate-900 truncate">
-                      {currentOccupation.agissantPour 
-                        ? allTiers.find(t => t.id === Number(currentOccupation.agissantPour))?.nom || 'Tiers externe'
-                        : commerce.nom}
-                    </p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-black text-slate-900 truncate">
+                        {(() => {
+                          if (currentOccupation.agissantPour) {
+                            const t = allTiers.find(t => t.id === Number(currentOccupation.agissantPour));
+                            return t?.nom || 'Tiers externe';
+                          }
+                          return commerce.nom;
+                        })()}
+                      </p>
+                      {(() => {
+                        const t = currentOccupation.agissantPour 
+                          ? allTiers.find(t => t.id === Number(currentOccupation.agissantPour))
+                          : commerce;
+                        if (t?.etatAdministratif === 'Cessée') {
+                          return (
+                            <span className="flex items-center gap-1 text-[10px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded whitespace-nowrap">
+                              <AlertCircle size={10} /> Fermé
+                            </span>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                       {currentOccupation.agissantPour 
                         ? `Code: ${allTiers.find(t => t.id === Number(currentOccupation.agissantPour))?.code_sedit || 'N/A'}`
                         : `Le tiers lui-même (Code: ${commerce.code_sedit || 'N/A'})`}

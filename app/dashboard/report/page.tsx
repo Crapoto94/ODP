@@ -55,7 +55,7 @@ export default function ReportAnneePage() {
     try {
       // Just fetch eligible dossiers first to see if anything to check
       setLoadingEligible(true);
-      const res = await axios.get(`/api/occupations?status=FACTURE&type=${type}&anneeTaxation=${fromYear}&excludeArchived=true`);
+      const res = await axios.get(`/api/occupations?minStatus=FACTURE&type=${type}&anneeTaxation=${fromYear}&excludeArchived=true`);
       const data = res.data;
       setDossiers(data);
       setSelectedIds(data.map((d: any) => d.id));
@@ -248,8 +248,8 @@ export default function ReportAnneePage() {
             <div className="flex-1 flex flex-col">
               <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Dossiers Facturés ({type} - {fromYear})</h2>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Sélectionnez les dossiers à reconduire vers {toYear}</p>
+                  <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Dossiers Facturés ou Plus ({type} - {fromYear})</h2>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Sélectionnez les dossiers facturés, titrés, payés ou clos à reconduire vers {toYear}</p>
                 </div>
                 <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-xl border border-blue-100 font-black text-sm">
                   {selectedIds.length} sélectionné(s)

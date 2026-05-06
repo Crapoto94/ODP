@@ -39,8 +39,7 @@ export default function DocumentList({  documents,
   isSendingAot,
   aotSentMsg,
 }: Props) {
-  const showInvoiceBlock = occupation && (!!occupation.facturePath || occupation.statut === 'VERIFIE' || occupation.statut === 'FACTURE' || occupation.statut === 'PAYE');
-  const totalCount = docCount + (showInvoiceBlock ? 1 : 0) + (occupation?.aotFinalPath ? 1 : 0);
+  const totalCount = docCount + (occupation?.aotFinalPath ? 1 : 0);
 
   return (
     <section className="space-y-8">
@@ -102,33 +101,6 @@ export default function DocumentList({  documents,
             </div>
           );
         })}
-
-        {occupation && showInvoiceBlock && (() => {
-          const isDefinitive = ['FACTURE', 'FACTURÉ', 'TITRE', 'TITRÉ', 'CLOS', 'PAYÉ', 'PAYE'].includes(occupation.statut);
-          return (
-            <div className="space-y-1.5">
-              <a
-                href={occupation.facturePath || `/api/commerces/${occupation.tiersId}/facture-pdf?annee=${occupation.anneeTaxation}`}
-                target="_blank"
-                rel="noreferrer"
-                className={`group flex items-center gap-4 p-4 ${isDefinitive ? 'bg-rose-50/50 border-rose-100 hover:border-rose-400' : 'bg-blue-50/50 border-blue-100 hover:border-blue-400'} rounded-2xl border-2 shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5`}
-              >
-                <div className={`w-12 h-12 rounded-xl shrink-0 ${isDefinitive ? 'bg-rose-600' : 'bg-blue-600'} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
-                  <FileText size={20} />
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <p className={`text-[10px] font-black ${isDefinitive ? 'text-rose-700' : 'text-blue-700'} uppercase tracking-widest truncate`}>
-                    Détails de facture ({occupation.anneeTaxation})
-                  </p>
-                  <p className={`text-[8px] font-black ${isDefinitive ? 'text-rose-400/70' : 'text-blue-400/70'} uppercase tracking-tighter mt-1`}>
-                    {isDefinitive ? 'Document Définitif' : 'Brouillon Provisoire'} • PDF
-                  </p>
-                </div>
-              </a>
-            </div>
-          );
-        })()}
 
         {occupation && occupation.aotFinalPath && occupation.aotSigned && (
           <div className="space-y-1.5">

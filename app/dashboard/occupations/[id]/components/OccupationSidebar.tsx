@@ -87,7 +87,8 @@ export default function OccupationSidebar({
   };
 
   const photoList = occupation.photos ? occupation.photos.split(',').filter(Boolean) : [];
-  const showInvoiceBlock = !!occupation.facturePath || occupation.statut === 'VERIFIE' || occupation.statut === 'FACTURE' || occupation.statut === 'PAYE';
+  const billingStatuses = ['VERIFIE', 'VALIDÉ', 'VALIDE', 'FACTURE', 'FACTURÉ', 'TITRE', 'TITRÉ', 'PAYE', 'PAYÉ', 'CLOS'];
+  const showInvoiceBlock = !!occupation.facturePath || billingStatuses.includes(occupation.statut);
   const docCount = photoList.length + (showInvoiceBlock ? 1 : 0) + (occupation.aotFinalPath ? 1 : 0);
 
   React.useEffect(() => {

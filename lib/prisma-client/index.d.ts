@@ -59,6 +59,11 @@ export type Article = $Result.DefaultSelection<Prisma.$ArticlePayload>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model FavoriteCommerce
+ * 
+ */
+export type FavoriteCommerce = $Result.DefaultSelection<Prisma.$FavoriteCommercePayload>
+/**
  * Model MobileLog
  * 
  */
@@ -361,6 +366,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs>;
+
+  /**
+   * `prisma.favoriteCommerce`: Exposes CRUD operations for the **FavoriteCommerce** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FavoriteCommerces
+    * const favoriteCommerces = await prisma.favoriteCommerce.findMany()
+    * ```
+    */
+  get favoriteCommerce(): Prisma.FavoriteCommerceDelegate<ExtArgs>;
 
   /**
    * `prisma.mobileLog`: Exposes CRUD operations for the **MobileLog** model.
@@ -991,6 +1006,7 @@ export namespace Prisma {
     ModeTaxation: 'ModeTaxation',
     Article: 'Article',
     User: 'User',
+    FavoriteCommerce: 'FavoriteCommerce',
     MobileLog: 'MobileLog',
     ContextualMessage: 'ContextualMessage',
     AppSettings: 'AppSettings',
@@ -1024,7 +1040,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "contextualMessage" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1655,6 +1671,76 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      FavoriteCommerce: {
+        payload: Prisma.$FavoriteCommercePayload<ExtArgs>
+        fields: Prisma.FavoriteCommerceFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FavoriteCommerceFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FavoriteCommerceFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          findFirst: {
+            args: Prisma.FavoriteCommerceFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FavoriteCommerceFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          findMany: {
+            args: Prisma.FavoriteCommerceFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>[]
+          }
+          create: {
+            args: Prisma.FavoriteCommerceCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          createMany: {
+            args: Prisma.FavoriteCommerceCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FavoriteCommerceCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>[]
+          }
+          delete: {
+            args: Prisma.FavoriteCommerceDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          update: {
+            args: Prisma.FavoriteCommerceUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          deleteMany: {
+            args: Prisma.FavoriteCommerceDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FavoriteCommerceUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.FavoriteCommerceUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          aggregate: {
+            args: Prisma.FavoriteCommerceAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFavoriteCommerce>
+          }
+          groupBy: {
+            args: Prisma.FavoriteCommerceGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FavoriteCommerceGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FavoriteCommerceCountArgs<ExtArgs>
+            result: $Utils.Optional<FavoriteCommerceCountAggregateOutputType> | number
           }
         }
       }
@@ -3082,12 +3168,14 @@ export namespace Prisma {
     contacts: number
     occupations: number
     notes: number
+    favoritedBy: number
   }
 
   export type TiersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     contacts?: boolean | TiersCountOutputTypeCountContactsArgs
     occupations?: boolean | TiersCountOutputTypeCountOccupationsArgs
     notes?: boolean | TiersCountOutputTypeCountNotesArgs
+    favoritedBy?: boolean | TiersCountOutputTypeCountFavoritedByArgs
   }
 
   // Custom InputTypes
@@ -3120,6 +3208,13 @@ export namespace Prisma {
    */
   export type TiersCountOutputTypeCountNotesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NoteWhereInput
+  }
+
+  /**
+   * TiersCountOutputType without action
+   */
+  export type TiersCountOutputTypeCountFavoritedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FavoriteCommerceWhereInput
   }
 
 
@@ -3298,10 +3393,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     logs: number
+    favoriteCommerces: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     logs?: boolean | UserCountOutputTypeCountLogsArgs
+    favoriteCommerces?: boolean | UserCountOutputTypeCountFavoriteCommercesArgs
   }
 
   // Custom InputTypes
@@ -3320,6 +3417,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MobileLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFavoriteCommercesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FavoriteCommerceWhereInput
   }
 
 
@@ -3740,6 +3844,7 @@ export namespace Prisma {
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
     occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
     notes?: boolean | Tiers$notesArgs<ExtArgs>
+    favoritedBy?: boolean | Tiers$favoritedByArgs<ExtArgs>
     _count?: boolean | TiersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tiers"]>
 
@@ -3783,6 +3888,7 @@ export namespace Prisma {
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
     occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
     notes?: boolean | Tiers$notesArgs<ExtArgs>
+    favoritedBy?: boolean | Tiers$favoritedByArgs<ExtArgs>
     _count?: boolean | TiersCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TiersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3793,6 +3899,7 @@ export namespace Prisma {
       contacts: Prisma.$ContactPayload<ExtArgs>[]
       occupations: Prisma.$OccupationPayload<ExtArgs>[]
       notes: Prisma.$NotePayload<ExtArgs>[]
+      favoritedBy: Prisma.$FavoriteCommercePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -4177,6 +4284,7 @@ export namespace Prisma {
     contacts<T extends Tiers$contactsArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$contactsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findMany"> | Null>
     occupations<T extends Tiers$occupationsArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$occupationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findMany"> | Null>
     notes<T extends Tiers$notesArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$notesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany"> | Null>
+    favoritedBy<T extends Tiers$favoritedByArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$favoritedByArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4590,6 +4698,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NoteScalarFieldEnum | NoteScalarFieldEnum[]
+  }
+
+  /**
+   * Tiers.favoritedBy
+   */
+  export type Tiers$favoritedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    where?: FavoriteCommerceWhereInput
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    cursor?: FavoriteCommerceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
   }
 
   /**
@@ -12652,6 +12780,7 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     logs?: boolean | User$logsArgs<ExtArgs>
+    favoriteCommerces?: boolean | User$favoriteCommercesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -12683,6 +12812,7 @@ export namespace Prisma {
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     logs?: boolean | User$logsArgs<ExtArgs>
+    favoriteCommerces?: boolean | User$favoriteCommercesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -12691,6 +12821,7 @@ export namespace Prisma {
     name: "User"
     objects: {
       logs: Prisma.$MobileLogPayload<ExtArgs>[]
+      favoriteCommerces: Prisma.$FavoriteCommercePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -13068,6 +13199,7 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     logs<T extends User$logsArgs<ExtArgs> = {}>(args?: Subset<T, User$logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MobileLogPayload<ExtArgs>, T, "findMany"> | Null>
+    favoriteCommerces<T extends User$favoriteCommercesArgs<ExtArgs> = {}>(args?: Subset<T, User$favoriteCommercesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13439,6 +13571,26 @@ export namespace Prisma {
   }
 
   /**
+   * User.favoriteCommerces
+   */
+  export type User$favoriteCommercesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    where?: FavoriteCommerceWhereInput
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    cursor?: FavoriteCommerceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13450,6 +13602,973 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FavoriteCommerce
+   */
+
+  export type AggregateFavoriteCommerce = {
+    _count: FavoriteCommerceCountAggregateOutputType | null
+    _avg: FavoriteCommerceAvgAggregateOutputType | null
+    _sum: FavoriteCommerceSumAggregateOutputType | null
+    _min: FavoriteCommerceMinAggregateOutputType | null
+    _max: FavoriteCommerceMaxAggregateOutputType | null
+  }
+
+  export type FavoriteCommerceAvgAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    tiersId: number | null
+  }
+
+  export type FavoriteCommerceSumAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    tiersId: number | null
+  }
+
+  export type FavoriteCommerceMinAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    tiersId: number | null
+    created_at: Date | null
+  }
+
+  export type FavoriteCommerceMaxAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    tiersId: number | null
+    created_at: Date | null
+  }
+
+  export type FavoriteCommerceCountAggregateOutputType = {
+    id: number
+    userId: number
+    tiersId: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type FavoriteCommerceAvgAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+  }
+
+  export type FavoriteCommerceSumAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+  }
+
+  export type FavoriteCommerceMinAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+    created_at?: true
+  }
+
+  export type FavoriteCommerceMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+    created_at?: true
+  }
+
+  export type FavoriteCommerceCountAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type FavoriteCommerceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FavoriteCommerce to aggregate.
+     */
+    where?: FavoriteCommerceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FavoriteCommerces to fetch.
+     */
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FavoriteCommerceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FavoriteCommerces from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FavoriteCommerces.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FavoriteCommerces
+    **/
+    _count?: true | FavoriteCommerceCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: FavoriteCommerceAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FavoriteCommerceSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FavoriteCommerceMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FavoriteCommerceMaxAggregateInputType
+  }
+
+  export type GetFavoriteCommerceAggregateType<T extends FavoriteCommerceAggregateArgs> = {
+        [P in keyof T & keyof AggregateFavoriteCommerce]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFavoriteCommerce[P]>
+      : GetScalarType<T[P], AggregateFavoriteCommerce[P]>
+  }
+
+
+
+
+  export type FavoriteCommerceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FavoriteCommerceWhereInput
+    orderBy?: FavoriteCommerceOrderByWithAggregationInput | FavoriteCommerceOrderByWithAggregationInput[]
+    by: FavoriteCommerceScalarFieldEnum[] | FavoriteCommerceScalarFieldEnum
+    having?: FavoriteCommerceScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FavoriteCommerceCountAggregateInputType | true
+    _avg?: FavoriteCommerceAvgAggregateInputType
+    _sum?: FavoriteCommerceSumAggregateInputType
+    _min?: FavoriteCommerceMinAggregateInputType
+    _max?: FavoriteCommerceMaxAggregateInputType
+  }
+
+  export type FavoriteCommerceGroupByOutputType = {
+    id: number
+    userId: number
+    tiersId: number
+    created_at: Date
+    _count: FavoriteCommerceCountAggregateOutputType | null
+    _avg: FavoriteCommerceAvgAggregateOutputType | null
+    _sum: FavoriteCommerceSumAggregateOutputType | null
+    _min: FavoriteCommerceMinAggregateOutputType | null
+    _max: FavoriteCommerceMaxAggregateOutputType | null
+  }
+
+  type GetFavoriteCommerceGroupByPayload<T extends FavoriteCommerceGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FavoriteCommerceGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FavoriteCommerceGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FavoriteCommerceGroupByOutputType[P]>
+            : GetScalarType<T[P], FavoriteCommerceGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FavoriteCommerceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tiersId?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tiers?: boolean | TiersDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["favoriteCommerce"]>
+
+  export type FavoriteCommerceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tiersId?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tiers?: boolean | TiersDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["favoriteCommerce"]>
+
+  export type FavoriteCommerceSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    tiersId?: boolean
+    created_at?: boolean
+  }
+
+  export type FavoriteCommerceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tiers?: boolean | TiersDefaultArgs<ExtArgs>
+  }
+  export type FavoriteCommerceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tiers?: boolean | TiersDefaultArgs<ExtArgs>
+  }
+
+  export type $FavoriteCommercePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FavoriteCommerce"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      tiers: Prisma.$TiersPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: number
+      tiersId: number
+      created_at: Date
+    }, ExtArgs["result"]["favoriteCommerce"]>
+    composites: {}
+  }
+
+  type FavoriteCommerceGetPayload<S extends boolean | null | undefined | FavoriteCommerceDefaultArgs> = $Result.GetResult<Prisma.$FavoriteCommercePayload, S>
+
+  type FavoriteCommerceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<FavoriteCommerceFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: FavoriteCommerceCountAggregateInputType | true
+    }
+
+  export interface FavoriteCommerceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FavoriteCommerce'], meta: { name: 'FavoriteCommerce' } }
+    /**
+     * Find zero or one FavoriteCommerce that matches the filter.
+     * @param {FavoriteCommerceFindUniqueArgs} args - Arguments to find a FavoriteCommerce
+     * @example
+     * // Get one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FavoriteCommerceFindUniqueArgs>(args: SelectSubset<T, FavoriteCommerceFindUniqueArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one FavoriteCommerce that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {FavoriteCommerceFindUniqueOrThrowArgs} args - Arguments to find a FavoriteCommerce
+     * @example
+     * // Get one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FavoriteCommerceFindUniqueOrThrowArgs>(args: SelectSubset<T, FavoriteCommerceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first FavoriteCommerce that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceFindFirstArgs} args - Arguments to find a FavoriteCommerce
+     * @example
+     * // Get one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FavoriteCommerceFindFirstArgs>(args?: SelectSubset<T, FavoriteCommerceFindFirstArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first FavoriteCommerce that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceFindFirstOrThrowArgs} args - Arguments to find a FavoriteCommerce
+     * @example
+     * // Get one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FavoriteCommerceFindFirstOrThrowArgs>(args?: SelectSubset<T, FavoriteCommerceFindFirstOrThrowArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more FavoriteCommerces that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FavoriteCommerces
+     * const favoriteCommerces = await prisma.favoriteCommerce.findMany()
+     * 
+     * // Get first 10 FavoriteCommerces
+     * const favoriteCommerces = await prisma.favoriteCommerce.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const favoriteCommerceWithIdOnly = await prisma.favoriteCommerce.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FavoriteCommerceFindManyArgs>(args?: SelectSubset<T, FavoriteCommerceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a FavoriteCommerce.
+     * @param {FavoriteCommerceCreateArgs} args - Arguments to create a FavoriteCommerce.
+     * @example
+     * // Create one FavoriteCommerce
+     * const FavoriteCommerce = await prisma.favoriteCommerce.create({
+     *   data: {
+     *     // ... data to create a FavoriteCommerce
+     *   }
+     * })
+     * 
+     */
+    create<T extends FavoriteCommerceCreateArgs>(args: SelectSubset<T, FavoriteCommerceCreateArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many FavoriteCommerces.
+     * @param {FavoriteCommerceCreateManyArgs} args - Arguments to create many FavoriteCommerces.
+     * @example
+     * // Create many FavoriteCommerces
+     * const favoriteCommerce = await prisma.favoriteCommerce.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FavoriteCommerceCreateManyArgs>(args?: SelectSubset<T, FavoriteCommerceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FavoriteCommerces and returns the data saved in the database.
+     * @param {FavoriteCommerceCreateManyAndReturnArgs} args - Arguments to create many FavoriteCommerces.
+     * @example
+     * // Create many FavoriteCommerces
+     * const favoriteCommerce = await prisma.favoriteCommerce.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FavoriteCommerces and only return the `id`
+     * const favoriteCommerceWithIdOnly = await prisma.favoriteCommerce.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FavoriteCommerceCreateManyAndReturnArgs>(args?: SelectSubset<T, FavoriteCommerceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a FavoriteCommerce.
+     * @param {FavoriteCommerceDeleteArgs} args - Arguments to delete one FavoriteCommerce.
+     * @example
+     * // Delete one FavoriteCommerce
+     * const FavoriteCommerce = await prisma.favoriteCommerce.delete({
+     *   where: {
+     *     // ... filter to delete one FavoriteCommerce
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FavoriteCommerceDeleteArgs>(args: SelectSubset<T, FavoriteCommerceDeleteArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one FavoriteCommerce.
+     * @param {FavoriteCommerceUpdateArgs} args - Arguments to update one FavoriteCommerce.
+     * @example
+     * // Update one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FavoriteCommerceUpdateArgs>(args: SelectSubset<T, FavoriteCommerceUpdateArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more FavoriteCommerces.
+     * @param {FavoriteCommerceDeleteManyArgs} args - Arguments to filter FavoriteCommerces to delete.
+     * @example
+     * // Delete a few FavoriteCommerces
+     * const { count } = await prisma.favoriteCommerce.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FavoriteCommerceDeleteManyArgs>(args?: SelectSubset<T, FavoriteCommerceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FavoriteCommerces.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FavoriteCommerces
+     * const favoriteCommerce = await prisma.favoriteCommerce.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FavoriteCommerceUpdateManyArgs>(args: SelectSubset<T, FavoriteCommerceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one FavoriteCommerce.
+     * @param {FavoriteCommerceUpsertArgs} args - Arguments to update or create a FavoriteCommerce.
+     * @example
+     * // Update or create a FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.upsert({
+     *   create: {
+     *     // ... data to create a FavoriteCommerce
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FavoriteCommerce we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FavoriteCommerceUpsertArgs>(args: SelectSubset<T, FavoriteCommerceUpsertArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of FavoriteCommerces.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceCountArgs} args - Arguments to filter FavoriteCommerces to count.
+     * @example
+     * // Count the number of FavoriteCommerces
+     * const count = await prisma.favoriteCommerce.count({
+     *   where: {
+     *     // ... the filter for the FavoriteCommerces we want to count
+     *   }
+     * })
+    **/
+    count<T extends FavoriteCommerceCountArgs>(
+      args?: Subset<T, FavoriteCommerceCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FavoriteCommerceCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FavoriteCommerce.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FavoriteCommerceAggregateArgs>(args: Subset<T, FavoriteCommerceAggregateArgs>): Prisma.PrismaPromise<GetFavoriteCommerceAggregateType<T>>
+
+    /**
+     * Group by FavoriteCommerce.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FavoriteCommerceGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FavoriteCommerceGroupByArgs['orderBy'] }
+        : { orderBy?: FavoriteCommerceGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FavoriteCommerceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFavoriteCommerceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FavoriteCommerce model
+   */
+  readonly fields: FavoriteCommerceFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FavoriteCommerce.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FavoriteCommerceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    tiers<T extends TiersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TiersDefaultArgs<ExtArgs>>): Prisma__TiersClient<$Result.GetResult<Prisma.$TiersPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FavoriteCommerce model
+   */ 
+  interface FavoriteCommerceFieldRefs {
+    readonly id: FieldRef<"FavoriteCommerce", 'Int'>
+    readonly userId: FieldRef<"FavoriteCommerce", 'Int'>
+    readonly tiersId: FieldRef<"FavoriteCommerce", 'Int'>
+    readonly created_at: FieldRef<"FavoriteCommerce", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FavoriteCommerce findUnique
+   */
+  export type FavoriteCommerceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerce to fetch.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+  }
+
+  /**
+   * FavoriteCommerce findUniqueOrThrow
+   */
+  export type FavoriteCommerceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerce to fetch.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+  }
+
+  /**
+   * FavoriteCommerce findFirst
+   */
+  export type FavoriteCommerceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerce to fetch.
+     */
+    where?: FavoriteCommerceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FavoriteCommerces to fetch.
+     */
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FavoriteCommerces.
+     */
+    cursor?: FavoriteCommerceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FavoriteCommerces from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FavoriteCommerces.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FavoriteCommerces.
+     */
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
+  }
+
+  /**
+   * FavoriteCommerce findFirstOrThrow
+   */
+  export type FavoriteCommerceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerce to fetch.
+     */
+    where?: FavoriteCommerceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FavoriteCommerces to fetch.
+     */
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FavoriteCommerces.
+     */
+    cursor?: FavoriteCommerceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FavoriteCommerces from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FavoriteCommerces.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FavoriteCommerces.
+     */
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
+  }
+
+  /**
+   * FavoriteCommerce findMany
+   */
+  export type FavoriteCommerceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerces to fetch.
+     */
+    where?: FavoriteCommerceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FavoriteCommerces to fetch.
+     */
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FavoriteCommerces.
+     */
+    cursor?: FavoriteCommerceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FavoriteCommerces from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FavoriteCommerces.
+     */
+    skip?: number
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
+  }
+
+  /**
+   * FavoriteCommerce create
+   */
+  export type FavoriteCommerceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FavoriteCommerce.
+     */
+    data: XOR<FavoriteCommerceCreateInput, FavoriteCommerceUncheckedCreateInput>
+  }
+
+  /**
+   * FavoriteCommerce createMany
+   */
+  export type FavoriteCommerceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FavoriteCommerces.
+     */
+    data: FavoriteCommerceCreateManyInput | FavoriteCommerceCreateManyInput[]
+  }
+
+  /**
+   * FavoriteCommerce createManyAndReturn
+   */
+  export type FavoriteCommerceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many FavoriteCommerces.
+     */
+    data: FavoriteCommerceCreateManyInput | FavoriteCommerceCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FavoriteCommerce update
+   */
+  export type FavoriteCommerceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FavoriteCommerce.
+     */
+    data: XOR<FavoriteCommerceUpdateInput, FavoriteCommerceUncheckedUpdateInput>
+    /**
+     * Choose, which FavoriteCommerce to update.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+  }
+
+  /**
+   * FavoriteCommerce updateMany
+   */
+  export type FavoriteCommerceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FavoriteCommerces.
+     */
+    data: XOR<FavoriteCommerceUpdateManyMutationInput, FavoriteCommerceUncheckedUpdateManyInput>
+    /**
+     * Filter which FavoriteCommerces to update
+     */
+    where?: FavoriteCommerceWhereInput
+  }
+
+  /**
+   * FavoriteCommerce upsert
+   */
+  export type FavoriteCommerceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FavoriteCommerce to update in case it exists.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+    /**
+     * In case the FavoriteCommerce found by the `where` argument doesn't exist, create a new FavoriteCommerce with this data.
+     */
+    create: XOR<FavoriteCommerceCreateInput, FavoriteCommerceUncheckedCreateInput>
+    /**
+     * In case the FavoriteCommerce was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FavoriteCommerceUpdateInput, FavoriteCommerceUncheckedUpdateInput>
+  }
+
+  /**
+   * FavoriteCommerce delete
+   */
+  export type FavoriteCommerceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter which FavoriteCommerce to delete.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+  }
+
+  /**
+   * FavoriteCommerce deleteMany
+   */
+  export type FavoriteCommerceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FavoriteCommerces to delete
+     */
+    where?: FavoriteCommerceWhereInput
+  }
+
+  /**
+   * FavoriteCommerce without action
+   */
+  export type FavoriteCommerceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
   }
 
 
@@ -20761,6 +21880,7 @@ export namespace Prisma {
     filienSens: string | null
     filienStructure: string | null
     filienGestionnaire: string | null
+    filienPreBordereau: string | null
     invoiceTemplateId: string | null
     updated_at: Date | null
   }
@@ -20777,6 +21897,7 @@ export namespace Prisma {
     filienSens: string | null
     filienStructure: string | null
     filienGestionnaire: string | null
+    filienPreBordereau: string | null
     invoiceTemplateId: string | null
     updated_at: Date | null
   }
@@ -20793,6 +21914,7 @@ export namespace Prisma {
     filienSens: number
     filienStructure: number
     filienGestionnaire: number
+    filienPreBordereau: number
     invoiceTemplateId: number
     updated_at: number
     _all: number
@@ -20819,6 +21941,7 @@ export namespace Prisma {
     filienSens?: true
     filienStructure?: true
     filienGestionnaire?: true
+    filienPreBordereau?: true
     invoiceTemplateId?: true
     updated_at?: true
   }
@@ -20835,6 +21958,7 @@ export namespace Prisma {
     filienSens?: true
     filienStructure?: true
     filienGestionnaire?: true
+    filienPreBordereau?: true
     invoiceTemplateId?: true
     updated_at?: true
   }
@@ -20851,6 +21975,7 @@ export namespace Prisma {
     filienSens?: true
     filienStructure?: true
     filienGestionnaire?: true
+    filienPreBordereau?: true
     invoiceTemplateId?: true
     updated_at?: true
     _all?: true
@@ -20954,6 +22079,7 @@ export namespace Prisma {
     filienSens: string | null
     filienStructure: string | null
     filienGestionnaire: string | null
+    filienPreBordereau: string | null
     invoiceTemplateId: string | null
     updated_at: Date
     _count: TypeDossierConfigCountAggregateOutputType | null
@@ -20989,6 +22115,7 @@ export namespace Prisma {
     filienSens?: boolean
     filienStructure?: boolean
     filienGestionnaire?: boolean
+    filienPreBordereau?: boolean
     invoiceTemplateId?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["typeDossierConfig"]>
@@ -21005,6 +22132,7 @@ export namespace Prisma {
     filienSens?: boolean
     filienStructure?: boolean
     filienGestionnaire?: boolean
+    filienPreBordereau?: boolean
     invoiceTemplateId?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["typeDossierConfig"]>
@@ -21021,6 +22149,7 @@ export namespace Prisma {
     filienSens?: boolean
     filienStructure?: boolean
     filienGestionnaire?: boolean
+    filienPreBordereau?: boolean
     invoiceTemplateId?: boolean
     updated_at?: boolean
   }
@@ -21041,6 +22170,7 @@ export namespace Prisma {
       filienSens: string | null
       filienStructure: string | null
       filienGestionnaire: string | null
+      filienPreBordereau: string | null
       invoiceTemplateId: string | null
       updated_at: Date
     }, ExtArgs["result"]["typeDossierConfig"]>
@@ -21447,6 +22577,7 @@ export namespace Prisma {
     readonly filienSens: FieldRef<"TypeDossierConfig", 'String'>
     readonly filienStructure: FieldRef<"TypeDossierConfig", 'String'>
     readonly filienGestionnaire: FieldRef<"TypeDossierConfig", 'String'>
+    readonly filienPreBordereau: FieldRef<"TypeDossierConfig", 'String'>
     readonly invoiceTemplateId: FieldRef<"TypeDossierConfig", 'String'>
     readonly updated_at: FieldRef<"TypeDossierConfig", 'DateTime'>
   }
@@ -31834,6 +32965,16 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const FavoriteCommerceScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    tiersId: 'tiersId',
+    created_at: 'created_at'
+  };
+
+  export type FavoriteCommerceScalarFieldEnum = (typeof FavoriteCommerceScalarFieldEnum)[keyof typeof FavoriteCommerceScalarFieldEnum]
+
+
   export const MobileLogScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -31980,6 +33121,7 @@ export namespace Prisma {
     filienSens: 'filienSens',
     filienStructure: 'filienStructure',
     filienGestionnaire: 'filienGestionnaire',
+    filienPreBordereau: 'filienPreBordereau',
     invoiceTemplateId: 'invoiceTemplateId',
     updated_at: 'updated_at'
   };
@@ -32203,6 +33345,7 @@ export namespace Prisma {
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
     notes?: NoteListRelationFilter
+    favoritedBy?: FavoriteCommerceListRelationFilter
   }
 
   export type TiersOrderByWithRelationInput = {
@@ -32224,6 +33367,7 @@ export namespace Prisma {
     contacts?: ContactOrderByRelationAggregateInput
     occupations?: OccupationOrderByRelationAggregateInput
     notes?: NoteOrderByRelationAggregateInput
+    favoritedBy?: FavoriteCommerceOrderByRelationAggregateInput
   }
 
   export type TiersWhereUniqueInput = Prisma.AtLeast<{
@@ -32248,6 +33392,7 @@ export namespace Prisma {
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
     notes?: NoteListRelationFilter
+    favoritedBy?: FavoriteCommerceListRelationFilter
   }, "id" | "siret" | "code_sedit">
 
   export type TiersOrderByWithAggregationInput = {
@@ -33041,6 +34186,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     logs?: MobileLogListRelationFilter
+    favoriteCommerces?: FavoriteCommerceListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -33055,6 +34201,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     logs?: MobileLogOrderByRelationAggregateInput
+    favoriteCommerces?: FavoriteCommerceOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -33072,6 +34219,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     logs?: MobileLogListRelationFilter
+    favoriteCommerces?: FavoriteCommerceListRelationFilter
   }, "id" | "email" | "login">
 
   export type UserOrderByWithAggregationInput = {
@@ -33106,6 +34254,62 @@ export namespace Prisma {
     isAd?: BoolWithAggregatesFilter<"User"> | boolean
     created_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  }
+
+  export type FavoriteCommerceWhereInput = {
+    AND?: FavoriteCommerceWhereInput | FavoriteCommerceWhereInput[]
+    OR?: FavoriteCommerceWhereInput[]
+    NOT?: FavoriteCommerceWhereInput | FavoriteCommerceWhereInput[]
+    id?: IntFilter<"FavoriteCommerce"> | number
+    userId?: IntFilter<"FavoriteCommerce"> | number
+    tiersId?: IntFilter<"FavoriteCommerce"> | number
+    created_at?: DateTimeFilter<"FavoriteCommerce"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    tiers?: XOR<TiersRelationFilter, TiersWhereInput>
+  }
+
+  export type FavoriteCommerceOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+    user?: UserOrderByWithRelationInput
+    tiers?: TiersOrderByWithRelationInput
+  }
+
+  export type FavoriteCommerceWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    userId_tiersId?: FavoriteCommerceUserIdTiersIdCompoundUniqueInput
+    AND?: FavoriteCommerceWhereInput | FavoriteCommerceWhereInput[]
+    OR?: FavoriteCommerceWhereInput[]
+    NOT?: FavoriteCommerceWhereInput | FavoriteCommerceWhereInput[]
+    userId?: IntFilter<"FavoriteCommerce"> | number
+    tiersId?: IntFilter<"FavoriteCommerce"> | number
+    created_at?: DateTimeFilter<"FavoriteCommerce"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    tiers?: XOR<TiersRelationFilter, TiersWhereInput>
+  }, "id" | "userId_tiersId">
+
+  export type FavoriteCommerceOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+    _count?: FavoriteCommerceCountOrderByAggregateInput
+    _avg?: FavoriteCommerceAvgOrderByAggregateInput
+    _max?: FavoriteCommerceMaxOrderByAggregateInput
+    _min?: FavoriteCommerceMinOrderByAggregateInput
+    _sum?: FavoriteCommerceSumOrderByAggregateInput
+  }
+
+  export type FavoriteCommerceScalarWhereWithAggregatesInput = {
+    AND?: FavoriteCommerceScalarWhereWithAggregatesInput | FavoriteCommerceScalarWhereWithAggregatesInput[]
+    OR?: FavoriteCommerceScalarWhereWithAggregatesInput[]
+    NOT?: FavoriteCommerceScalarWhereWithAggregatesInput | FavoriteCommerceScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"FavoriteCommerce"> | number
+    userId?: IntWithAggregatesFilter<"FavoriteCommerce"> | number
+    tiersId?: IntWithAggregatesFilter<"FavoriteCommerce"> | number
+    created_at?: DateTimeWithAggregatesFilter<"FavoriteCommerce"> | Date | string
   }
 
   export type MobileLogWhereInput = {
@@ -33798,6 +35002,7 @@ export namespace Prisma {
     filienSens?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienStructure?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienGestionnaire?: StringNullableFilter<"TypeDossierConfig"> | string | null
+    filienPreBordereau?: StringNullableFilter<"TypeDossierConfig"> | string | null
     invoiceTemplateId?: StringNullableFilter<"TypeDossierConfig"> | string | null
     updated_at?: DateTimeFilter<"TypeDossierConfig"> | Date | string
   }
@@ -33814,6 +35019,7 @@ export namespace Prisma {
     filienSens?: SortOrderInput | SortOrder
     filienStructure?: SortOrderInput | SortOrder
     filienGestionnaire?: SortOrderInput | SortOrder
+    filienPreBordereau?: SortOrderInput | SortOrder
     invoiceTemplateId?: SortOrderInput | SortOrder
     updated_at?: SortOrder
   }
@@ -33833,6 +35039,7 @@ export namespace Prisma {
     filienSens?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienStructure?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienGestionnaire?: StringNullableFilter<"TypeDossierConfig"> | string | null
+    filienPreBordereau?: StringNullableFilter<"TypeDossierConfig"> | string | null
     invoiceTemplateId?: StringNullableFilter<"TypeDossierConfig"> | string | null
     updated_at?: DateTimeFilter<"TypeDossierConfig"> | Date | string
   }, "id" | "type">
@@ -33849,6 +35056,7 @@ export namespace Prisma {
     filienSens?: SortOrderInput | SortOrder
     filienStructure?: SortOrderInput | SortOrder
     filienGestionnaire?: SortOrderInput | SortOrder
+    filienPreBordereau?: SortOrderInput | SortOrder
     invoiceTemplateId?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     _count?: TypeDossierConfigCountOrderByAggregateInput
@@ -33873,6 +35081,7 @@ export namespace Prisma {
     filienSens?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     filienStructure?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     filienGestionnaire?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
+    filienPreBordereau?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     invoiceTemplateId?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     updated_at?: DateTimeWithAggregatesFilter<"TypeDossierConfig"> | Date | string
   }
@@ -34587,6 +35796,7 @@ export namespace Prisma {
     contacts?: ContactCreateNestedManyWithoutTiersInput
     occupations?: OccupationCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateInput = {
@@ -34608,6 +35818,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUpdateInput = {
@@ -34628,6 +35839,7 @@ export namespace Prisma {
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateInput = {
@@ -34649,6 +35861,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersCreateManyInput = {
@@ -35544,6 +36757,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     logs?: MobileLogCreateNestedManyWithoutUserInput
+    favoriteCommerces?: FavoriteCommerceCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -35558,6 +36772,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     logs?: MobileLogUncheckedCreateNestedManyWithoutUserInput
+    favoriteCommerces?: FavoriteCommerceUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -35571,6 +36786,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     logs?: MobileLogUpdateManyWithoutUserNestedInput
+    favoriteCommerces?: FavoriteCommerceUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -35585,6 +36801,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     logs?: MobileLogUncheckedUpdateManyWithoutUserNestedInput
+    favoriteCommerces?: FavoriteCommerceUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -35623,6 +36840,50 @@ export namespace Prisma {
     isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceCreateInput = {
+    created_at?: Date | string
+    user: UserCreateNestedOneWithoutFavoriteCommercesInput
+    tiers: TiersCreateNestedOneWithoutFavoritedByInput
+  }
+
+  export type FavoriteCommerceUncheckedCreateInput = {
+    id?: number
+    userId: number
+    tiersId: number
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceUpdateInput = {
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutFavoriteCommercesNestedInput
+    tiers?: TiersUpdateOneRequiredWithoutFavoritedByNestedInput
+  }
+
+  export type FavoriteCommerceUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    tiersId?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceCreateManyInput = {
+    id?: number
+    userId: number
+    tiersId: number
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceUpdateManyMutationInput = {
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    tiersId?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MobileLogCreateInput = {
@@ -36402,6 +37663,7 @@ export namespace Prisma {
     filienSens?: string | null
     filienStructure?: string | null
     filienGestionnaire?: string | null
+    filienPreBordereau?: string | null
     invoiceTemplateId?: string | null
     updated_at?: Date | string
   }
@@ -36418,6 +37680,7 @@ export namespace Prisma {
     filienSens?: string | null
     filienStructure?: string | null
     filienGestionnaire?: string | null
+    filienPreBordereau?: string | null
     invoiceTemplateId?: string | null
     updated_at?: Date | string
   }
@@ -36433,6 +37696,7 @@ export namespace Prisma {
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36449,6 +37713,7 @@ export namespace Prisma {
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36465,6 +37730,7 @@ export namespace Prisma {
     filienSens?: string | null
     filienStructure?: string | null
     filienGestionnaire?: string | null
+    filienPreBordereau?: string | null
     invoiceTemplateId?: string | null
     updated_at?: Date | string
   }
@@ -36480,6 +37746,7 @@ export namespace Prisma {
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36496,6 +37763,7 @@ export namespace Prisma {
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37298,6 +38566,12 @@ export namespace Prisma {
     none?: NoteWhereInput
   }
 
+  export type FavoriteCommerceListRelationFilter = {
+    every?: FavoriteCommerceWhereInput
+    some?: FavoriteCommerceWhereInput
+    none?: FavoriteCommerceWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -37312,6 +38586,10 @@ export namespace Prisma {
   }
 
   export type NoteOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FavoriteCommerceOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -38120,6 +39398,49 @@ export namespace Prisma {
     id?: SortOrder
   }
 
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type FavoriteCommerceUserIdTiersIdCompoundUniqueInput = {
+    userId: number
+    tiersId: number
+  }
+
+  export type FavoriteCommerceCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type FavoriteCommerceAvgOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+  }
+
+  export type FavoriteCommerceMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type FavoriteCommerceMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type FavoriteCommerceSumOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+  }
+
   export type UserNullableRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -38573,6 +39894,7 @@ export namespace Prisma {
     filienSens?: SortOrder
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
+    filienPreBordereau?: SortOrder
     invoiceTemplateId?: SortOrder
     updated_at?: SortOrder
   }
@@ -38593,6 +39915,7 @@ export namespace Prisma {
     filienSens?: SortOrder
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
+    filienPreBordereau?: SortOrder
     invoiceTemplateId?: SortOrder
     updated_at?: SortOrder
   }
@@ -38609,6 +39932,7 @@ export namespace Prisma {
     filienSens?: SortOrder
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
+    filienPreBordereau?: SortOrder
     invoiceTemplateId?: SortOrder
     updated_at?: SortOrder
   }
@@ -39101,6 +40425,13 @@ export namespace Prisma {
     connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
   }
 
+  export type FavoriteCommerceCreateNestedManyWithoutTiersInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput> | FavoriteCommerceCreateWithoutTiersInput[] | FavoriteCommerceUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutTiersInput | FavoriteCommerceCreateOrConnectWithoutTiersInput[]
+    createMany?: FavoriteCommerceCreateManyTiersInputEnvelope
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+  }
+
   export type ContactUncheckedCreateNestedManyWithoutTiersInput = {
     create?: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput> | ContactCreateWithoutTiersInput[] | ContactUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutTiersInput | ContactCreateOrConnectWithoutTiersInput[]
@@ -39120,6 +40451,13 @@ export namespace Prisma {
     connectOrCreate?: NoteCreateOrConnectWithoutTiersInput | NoteCreateOrConnectWithoutTiersInput[]
     createMany?: NoteCreateManyTiersInputEnvelope
     connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+  }
+
+  export type FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput> | FavoriteCommerceCreateWithoutTiersInput[] | FavoriteCommerceUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutTiersInput | FavoriteCommerceCreateOrConnectWithoutTiersInput[]
+    createMany?: FavoriteCommerceCreateManyTiersInputEnvelope
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -39184,6 +40522,20 @@ export namespace Prisma {
     deleteMany?: NoteScalarWhereInput | NoteScalarWhereInput[]
   }
 
+  export type FavoriteCommerceUpdateManyWithoutTiersNestedInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput> | FavoriteCommerceCreateWithoutTiersInput[] | FavoriteCommerceUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutTiersInput | FavoriteCommerceCreateOrConnectWithoutTiersInput[]
+    upsert?: FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput | FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput[]
+    createMany?: FavoriteCommerceCreateManyTiersInputEnvelope
+    set?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    disconnect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    delete?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    update?: FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput | FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput[]
+    updateMany?: FavoriteCommerceUpdateManyWithWhereWithoutTiersInput | FavoriteCommerceUpdateManyWithWhereWithoutTiersInput[]
+    deleteMany?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -39232,6 +40584,20 @@ export namespace Prisma {
     update?: NoteUpdateWithWhereUniqueWithoutTiersInput | NoteUpdateWithWhereUniqueWithoutTiersInput[]
     updateMany?: NoteUpdateManyWithWhereWithoutTiersInput | NoteUpdateManyWithWhereWithoutTiersInput[]
     deleteMany?: NoteScalarWhereInput | NoteScalarWhereInput[]
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput> | FavoriteCommerceCreateWithoutTiersInput[] | FavoriteCommerceUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutTiersInput | FavoriteCommerceCreateOrConnectWithoutTiersInput[]
+    upsert?: FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput | FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput[]
+    createMany?: FavoriteCommerceCreateManyTiersInputEnvelope
+    set?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    disconnect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    delete?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    update?: FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput | FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput[]
+    updateMany?: FavoriteCommerceUpdateManyWithWhereWithoutTiersInput | FavoriteCommerceUpdateManyWithWhereWithoutTiersInput[]
+    deleteMany?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
   }
 
   export type ContactCreateNestedManyWithoutOccupationInput = {
@@ -39769,11 +41135,25 @@ export namespace Prisma {
     connect?: MobileLogWhereUniqueInput | MobileLogWhereUniqueInput[]
   }
 
+  export type FavoriteCommerceCreateNestedManyWithoutUserInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput> | FavoriteCommerceCreateWithoutUserInput[] | FavoriteCommerceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutUserInput | FavoriteCommerceCreateOrConnectWithoutUserInput[]
+    createMany?: FavoriteCommerceCreateManyUserInputEnvelope
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+  }
+
   export type MobileLogUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<MobileLogCreateWithoutUserInput, MobileLogUncheckedCreateWithoutUserInput> | MobileLogCreateWithoutUserInput[] | MobileLogUncheckedCreateWithoutUserInput[]
     connectOrCreate?: MobileLogCreateOrConnectWithoutUserInput | MobileLogCreateOrConnectWithoutUserInput[]
     createMany?: MobileLogCreateManyUserInputEnvelope
     connect?: MobileLogWhereUniqueInput | MobileLogWhereUniqueInput[]
+  }
+
+  export type FavoriteCommerceUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput> | FavoriteCommerceCreateWithoutUserInput[] | FavoriteCommerceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutUserInput | FavoriteCommerceCreateOrConnectWithoutUserInput[]
+    createMany?: FavoriteCommerceCreateManyUserInputEnvelope
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
   }
 
   export type MobileLogUpdateManyWithoutUserNestedInput = {
@@ -39790,6 +41170,20 @@ export namespace Prisma {
     deleteMany?: MobileLogScalarWhereInput | MobileLogScalarWhereInput[]
   }
 
+  export type FavoriteCommerceUpdateManyWithoutUserNestedInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput> | FavoriteCommerceCreateWithoutUserInput[] | FavoriteCommerceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutUserInput | FavoriteCommerceCreateOrConnectWithoutUserInput[]
+    upsert?: FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput | FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: FavoriteCommerceCreateManyUserInputEnvelope
+    set?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    disconnect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    delete?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    update?: FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput | FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: FavoriteCommerceUpdateManyWithWhereWithoutUserInput | FavoriteCommerceUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+  }
+
   export type MobileLogUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<MobileLogCreateWithoutUserInput, MobileLogUncheckedCreateWithoutUserInput> | MobileLogCreateWithoutUserInput[] | MobileLogUncheckedCreateWithoutUserInput[]
     connectOrCreate?: MobileLogCreateOrConnectWithoutUserInput | MobileLogCreateOrConnectWithoutUserInput[]
@@ -39802,6 +41196,48 @@ export namespace Prisma {
     update?: MobileLogUpdateWithWhereUniqueWithoutUserInput | MobileLogUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: MobileLogUpdateManyWithWhereWithoutUserInput | MobileLogUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: MobileLogScalarWhereInput | MobileLogScalarWhereInput[]
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput> | FavoriteCommerceCreateWithoutUserInput[] | FavoriteCommerceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutUserInput | FavoriteCommerceCreateOrConnectWithoutUserInput[]
+    upsert?: FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput | FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: FavoriteCommerceCreateManyUserInputEnvelope
+    set?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    disconnect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    delete?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    update?: FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput | FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: FavoriteCommerceUpdateManyWithWhereWithoutUserInput | FavoriteCommerceUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutFavoriteCommercesInput = {
+    create?: XOR<UserCreateWithoutFavoriteCommercesInput, UserUncheckedCreateWithoutFavoriteCommercesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFavoriteCommercesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TiersCreateNestedOneWithoutFavoritedByInput = {
+    create?: XOR<TiersCreateWithoutFavoritedByInput, TiersUncheckedCreateWithoutFavoritedByInput>
+    connectOrCreate?: TiersCreateOrConnectWithoutFavoritedByInput
+    connect?: TiersWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutFavoriteCommercesNestedInput = {
+    create?: XOR<UserCreateWithoutFavoriteCommercesInput, UserUncheckedCreateWithoutFavoriteCommercesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFavoriteCommercesInput
+    upsert?: UserUpsertWithoutFavoriteCommercesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFavoriteCommercesInput, UserUpdateWithoutFavoriteCommercesInput>, UserUncheckedUpdateWithoutFavoriteCommercesInput>
+  }
+
+  export type TiersUpdateOneRequiredWithoutFavoritedByNestedInput = {
+    create?: XOR<TiersCreateWithoutFavoritedByInput, TiersUncheckedCreateWithoutFavoritedByInput>
+    connectOrCreate?: TiersCreateOrConnectWithoutFavoritedByInput
+    upsert?: TiersUpsertWithoutFavoritedByInput
+    connect?: TiersWhereUniqueInput
+    update?: XOR<XOR<TiersUpdateToOneWithWhereWithoutFavoritedByInput, TiersUpdateWithoutFavoritedByInput>, TiersUncheckedUpdateWithoutFavoritedByInput>
   }
 
   export type UserCreateNestedOneWithoutLogsInput = {
@@ -40524,6 +41960,26 @@ export namespace Prisma {
     data: NoteCreateManyTiersInput | NoteCreateManyTiersInput[]
   }
 
+  export type FavoriteCommerceCreateWithoutTiersInput = {
+    created_at?: Date | string
+    user: UserCreateNestedOneWithoutFavoriteCommercesInput
+  }
+
+  export type FavoriteCommerceUncheckedCreateWithoutTiersInput = {
+    id?: number
+    userId: number
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceCreateOrConnectWithoutTiersInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    create: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput>
+  }
+
+  export type FavoriteCommerceCreateManyTiersInputEnvelope = {
+    data: FavoriteCommerceCreateManyTiersInput | FavoriteCommerceCreateManyTiersInput[]
+  }
+
   export type ContactUpsertWithWhereUniqueWithoutTiersInput = {
     where: ContactWhereUniqueInput
     update: XOR<ContactUpdateWithoutTiersInput, ContactUncheckedUpdateWithoutTiersInput>
@@ -40651,6 +42107,32 @@ export namespace Prisma {
     toEmail?: StringNullableFilter<"Note"> | string | null
     origin?: StringNullableFilter<"Note"> | string | null
     created_at?: DateTimeFilter<"Note"> | Date | string
+  }
+
+  export type FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    update: XOR<FavoriteCommerceUpdateWithoutTiersInput, FavoriteCommerceUncheckedUpdateWithoutTiersInput>
+    create: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput>
+  }
+
+  export type FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    data: XOR<FavoriteCommerceUpdateWithoutTiersInput, FavoriteCommerceUncheckedUpdateWithoutTiersInput>
+  }
+
+  export type FavoriteCommerceUpdateManyWithWhereWithoutTiersInput = {
+    where: FavoriteCommerceScalarWhereInput
+    data: XOR<FavoriteCommerceUpdateManyMutationInput, FavoriteCommerceUncheckedUpdateManyWithoutTiersInput>
+  }
+
+  export type FavoriteCommerceScalarWhereInput = {
+    AND?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+    OR?: FavoriteCommerceScalarWhereInput[]
+    NOT?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+    id?: IntFilter<"FavoriteCommerce"> | number
+    userId?: IntFilter<"FavoriteCommerce"> | number
+    tiersId?: IntFilter<"FavoriteCommerce"> | number
+    created_at?: DateTimeFilter<"FavoriteCommerce"> | Date | string
   }
 
   export type ContactCreateWithoutOccupationInput = {
@@ -40850,6 +42332,7 @@ export namespace Prisma {
     photo?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateWithoutOccupationsInput = {
@@ -40870,6 +42353,7 @@ export namespace Prisma {
     photo?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersCreateOrConnectWithoutOccupationsInput = {
@@ -41035,6 +42519,7 @@ export namespace Prisma {
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateWithoutOccupationsInput = {
@@ -41055,6 +42540,7 @@ export namespace Prisma {
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersCreateWithoutContactsInput = {
@@ -41074,6 +42560,7 @@ export namespace Prisma {
     photo?: string | null
     occupations?: OccupationCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateWithoutContactsInput = {
@@ -41094,6 +42581,7 @@ export namespace Prisma {
     photo?: string | null
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersCreateOrConnectWithoutContactsInput = {
@@ -41217,6 +42705,7 @@ export namespace Prisma {
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateWithoutContactsInput = {
@@ -41237,6 +42726,7 @@ export namespace Prisma {
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type OccupationUpsertWithoutContactsInput = {
@@ -41438,6 +42928,7 @@ export namespace Prisma {
     photo?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     occupations?: OccupationCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateWithoutNotesInput = {
@@ -41458,6 +42949,7 @@ export namespace Prisma {
     photo?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersCreateOrConnectWithoutNotesInput = {
@@ -41587,6 +43079,7 @@ export namespace Prisma {
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateWithoutNotesInput = {
@@ -41607,6 +43100,7 @@ export namespace Prisma {
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type ArticleCreateWithoutCategorieInput = {
@@ -42036,6 +43530,26 @@ export namespace Prisma {
     data: MobileLogCreateManyUserInput | MobileLogCreateManyUserInput[]
   }
 
+  export type FavoriteCommerceCreateWithoutUserInput = {
+    created_at?: Date | string
+    tiers: TiersCreateNestedOneWithoutFavoritedByInput
+  }
+
+  export type FavoriteCommerceUncheckedCreateWithoutUserInput = {
+    id?: number
+    tiersId: number
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceCreateOrConnectWithoutUserInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    create: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput>
+  }
+
+  export type FavoriteCommerceCreateManyUserInputEnvelope = {
+    data: FavoriteCommerceCreateManyUserInput | FavoriteCommerceCreateManyUserInput[]
+  }
+
   export type MobileLogUpsertWithWhereUniqueWithoutUserInput = {
     where: MobileLogWhereUniqueInput
     update: XOR<MobileLogUpdateWithoutUserInput, MobileLogUncheckedUpdateWithoutUserInput>
@@ -42065,6 +43579,190 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"MobileLog"> | Date | string
   }
 
+  export type FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    update: XOR<FavoriteCommerceUpdateWithoutUserInput, FavoriteCommerceUncheckedUpdateWithoutUserInput>
+    create: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput>
+  }
+
+  export type FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    data: XOR<FavoriteCommerceUpdateWithoutUserInput, FavoriteCommerceUncheckedUpdateWithoutUserInput>
+  }
+
+  export type FavoriteCommerceUpdateManyWithWhereWithoutUserInput = {
+    where: FavoriteCommerceScalarWhereInput
+    data: XOR<FavoriteCommerceUpdateManyMutationInput, FavoriteCommerceUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type UserCreateWithoutFavoriteCommercesInput = {
+    nom: string
+    prenom: string
+    email: string
+    login: string
+    password: string
+    role: string
+    isAd?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    logs?: MobileLogCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFavoriteCommercesInput = {
+    id?: number
+    nom: string
+    prenom: string
+    email: string
+    login: string
+    password: string
+    role: string
+    isAd?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    logs?: MobileLogUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFavoriteCommercesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFavoriteCommercesInput, UserUncheckedCreateWithoutFavoriteCommercesInput>
+  }
+
+  export type TiersCreateWithoutFavoritedByInput = {
+    nom: string
+    siret?: string | null
+    email?: string | null
+    adresse?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    code_sedit?: string | null
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    natureJuridique?: string | null
+    etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
+    contacts?: ContactCreateNestedManyWithoutTiersInput
+    occupations?: OccupationCreateNestedManyWithoutTiersInput
+    notes?: NoteCreateNestedManyWithoutTiersInput
+  }
+
+  export type TiersUncheckedCreateWithoutFavoritedByInput = {
+    id?: number
+    nom: string
+    siret?: string | null
+    email?: string | null
+    adresse?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    code_sedit?: string | null
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    natureJuridique?: string | null
+    etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
+    contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
+    occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
+    notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
+  }
+
+  export type TiersCreateOrConnectWithoutFavoritedByInput = {
+    where: TiersWhereUniqueInput
+    create: XOR<TiersCreateWithoutFavoritedByInput, TiersUncheckedCreateWithoutFavoritedByInput>
+  }
+
+  export type UserUpsertWithoutFavoriteCommercesInput = {
+    update: XOR<UserUpdateWithoutFavoriteCommercesInput, UserUncheckedUpdateWithoutFavoriteCommercesInput>
+    create: XOR<UserCreateWithoutFavoriteCommercesInput, UserUncheckedCreateWithoutFavoriteCommercesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFavoriteCommercesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFavoriteCommercesInput, UserUncheckedUpdateWithoutFavoriteCommercesInput>
+  }
+
+  export type UserUpdateWithoutFavoriteCommercesInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    prenom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    login?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    logs?: MobileLogUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFavoriteCommercesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    prenom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    login?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    logs?: MobileLogUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type TiersUpsertWithoutFavoritedByInput = {
+    update: XOR<TiersUpdateWithoutFavoritedByInput, TiersUncheckedUpdateWithoutFavoritedByInput>
+    create: XOR<TiersCreateWithoutFavoritedByInput, TiersUncheckedCreateWithoutFavoritedByInput>
+    where?: TiersWhereInput
+  }
+
+  export type TiersUpdateToOneWithWhereWithoutFavoritedByInput = {
+    where?: TiersWhereInput
+    data: XOR<TiersUpdateWithoutFavoritedByInput, TiersUncheckedUpdateWithoutFavoritedByInput>
+  }
+
+  export type TiersUpdateWithoutFavoritedByInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    siret?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    code_sedit?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
+    etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
+    contacts?: ContactUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUpdateManyWithoutTiersNestedInput
+    notes?: NoteUpdateManyWithoutTiersNestedInput
+  }
+
+  export type TiersUncheckedUpdateWithoutFavoritedByInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    siret?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    code_sedit?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
+    etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
+    contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
+  }
+
   export type UserCreateWithoutLogsInput = {
     nom: string
     prenom: string
@@ -42075,6 +43773,7 @@ export namespace Prisma {
     isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
+    favoriteCommerces?: FavoriteCommerceCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutLogsInput = {
@@ -42088,6 +43787,7 @@ export namespace Prisma {
     isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
+    favoriteCommerces?: FavoriteCommerceUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutLogsInput = {
@@ -42116,6 +43816,7 @@ export namespace Prisma {
     isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    favoriteCommerces?: FavoriteCommerceUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLogsInput = {
@@ -42129,6 +43830,7 @@ export namespace Prisma {
     isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    favoriteCommerces?: FavoriteCommerceUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ArticleCreateWithoutLignesInput = {
@@ -43310,6 +45012,12 @@ export namespace Prisma {
     created_at?: Date | string
   }
 
+  export type FavoriteCommerceCreateManyTiersInput = {
+    id?: number
+    userId: number
+    created_at?: Date | string
+  }
+
   export type ContactUpdateWithoutTiersInput = {
     nom?: NullableStringFieldUpdateOperationsInput | string | null
     prenom?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43521,6 +45229,23 @@ export namespace Prisma {
     fromEmail?: NullableStringFieldUpdateOperationsInput | string | null
     toEmail?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUpdateWithoutTiersInput = {
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutFavoriteCommercesNestedInput
+  }
+
+  export type FavoriteCommerceUncheckedUpdateWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -44068,6 +45793,12 @@ export namespace Prisma {
     created_at?: Date | string
   }
 
+  export type FavoriteCommerceCreateManyUserInput = {
+    id?: number
+    tiersId: number
+    created_at?: Date | string
+  }
+
   export type MobileLogUpdateWithoutUserInput = {
     action?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44091,6 +45822,23 @@ export namespace Prisma {
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     deviceInfo?: NullableStringFieldUpdateOperationsInput | string | null
     ip?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUpdateWithoutUserInput = {
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tiers?: TiersUpdateOneRequiredWithoutFavoritedByNestedInput
+  }
+
+  export type FavoriteCommerceUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tiersId?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tiersId?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -44337,6 +46085,10 @@ export namespace Prisma {
      * @deprecated Use UserDefaultArgs instead
      */
     export type UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use FavoriteCommerceDefaultArgs instead
+     */
+    export type FavoriteCommerceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = FavoriteCommerceDefaultArgs<ExtArgs>
     /**
      * @deprecated Use MobileLogDefaultArgs instead
      */

@@ -198,7 +198,7 @@ export default function CommerceStepper({
               )}
               <button
                 onClick={handleNext}
-                disabled={currentIdx === PROCESS_STEPS.length - 1 || isUpdating || normalizedStatus === 'VALIDE'}
+                disabled={currentIdx === PROCESS_STEPS.length - 1 || isUpdating}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-bold text-sm transition-all disabled:cursor-not-allowed"
                 title={normalizedStatus === 'VALIDE' ? 'Navigation bloquée à ce stade' : 'Étape suivante'}
               >

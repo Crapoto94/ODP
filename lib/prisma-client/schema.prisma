@@ -10,22 +10,25 @@ datasource db {
 }
 
 model Tiers {
-  id                Int          @id @default(autoincrement())
+  id                Int                @id @default(autoincrement())
   nom               String
-  siret             String?      @unique
+  siret             String?            @unique
   email             String?
   adresse           String?
   latitude          Float?
   longitude         Float?
-  code_sedit        String?      @unique
-  statut            String       @default("PROVISOIRE")
-  created_at        DateTime     @default(now())
-  updated_at        DateTime     @updatedAt
+  code_sedit        String?            @unique
+  statut            String             @default("PROVISOIRE")
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
   natureJuridique   String?
   etatAdministratif String?
+  observations      String?
+  photo             String?
   contacts          Contact[]
   occupations       Occupation[]
   notes             Note[]
+  favoritedBy       FavoriteCommerce[]
 }
 
 model Occupation {
@@ -56,6 +59,14 @@ model Occupation {
   aotFinalPath           String?
   aotSigned              Boolean            @default(false)
   datePaiement           DateTime?
+  dateINIT               DateTime?
+  dateINST               DateTime?
+  datePREP               DateTime?
+  dateEN_COURS           DateTime?
+  dateVALIDE             DateTime?
+  dateFACTURE            DateTime?
+  dateTITRE              DateTime?
+  dateCLOS               DateTime?
   contacts               Contact[]
   dispositifs            Dispositif[]
   lignes                 LigneOccupation[]
@@ -74,6 +85,7 @@ model Contact {
   role         String      @default("CONTACT_DIRECT")
   occupationId Int?
   tiersId      Int?
+  commerceId   Int?
   pjPath       String?
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
@@ -157,17 +169,29 @@ model Article {
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  nom        String
-  prenom     String
-  email      String      @unique
-  login      String      @unique
-  password   String
-  role       String
-  isAd       Boolean     @default(false)
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
-  logs       MobileLog[]
+  id                Int                @id @default(autoincrement())
+  nom               String
+  prenom            String
+  email             String             @unique
+  login             String             @unique
+  password          String
+  role              String
+  isAd              Boolean            @default(false)
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  logs              MobileLog[]
+  favoriteCommerces FavoriteCommerce[]
+}
+
+model FavoriteCommerce {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  tiersId    Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tiers      Tiers    @relation(fields: [tiersId], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+
+  @@unique([userId, tiersId])
 }
 
 model MobileLog {
@@ -299,6 +323,7 @@ model TypeDossierConfig {
   filienSens          String?  @default("")
   filienStructure     String?  @default("")
   filienGestionnaire  String?  @default("")
+  filienPreBordereau  String?  @default("")
   invoiceTemplateId   String?
   updated_at          DateTime @updatedAt
 }

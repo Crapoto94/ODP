@@ -5,7 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle, Plus, Search, Lock, LockOpen, X } from 'lucide-react';
+import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle, Plus, Search, Lock, LockOpen, X, Star } from 'lucide-react';
 import { useLockedYear } from './hooks/useLockedYear';
 import { getAvailableStatuses } from '@/lib/status-utils';
 
@@ -43,6 +43,8 @@ export default function CommercesPage() {
   const [streetFilter, setStreetFilter] = useState('ALL');
   const [onlyClosed, setOnlyClosed] = useState(false);
   const [sortByAddress, setSortByAddress] = useState(false);
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [loadingFavorites, setLoadingFavorites] = useState(false);
   const { lockedYear, setLockedYear, isHydrated } = useLockedYear();
 
   useEffect(() => {
@@ -53,17 +55,47 @@ export default function CommercesPage() {
 
   useEffect(() => {
     fetchCommerces();
+    fetchFavorites();
   }, [view]);
+
+  const fetchFavorites = async () => {
+    try {
+      setLoadingFavorites(true);
+      const res = await axios.get('/api/commerces/favorites');
+      setFavorites(new Set(res.data));
+    } catch (err) {
+      console.error('Failed to fetch favorites:', err);
+    } finally {
+      setLoadingFavorites(false);
+    }
+  };
 
   const fetchCommerces = async () => {
     setLoading(true);
     try {
       const res = await axios.get(`/api/commerces?status=${view}`);
-      setCommerces(res.data);
+      setCommerces(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to fetch commerces:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleFavorite = async (commerceId: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const res = await axios.post(`/api/commerces/${commerceId}/favorite`);
+      const newFavorites = new Set(favorites);
+      if (res.data.isFavorite) {
+        newFavorites.add(commerceId);
+      } else {
+        newFavorites.delete(commerceId);
+      }
+      setFavorites(newFavorites);
+    } catch (err) {
+      console.error('Failed to toggle favorite:', err);
     }
   };
 
@@ -75,31 +107,32 @@ export default function CommercesPage() {
 
   const parseAddress = (addr: string) => {
     if (!addr) return { number: 0, street: 'Sans adresse', suffix: '' };
-    const trimAddr = addr.trim();
 
-    // Try to extract: number + optional suffix + street
-    // Pattern: optional digits, optional suffix (BIS/TER/B/T), then street
-    const fullMatch = trimAddr.match(/^(\d+)?\s*(BIS|TER|B|T)?\s+(.+)$/i);
+    let remaining = addr.trim();
 
-    if (fullMatch) {
-      const number = fullMatch[1] ? parseInt(fullMatch[1]) : 0;
-      const suffix = fullMatch[2] ? fullMatch[2].toUpperCase() : '';
-      let street = fullMatch[3].trim();
+    // Remove postal code and city (pattern: space + 5 digits + space + text)
+    remaining = remaining.replace(/\s+\d{5}\s+.+$/i, '').trim();
 
-      // Only extract suffix if we have a proper street (starts with letter)
-      if (suffix && street.match(/^[A-ZÀ-ÿ]/i)) {
-        street = normalizeStreet(street);
-        return { number, street, suffix };
-      }
-
-      // If no valid suffix, just return number and street
-      street = normalizeStreet(street);
-      return { number, street, suffix: '' };
+    // Extract leading number
+    let number = 0;
+    const numberMatch = remaining.match(/^(\d+)/);
+    if (numberMatch) {
+      number = parseInt(numberMatch[1]);
+      remaining = remaining.slice(numberMatch[1].length).trim();
     }
 
-    // Fallback: treat entire address as street (remove leading number if present)
-    const streetOnly = trimAddr.replace(/^\d+\s+/, '').trim();
-    return { number: 0, street: normalizeStreet(streetOnly), suffix: '' };
+    // Extract suffix (B, BIS, T, TER)
+    let suffix = '';
+    const suffixMatch = remaining.match(/^(BIS|TER|B|T)(?:\s|$)/i);
+    if (suffixMatch) {
+      suffix = suffixMatch[1].toUpperCase();
+      remaining = remaining.slice(suffixMatch[0].length).trim();
+    }
+
+    // Normalize and finalize street
+    let street = normalizeStreet(remaining) || 'Sans adresse';
+
+    return { number, street, suffix };
   };
 
   const filteredCommerces = commerces.filter(commerce => {
@@ -141,6 +174,13 @@ export default function CommercesPage() {
   })();
 
   const sortedCommerces = [...filteredCommerces].sort((a, b) => {
+    // First, prioritize favorites
+    const aIsFavorite = favorites.has(a.id);
+    const bIsFavorite = favorites.has(b.id);
+    if (aIsFavorite !== bIsFavorite) {
+      return aIsFavorite ? -1 : 1;
+    }
+
     if (sortByAddress) {
       const pA = parseAddress(a.adresse || '');
       const pB = parseAddress(b.adresse || '');
@@ -380,6 +420,15 @@ export default function CommercesPage() {
                   className="group block bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 p-4"
                 >
                   <div className="flex items-center justify-between gap-6">
+                  {/* Star Icon */}
+                  <button
+                    onClick={(e) => handleToggleFavorite(commerce.id, e)}
+                    className="p-2 hover:bg-yellow-100 rounded-lg transition-colors shrink-0"
+                    title={favorites.has(commerce.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
+                  >
+                    <Star size={20} className={favorites.has(commerce.id) ? "fill-yellow-500 text-yellow-500" : "text-slate-300"} />
+                  </button>
+
                   {/* Left: Avatar and Name and Address */}
                   <div className="flex items-start gap-3 min-w-0" style={{ flex: '0 0 25%' }}>
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shrink-0 overflow-hidden relative">
