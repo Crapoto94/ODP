@@ -185,15 +185,17 @@ export default function CommerceStepper({
           {/* Navigation Buttons */}
           {onStatusChange && !isReadOnly && (
             <div className="flex gap-3 mt-8 justify-center">
-              <button
-                onClick={handlePrevious}
-                disabled={currentIdx === 0 || isUpdating}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:bg-slate-100 disabled:opacity-50 text-slate-700 rounded-lg font-bold text-sm transition-all disabled:cursor-not-allowed"
-                title="Étape précédente"
-              >
-                <ChevronLeft size={18} />
-                Précédent
-              </button>
+              {currentIdx > 0 && (
+                <button
+                  onClick={handlePrevious}
+                  disabled={isUpdating}
+                  className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 text-slate-700 rounded-lg font-bold text-sm transition-all disabled:cursor-not-allowed"
+                  title="Étape précédente"
+                >
+                  <ChevronLeft size={18} />
+                  Précédent
+                </button>
+              )}
               <button
                 onClick={handleNext}
                 disabled={currentIdx === PROCESS_STEPS.length - 1 || isUpdating || normalizedStatus === 'VALIDE'}
