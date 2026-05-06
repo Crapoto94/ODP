@@ -124,7 +124,7 @@ export default function FilienTab({ settings, setSettings, handleSubmit, saving,
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">N° 1er mouvement</label>
+                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">N° 1er mouvement (/01/)</label>
                 <input 
                   type="text" 
                   className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm text-center"
@@ -159,7 +159,7 @@ export default function FilienTab({ settings, setSettings, handleSubmit, saving,
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Objet (/20/)</label>
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Objet du Mouvement (/04/)</label>
                   <input 
                     type="text" 
                     maxLength={40}

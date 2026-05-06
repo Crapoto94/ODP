@@ -30,45 +30,65 @@ export function prepareFilienMovements(
   // Each run gets its own subfolder in the UNC root
   const runUncPath = uncBase ? join(uncBase, runName) : '';
 
-  return results.map((r) => {
+  const rawStart = appSettings?.filienMouvement || '1';
+  const match = rawStart.match(/^(.*?)(\d+)$/);
+  const prefix = match ? match[1] : '';
+  const numStr = match ? match[2] : rawStart;
+  const startNum = parseInt(numStr) || 1;
+  const padding = numStr.length;
+
+  return results.map((r, idx) => {
     const occ = dossiers.find((d: any) => d.id === r.id);
     const attachments = [];
+    const mouvementId = prefix + (startNum + idx).toString().padStart(padding, '0');
 
-    // 1. Facture
-    attachments.push({
-      name: `Facture ${r.numero}`,
-      supportType: '01', // Electronic
-      path: runUncPath ? join(runUncPath, `${r.numero}.pdf`) : r.path,
-      docType: 'MDT'
-    });
-
-    // 2. Délibération
+    // 1. Délibération (PJ1 - /26/)
     if (tlpeConfig?.deliberationPath) {
       const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
       attachments.push({
-        name: `Délibération ${year}`,
+        name: 'Délibération',
+        filename: delibName,
         supportType: '01',
         path: runUncPath ? join(runUncPath, delibName) : tlpeConfig.deliberationPath,
-        docType: 'MDT'
       });
     }
 
-    // 3. Tarifs
-    if (tlpeConfig?.tarifsPath) {
-      const tarifsName = tlpeConfig.tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
+    // 2. Tarifs (PJ2 - /27/)
+    const tarifsPath = tlpeConfig?.tarifsOdpPath || tlpeConfig?.tarifsPath;
+    if (tarifsPath) {
+      const tarifsName = tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
       attachments.push({
-        name: `Tarifs ${year}`,
+        name: 'Tarifs',
+        filename: tarifsName,
         supportType: '01',
-        path: runUncPath ? join(runUncPath, tarifsName) : tlpeConfig.tarifsPath,
-        docType: 'MDT'
+        path: runUncPath ? join(runUncPath, tarifsName) : tarifsPath,
       });
     }
+
+    // 3. AOT (PJ3 - /28/)
+    if (occ?.aotFinalPath) {
+      const aotName = occ.aotFinalPath.split(/[\\/]/).pop() || `AOT_${occ.id}.pdf`;
+      attachments.push({
+        name: 'AOT',
+        filename: aotName,
+        supportType: '01',
+        path: runUncPath ? join(runUncPath, aotName) : occ.aotFinalPath,
+      });
+    }
+
+    // 4. Détails de facture (PJ4 - /29/)
+    attachments.push({
+      name: 'Détails de facture',
+      filename: `${r.numero}.pdf`,
+      supportType: '01',
+      path: runUncPath ? join(runUncPath, `${r.numero}.pdf`) : r.path,
+    });
 
     return {
-      id: r.numero.replace(/-/g, '').slice(-10),
+      id: mouvementId,
       type: appSettings?.filienType || 'R',
-      tiersCode: occ?.tiers?.code_sedit || 'TIERS_INCONNU',
-      libelle: appSettings?.filienLibelle || occ?.nom || `Dossier #${occ?.id}`,
+      tiersCode: r.tiersCode || (occ?.debiteur || occ?.tiers)?.code_sedit || 'TIERS_INCONNU',
+      libelle: `Chantier ${appSettings?.filienLibelle || occ?.nom || `Dossier #${occ?.id}`}`,
       calendrier: appSettings?.filienCalendrier || '01',
       monnaie: appSettings?.filienMonnaie || 'E',
       existant: appSettings?.filienMouvementEx || 'N',
@@ -77,24 +97,24 @@ export function prepareFilienMovements(
       bordereau: appSettings?.filienBordereau || '0001',
       objet: appSettings?.filienObjet || '',
       attachments,
-      lines: r.lignes.map((l: any, lIdx: number) => ({
-        numero: lIdx + 1,
-        imputation: l.article?.numero || 'IMPUT_VIDE',
-        montant: l.calculatedTotal || l.montant,
-        dateDebut: l.dateDebut || undefined,
-        dateFin: l.dateFin || undefined,
-        description: l.article?.designation || '',
-        quantite: (l.quantite1 || 1) * (l.quantite2 || 1),
-        prixUnitaire: l.article?.montant || 0,
-        chapitre: l.article?.chapitre || '',
-        nature: l.article?.nature || '',
-        fonction: l.article?.fonction || '',
-        codeInterne: l.article?.codeInterne || '',
-        typeMouvement: l.article?.typeMouvement || '',
-        sens: l.article?.sens || '',
-        structure: l.article?.structure || '',
-        gestionnaire: l.article?.gestionnaire || ''
-      }))
+      lines: [{
+        numero: 1,
+        imputation: r.lignes[0]?.article?.numero || 'IMPUT_VIDE',
+        montant: r.total,
+        dateDebut: r.lignes[0]?.dateDebut || undefined,
+        dateFin: r.lignes[0]?.dateFin || undefined,
+        description: `Occupation du domaine public - ${occ?.nom || r.numero}`,
+        quantite: 1,
+        prixUnitaire: r.total,
+        chapitre: r.lignes[0]?.article?.chapitre || '',
+        nature: r.lignes[0]?.article?.nature || '',
+        fonction: r.lignes[0]?.article?.fonction || '',
+        codeInterne: r.lignes[0]?.article?.codeInterne || '',
+        typeMouvement: r.lignes[0]?.article?.typeMouvement || '',
+        sens: r.lignes[0]?.article?.sens || '',
+        structure: r.lignes[0]?.article?.structure || '',
+        gestionnaire: r.lignes[0]?.article?.gestionnaire || '',
+      }]
     };
   });
 }
@@ -112,9 +132,11 @@ export async function exportToUnc(params: {
   recapFilename?: string;
   recapPath?: string;
   facturesDir: string;
-  appSettings?: any; // Add appSettings to params
+  appSettings?: any;
+  dossiers?: any[];
 }): Promise<boolean> {
-  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, recapFilename, recapPath, facturesDir, appSettings } = params;
+  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, recapFilename, recapPath, facturesDir, appSettings, dossiers } = params;
+  const publicPath = join(process.cwd(), 'public');
   
   try {
     // If SMB credentials are provided, use SMB2
@@ -158,14 +180,30 @@ export async function exportToUnc(params: {
         }
       }
 
-      // 1. Copy individual invoices
+      // 1. Copy individual invoices & AOTs
       for (const res of results) {
+        // Invoice
         const pdfName = `${res.numero}.pdf`;
-        const source = join(facturesDir, pdfName);
         const target = join(targetSubDir, pdfName);
-        if (existsSync(source)) {
-          const content = await readFile(source);
-          await smbWriteFile(target, content);
+        let source = '';
+        if (res.path) {
+          source = res.path.startsWith('/') ? join(publicPath, res.path) : res.path;
+        } else {
+          source = join(facturesDir, pdfName);
+        }
+
+        if (source && existsSync(source)) {
+          await smbWriteFile(target, await readFile(source));
+        }
+
+        // AOT
+        const occ = dossiers.find((d: any) => d.id === res.id);
+        if (occ?.aotFinalPath) {
+          const aotName = occ.aotFinalPath.split(/[\\/]/).pop() || `AOT_${occ.id}.pdf`;
+          const aotSrc = occ.aotFinalPath.startsWith('/') ? join(publicPath, occ.aotFinalPath) : occ.aotFinalPath;
+          if (existsSync(aotSrc)) {
+            await smbWriteFile(join(targetSubDir, aotName), await readFile(aotSrc));
+          }
         }
       }
 
@@ -178,7 +216,6 @@ export async function exportToUnc(params: {
       await smbWriteFile(join(targetSubDir, filienFilename), Buffer.from(filienContent));
 
       // 4. Copy Regulatory documents
-      const publicPath = join(process.cwd(), 'public');
       if (tlpeConfig?.deliberationPath) {
         const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
         const delibSrc = tlpeConfig.deliberationPath.startsWith('/') ? join(publicPath, tlpeConfig.deliberationPath) : tlpeConfig.deliberationPath;
@@ -187,9 +224,10 @@ export async function exportToUnc(params: {
         }
       }
 
-      if (tlpeConfig?.tarifsPath) {
-        const tarifsName = tlpeConfig.tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
-        const tarifsSrc = tlpeConfig.tarifsPath.startsWith('/') ? join(publicPath, tlpeConfig.tarifsPath) : tlpeConfig.tarifsPath;
+      const tarifsPath = tlpeConfig?.tarifsOdpPath || tlpeConfig?.tarifsPath;
+      if (tarifsPath) {
+        const tarifsName = tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
+        const tarifsSrc = tarifsPath.startsWith('/') ? join(publicPath, tarifsPath) : tarifsPath;
         if (existsSync(tarifsSrc)) {
           await smbWriteFile(join(targetSubDir, tarifsName), await readFile(tarifsSrc));
         }
@@ -204,11 +242,28 @@ export async function exportToUnc(params: {
       if (!existsSync(targetDir)) await mkdir(targetDir, { recursive: true });
 
       for (const res of results) {
+        // Invoice
         const pdfName = `${res.numero}.pdf`;
-        const source = join(facturesDir, pdfName);
         const target = join(targetDir, pdfName);
-        if (existsSync(source)) {
+        let source = '';
+        if (res.path) {
+          source = res.path.startsWith('/') ? join(publicPath, res.path) : res.path;
+        } else {
+          source = join(facturesDir, pdfName);
+        }
+
+        if (source && existsSync(source)) {
           await writeFile(target, await readFile(source));
+        }
+
+        // AOT
+        const occ = dossiers.find((d: any) => d.id === res.id);
+        if (occ?.aotFinalPath) {
+          const aotName = occ.aotFinalPath.split(/[\\/]/).pop() || `AOT_${occ.id}.pdf`;
+          const aotSrc = occ.aotFinalPath.startsWith('/') ? join(publicPath, occ.aotFinalPath) : occ.aotFinalPath;
+          if (existsSync(aotSrc)) {
+            await writeFile(join(targetDir, aotName), await readFile(aotSrc));
+          }
         }
       }
 
@@ -218,7 +273,6 @@ export async function exportToUnc(params: {
       
       await writeFile(join(targetDir, filienFilename), filienContent);
 
-      const publicPath = join(process.cwd(), 'public');
       if (tlpeConfig?.deliberationPath) {
         const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
         const delibSrc = tlpeConfig.deliberationPath.startsWith('/') ? join(publicPath, tlpeConfig.deliberationPath) : tlpeConfig.deliberationPath;
@@ -227,9 +281,10 @@ export async function exportToUnc(params: {
         }
       }
 
-      if (tlpeConfig?.tarifsPath) {
-        const tarifsName = tlpeConfig.tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
-        const tarifsSrc = tlpeConfig.tarifsPath.startsWith('/') ? join(publicPath, tlpeConfig.tarifsPath) : tlpeConfig.tarifsPath;
+      const tarifsPath = tlpeConfig?.tarifsOdpPath || tlpeConfig?.tarifsPath;
+      if (tarifsPath) {
+        const tarifsName = tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
+        const tarifsSrc = tarifsPath.startsWith('/') ? join(publicPath, tarifsPath) : tarifsPath;
         if (existsSync(tarifsSrc)) {
           await writeFile(join(targetDir, tarifsName), await readFile(tarifsSrc));
         }
