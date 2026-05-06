@@ -78,9 +78,10 @@ export default function CommercesPage() {
     if (!addr) return { number: 0, street: 'Sans adresse', suffix: '' };
     const trimAddr = addr.trim();
 
-    // Pattern: optional number + optional suffix (B, BIS, T, TER) + street name
-    // Example: "5 BIS Rue de la Paix" or "TER AVE MARAT" or "5 Rue"
-    const addressPattern = /^(\d+)?(?:\s+(BIS|TER|B|T))?\s+(.+)$/i;
+    // Pattern to extract: number (optional) + suffix (optional) + street name
+    // Handles: "5 BIS Rue", "BIS AVE MARAT", "5 Rue", "Rue de la Paix", etc.
+    // Suffix can be: BIS, TER, B, T (case-insensitive)
+    const addressPattern = /^(?:(\d+)\s+)?(BIS|TER|B|T)?\s*(.+)$/i;
     const match = trimAddr.match(addressPattern);
 
     if (match) {
@@ -88,13 +89,21 @@ export default function CommercesPage() {
       const suffix = match[2] ? match[2].toUpperCase() : '';
       let street = match[3].trim();
 
-      // Normalize street (replace PLA with Place, etc.)
-      street = normalizeStreet(street);
+      // Only treat as suffix if followed by a valid street (contains letters)
+      // This prevents treating streets like "B STREET" as having suffix "B"
+      if (suffix && street && street.match(/^[A-ZÀ-ÿ]/i)) {
+        // Normalize street (replace PLA with Place, etc.)
+        street = normalizeStreet(street);
+        return { number, street, suffix, fullNumber: match[0] };
+      }
 
-      return { number, street, suffix, fullNumber: match[0] };
+      // If no suffix found or suffix is not valid, treat whole thing as street
+      let fullStreet = (suffix ? (number ? number + ' ' + suffix : suffix) + ' ' : (number ? number + ' ' : '')) + match[3];
+      fullStreet = normalizeStreet(fullStreet.trim());
+      return { number: 0, street: fullStreet, suffix: '', fullNumber: '' };
     }
 
-    // Fallback: treat entire string as street if pattern doesn't match
+    // Fallback: treat entire string as street
     let street = normalizeStreet(trimAddr);
     return { number: 0, street, suffix: '', fullNumber: '' };
   };
