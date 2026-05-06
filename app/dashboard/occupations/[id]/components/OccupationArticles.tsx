@@ -235,10 +235,6 @@ export default function OccupationArticles({
                                   <span className="text-slate-400">Tarif :</span>
                                   <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
                                 </div>
-                                <div className="flex items-center gap-2 pt-1 border-t border-slate-200">
-                                  <span className="text-slate-400">Total :</span>
-                                  <span className="text-slate-950 font-black">{subTotal.toLocaleString('fr-FR')}€</span>
-                                </div>
                               </div>
                             );
                           }
@@ -252,10 +248,6 @@ export default function OccupationArticles({
                               <div className="flex items-center gap-2">
                                 <span className="text-slate-400">Tarif :</span>
                                 <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
-                              </div>
-                              <div className="flex items-center gap-2 pt-1 border-t border-slate-200">
-                                <span className="text-slate-400">Total :</span>
-                                <span className="text-slate-950 font-black">{subTotal.toLocaleString('fr-FR')}€</span>
                               </div>
                             </div>
                           );
