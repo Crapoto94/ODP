@@ -78,6 +78,14 @@ export default function CommercesPage() {
     if (!addr) return { number: 0, street: 'Sans adresse', suffix: '' };
     const trimAddr = addr.trim();
 
+    // Check if address starts with a suffix (B, BIS, T, TER) without a number
+    const startsWithSuffixMatch = trimAddr.match(/^(BIS|TER|B|T)\s+(.+)$/i);
+    if (startsWithSuffixMatch) {
+      const suffix = startsWithSuffixMatch[1].toUpperCase();
+      let streetPart = normalizeStreet(startsWithSuffixMatch[2].trim());
+      return { number: 0, street: streetPart, suffix, fullNumber: '' };
+    }
+
     // Find the first index where an alphabetical character appears
     const firstLetterMatch = trimAddr.match(/[a-zA-ZÀ-ÿ]/);
     if (!firstLetterMatch) return { number: 0, street: trimAddr, suffix: '' };
@@ -86,7 +94,7 @@ export default function CommercesPage() {
     const numberPart = trimAddr.substring(0, index).trim();
     let streetPart = trimAddr.substring(index).trim();
 
-    // Extract suffix (BIS, TER, B, T) that follows a space and a number
+    // Extract suffix (BIS, TER, B, T) that follows a number
     let suffix = '';
     const suffixMatch = numberPart.match(/\s+(BIS|TER|B|T)$/i);
     if (suffixMatch) {
