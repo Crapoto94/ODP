@@ -67,23 +67,40 @@ export default function CommercesPage() {
     }
   };
 
+  const normalizeStreet = (street: string): string => {
+    if (!street) return '';
+    // Replace PLA with Place
+    let normalized = street.replace(/\bPLA\b/gi, 'Place');
+    return normalized;
+  };
+
   const parseAddress = (addr: string) => {
-    if (!addr) return { number: 0, street: 'Sans adresse' };
+    if (!addr) return { number: 0, street: 'Sans adresse', suffix: '' };
     const trimAddr = addr.trim();
-    
+
     // Find the first index where an alphabetical character appears
     const firstLetterMatch = trimAddr.match(/[a-zA-ZÀ-ÿ]/);
-    if (!firstLetterMatch) return { number: 0, street: trimAddr };
-    
+    if (!firstLetterMatch) return { number: 0, street: trimAddr, suffix: '' };
+
     const index = firstLetterMatch.index!;
     const numberPart = trimAddr.substring(0, index).trim();
-    const streetPart = trimAddr.substring(index).trim();
-    
+    let streetPart = trimAddr.substring(index).trim();
+
+    // Extract suffix (BIS, TER, B, T) that follows a space and a number
+    let suffix = '';
+    const suffixMatch = numberPart.match(/\s+(BIS|TER|B|T)$/i);
+    if (suffixMatch) {
+      suffix = suffixMatch[1].toUpperCase();
+    }
+
+    // Normalize street (replace PLA with Place, etc.)
+    streetPart = normalizeStreet(streetPart);
+
     // For sorting purposes, we still want a numeric value for the number part
     const numericMatch = numberPart.match(/\d+/);
     const numericNumber = numericMatch ? parseInt(numericMatch[0]) : 0;
-    
-    return { number: numericNumber, street: streetPart, fullNumber: numberPart };
+
+    return { number: numericNumber, street: streetPart, fullNumber: numberPart, suffix };
   };
 
   const filteredCommerces = commerces.filter(commerce => {
@@ -108,20 +125,38 @@ export default function CommercesPage() {
     return matchesSearch && matchesStatus && matchesYear && matchesStreet;
   });
 
-  const availableStreets = Array.from(new Set(
-    commerces.map(c => parseAddress(c.adresse || '').street).filter(s => s && s !== 'Sans adresse')
-  )).sort((a, b) => a.localeCompare(b));
+  const availableStreets = (() => {
+    const streetMap = new Map<string, string>();
+    commerces
+      .map(c => parseAddress(c.adresse || '').street)
+      .filter(s => s && s !== 'Sans adresse')
+      .forEach(street => {
+        const normalizedKey = street.toLowerCase();
+        if (!streetMap.has(normalizedKey)) {
+          streetMap.set(normalizedKey, street);
+        }
+      });
+    return Array.from(streetMap.values()).sort((a, b) => a.localeCompare(b));
+  })();
 
   const sortedCommerces = [...filteredCommerces].sort((a, b) => {
     if (sortByAddress) {
       const pA = parseAddress(a.adresse || '');
       const pB = parseAddress(b.adresse || '');
-      
+
       const sA = pA.street.toLowerCase();
       const sB = pB.street.toLowerCase();
-      
+
       if (sA !== sB) return sA.localeCompare(sB);
-      return pA.number - pB.number;
+
+      // If same street, sort by number
+      if (pA.number !== pB.number) return pA.number - pB.number;
+
+      // If same number and street, sort by suffix (order: no suffix, BIS, B, TER, T)
+      const suffixOrder: Record<string, number> = { '': 0, 'BIS': 1, 'B': 2, 'TER': 3, 'T': 4 };
+      const orderA = suffixOrder[pA.suffix] ?? 5;
+      const orderB = suffixOrder[pB.suffix] ?? 5;
+      return orderA - orderB;
     }
     return a.nom.localeCompare(b.nom);
   });
