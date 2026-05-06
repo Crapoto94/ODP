@@ -78,37 +78,25 @@ export default function CommercesPage() {
     if (!addr) return { number: 0, street: 'Sans adresse', suffix: '' };
     const trimAddr = addr.trim();
 
-    // Check if address starts with a suffix (B, BIS, T, TER) without a number
-    const startsWithSuffixMatch = trimAddr.match(/^(BIS|TER|B|T)\s+(.+)$/i);
-    if (startsWithSuffixMatch) {
-      const suffix = startsWithSuffixMatch[1].toUpperCase();
-      let streetPart = normalizeStreet(startsWithSuffixMatch[2].trim());
-      return { number: 0, street: streetPart, suffix, fullNumber: '' };
+    // Pattern: optional number + optional suffix (B, BIS, T, TER) + street name
+    // Example: "5 BIS Rue de la Paix" or "TER AVE MARAT" or "5 Rue"
+    const addressPattern = /^(\d+)?(?:\s+(BIS|TER|B|T))?\s+(.+)$/i;
+    const match = trimAddr.match(addressPattern);
+
+    if (match) {
+      const number = match[1] ? parseInt(match[1]) : 0;
+      const suffix = match[2] ? match[2].toUpperCase() : '';
+      let street = match[3].trim();
+
+      // Normalize street (replace PLA with Place, etc.)
+      street = normalizeStreet(street);
+
+      return { number, street, suffix, fullNumber: match[0] };
     }
 
-    // Find the first index where an alphabetical character appears
-    const firstLetterMatch = trimAddr.match(/[a-zA-ZÀ-ÿ]/);
-    if (!firstLetterMatch) return { number: 0, street: trimAddr, suffix: '' };
-
-    const index = firstLetterMatch.index!;
-    const numberPart = trimAddr.substring(0, index).trim();
-    let streetPart = trimAddr.substring(index).trim();
-
-    // Extract suffix (BIS, TER, B, T) that follows a number
-    let suffix = '';
-    const suffixMatch = numberPart.match(/\s+(BIS|TER|B|T)$/i);
-    if (suffixMatch) {
-      suffix = suffixMatch[1].toUpperCase();
-    }
-
-    // Normalize street (replace PLA with Place, etc.)
-    streetPart = normalizeStreet(streetPart);
-
-    // For sorting purposes, we still want a numeric value for the number part
-    const numericMatch = numberPart.match(/\d+/);
-    const numericNumber = numericMatch ? parseInt(numericMatch[0]) : 0;
-
-    return { number: numericNumber, street: streetPart, fullNumber: numberPart, suffix };
+    // Fallback: treat entire string as street if pattern doesn't match
+    let street = normalizeStreet(trimAddr);
+    return { number: 0, street, suffix: '', fullNumber: '' };
   };
 
   const filteredCommerces = commerces.filter(commerce => {
