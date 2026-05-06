@@ -70,46 +70,36 @@ export default function CommercesPage() {
   const normalizeStreet = (street: string): string => {
     if (!street) return '';
     // Replace PLA with Place
-    let normalized = street.replace(/\bPLA\b/gi, 'Place');
-    return normalized;
+    return street.replace(/\bPLA\b/gi, 'Place');
   };
 
   const parseAddress = (addr: string) => {
     if (!addr) return { number: 0, street: 'Sans adresse', suffix: '' };
     const trimAddr = addr.trim();
 
-    // Pattern to extract: number (optional) + suffix (optional) + street name
-    // Handles: "5 BIS Rue", "BIS AVE MARAT", "5 Rue", "Rue de la Paix", etc.
-    // Suffix can be: BIS, TER, B, T (case-insensitive)
-    const addressPattern = /^(?:(\d+)\s+)?(BIS|TER|B|T)?\s*(.+)$/i;
-    const match = trimAddr.match(addressPattern);
+    // Try to extract: number + optional suffix + street
+    // Pattern: optional digits, optional suffix (BIS/TER/B/T), then street
+    const fullMatch = trimAddr.match(/^(\d+)?\s*(BIS|TER|B|T)?\s+(.+)$/i);
 
-    if (match) {
-      const number = match[1] ? parseInt(match[1]) : 0;
-      const suffix = match[2] ? match[2].toUpperCase() : '';
-      let street = match[3].trim();
+    if (fullMatch) {
+      const number = fullMatch[1] ? parseInt(fullMatch[1]) : 0;
+      const suffix = fullMatch[2] ? fullMatch[2].toUpperCase() : '';
+      let street = fullMatch[3].trim();
 
-      // Case 1: Has suffix AND followed by a valid street
-      if (suffix && street && street.match(/^[A-ZÀ-ÿ]/i)) {
+      // Only extract suffix if we have a proper street (starts with letter)
+      if (suffix && street.match(/^[A-ZÀ-ÿ]/i)) {
         street = normalizeStreet(street);
-        return { number, street, suffix, fullNumber: match[0] };
+        return { number, street, suffix };
       }
 
-      // Case 2: Has number but no suffix - extract number and street
-      if (number > 0 && !suffix) {
-        street = normalizeStreet(street);
-        return { number, street, suffix: '', fullNumber: match[0] };
-      }
-
-      // Case 3: Suffix found but not valid (not followed by proper street)
-      // Treat entire address as street name without number or suffix
-      let fullStreet = normalizeStreet(trimAddr);
-      return { number: 0, street: fullStreet, suffix: '', fullNumber: '' };
+      // If no valid suffix, just return number and street
+      street = normalizeStreet(street);
+      return { number, street, suffix: '' };
     }
 
-    // Fallback: treat entire string as street
-    let street = normalizeStreet(trimAddr);
-    return { number: 0, street, suffix: '', fullNumber: '' };
+    // Fallback: treat entire address as street (remove leading number if present)
+    const streetOnly = trimAddr.replace(/^\d+\s+/, '').trim();
+    return { number: 0, street: normalizeStreet(streetOnly), suffix: '' };
   };
 
   const filteredCommerces = commerces.filter(commerce => {
