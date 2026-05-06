@@ -4,6 +4,7 @@ import { validateSeditValidationToken } from '@/lib/sedit-validation-token';
 import { sendApmMail } from '@/lib/apm';
 import { generateSeditIntegrationConfirmationEmail } from '@/lib/billing-email-templates';
 import { format } from 'date-fns';
+import { getSession } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,6 +38,27 @@ export async function POST(req: NextRequest) {
       where: { id: { in: occupationIds } },
       data: { statut: 'TITRE' }
     });
+
+    // 2b. Add automatic notes for each occupation's status change
+    const session = await getSession();
+    const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Système';
+    const year = new Date().getFullYear();
+
+    for (const occupationId of occupationIds) {
+      try {
+        await (prisma as any).$executeRawUnsafe(
+          `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+          occupationId,
+          `📋 Passage en TITRÉ - Intégration SEDIT validée (${year})`,
+          author,
+          false,
+          'desktop',
+          new Date().toISOString()
+        );
+      } catch (noteErr) {
+        console.error('[NOTE CREATION ERROR]', noteErr);
+      }
+    }
 
     // 3. Send confirmation email to agent
     // Build dossierTypes from the billing run type

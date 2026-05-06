@@ -16,7 +16,7 @@ export default function CommerceNotes({ tiersId, currentUser }: Props) {
     <div className="bg-slate-50/50 rounded-2xl border border-slate-100 p-8 flex flex-col gap-8 min-h-[400px]">
       <div className="flex items-center justify-between pb-2 border-b border-slate-200/50">
         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-          <MessageSquare size={14} /> Fil de discussion
+          <MessageSquare size={14} /> Fil d'événements
         </h3>
       </div>
 
@@ -26,39 +26,46 @@ export default function CommerceNotes({ tiersId, currentUser }: Props) {
             <Loader2 className="animate-spin" size={24} />
           </div>
         ) : (() => {
-          const filteredNotes = notes.filter((note: any) => !(note.pjPath && note.pjName));
-          return filteredNotes.length === 0 ? (
+          return notes.length === 0 ? (
             <div className="text-center py-20 opacity-20">
               <MessageSquare size={40} className="mx-auto mb-2" />
               <p className="text-[10px] font-black uppercase tracking-widest italic">Aucun message pour le moment</p>
             </div>
           ) : (
-            filteredNotes.map((note: any) => {
-              const isMe = note.author === 'Conseiller' || note.author === "Mairie d'Ivry-sur-Seine" || (currentUser && note.author === `${currentUser.prenom} ${currentUser.nom}`);
-              const isReceived = note.isEmail && !isMe;
-              const bgColor = isMe ? (note.isEmail ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-800 border-slate-700') : (isReceived ? 'bg-emerald-50 border-emerald-100' : 'bg-white border-slate-100');
-              const textColor = isMe ? 'text-white' : (isReceived ? 'text-emerald-900' : 'text-slate-800');
+            notes.map((note: any) => {
+              const isAutomatic = note.author === 'Système';
+              const isMe = !isAutomatic && (note.author === 'Conseiller' || note.author === "Mairie d'Ivry-sur-Seine" || (currentUser && note.author === `${currentUser.prenom} ${currentUser.nom}`));
+              const isReceived = !isAutomatic && note.isEmail && !isMe;
+
+              let bgColor, textColor;
+              if (isAutomatic) {
+                bgColor = 'bg-blue-50 border-blue-100';
+                textColor = 'text-blue-900';
+              } else {
+                bgColor = isMe ? (note.isEmail ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-800 border-slate-700') : (isReceived ? 'bg-emerald-50 border-emerald-100' : 'bg-white border-slate-100');
+                textColor = isMe ? 'text-white' : (isReceived ? 'text-emerald-900' : 'text-slate-800');
+              }
 
               return (
                 <div key={note.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[80%] rounded-2xl p-5 border ${bgColor} ${textColor}`}>
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-[8px] font-black uppercase">{note.author}</span>
-                      {note.isEmail && <span className="text-[7px] font-black uppercase px-2 py-1 bg-white/20 rounded-full"><Mail size={8} /></span>}
+                      {note.isEmail && !isAutomatic && <span className="text-[7px] font-black uppercase px-2 py-1 bg-white/20 rounded-full"><Mail size={8} /></span>}
                     </div>
                     <p className="text-sm font-medium mb-2">{note.content}</p>
                     {note.pjPath && (
-                      <div className="mt-3 pt-3 border-t border-white/10">
+                      <div className={`mt-3 pt-3 border-t ${isAutomatic ? 'border-blue-200' : 'border-white/10'}`}>
                         {note.pjPath.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) ? (
                           <img src={note.pjPath} alt="Attachment" className="max-w-sm rounded-lg" />
                         ) : (
-                          <a href={note.pjPath} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs hover:opacity-80">
+                          <a href={note.pjPath} target="_blank" rel="noreferrer" className={`flex items-center gap-2 text-xs hover:opacity-80 ${isAutomatic ? 'text-blue-600' : ''}`}>
                             <FileText size={12} /> {note.pjName || 'Document'}
                           </a>
                         )}
                       </div>
                     )}
-                    <div className="text-[8px] font-bold mt-2">{format(new Date(note.created_at), 'dd MMM HH:mm', { locale: fr })}</div>
+                    <div className="text-[8px] font-bold mt-2">{format(new Date(note.created_at), 'dd MMM yyyy HH:mm', { locale: fr })}</div>
                   </div>
                 </div>
               );

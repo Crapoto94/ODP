@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -82,12 +83,31 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       // Recalculate total for the new occupation
       const { updateOccupationTotal } = await import('@/lib/tlpe-utils');
       await updateOccupationTotal(targetOccupation.id);
+
+      // Add automatic note for device renewal
+      const session = await getSession();
+      const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Système';
+      const year = new Date().getFullYear();
+
+      try {
+        await (prisma as any).$executeRawUnsafe(
+          `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+          targetOccupation.id,
+          `🔄 Reconduction des dispositifs de l'année ${fromYear} à ${toYear} (${newLinesData.length} ligne${newLinesData.length > 1 ? 's' : ''}) (${year})`,
+          author,
+          false,
+          'desktop',
+          new Date().toISOString()
+        );
+      } catch (noteErr) {
+        console.error('[NOTE CREATION ERROR]', noteErr);
+      }
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       count: newLinesData.length,
-      occupationId: targetOccupation.id 
+      occupationId: targetOccupation.id
     });
 
   } catch (err: any) {
