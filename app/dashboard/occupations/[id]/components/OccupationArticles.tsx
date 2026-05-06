@@ -180,82 +180,98 @@ export default function OccupationArticles({
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-3 text-slate-500">
-                        <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
-                          <Clock size={14} />
-                        </div>
-                        <span className="text-xs font-bold uppercase tracking-wide flex flex-col gap-1">
-                          <span>
-                            {occupation.type === 'TLPE' 
-                              ? `Exercice ${occupation.anneeTaxation || new Date(ligne.dateDebut).getFullYear()}`
-                              : `Prévu : Du ${(() => { try { return ligne.dateDebut ? format(new Date(ligne.dateDebut), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()} au ${(() => { try { return ligne.dateFin ? format(new Date(ligne.dateFin), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()}`
-                            }
-                          </span>
-                          {(ligne.dateDebutConstatee || ligne.dateFinConstatee) && (
-                            <span className="text-[10px] text-emerald-600">
-                              Réel : Du {(() => {
-                                  if (!ligne.dateDebutConstatee) return '--';
-                                  try { return format(new Date(ligne.dateDebutConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
-                                })()} au {(() => {
-                                  if (!ligne.dateFinConstatee) return '--';
-                                  try { return format(new Date(ligne.dateFinConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
-                                })()}
-                            </span>
-                          )}
-                        </span>
+                  <div className="space-y-3">
+                    {/* Dates */}
+                    <div className="flex items-start gap-3 text-slate-500">
+                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 flex-shrink-0">
+                        <Clock size={14} />
                       </div>
+                      <span className="text-xs font-bold uppercase tracking-wide">
+                        {occupation.type === 'TLPE'
+                          ? `Exercice ${occupation.anneeTaxation || new Date(ligne.dateDebut).getFullYear()}`
+                          : `Du ${(() => { try { return ligne.dateDebut ? format(new Date(ligne.dateDebut), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()} au ${(() => { try { return ligne.dateFin ? format(new Date(ligne.dateFin), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()}`
+                        }
+                        {(ligne.dateDebutConstatee || ligne.dateFinConstatee) && (
+                          <div className="text-[10px] text-emerald-600 mt-1">
+                            Réel : Du {(() => {
+                                if (!ligne.dateDebutConstatee) return '--';
+                                try { return format(new Date(ligne.dateDebutConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
+                              })()} au {(() => {
+                                if (!ligne.dateFinConstatee) return '--';
+                                try { return format(new Date(ligne.dateFinConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
+                              })()}
+                          </div>
+                        )}
+                      </span>
                     </div>
 
-                    <div className="flex items-center gap-3 text-slate-500">
-                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                    {/* Quantities and Price */}
+                    <div className="flex items-start gap-3 text-slate-500">
+                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 flex-shrink-0">
                         <Hash size={14} />
                       </div>
-                      <div className="text-xs font-bold uppercase tracking-wide leading-relaxed">
+                      <div className="text-xs font-bold uppercase tracking-wide space-y-1.5">
                         {(() => {
                           const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
                           const parts = rawMode.split('/').filter(Boolean).map((p: string) => p.trim().toLowerCase());
                           const u1 = parts[0] || 'unités';
                           const u2 = parts[1] || 'unités';
-                          
+
                           const unitPrice = ligne.article?.montant || 0;
                           const subTotal = ligne.montant;
 
                           if (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') {
                             return (
-                              <span className="flex items-center gap-1.5">
-                                <span className="text-blue-600">{ligne.quantite1} {u1}</span>
-                                <span className="text-slate-300">x</span>
-                                <span className="text-blue-600">{ligne.quantite2} {u2}</span>
-                                <span className="text-slate-300">à</span>
-                                <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
-                                <span className="text-slate-400 font-medium">=</span>
-                                <span className="text-slate-950 font-black">{subTotal.toLocaleString('fr-FR')}€</span>
-                              </span>
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-slate-400">Quantités :</span>
+                                  <span className="text-blue-600 font-black">{ligne.quantite1}</span>
+                                  <span className="text-slate-300">{u1}</span>
+                                  <span className="text-slate-300">×</span>
+                                  <span className="text-blue-600 font-black">{ligne.quantite2}</span>
+                                  <span className="text-slate-300">{u2}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-slate-400">Tarif :</span>
+                                  <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
+                                </div>
+                                <div className="flex items-center gap-2 pt-1 border-t border-slate-200">
+                                  <span className="text-slate-400">Total :</span>
+                                  <span className="text-slate-950 font-black">{subTotal.toLocaleString('fr-FR')}€</span>
+                                </div>
+                              </div>
                             );
                           }
                           return (
-                            <span className="flex items-center gap-1.5">
-                              <span className="text-blue-600">{ligne.quantite1} {u1}</span>
-                              <span className="text-slate-300">à</span>
-                              <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
-                              <span className="text-slate-400 font-medium">=</span>
-                              <span className="text-slate-950 font-black">{subTotal.toLocaleString('fr-FR')}€</span>
-                            </span>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-slate-400">Quantité :</span>
+                                <span className="text-blue-600 font-black">{ligne.quantite1}</span>
+                                <span className="text-slate-300">{u1}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-slate-400">Tarif :</span>
+                                <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
+                              </div>
+                              <div className="flex items-center gap-2 pt-1 border-t border-slate-200">
+                                <span className="text-slate-400">Total :</span>
+                                <span className="text-slate-950 font-black">{subTotal.toLocaleString('fr-FR')}€</span>
+                              </div>
+                            </div>
                           );
                         })()}
                       </div>
-
-                      {ligne.note && (
-                        <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mt-2">
-                          <p className="text-[10px] text-amber-800 leading-relaxed italic">
-                            <span className="font-black uppercase mr-2 tracking-tighter">Note :</span>
-                            {ligne.note}
-                          </p>
-                        </div>
-                      )}
                     </div>
+
+                    {/* Note */}
+                    {ligne.note && (
+                      <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 ml-11">
+                        <p className="text-[10px] text-amber-800 leading-relaxed italic">
+                          <span className="font-black uppercase mr-2 tracking-tighter">Note :</span>
+                          {ligne.note}
+                        </p>
+                      </div>
+                    )}
                   </div>
                   
                   {ligne.photos && (
