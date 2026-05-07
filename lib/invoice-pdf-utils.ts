@@ -131,8 +131,9 @@ export async function generateInvoicePdfBuffer(
   
   let tlpeConfig = overrides?.tlpeConfig || null;
   if (!tlpeConfig && occ.type === 'TLPE') {
-    const records = await prisma.$queryRaw`SELECT * FROM TlpeConfig WHERE annee = ${taxYear}` as any[];
-    tlpeConfig = records[0] || null;
+    tlpeConfig = await (prisma as any).tlpeConfig.findUnique({
+      where: { annee: taxYear }
+    });
   }
 
   const { elements } = JSON.parse(gabarit.contenu);

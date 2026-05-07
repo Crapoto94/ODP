@@ -53,26 +53,22 @@ export async function POST(
       }
     }
 
-    // Use raw query to bypass out-of-sync Prisma Client
-    await (prisma as any).$executeRawUnsafe(
-      `INSERT INTO Note (occupationId, content, author, pjPath, pjName, pjThumb, isEmail, externalId, toEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      parseInt(id),
-      content || "",
-      sendEmail ? "Mairie d'Ivry-sur-Seine" : authorName,
-      pjPath || null,
-      pjName || null,
-      pjThumb || null,
-      sendEmail || false,
-      externalId || null,
-      toEmail || null,
-      origin || 'desktop',
-      new Date().toISOString()
-    );
-
-    const note = await (prisma as any).note.findFirst({
-      where: { occupationId: parseInt(id) },
-      orderBy: { created_at: 'desc' }
+    const note = await (prisma as any).note.create({
+      data: {
+        occupationId: parseInt(id),
+        content: content || "",
+        author: sendEmail ? "Mairie d'Ivry-sur-Seine" : authorName,
+        pjPath: pjPath || null,
+        pjName: pjName || null,
+        pjThumb: pjThumb || null,
+        isEmail: !!sendEmail,
+        externalId: externalId || null,
+        toEmail: toEmail || null,
+        origin: origin || 'desktop',
+        created_at: new Date()
+      }
     });
+
     return NextResponse.json(note);
   } catch (error: any) {
     console.error('[Notes API] Error:', error);

@@ -387,15 +387,16 @@ export async function POST(
     try {
       const year = signatureRequest.occupation.anneeTaxation || new Date().getFullYear();
       const noteContent = `✅ Document signé par ${signatureRequest.signatory.nom} et statut avancé à ${nextStatut || signatureRequest.occupation.statut} (${year})`;
-      await (prisma as any).$executeRawUnsafe(
-        `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-        signatureRequest.occupation.id,
-        noteContent,
-        'Système',
-        false,
-        'desktop',
-        now.toISOString()
-      );
+      await (prisma as any).note.create({
+        data: {
+          occupationId: signatureRequest.occupation.id,
+          content: noteContent,
+          author: 'Système',
+          isEmail: false,
+          origin: 'desktop',
+          created_at: now
+        }
+      });
     } catch (noteError) {
       console.error('[Accept] Failed to create note:', noteError);
     }

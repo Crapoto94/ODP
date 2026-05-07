@@ -9,6 +9,8 @@ const globalForPrisma = global as unknown as {
   isInitialized: boolean
 };
 
+console.log('[PRISMA] Module loading...');
+
 // 1. Initialize Local SQLite Client
 const sqlitePath = path.join(process.cwd(), 'prisma', 'dev.db').replace(/\\/g, '/');
 export const prismaLocal =
@@ -44,26 +46,49 @@ async function getPostgresUrl() {
 let _prisma: PrismaClient | null = globalForPrisma.prisma || null;
 
 const createClient = (url: string) => {
+  if (!url) {
+    console.error('[PRISMA] Attempted to create client with empty URL');
+    return null;
+  }
+  
   // Debug log (sanitized)
   const sanitizedUrl = url.replace(/:([^:@]+)@/, ':****@');
-  console.log(`[PRISMA] Creating new client with URL: ${sanitizedUrl}`);
+  console.log(`[PRISMA] Attempting to create new client with URL: ${sanitizedUrl}`);
   
-  return new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-    datasources: {
-      db: {
-        url: url,
+  try {
+    const client = new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      datasources: {
+        db: {
+          url: url,
+        },
       },
-    },
-  });
+    });
+    console.log('[PRISMA] Client created successfully');
+    return client;
+  } catch (err: any) {
+    console.error('[PRISMA] CRITICAL ERROR during PrismaClient constructor:', err.message);
+    if (err.stack) console.error(err.stack);
+    return null;
+  }
 };
 
 export const prisma = new Proxy({} as PrismaClient, {
   get: (target, prop) => {
     if (!_prisma) {
-      _prisma = createClient(process.env.DATABASE_URL || '');
-      globalForPrisma.prisma = _prisma;
+      const fallbackUrl = process.env.DATABASE_URL;
+      if (fallbackUrl && fallbackUrl !== '""' && fallbackUrl !== "''") {
+        _prisma = createClient(fallbackUrl);
+        if (_prisma) globalForPrisma.prisma = _prisma;
+      }
     }
+    
+    if (!_prisma) {
+      // If we reach here, we'll try to initialize synchronously if it's the first time
+      // But we can't await here. So we just throw a better error.
+      throw new Error('[PRISMA] Le client Postgres n\'est pas encore initialisé. Veuillez patienter ou vérifier la configuration.');
+    }
+    
     return (_prisma as any)[prop];
   }
 });
@@ -88,7 +113,8 @@ export async function initializePrisma(force = false) {
   return _prisma;
 }
 
-initializePrisma().catch(err => console.error('[PRISMA] Initialization error:', err));
+console.log('[PRISMA] Module loaded.');
+initializePrisma().catch(err => console.error('[PRISMA] Top-level initialization failed:', err.message));
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prismaLocal = prismaLocal;

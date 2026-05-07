@@ -105,15 +105,16 @@ export async function POST(
     const year = occ.anneeTaxation || new Date().getFullYear();
     const noteContent = `📧 Facture envoyée par e-mail au contact principal : ${primaryContact.email} (${contactNom}) (${year})`;
 
-    await (prisma as any).$executeRawUnsafe(
-      `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-      occupationId,
-      noteContent,
-      author,
-      false,
-      'desktop',
-      new Date().toISOString()
-    );
+    await (prisma as any).note.create({
+      data: {
+        occupationId,
+        content: noteContent,
+        author,
+        isEmail: false,
+        origin: 'desktop',
+        created_at: new Date()
+      }
+    });
 
     return NextResponse.json({ success: true, sentTo: primaryContact.email });
   } catch (err: any) {

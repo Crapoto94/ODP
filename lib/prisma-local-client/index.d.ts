@@ -999,6 +999,8 @@ export namespace Prisma {
     filienUncDomain: string | null
     watermark: string | null
     dbMode: string | null
+    autoDistributeInvoices: boolean | null
+    distributeOnlyVerified: boolean | null
   }
 
   export type AppSettingsMaxAggregateOutputType = {
@@ -1049,6 +1051,8 @@ export namespace Prisma {
     filienUncDomain: string | null
     watermark: string | null
     dbMode: string | null
+    autoDistributeInvoices: boolean | null
+    distributeOnlyVerified: boolean | null
   }
 
   export type AppSettingsCountAggregateOutputType = {
@@ -1099,6 +1103,8 @@ export namespace Prisma {
     filienUncDomain: number
     watermark: number
     dbMode: number
+    autoDistributeInvoices: number
+    distributeOnlyVerified: number
     _all: number
   }
 
@@ -1161,6 +1167,8 @@ export namespace Prisma {
     filienUncDomain?: true
     watermark?: true
     dbMode?: true
+    autoDistributeInvoices?: true
+    distributeOnlyVerified?: true
   }
 
   export type AppSettingsMaxAggregateInputType = {
@@ -1211,6 +1219,8 @@ export namespace Prisma {
     filienUncDomain?: true
     watermark?: true
     dbMode?: true
+    autoDistributeInvoices?: true
+    distributeOnlyVerified?: true
   }
 
   export type AppSettingsCountAggregateInputType = {
@@ -1261,6 +1271,8 @@ export namespace Prisma {
     filienUncDomain?: true
     watermark?: true
     dbMode?: true
+    autoDistributeInvoices?: true
+    distributeOnlyVerified?: true
     _all?: true
   }
 
@@ -1398,6 +1410,8 @@ export namespace Prisma {
     filienUncDomain: string | null
     watermark: string | null
     dbMode: string
+    autoDistributeInvoices: boolean
+    distributeOnlyVerified: boolean
     _count: AppSettingsCountAggregateOutputType | null
     _avg: AppSettingsAvgAggregateOutputType | null
     _sum: AppSettingsSumAggregateOutputType | null
@@ -1467,6 +1481,8 @@ export namespace Prisma {
     filienUncDomain?: boolean
     watermark?: boolean
     dbMode?: boolean
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
   export type AppSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1517,6 +1533,8 @@ export namespace Prisma {
     filienUncDomain?: boolean
     watermark?: boolean
     dbMode?: boolean
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
   export type AppSettingsSelectScalar = {
@@ -1567,6 +1585,8 @@ export namespace Prisma {
     filienUncDomain?: boolean
     watermark?: boolean
     dbMode?: boolean
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
   }
 
 
@@ -1621,6 +1641,8 @@ export namespace Prisma {
       filienUncDomain: string | null
       watermark: string | null
       dbMode: string
+      autoDistributeInvoices: boolean
+      distributeOnlyVerified: boolean
     }, ExtArgs["result"]["appSettings"]>
     composites: {}
   }
@@ -2061,6 +2083,8 @@ export namespace Prisma {
     readonly filienUncDomain: FieldRef<"AppSettings", 'String'>
     readonly watermark: FieldRef<"AppSettings", 'String'>
     readonly dbMode: FieldRef<"AppSettings", 'String'>
+    readonly autoDistributeInvoices: FieldRef<"AppSettings", 'Boolean'>
+    readonly distributeOnlyVerified: FieldRef<"AppSettings", 'Boolean'>
   }
     
 
@@ -3355,7 +3379,9 @@ export namespace Prisma {
     filienUncUser: 'filienUncUser',
     filienUncDomain: 'filienUncDomain',
     watermark: 'watermark',
-    dbMode: 'dbMode'
+    dbMode: 'dbMode',
+    autoDistributeInvoices: 'autoDistributeInvoices',
+    distributeOnlyVerified: 'distributeOnlyVerified'
   };
 
   export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
@@ -3485,6 +3511,8 @@ export namespace Prisma {
     filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
     watermark?: StringNullableFilter<"AppSettings"> | string | null
     dbMode?: StringFilter<"AppSettings"> | string
+    autoDistributeInvoices?: BoolFilter<"AppSettings"> | boolean
+    distributeOnlyVerified?: BoolFilter<"AppSettings"> | boolean
   }
 
   export type AppSettingsOrderByWithRelationInput = {
@@ -3535,6 +3563,8 @@ export namespace Prisma {
     filienUncDomain?: SortOrderInput | SortOrder
     watermark?: SortOrderInput | SortOrder
     dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
   }
 
   export type AppSettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -3588,6 +3618,8 @@ export namespace Prisma {
     filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
     watermark?: StringNullableFilter<"AppSettings"> | string | null
     dbMode?: StringFilter<"AppSettings"> | string
+    autoDistributeInvoices?: BoolFilter<"AppSettings"> | boolean
+    distributeOnlyVerified?: BoolFilter<"AppSettings"> | boolean
   }, "id">
 
   export type AppSettingsOrderByWithAggregationInput = {
@@ -3638,6 +3670,8 @@ export namespace Prisma {
     filienUncDomain?: SortOrderInput | SortOrder
     watermark?: SortOrderInput | SortOrder
     dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
     _count?: AppSettingsCountOrderByAggregateInput
     _avg?: AppSettingsAvgOrderByAggregateInput
     _max?: AppSettingsMaxOrderByAggregateInput
@@ -3696,6 +3730,8 @@ export namespace Prisma {
     filienUncDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     watermark?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     dbMode?: StringWithAggregatesFilter<"AppSettings"> | string
+    autoDistributeInvoices?: BoolWithAggregatesFilter<"AppSettings"> | boolean
+    distributeOnlyVerified?: BoolWithAggregatesFilter<"AppSettings"> | boolean
   }
 
   export type PostgresConfigWhereInput = {
@@ -3814,6 +3850,8 @@ export namespace Prisma {
     filienUncDomain?: string | null
     watermark?: string | null
     dbMode?: string
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
   }
 
   export type AppSettingsUncheckedCreateInput = {
@@ -3864,6 +3902,8 @@ export namespace Prisma {
     filienUncDomain?: string | null
     watermark?: string | null
     dbMode?: string
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
   }
 
   export type AppSettingsUpdateInput = {
@@ -3913,6 +3953,8 @@ export namespace Prisma {
     filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     watermark?: NullableStringFieldUpdateOperationsInput | string | null
     dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AppSettingsUncheckedUpdateInput = {
@@ -3963,6 +4005,8 @@ export namespace Prisma {
     filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     watermark?: NullableStringFieldUpdateOperationsInput | string | null
     dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AppSettingsCreateManyInput = {
@@ -4013,6 +4057,8 @@ export namespace Prisma {
     filienUncDomain?: string | null
     watermark?: string | null
     dbMode?: string
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
   }
 
   export type AppSettingsUpdateManyMutationInput = {
@@ -4062,6 +4108,8 @@ export namespace Prisma {
     filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     watermark?: NullableStringFieldUpdateOperationsInput | string | null
     dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type AppSettingsUncheckedUpdateManyInput = {
@@ -4112,6 +4160,8 @@ export namespace Prisma {
     filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
     watermark?: NullableStringFieldUpdateOperationsInput | string | null
     dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type PostgresConfigCreateInput = {
@@ -4254,6 +4304,11 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -4307,6 +4362,8 @@ export namespace Prisma {
     filienUncDomain?: SortOrder
     watermark?: SortOrder
     dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
   }
 
   export type AppSettingsAvgOrderByAggregateInput = {
@@ -4362,6 +4419,8 @@ export namespace Prisma {
     filienUncDomain?: SortOrder
     watermark?: SortOrder
     dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
   }
 
   export type AppSettingsMinOrderByAggregateInput = {
@@ -4412,6 +4471,8 @@ export namespace Prisma {
     filienUncDomain?: SortOrder
     watermark?: SortOrder
     dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
   }
 
   export type AppSettingsSumOrderByAggregateInput = {
@@ -4507,6 +4568,14 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type PostgresConfigCountOrderByAggregateInput = {
     id?: SortOrder
     host?: SortOrder
@@ -4572,6 +4641,10 @@ export namespace Prisma {
 
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -4646,6 +4719,11 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -4756,6 +4834,14 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
 

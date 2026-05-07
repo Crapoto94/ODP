@@ -172,7 +172,7 @@ export async function POST(req: Request) {
     console.log('[POST Occupations] Created occupation:', occupation.id);
 
     if (isCourtMetrage !== undefined) {
-      await (prisma as any).$executeRaw`UPDATE Occupation SET isCourtMetrage = ${!!isCourtMetrage} WHERE id = ${occupation.id}`;
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isCourtMetrage" = ${!!isCourtMetrage} WHERE id = ${occupation.id}`;
     }
 
     return NextResponse.json(occupation);

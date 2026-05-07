@@ -75,21 +75,22 @@ export async function POST(
     // Generate token expiration
     const tokenExpirationDate = getTokenExpirationDate(7);
 
-    // Create signature request (temp, to get ID for token) — raw SQL (client Prisma stale)
-    const now = new Date().toISOString();
-    const expiresIso = tokenExpirationDate.toISOString();
+    // Create signature request (temp, to get ID for token)
     const requestedBy = session.login ?? null;
     const tempToken = `__tmp_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
-    await (prisma as any).$executeRaw`
-      INSERT INTO SignatureRequest (occupationId, signatoriesId, status, token, tokenExpiresAt, requestedByLogin, created_at, updated_at)
-      VALUES (${occupationId}, ${signatory.id}, 'PENDING', ${tempToken}, ${expiresIso}, ${requestedBy}, ${now}, ${now})
-    `;
+    const signatureRequest = await (prisma as any).signatureRequest.create({
+      data: {
+        occupationId,
+        signatoriesId: signatory.id,
+        status: 'PENDING',
+        token: tempToken,
+        tokenExpiresAt: tokenExpirationDate,
+        requestedByLogin: requestedBy
+      }
+    });
 
-    const tempRows = await (prisma as any).$queryRaw`
-      SELECT id FROM SignatureRequest WHERE token = ${tempToken} LIMIT 1
-    `;
-    const tempId = (tempRows as any[])[0]?.id;
+    const tempId = signatureRequest.id;
 
     // Generate actual token with request ID
     const signatureToken = await generateSignatureToken(
@@ -99,11 +100,10 @@ export async function POST(
     );
 
     // Update request with actual token
-    await (prisma as any).$executeRaw`
-      UPDATE SignatureRequest SET token = ${signatureToken}, updated_at = ${now} WHERE id = ${tempId}
-    `;
-
-    const signatureRequest = { id: tempId, token: signatureToken };
+    await (prisma as any).signatureRequest.update({
+      where: { id: tempId },
+      data: { token: signatureToken }
+    });
 
     // Generate signature link
     const baseUrl = (settings?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
@@ -143,22 +143,23 @@ export async function POST(
       try {
         const year = occupation.anneeTaxation || new Date().getFullYear();
         const noteContent = `📝 Demande de signature envoyée à ${signatory.nom} (${signatory.email}) - Expire le ${expirationDateStr} (${year})`;
-        await (prisma as any).$executeRawUnsafe(
-          `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-          occupationId,
-          noteContent,
-          'Système',
-          false,
-          'desktop',
-          new Date().toISOString()
-        );
+        await (prisma as any).note.create({
+          data: {
+            occupationId,
+            content: noteContent,
+            author: 'Système',
+            isEmail: false,
+            origin: 'desktop',
+            created_at: new Date()
+          }
+        });
       } catch (noteError) {
         console.error('[SignatureRequest] Failed to create note:', noteError);
       }
     }
 
     return NextResponse.json({
-      requestId: signatureRequest.id,
+      requestId: tempId,
       token: signatureToken,
       signatory: {
         id: signatory.id,

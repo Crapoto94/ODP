@@ -141,28 +141,30 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     if (statusChanged) {
       const noteContent = `📊 Passage de statut : ${oldOccupation.statut} → ${statut} (${year})`;
-      await (prisma as any).$executeRawUnsafe(
-        `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-        id,
-        noteContent,
-        author,
-        false,
-        'desktop',
-        now
-      );
+      await (prisma as any).note.create({
+        data: {
+          occupationId: id,
+          content: noteContent,
+          author: author,
+          isEmail: false,
+          origin: 'desktop',
+          created_at: new Date(now)
+        }
+      });
     }
 
     if (aotUploaded) {
       const noteContent = `📄 Document AOT uploadé${aotNowSigned ? ' et signé' : ' (en brouillon)'} (${year})`;
-      await (prisma as any).$executeRawUnsafe(
-        `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-        id,
-        noteContent,
-        author,
-        false,
-        'desktop',
-        now
-      );
+      await (prisma as any).note.create({
+        data: {
+          occupationId: id,
+          content: noteContent,
+          author: author,
+          isEmail: false,
+          origin: 'desktop',
+          created_at: new Date(now)
+        }
+      });
     }
 
     // Recalculer le montant net total (exonération globale, etc.)

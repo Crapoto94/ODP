@@ -57,6 +57,8 @@ model AppSettings {
   filienUncDomain           String?  @default("WORKGROUP")
   watermark                 String?  @default("BROUILLON")
   dbMode                    String   @default("PROD") // PROD or DEV
+  autoDistributeInvoices    Boolean  @default(false)
+  distributeOnlyVerified    Boolean  @default(true)
 }
 
 model PostgresConfig {
