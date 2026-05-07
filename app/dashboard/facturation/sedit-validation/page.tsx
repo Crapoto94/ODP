@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import { CheckCircle2, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
@@ -23,7 +23,7 @@ interface TokenPayload {
   dossiersCount: number;
 }
 
-export default function SeditValidationPage() {
+function SeditValidationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -239,5 +239,18 @@ export default function SeditValidationPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SeditValidationPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <Loader2 size={40} className="animate-spin text-blue-600" />
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Initialisation...</p>
+      </div>
+    }>
+      <SeditValidationContent />
+    </Suspense>
   );
 }
