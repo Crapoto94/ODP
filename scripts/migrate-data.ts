@@ -71,7 +71,7 @@ async function migrate() {
     for (const table of [...tables].reverse()) {
       try {
         await postgres.$executeRawUnsafe(`TRUNCATE TABLE "${targetSchema}"."${table}" CASCADE;`);
-      } catch (e) {
+      } catch (e: any) {
         // Table might not exist or other issue
       }
     }
@@ -83,7 +83,7 @@ async function migrate() {
       let data = [];
       try {
         data = await (sqlite as any).$queryRawUnsafe(`SELECT * FROM "${table}"`);
-      } catch (e) {
+      } catch (e: any) {
         console.log(`   ⚠️ Table ${table} not found in SQLite, skipping.`);
         continue;
       }
@@ -116,8 +116,8 @@ async function migrate() {
           skipDuplicates: true,
         });
         console.log(`   ✅ Migrated ${data.length} rows.`);
-      } catch (e) {
-        console.error(`   ❌ Failed to migrate ${table}:`, e.message);
+      } catch (e: any) {
+        console.error(`   ❌ Failed to migrate ${table}:`, e?.message || e);
       }
     }
 
@@ -128,7 +128,7 @@ async function migrate() {
         await postgres.$executeRawUnsafe(`
           SELECT setval(pg_get_serial_sequence('"${targetSchema}"."${table}"', 'id'), coalesce(max(id), 1)) FROM "${targetSchema}"."${table}";
         `);
-      } catch (e) {
+      } catch (e: any) {
         // No auto-increment id or other issue
       }
     }
