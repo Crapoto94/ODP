@@ -177,6 +177,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const session = await getSession();
+    if (!session || session.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Seul un administrateur peut supprimer un dossier' }, { status: 403 });
+    }
+
     const { id: paramId } = await params;
     const id = parseInt(paramId);
     await (prisma as any).occupation.delete({

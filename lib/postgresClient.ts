@@ -1,14 +1,14 @@
-import { PrismaClient as PostgresPrismaClient } from './prisma-postgres-client';
-import { prisma as localPrisma } from './prisma';
+import { PrismaClient as PostgresPrismaClient } from './prisma-client';
+import { prismaLocal } from './prisma';
 
 let cachedClient: PostgresPrismaClient | null = null;
 let lastConfigStr: string = '';
 
 export async function getPostgresClient(): Promise<PostgresPrismaClient> {
-  const config = await localPrisma.postgresConfig.findFirst();
+  const config = await prismaLocal.postgresConfig.findFirst();
 
   if (!config) {
-    throw new Error('La configuration PostgreSQL n\'est pas définie dans la base de données.');
+    throw new Error('La configuration PostgreSQL n\'est pas définie dans la base de données locale.');
   }
 
   const { user, password, host, port, database, schema } = config;

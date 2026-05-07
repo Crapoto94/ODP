@@ -12,7 +12,8 @@ import {
   CheckCircle2,
   AlertCircle,
   Table,
-  Zap
+  Zap,
+  Code
 } from 'lucide-react';
 import TabHeader from './TabHeader';
 
@@ -22,6 +23,7 @@ export default function PostgresTab() {
     port: 5432,
     database: '',
     schema: 'public',
+    schemaDev: 'ODP',
     user: '',
     password: ''
   });
@@ -67,7 +69,7 @@ export default function PostgresTab() {
     setMessage(null);
     setTables([]);
     try {
-      const res = await axios.get('/api/settings/postgres/test');
+      const res = await axios.post('/api/settings/postgres/test', config);
       if (res.data.success) {
         setMessage({ type: 'success', text: 'Connexion réussie !' });
         setTables(res.data.tables || []);
@@ -155,7 +157,7 @@ export default function PostgresTab() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Schéma</label>
+                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Schéma de Prod</label>
                 <div className="relative group">
                   <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={16} />
                   <input 
@@ -164,6 +166,22 @@ export default function PostgresTab() {
                     placeholder="public"
                     value={config.schema}
                     onChange={e => setConfig({...config, schema: e.target.value})}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Schéma de DEV</label>
+                <div className="relative group">
+                  <Code className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={16} />
+                  <input 
+                    type="text" 
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                    placeholder="ODP"
+                    value={config.schemaDev}
+                    onChange={e => setConfig({...config, schemaDev: e.target.value})}
                   />
                 </div>
               </div>

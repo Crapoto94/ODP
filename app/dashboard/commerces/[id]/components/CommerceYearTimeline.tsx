@@ -1,14 +1,16 @@
 import React from 'react';
-import { Clock, Info } from 'lucide-react';
+import { Clock, Info, Trash2 } from 'lucide-react';
 
 interface Props {
   years: number[];
   getDispositivesTimeline: () => Record<number, any[]>;
   selectedYear?: number;
   onSelectYear?: (year: number) => void;
+  onDeleteYear?: (year: number) => void;
+  isAdmin?: boolean;
 }
 
-export default function CommerceYearTimeline({ years, getDispositivesTimeline, selectedYear, onSelectYear }: Props) {
+export default function CommerceYearTimeline({ years, getDispositivesTimeline, selectedYear, onSelectYear, onDeleteYear, isAdmin }: Props) {
   if (years.length === 0) return null;
   const timelineData = getDispositivesTimeline();
   const sortedYears = Object.keys(timelineData).map(Number).sort((a, b) => a - b);
@@ -130,6 +132,15 @@ export default function CommerceYearTimeline({ years, getDispositivesTimeline, s
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     Année {year}
                   </p>
+                  {isAdmin && onDeleteYear && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onDeleteYear(year); }}
+                      className="mt-2 p-1.5 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                      title="Supprimer cette année"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  )}
                 </div>
               </div>
             );

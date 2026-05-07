@@ -1,0 +1,69 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../lib/prisma-local-client"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model AppSettings {
+  id                   Int      @id @default(autoincrement())
+  financeEmail         String?
+  appUrl               String?
+  apmUrl               String?
+  apmToken             String?
+  senderName           String?  @default("Domaine Public")
+  senderEmail          String?  @default("dsihub@fbc.fr")
+  filienOrga           String?  @default("01")
+  filienBudget         String?  @default("BA")
+  filienExercice       Int?
+  filienAvancement     String?  @default("5")
+  filienRejetDispo     Boolean? @default(true)
+  filienRejetCA        Boolean? @default(false)
+  filienRejetMarche    Boolean? @default(false)
+  filienMouvement      String?  @default("1")
+  filienType           String?  @default("R")
+  filienLibelle        String?
+  filienCalendrier     String?  @default("01")
+  filienMonnaie        String?  @default("E")
+  filienMouvementEx    String?  @default("N")
+  filienPreBordereau   String?  @default("1235")
+  filienPoste          String?  @default("0001")
+  filienBordereau      String?  @default("0001")
+  filienObjet          String?
+  filienChapitre       String?  @default("")
+  filienNature         String?  @default("")
+  filienFonction       String?  @default("")
+  filienCodeInterne    String?  @default("")
+  filienTypeMouvement  String?  @default("")
+  filienSens           String?  @default("")
+  filienStructure      String?  @default("")
+  filienGestionnaire   String?  @default("")
+  filienUncPj          String?  @default("")
+  adDomain             String?  @default("ivry.local")
+  signataireRole       String?  @default("Le Maire d'Ivry-sur-Seine,")
+  signataireDelegation String?  @default("et par délégation,")
+  signataireNom        String?  @default("Dominique Montet - Directrice Générale Adjointe")
+  footer1              String?
+  footer2              String?
+  footer3              String?
+  footerColor          String?
+  updated_at           DateTime @updatedAt
+  filienUncPass        String?  @default("")
+  filienUncUser        String?  @default("")
+  filienUncDomain      String?  @default("WORKGROUP")
+  watermark            String?  @default("BROUILLON")
+}
+
+model PostgresConfig {
+  id       Int    @id @default(autoincrement())
+  host     String
+  port     Int    @default(5432)
+  database String
+  schema   String @default("public")
+  user     String
+  password String
+}

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { prisma } from './prisma';
+import { prismaLocal } from './prisma';
 import https from 'https';
 
 export const httpsAgent = new https.Agent({
@@ -7,8 +7,9 @@ export const httpsAgent = new https.Agent({
 });
 
 export async function getApmSettings() {
-  const rows = await (prisma as any).$queryRaw`SELECT * FROM AppSettings WHERE id = 1`;
-  const settings: any = (rows as any[])[0] || null;
+  const settings = await prismaLocal.appSettings.findFirst({
+    where: { id: 1 }
+  });
 
   let url = (settings?.apmUrl || 'http://localhost:8001/api/v1').trim().replace(/\/$/, '');
 

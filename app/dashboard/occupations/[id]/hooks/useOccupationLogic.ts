@@ -98,7 +98,7 @@ export function useOccupationLogic(occupationId: string) {
 
   useEffect(() => {
     fetchOccupation();
-    // fetchCurrentUser();
+    fetchCurrentUser();
     fetchGabarits();
   }, [occupationId]);
 

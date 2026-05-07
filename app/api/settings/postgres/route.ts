@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prismaLocal, initializePrisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const config = await prisma.postgresConfig.findFirst();
-    return NextResponse.json(config || { host: '', port: 5432, database: '', user: '', password: '' });
+    const config = await prismaLocal.postgresConfig.findFirst();
+    return NextResponse.json(config || { host: '', port: 5432, database: '', user: '', password: '', schema: 'public', schemaDev: 'ODP' });
   } catch (error) {
     console.error('[GET /api/settings/postgres] Error:', error);
     return NextResponse.json({ error: 'Failed to fetch Postgres credentials' }, { status: 500 });
@@ -14,20 +14,23 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { host, port, database, schema, user, password } = body;
+    const { host, port, database, schema, schemaDev, user, password } = body;
 
-    let config = await prisma.postgresConfig.findFirst();
+    let config = await prismaLocal.postgresConfig.findFirst();
 
     if (config) {
-      config = await prisma.postgresConfig.update({
+      config = await prismaLocal.postgresConfig.update({
         where: { id: config.id },
-        data: { host, port, database, schema, user, password }
+        data: { host, port, database, schema, schemaDev, user, password }
       });
     } else {
-      config = await prisma.postgresConfig.create({
-        data: { host, port, database, schema, user, password }
+      config = await prismaLocal.postgresConfig.create({
+        data: { host, port, database, schema, schemaDev, user, password }
       });
     }
+
+    // Force re-initialization of the Postgres client
+    await initializePrisma(true);
 
     return NextResponse.json(config);
   } catch (error) {

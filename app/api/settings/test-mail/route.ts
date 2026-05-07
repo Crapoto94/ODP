@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, prismaLocal } from '@/lib/prisma';
 import { sendApmMail } from '@/lib/apm';
 
 export async function POST() {
   try {
-    const settings = await prisma.appSettings.findFirst();
+    const settings = await prismaLocal.appSettings.findFirst();
     if (!settings || !settings.financeEmail) {
       return NextResponse.json({ error: 'Email des finances non configuré' }, { status: 400 });
     }

@@ -237,7 +237,8 @@ export default function TiersPage() {
     for (const t of tiersToVerify) {
       setCurrentVerifying(t.nom);
       try {
-        await axios.post(`/api/admin/verify-tiers/${t.id}`);
+        // Set a shorter timeout for individual requests to avoid long hangs
+        await axios.post(`/api/admin/verify-tiers/${t.id}`, {}, { timeout: 15000 });
       } catch (err) {
         console.error(`Error verifying ${t.nom}:`, err);
       }
@@ -245,9 +246,12 @@ export default function TiersPage() {
       count++;
       setVerifyProgress(Math.round((count / tiersToVerify.length) * 100));
       
-      // Delay to respect API limits
-      if (count % 10 === 0) {
-        await new Promise(resolve => setTimeout(resolve, 300));
+      // Small delay between every request to avoid burst peaks
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Larger delay every 5 requests to be safe with public API
+      if (count % 5 === 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
 

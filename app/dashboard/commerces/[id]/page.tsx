@@ -92,7 +92,8 @@ export default function CommerceDetailPage({ params }: Props) {
     handleUpdateAgissantPour,
     handleUpdateOccupationAddress,
     handleUpdateObservations,
-    handleUpdatePhoto
+    handleUpdatePhoto,
+    handleDeleteYear
   } = logic;
 
   const [isTiersSearchOpen, setIsTiersSearchOpen] = useState(false);
@@ -279,6 +280,8 @@ export default function CommerceDetailPage({ params }: Props) {
         getDispositivesTimeline={getDispositivesTimeline}
         selectedYear={selectedYear ?? undefined}
         onSelectYear={setSelectedYear}
+        onDeleteYear={handleDeleteYear}
+        isAdmin={currentUser?.role === 'ADMIN'}
       />
 
       {/* Main Content + Sidebar Grid */}

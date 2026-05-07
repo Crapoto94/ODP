@@ -114,6 +114,16 @@ export function useNotesLogic(occupationId: number, currentUser: any) {
     }
   };
 
+  const handleDeleteNote = async (noteId: number) => {
+    if (!confirm('Supprimer cette note du fil d\'événements ?')) return;
+    try {
+      await axios.delete(`/api/notes/${noteId}`);
+      fetchNotes();
+    } catch (err) {
+      alert('Erreur lors de la suppression de la note');
+    }
+  };
+
   useEffect(() => {
     fetchNotes();
     fetchContacts();
@@ -138,6 +148,7 @@ export function useNotesLogic(occupationId: number, currentUser: any) {
     handleHarvest,
     handleFileUpload,
     startDictation,
+    handleDeleteNote,
     handleSubmit
   };
 }

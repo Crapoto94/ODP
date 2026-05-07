@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, prismaLocal } from '@/lib/prisma';
 import { Document, Packer, Paragraph, TextRun, UnderlineType, AlignmentType, convertInchesToTwip } from 'docx';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -19,7 +19,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
           lignes: { include: { article: { include: { modeTaxation: true } } } }
         }
       }),
-      prisma.appSettings.findFirst()
+      prismaLocal.appSettings.findFirst()
     ]);
 
     if (!occ) return NextResponse.json({ error: 'Occupation non trouvée' }, { status: 404 });

@@ -1,4 +1,4 @@
-import { prisma } from './prisma';
+import { prisma, prismaLocal } from './prisma';
 
 export async function initializeTypeDossierConfigs() {
   try {
@@ -7,7 +7,7 @@ export async function initializeTypeDossierConfigs() {
 
     console.log('[Init] No configurations found. Starting initialization...');
 
-    const settings = await prisma.appSettings.findFirst();
+    const settings = await prismaLocal.appSettings.findFirst();
     const defaultGabarit = await (prisma as any).gabarit.findFirst({
       where: { isDefault: true }
     });

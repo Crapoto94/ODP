@@ -87,6 +87,7 @@ const TYPE_MAP: Record<string, { label: string; icon: any; color: string; bg: st
 };
 
 function OccupationsPageContent() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [occupations, setOccupations] = useState<Occupation[]>([]);
   const [tiers, setTiers] = useState<Tiers[]>([]);
   const [loading, setLoading] = useState(true);
@@ -196,6 +197,7 @@ function OccupationsPageContent() {
 
   useEffect(() => {
     console.log('[Occupations] 🚀 Component mounted, loading data...');
+    axios.get('/api/auth/me').then(res => setCurrentUser(res.data)).catch(() => {});
     fetchTiers();
     fetchOccupations();
   }, []);
@@ -315,6 +317,10 @@ function OccupationsPageContent() {
   };
 
   const handleDelete = async (id: number, nom: string) => {
+    if (currentUser?.role !== 'ADMIN') {
+      alert('Seul un administrateur peut supprimer un dossier');
+      return;
+    }
     if (!confirm(`Supprimer le dossier "${nom || id}" ?`)) return;
     try {
       await axios.delete(`/api/occupations/${id}`);
@@ -901,7 +907,9 @@ function OccupationsPageContent() {
                           {['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => downloadFacture(occ.id)} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Télécharger Facture"><FileText size={18} /></button>}
                           {['FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => handleUnlock(occ.id)} className="p-2.5 text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Déverrouiller Dossier"><Unlock size={18} /></button>}
                           <button onClick={() => handleEdit(occ)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Modifier"><Pencil size={18} /></button>
-                          <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer"><Trash2 size={18} /></button>
+                          {currentUser?.role === 'ADMIN' && (
+                            <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer"><Trash2 size={18} /></button>
+                          )}
                         </div>
                       </td>
                     </tr>

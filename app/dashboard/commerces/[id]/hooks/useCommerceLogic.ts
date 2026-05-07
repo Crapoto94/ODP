@@ -420,6 +420,20 @@ export function useCommerceLogic(paramId: string) {
     }
   };
 
+  const handleDeleteYear = async (year: number) => {
+    if (!confirm(`Supprimer toute l'année ${year} et ses dispositifs ? Cette action est irréversible.`)) return;
+    try {
+      await axios.delete(`/api/commerces/${paramId}/year/${year}`);
+      await fetchCommerceDetails();
+      if (selectedYear === year) {
+        setSelectedYear(years.find(y => y !== year) || null);
+      }
+    } catch (err) {
+      console.error('Error deleting year:', err);
+      alert('Erreur lors de la suppression de l\'année');
+    }
+  };
+
   const getTotalAmountForYear = (year: number) => {
     let total = 0;
     occupations.forEach((occ: any) => {
@@ -597,6 +611,7 @@ export function useCommerceLogic(paramId: string) {
     handleUpdateAgissantPour,
     handleUpdateOccupationAddress,
     handleUpdateObservations,
-    handleUpdatePhoto
+    handleUpdatePhoto,
+    handleDeleteYear
   };
 }

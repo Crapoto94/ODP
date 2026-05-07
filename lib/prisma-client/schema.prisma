@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -29,6 +29,9 @@ model Tiers {
   occupations       Occupation[]
   notes             Note[]
   favoritedBy       FavoriteCommerce[]
+
+  @@index([nom])
+  @@index([code_sedit])
 }
 
 model Occupation {
@@ -73,6 +76,11 @@ model Occupation {
   notes                  Note[]
   signatureRequests      SignatureRequest[]
   tiers                  Tiers              @relation(fields: [tiersId], references: [id])
+
+  @@index([tiersId])
+  @@index([statut])
+  @@index([anneeTaxation])
+  @@index([type])
 }
 
 model Contact {
@@ -92,6 +100,9 @@ model Contact {
   entreprise   String?
   tiers        Tiers?      @relation(fields: [tiersId], references: [id], onDelete: Cascade)
   occupation   Occupation? @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+
+  @@index([tiersId])
+  @@index([occupationId])
 }
 
 model Note {
@@ -166,6 +177,9 @@ model Article {
   modeTaxation   ModeTaxation?     @relation(fields: [modeTaxationId], references: [id])
   categorie      Categorie?        @relation(fields: [categorieId], references: [id])
   lignes         LigneOccupation[]
+
+  @@index([annee])
+  @@index([numero])
 }
 
 model User {
@@ -181,6 +195,8 @@ model User {
   updated_at        DateTime           @updatedAt
   logs              MobileLog[]
   favoriteCommerces FavoriteCommerce[]
+
+  @@index([login])
 }
 
 model FavoriteCommerce {
@@ -203,6 +219,8 @@ model MobileLog {
   ip         String?
   created_at DateTime @default(now())
   user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 model ContextualMessage {
@@ -212,55 +230,6 @@ model ContextualMessage {
   sujet    String?
   valeur   String
   disabled Boolean @default(false)
-}
-
-model AppSettings {
-  id                   Int      @id @default(autoincrement())
-  financeEmail         String?
-  appUrl               String?
-  apmUrl               String?
-  apmToken             String?
-  senderName           String?  @default("Domaine Public")
-  senderEmail          String?  @default("dsihub@fbc.fr")
-  filienOrga           String?  @default("01")
-  filienBudget         String?  @default("BA")
-  filienExercice       Int?
-  filienAvancement     String?  @default("5")
-  filienRejetDispo     Boolean? @default(true)
-  filienRejetCA        Boolean? @default(false)
-  filienRejetMarche    Boolean? @default(false)
-  filienMouvement      String?  @default("1")
-  filienType           String?  @default("R")
-  filienLibelle        String?
-  filienCalendrier     String?  @default("01")
-  filienMonnaie        String?  @default("E")
-  filienMouvementEx    String?  @default("N")
-  filienPreBordereau   String?  @default("1235")
-  filienPoste          String?  @default("0001")
-  filienBordereau      String?  @default("0001")
-  filienObjet          String?
-  filienChapitre       String?  @default("")
-  filienNature         String?  @default("")
-  filienFonction       String?  @default("")
-  filienCodeInterne    String?  @default("")
-  filienTypeMouvement  String?  @default("")
-  filienSens           String?  @default("")
-  filienStructure      String?  @default("")
-  filienGestionnaire   String?  @default("")
-  filienUncPj          String?  @default("")
-  adDomain             String?  @default("ivry.local")
-  signataireRole       String?  @default("Le Maire d'Ivry-sur-Seine,")
-  signataireDelegation String?  @default("et par délégation,")
-  signataireNom        String?  @default("Dominique Montet - Directrice Générale Adjointe")
-  footer1              String?
-  footer2              String?
-  footer3              String?
-  footerColor          String?
-  updated_at           DateTime @updatedAt
-  filienUncPass        String?  @default("")
-  filienUncUser        String?  @default("")
-  filienUncDomain      String?  @default("WORKGROUP")
-  watermark            String?  @default("BROUILLON")
 }
 
 model LigneOccupation {
@@ -281,6 +250,9 @@ model LigneOccupation {
   note               String?
   article            Article    @relation(fields: [articleId], references: [id])
   occupation         Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+
+  @@index([occupationId])
+  @@index([articleId])
 }
 
 model Dispositif {
@@ -291,6 +263,8 @@ model Dispositif {
   created_at   DateTime   @default(now())
   updated_at   DateTime   @updatedAt
   occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+
+  @@index([occupationId])
 }
 
 model Gabarit {
@@ -341,6 +315,9 @@ model BacklogItem {
   updated_at  DateTime         @updatedAt
   comments    BacklogComment[]
   version     VersionRelease?  @relation(fields: [versionId], references: [id])
+
+  @@index([status])
+  @@index([versionId])
 }
 
 model BacklogComment {
@@ -350,6 +327,8 @@ model BacklogComment {
   author        String?
   created_at    DateTime    @default(now())
   backlogItem   BacklogItem @relation(fields: [backlogItemId], references: [id], onDelete: Cascade)
+
+  @@index([backlogItemId])
 }
 
 model VersionRelease {
@@ -359,16 +338,6 @@ model VersionRelease {
   releasedAt    DateTime      @default(now())
   created_at    DateTime      @default(now())
   backlogItems  BacklogItem[]
-}
-
-model PostgresConfig {
-  id       Int    @id @default(autoincrement())
-  host     String
-  port     Int    @default(5432)
-  database String
-  schema   String @default("public")
-  user     String
-  password String
 }
 
 model ContactRoleConfig {
@@ -408,6 +377,9 @@ model BillingRunInvoice {
   total        Float
   pdfPath      String
   run          BillingRun @relation(fields: [billingRunId], references: [id], onDelete: Cascade)
+
+  @@index([billingRunId])
+  @@index([dossierId])
 }
 
 model Signatory {
@@ -440,4 +412,7 @@ model SignatureRequest {
   updated_at       DateTime   @updatedAt
   occupation       Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
   signatory        Signatory  @relation(fields: [signatoriesId], references: [id])
+
+  @@index([occupationId])
+  @@index([signatoriesId])
 }
