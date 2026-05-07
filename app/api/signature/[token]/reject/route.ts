@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, prismaLocal } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { validateSignatureToken } from '@/lib/signature-token';
 import { sendApmMail } from '@/lib/apm';
 import { getContextualMessageData } from '@/lib/contextual-messages';
@@ -86,7 +86,7 @@ export async function POST(
     });
 
     // Get settings for admin email + appUrl
-    const settings = await prismaLocal.appSettings.findFirst({
+    const settings = await (prisma as any).appSettings.findFirst({
       where: { id: 1 }
     });
     const baseUrl = (settings?.appUrl || 'http://localhost:3000').replace(/\/$/, '');

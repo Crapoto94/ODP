@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
-import { prismaLocal, initializePrisma } from '@/lib/prisma';
+import { initializePrisma } from '@/lib/prisma';
+import fs from 'fs';
+import path from 'path';
 
 export async function GET() {
   try {
-    const settings = await prismaLocal.appSettings.findFirst();
-    return NextResponse.json({ mode: settings?.dbMode || 'PROD' });
+    const configPath = path.join(process.cwd(), 'config', 'settings.json');
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    return NextResponse.json({ mode: config.postgres?.mode || 'PROD' });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -17,10 +20,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Mode invalide' }, { status: 400 });
     }
 
-    await prismaLocal.appSettings.update({
-      where: { id: 1 },
-      data: { dbMode: mode }
-    });
+    const configPath = path.join(process.cwd(), 'config', 'settings.json');
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    
+    if (!config.postgres) config.postgres = {};
+    config.postgres.mode = mode;
+    
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 
     // Force re-initialization of the Postgres client with the new mode/schema
     await initializePrisma(true);

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma, prismaLocal } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import { mapFont } from '@/app/dashboard/gabarit/types';
@@ -22,7 +22,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
           lignes: { include: { article: { include: { modeTaxation: true } } } }
         }
       }),
-      prismaLocal.appSettings.findFirst()
+      (prisma as any).appSettings.findFirst()
     ]);
     
     if (!occ) return NextResponse.json({ error: 'Occupation non trouvée' }, { status: 404 });

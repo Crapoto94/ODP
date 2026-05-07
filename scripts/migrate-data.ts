@@ -14,15 +14,16 @@ async function migrate() {
   });
 
   try {
-    // 1. Fetch Postgres configuration from SQLite
-    console.log('🔍 Fetching PostgreSQL configuration from local database...');
-    const config = await sqlite.postgresConfig.findFirst();
+    // 1. Fetch Postgres configuration from local file
+    console.log('🔍 Fetching PostgreSQL configuration from settings.json...');
+    const configPath = path.join(__dirname, '../config/settings.json');
+    const config = JSON.parse(require('fs').readFileSync(configPath, 'utf8'));
 
-    if (!config) {
-      throw new Error('PostgresConfig not found in SQLite database.');
+    if (!config || !config.postgres) {
+      throw new Error('PostgresConfig not found in settings.json.');
     }
 
-    const { user, password, host, port, database, schema } = config;
+    const { user, password, host, port, database, schema } = config.postgres;
     const targetSchema = schema || 'ODP';
     const postgresUrl = `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:${port}/${database}?schema=${targetSchema}`;
     
@@ -63,7 +64,8 @@ async function migrate() {
       'Note',
       'VersionRelease',
       'BacklogItem',
-      'BacklogComment'
+      'BacklogComment',
+      'AppSettings'
     ];
 
     // 2. Clear Postgres tables in reverse order

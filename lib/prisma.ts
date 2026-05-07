@@ -1,42 +1,50 @@
 import { PrismaClient } from './prisma-client';
-import { PrismaClient as PrismaLocalClient } from './prisma-local-client';
-import path from 'path';
 
 // Use a global variable to prevent multiple instances of Prisma Client during development
 const globalForPrisma = global as unknown as { 
   prisma: PrismaClient,
-  prismaLocal: PrismaLocalClient,
   isInitialized: boolean
 };
 
 console.log('[PRISMA] Module loading...');
 
-// 1. Initialize Local SQLite Client
-const sqlitePath = path.join(process.cwd(), 'prisma', 'dev.db').replace(/\\/g, '/');
-export const prismaLocal =
-  globalForPrisma.prismaLocal ||
-  new PrismaLocalClient({
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-    datasources: {
-      db: {
-        url: `file:${sqlitePath}`,
-      },
-    },
-  });
+// 1. Load config from local file (Server-side only)
+export function getLocalConfig() {
+  if (typeof window !== 'undefined') return null; // Browser safety
+
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const configPath = path.join(process.cwd(), 'config', 'settings.json');
+    if (fs.existsSync(configPath)) {
+      return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    }
+  } catch (e) {
+    console.error('[PRISMA] Error reading config/settings.json:', e);
+  }
+  return null;
+}
 
 // 2. Helper to build Postgres URL
 async function getPostgresUrl() {
+  if (typeof window !== 'undefined') return process.env.DATABASE_URL;
+
   try {
-    const config = await prismaLocal.postgresConfig.findFirst();
-    if (!config) return process.env.DATABASE_URL;
+    const config = getLocalConfig();
+    if (!config || !config.postgres) {
+      console.warn('[PRISMA] No postgres config found in settings.json, falling back to ENV');
+      return process.env.DATABASE_URL;
+    }
     
-    const { user, password, host, port, database, schema, schemaDev } = config;
-    const settings = await prismaLocal.appSettings.findFirst();
-    const currentMode = settings?.dbMode || 'PROD';
+    const { user, password, host, port, database, schema, schemaDev } = config.postgres;
+    
+    // We'll read the mode from the settings.json file for schema switching
+    const currentMode = config.postgres.mode || 'PROD';
+    
     const targetSchema = (currentMode === 'DEV' && schemaDev) ? schemaDev : (schema || 'public');
     return `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:${port}/${database}?schema=${targetSchema}`;
   } catch (e: any) {
-    console.error('[PRISMA] Failed to read PostgresConfig:', e?.message || e);
+    console.error('[PRISMA] Failed to build Postgres URL:', e?.message || e);
     return process.env.DATABASE_URL;
   }
 }
@@ -78,7 +86,24 @@ export const prisma = new Proxy({} as PrismaClient, {
     const activeClient = globalForPrisma.prisma || _prisma;
 
     if (!activeClient) {
-      const fallbackUrl = process.env.DATABASE_URL;
+      // Build URL from settings.json (synchronous fallback)
+      let fallbackUrl = '';
+      try {
+        const config = getLocalConfig();
+        if (config && config.postgres) {
+          const { user, password, host, port, database, schema } = config.postgres;
+          const targetSchema = schema || 'ODP';
+          fallbackUrl = `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:${port}/${database}?schema=${targetSchema}`;
+        }
+      } catch (e) {
+        console.warn('[PRISMA] Could not read settings.json in proxy fallback');
+      }
+
+      // If settings.json didn't work, try env var
+      if (!fallbackUrl) {
+        fallbackUrl = process.env.DATABASE_URL || '';
+      }
+
       if (fallbackUrl && fallbackUrl !== '""' && fallbackUrl !== "''") {
         _prisma = createClient(fallbackUrl);
         if (_prisma) (globalForPrisma as any).prisma = _prisma;
@@ -128,6 +153,5 @@ console.log('[PRISMA] Module loaded.');
 initializePrisma().catch(err => console.error('[PRISMA] Top-level initialization failed:', err.message));
 
 if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prismaLocal = prismaLocal;
   globalForPrisma.isInitialized = globalForPrisma.isInitialized || false;
 }

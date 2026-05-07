@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, prismaLocal } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { join } from 'path';
 import { prepareFilienMovements, exportToUnc } from '@/lib/billing-service';
 import { generateFilienFile, FilienParams } from '@/lib/filien';
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Aucun dossier sélectionné' }, { status: 400 });
     }
 
-    const settings = await prismaLocal.appSettings.findFirst({ where: { id: 1 } });
+    const settings = await (prisma as any).appSettings.findFirst({ where: { id: 1 } });
     if (!settings) {
       console.error('[Filien] Settings not found');
       return NextResponse.json({ error: 'Paramètres Filien non configurés' }, { status: 500 });

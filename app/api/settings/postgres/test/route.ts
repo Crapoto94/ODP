@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prismaLocal } from '@/lib/prisma';
+import { getLocalConfig } from '@/lib/prisma';
 import { PrismaClient } from '@/lib/prisma-client';
 
 async function testConnection(config: any) {
@@ -35,11 +35,12 @@ async function testConnection(config: any) {
 
 export async function GET() {
   try {
-    const config = await prismaLocal.postgresConfig.findFirst();
-    if (!config) {
+    const config = getLocalConfig();
+    const pg = config?.postgres;
+    if (!pg) {
       return NextResponse.json({ success: false, error: 'Aucune configuration trouvée' }, { status: 404 });
     }
-    const result = await testConnection(config);
+    const result = await testConnection(pg);
     return NextResponse.json(result);
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

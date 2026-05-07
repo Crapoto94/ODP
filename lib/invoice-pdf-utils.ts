@@ -1,4 +1,4 @@
-import { prisma, prismaLocal } from './prisma';
+import { prisma } from './prisma';
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import { writeFile, readFile, mkdir } from 'fs/promises';
@@ -93,7 +93,7 @@ export async function generateInvoicePdfBuffer(
     throw new Error('Paramètres manquants');
   }
 
-  const settings = await prismaLocal.appSettings.findFirst();
+  const settings = await (prisma as any).appSettings.findFirst();
 
   // Get the billing tiers: use "Agissant pour" if defined, otherwise use "Demandeur"
   let tierFacturable = occ.tiers;

@@ -1,0 +1,15 @@
+{
+  "postgres": {
+    "host": "10.103.130.106",
+    "port": 5432,
+    "database": "ivry_admin",
+    "schema": "ODP",
+    "schemaDev": "ODP_DEV",
+    "user": "postgres",
+    "password": "ivrypassword"
+  },
+  "admin": {
+    "login": "admin",
+    "password": "admin1234"
+  }
+}

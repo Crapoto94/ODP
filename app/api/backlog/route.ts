@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getPostgresClient } from '@/lib/postgresClient';
+import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const pgPrisma = await getPostgresClient();
-    const items = await pgPrisma.backlogItem.findMany({
+    const items = await prisma.backlogItem.findMany({
       include: {
         version: true,
         comments: {
@@ -26,7 +25,6 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const pgPrisma = await getPostgresClient();
     const body = await req.json();
 
     let requestedBy = 'Anonymous';
@@ -43,7 +41,7 @@ export async function POST(req: Request) {
       console.error('[POST /api/backlog] Error decrypting session:', e);
     }
 
-    const item = await (pgPrisma.backlogItem as any).create({
+    const item = await prisma.backlogItem.create({
       data: {
         title: body.title,
         description: body.description,

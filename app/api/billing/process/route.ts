@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, prismaLocal } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { format } from 'date-fns';
 import { mkdir } from 'fs/promises';
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     const currentYear = new Date().getFullYear();
     const [dossiers, appSettings, tlpeConfig] = await Promise.all([
       fetchDossiers(ids, type),
-      prismaLocal.appSettings.findFirst({ where: { id: 1 } }),
+      (prisma as any).appSettings.findFirst({ where: { id: 1 } }),
       (prisma as any).tlpeConfig.findUnique({ where: { annee: currentYear } })
     ]);
 

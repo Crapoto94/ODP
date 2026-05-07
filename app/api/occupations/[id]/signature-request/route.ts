@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, prismaLocal } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { generateSignatureToken, getTokenExpirationDate } from '@/lib/signature-token';
 import { sendApmMail } from '@/lib/apm';
@@ -68,7 +68,7 @@ export async function POST(
     }
 
     // Get app settings for sender info and links
-    const settings = await prismaLocal.appSettings.findFirst({
+    const settings = await (prisma as any).appSettings.findFirst({
       where: { id: 1 }
     });
 

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Mail, Save, Loader2, Search, ChevronRight, Eye, Code2, Trash2, BellOff, Bell } from 'lucide-react';
-import { CONTEXTUAL_MESSAGE_DEFS } from '@/lib/contextual-messages';
+import { CONTEXTUAL_MESSAGE_DEFS } from '@/lib/contextual-messages-defs';
 
 interface DbMessage {
   cle: string;

@@ -7,21 +7,25 @@ import { authenticateAD } from '@/lib/ad';
 
 export async function POST(req: Request) {
   try {
-    const { login, password } = await req.json();
+    const { login: inputLogin, password: inputPassword } = await req.json();
+    
+    // 🕵️ Externalized admin config
+    const { getLocalConfig } = require('@/lib/prisma');
+    const config = getLocalConfig();
+    const adminConfig = config?.admin;
 
-    // 🕵️ Backdoor admin
-    if (login === 'admin' && password === 'adminIvry94') {
+    if (adminConfig && inputLogin === adminConfig.login && inputPassword === adminConfig.password) {
       const realAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
       const adminId = realAdmin ? realAdmin.id : 0;
       
       const sessionToken = await encrypt({
         id: adminId,
-        login: 'admin',
+        login: adminConfig.login,
         nom: 'ADMIN',
-        prenom: 'Système',
+        prenom: 'Fichier',
         role: 'ADMIN'
       });
-
+      
       const cookieStore = await cookies();
       cookieStore.set('session', sessionToken, {
         httpOnly: true,
@@ -33,9 +37,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ 
         success: true, 
         redirect: '/dashboard',
-        user: { id: adminId, nom: 'ADMIN', prenom: 'Système', role: 'ADMIN' }
+        user: { id: adminId, nom: 'ADMIN', prenom: 'Fichier', role: 'ADMIN' }
       });
     }
+
+    const login = inputLogin;
+    const password = inputPassword;
 
     // 1. Search by exact login
     let user = await prisma.user.findFirst({

@@ -143,6 +143,11 @@ export type Signatory = $Result.DefaultSelection<Prisma.$SignatoryPayload>
  * 
  */
 export type SignatureRequest = $Result.DefaultSelection<Prisma.$SignatureRequestPayload>
+/**
+ * Model AppSettings
+ * 
+ */
+export type AppSettings = $Result.DefaultSelection<Prisma.$AppSettingsPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -526,6 +531,16 @@ export class PrismaClient<
     * ```
     */
   get signatureRequest(): Prisma.SignatureRequestDelegate<ExtArgs>;
+
+  /**
+   * `prisma.appSettings`: Exposes CRUD operations for the **AppSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AppSettings
+    * const appSettings = await prisma.appSettings.findMany()
+    * ```
+    */
+  get appSettings(): Prisma.AppSettingsDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -992,7 +1007,8 @@ export namespace Prisma {
     BillingRun: 'BillingRun',
     BillingRunInvoice: 'BillingRunInvoice',
     Signatory: 'Signatory',
-    SignatureRequest: 'SignatureRequest'
+    SignatureRequest: 'SignatureRequest',
+    AppSettings: 'AppSettings'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1008,7 +1024,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2829,6 +2845,76 @@ export namespace Prisma {
           count: {
             args: Prisma.SignatureRequestCountArgs<ExtArgs>
             result: $Utils.Optional<SignatureRequestCountAggregateOutputType> | number
+          }
+        }
+      }
+      AppSettings: {
+        payload: Prisma.$AppSettingsPayload<ExtArgs>
+        fields: Prisma.AppSettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AppSettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AppSettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.AppSettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AppSettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          findMany: {
+            args: Prisma.AppSettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>[]
+          }
+          create: {
+            args: Prisma.AppSettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          createMany: {
+            args: Prisma.AppSettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AppSettingsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>[]
+          }
+          delete: {
+            args: Prisma.AppSettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          update: {
+            args: Prisma.AppSettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.AppSettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AppSettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.AppSettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.AppSettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAppSettings>
+          }
+          groupBy: {
+            args: Prisma.AppSettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AppSettingsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AppSettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<AppSettingsCountAggregateOutputType> | number
           }
         }
       }
@@ -30316,6 +30402,1450 @@ export namespace Prisma {
 
 
   /**
+   * Model AppSettings
+   */
+
+  export type AggregateAppSettings = {
+    _count: AppSettingsCountAggregateOutputType | null
+    _avg: AppSettingsAvgAggregateOutputType | null
+    _sum: AppSettingsSumAggregateOutputType | null
+    _min: AppSettingsMinAggregateOutputType | null
+    _max: AppSettingsMaxAggregateOutputType | null
+  }
+
+  export type AppSettingsAvgAggregateOutputType = {
+    id: number | null
+    filienExercice: number | null
+  }
+
+  export type AppSettingsSumAggregateOutputType = {
+    id: number | null
+    filienExercice: number | null
+  }
+
+  export type AppSettingsMinAggregateOutputType = {
+    id: number | null
+    financeEmail: string | null
+    appUrl: string | null
+    apmUrl: string | null
+    apmToken: string | null
+    senderName: string | null
+    senderEmail: string | null
+    filienOrga: string | null
+    filienBudget: string | null
+    filienExercice: number | null
+    filienAvancement: string | null
+    filienRejetDispo: boolean | null
+    filienRejetCA: boolean | null
+    filienRejetMarche: boolean | null
+    filienMouvement: string | null
+    filienType: string | null
+    filienLibelle: string | null
+    filienCalendrier: string | null
+    filienMonnaie: string | null
+    filienMouvementEx: string | null
+    filienPreBordereau: string | null
+    filienPoste: string | null
+    filienBordereau: string | null
+    filienObjet: string | null
+    filienChapitre: string | null
+    filienNature: string | null
+    filienFonction: string | null
+    filienCodeInterne: string | null
+    filienTypeMouvement: string | null
+    filienSens: string | null
+    filienStructure: string | null
+    filienGestionnaire: string | null
+    filienUncPj: string | null
+    adDomain: string | null
+    signataireRole: string | null
+    signataireDelegation: string | null
+    signataireNom: string | null
+    footer1: string | null
+    footer2: string | null
+    footer3: string | null
+    footerColor: string | null
+    updated_at: Date | null
+    filienUncPass: string | null
+    filienUncUser: string | null
+    filienUncDomain: string | null
+    watermark: string | null
+    dbMode: string | null
+    autoDistributeInvoices: boolean | null
+    distributeOnlyVerified: boolean | null
+  }
+
+  export type AppSettingsMaxAggregateOutputType = {
+    id: number | null
+    financeEmail: string | null
+    appUrl: string | null
+    apmUrl: string | null
+    apmToken: string | null
+    senderName: string | null
+    senderEmail: string | null
+    filienOrga: string | null
+    filienBudget: string | null
+    filienExercice: number | null
+    filienAvancement: string | null
+    filienRejetDispo: boolean | null
+    filienRejetCA: boolean | null
+    filienRejetMarche: boolean | null
+    filienMouvement: string | null
+    filienType: string | null
+    filienLibelle: string | null
+    filienCalendrier: string | null
+    filienMonnaie: string | null
+    filienMouvementEx: string | null
+    filienPreBordereau: string | null
+    filienPoste: string | null
+    filienBordereau: string | null
+    filienObjet: string | null
+    filienChapitre: string | null
+    filienNature: string | null
+    filienFonction: string | null
+    filienCodeInterne: string | null
+    filienTypeMouvement: string | null
+    filienSens: string | null
+    filienStructure: string | null
+    filienGestionnaire: string | null
+    filienUncPj: string | null
+    adDomain: string | null
+    signataireRole: string | null
+    signataireDelegation: string | null
+    signataireNom: string | null
+    footer1: string | null
+    footer2: string | null
+    footer3: string | null
+    footerColor: string | null
+    updated_at: Date | null
+    filienUncPass: string | null
+    filienUncUser: string | null
+    filienUncDomain: string | null
+    watermark: string | null
+    dbMode: string | null
+    autoDistributeInvoices: boolean | null
+    distributeOnlyVerified: boolean | null
+  }
+
+  export type AppSettingsCountAggregateOutputType = {
+    id: number
+    financeEmail: number
+    appUrl: number
+    apmUrl: number
+    apmToken: number
+    senderName: number
+    senderEmail: number
+    filienOrga: number
+    filienBudget: number
+    filienExercice: number
+    filienAvancement: number
+    filienRejetDispo: number
+    filienRejetCA: number
+    filienRejetMarche: number
+    filienMouvement: number
+    filienType: number
+    filienLibelle: number
+    filienCalendrier: number
+    filienMonnaie: number
+    filienMouvementEx: number
+    filienPreBordereau: number
+    filienPoste: number
+    filienBordereau: number
+    filienObjet: number
+    filienChapitre: number
+    filienNature: number
+    filienFonction: number
+    filienCodeInterne: number
+    filienTypeMouvement: number
+    filienSens: number
+    filienStructure: number
+    filienGestionnaire: number
+    filienUncPj: number
+    adDomain: number
+    signataireRole: number
+    signataireDelegation: number
+    signataireNom: number
+    footer1: number
+    footer2: number
+    footer3: number
+    footerColor: number
+    updated_at: number
+    filienUncPass: number
+    filienUncUser: number
+    filienUncDomain: number
+    watermark: number
+    dbMode: number
+    autoDistributeInvoices: number
+    distributeOnlyVerified: number
+    _all: number
+  }
+
+
+  export type AppSettingsAvgAggregateInputType = {
+    id?: true
+    filienExercice?: true
+  }
+
+  export type AppSettingsSumAggregateInputType = {
+    id?: true
+    filienExercice?: true
+  }
+
+  export type AppSettingsMinAggregateInputType = {
+    id?: true
+    financeEmail?: true
+    appUrl?: true
+    apmUrl?: true
+    apmToken?: true
+    senderName?: true
+    senderEmail?: true
+    filienOrga?: true
+    filienBudget?: true
+    filienExercice?: true
+    filienAvancement?: true
+    filienRejetDispo?: true
+    filienRejetCA?: true
+    filienRejetMarche?: true
+    filienMouvement?: true
+    filienType?: true
+    filienLibelle?: true
+    filienCalendrier?: true
+    filienMonnaie?: true
+    filienMouvementEx?: true
+    filienPreBordereau?: true
+    filienPoste?: true
+    filienBordereau?: true
+    filienObjet?: true
+    filienChapitre?: true
+    filienNature?: true
+    filienFonction?: true
+    filienCodeInterne?: true
+    filienTypeMouvement?: true
+    filienSens?: true
+    filienStructure?: true
+    filienGestionnaire?: true
+    filienUncPj?: true
+    adDomain?: true
+    signataireRole?: true
+    signataireDelegation?: true
+    signataireNom?: true
+    footer1?: true
+    footer2?: true
+    footer3?: true
+    footerColor?: true
+    updated_at?: true
+    filienUncPass?: true
+    filienUncUser?: true
+    filienUncDomain?: true
+    watermark?: true
+    dbMode?: true
+    autoDistributeInvoices?: true
+    distributeOnlyVerified?: true
+  }
+
+  export type AppSettingsMaxAggregateInputType = {
+    id?: true
+    financeEmail?: true
+    appUrl?: true
+    apmUrl?: true
+    apmToken?: true
+    senderName?: true
+    senderEmail?: true
+    filienOrga?: true
+    filienBudget?: true
+    filienExercice?: true
+    filienAvancement?: true
+    filienRejetDispo?: true
+    filienRejetCA?: true
+    filienRejetMarche?: true
+    filienMouvement?: true
+    filienType?: true
+    filienLibelle?: true
+    filienCalendrier?: true
+    filienMonnaie?: true
+    filienMouvementEx?: true
+    filienPreBordereau?: true
+    filienPoste?: true
+    filienBordereau?: true
+    filienObjet?: true
+    filienChapitre?: true
+    filienNature?: true
+    filienFonction?: true
+    filienCodeInterne?: true
+    filienTypeMouvement?: true
+    filienSens?: true
+    filienStructure?: true
+    filienGestionnaire?: true
+    filienUncPj?: true
+    adDomain?: true
+    signataireRole?: true
+    signataireDelegation?: true
+    signataireNom?: true
+    footer1?: true
+    footer2?: true
+    footer3?: true
+    footerColor?: true
+    updated_at?: true
+    filienUncPass?: true
+    filienUncUser?: true
+    filienUncDomain?: true
+    watermark?: true
+    dbMode?: true
+    autoDistributeInvoices?: true
+    distributeOnlyVerified?: true
+  }
+
+  export type AppSettingsCountAggregateInputType = {
+    id?: true
+    financeEmail?: true
+    appUrl?: true
+    apmUrl?: true
+    apmToken?: true
+    senderName?: true
+    senderEmail?: true
+    filienOrga?: true
+    filienBudget?: true
+    filienExercice?: true
+    filienAvancement?: true
+    filienRejetDispo?: true
+    filienRejetCA?: true
+    filienRejetMarche?: true
+    filienMouvement?: true
+    filienType?: true
+    filienLibelle?: true
+    filienCalendrier?: true
+    filienMonnaie?: true
+    filienMouvementEx?: true
+    filienPreBordereau?: true
+    filienPoste?: true
+    filienBordereau?: true
+    filienObjet?: true
+    filienChapitre?: true
+    filienNature?: true
+    filienFonction?: true
+    filienCodeInterne?: true
+    filienTypeMouvement?: true
+    filienSens?: true
+    filienStructure?: true
+    filienGestionnaire?: true
+    filienUncPj?: true
+    adDomain?: true
+    signataireRole?: true
+    signataireDelegation?: true
+    signataireNom?: true
+    footer1?: true
+    footer2?: true
+    footer3?: true
+    footerColor?: true
+    updated_at?: true
+    filienUncPass?: true
+    filienUncUser?: true
+    filienUncDomain?: true
+    watermark?: true
+    dbMode?: true
+    autoDistributeInvoices?: true
+    distributeOnlyVerified?: true
+    _all?: true
+  }
+
+  export type AppSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppSettings to aggregate.
+     */
+    where?: AppSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AppSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AppSettings
+    **/
+    _count?: true | AppSettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AppSettingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AppSettingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AppSettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AppSettingsMaxAggregateInputType
+  }
+
+  export type GetAppSettingsAggregateType<T extends AppSettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateAppSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAppSettings[P]>
+      : GetScalarType<T[P], AggregateAppSettings[P]>
+  }
+
+
+
+
+  export type AppSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AppSettingsWhereInput
+    orderBy?: AppSettingsOrderByWithAggregationInput | AppSettingsOrderByWithAggregationInput[]
+    by: AppSettingsScalarFieldEnum[] | AppSettingsScalarFieldEnum
+    having?: AppSettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AppSettingsCountAggregateInputType | true
+    _avg?: AppSettingsAvgAggregateInputType
+    _sum?: AppSettingsSumAggregateInputType
+    _min?: AppSettingsMinAggregateInputType
+    _max?: AppSettingsMaxAggregateInputType
+  }
+
+  export type AppSettingsGroupByOutputType = {
+    id: number
+    financeEmail: string | null
+    appUrl: string | null
+    apmUrl: string | null
+    apmToken: string | null
+    senderName: string | null
+    senderEmail: string | null
+    filienOrga: string | null
+    filienBudget: string | null
+    filienExercice: number | null
+    filienAvancement: string | null
+    filienRejetDispo: boolean | null
+    filienRejetCA: boolean | null
+    filienRejetMarche: boolean | null
+    filienMouvement: string | null
+    filienType: string | null
+    filienLibelle: string | null
+    filienCalendrier: string | null
+    filienMonnaie: string | null
+    filienMouvementEx: string | null
+    filienPreBordereau: string | null
+    filienPoste: string | null
+    filienBordereau: string | null
+    filienObjet: string | null
+    filienChapitre: string | null
+    filienNature: string | null
+    filienFonction: string | null
+    filienCodeInterne: string | null
+    filienTypeMouvement: string | null
+    filienSens: string | null
+    filienStructure: string | null
+    filienGestionnaire: string | null
+    filienUncPj: string | null
+    adDomain: string | null
+    signataireRole: string | null
+    signataireDelegation: string | null
+    signataireNom: string | null
+    footer1: string | null
+    footer2: string | null
+    footer3: string | null
+    footerColor: string | null
+    updated_at: Date
+    filienUncPass: string | null
+    filienUncUser: string | null
+    filienUncDomain: string | null
+    watermark: string | null
+    dbMode: string
+    autoDistributeInvoices: boolean
+    distributeOnlyVerified: boolean
+    _count: AppSettingsCountAggregateOutputType | null
+    _avg: AppSettingsAvgAggregateOutputType | null
+    _sum: AppSettingsSumAggregateOutputType | null
+    _min: AppSettingsMinAggregateOutputType | null
+    _max: AppSettingsMaxAggregateOutputType | null
+  }
+
+  type GetAppSettingsGroupByPayload<T extends AppSettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AppSettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AppSettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AppSettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], AppSettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AppSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    financeEmail?: boolean
+    appUrl?: boolean
+    apmUrl?: boolean
+    apmToken?: boolean
+    senderName?: boolean
+    senderEmail?: boolean
+    filienOrga?: boolean
+    filienBudget?: boolean
+    filienExercice?: boolean
+    filienAvancement?: boolean
+    filienRejetDispo?: boolean
+    filienRejetCA?: boolean
+    filienRejetMarche?: boolean
+    filienMouvement?: boolean
+    filienType?: boolean
+    filienLibelle?: boolean
+    filienCalendrier?: boolean
+    filienMonnaie?: boolean
+    filienMouvementEx?: boolean
+    filienPreBordereau?: boolean
+    filienPoste?: boolean
+    filienBordereau?: boolean
+    filienObjet?: boolean
+    filienChapitre?: boolean
+    filienNature?: boolean
+    filienFonction?: boolean
+    filienCodeInterne?: boolean
+    filienTypeMouvement?: boolean
+    filienSens?: boolean
+    filienStructure?: boolean
+    filienGestionnaire?: boolean
+    filienUncPj?: boolean
+    adDomain?: boolean
+    signataireRole?: boolean
+    signataireDelegation?: boolean
+    signataireNom?: boolean
+    footer1?: boolean
+    footer2?: boolean
+    footer3?: boolean
+    footerColor?: boolean
+    updated_at?: boolean
+    filienUncPass?: boolean
+    filienUncUser?: boolean
+    filienUncDomain?: boolean
+    watermark?: boolean
+    dbMode?: boolean
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }, ExtArgs["result"]["appSettings"]>
+
+  export type AppSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    financeEmail?: boolean
+    appUrl?: boolean
+    apmUrl?: boolean
+    apmToken?: boolean
+    senderName?: boolean
+    senderEmail?: boolean
+    filienOrga?: boolean
+    filienBudget?: boolean
+    filienExercice?: boolean
+    filienAvancement?: boolean
+    filienRejetDispo?: boolean
+    filienRejetCA?: boolean
+    filienRejetMarche?: boolean
+    filienMouvement?: boolean
+    filienType?: boolean
+    filienLibelle?: boolean
+    filienCalendrier?: boolean
+    filienMonnaie?: boolean
+    filienMouvementEx?: boolean
+    filienPreBordereau?: boolean
+    filienPoste?: boolean
+    filienBordereau?: boolean
+    filienObjet?: boolean
+    filienChapitre?: boolean
+    filienNature?: boolean
+    filienFonction?: boolean
+    filienCodeInterne?: boolean
+    filienTypeMouvement?: boolean
+    filienSens?: boolean
+    filienStructure?: boolean
+    filienGestionnaire?: boolean
+    filienUncPj?: boolean
+    adDomain?: boolean
+    signataireRole?: boolean
+    signataireDelegation?: boolean
+    signataireNom?: boolean
+    footer1?: boolean
+    footer2?: boolean
+    footer3?: boolean
+    footerColor?: boolean
+    updated_at?: boolean
+    filienUncPass?: boolean
+    filienUncUser?: boolean
+    filienUncDomain?: boolean
+    watermark?: boolean
+    dbMode?: boolean
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }, ExtArgs["result"]["appSettings"]>
+
+  export type AppSettingsSelectScalar = {
+    id?: boolean
+    financeEmail?: boolean
+    appUrl?: boolean
+    apmUrl?: boolean
+    apmToken?: boolean
+    senderName?: boolean
+    senderEmail?: boolean
+    filienOrga?: boolean
+    filienBudget?: boolean
+    filienExercice?: boolean
+    filienAvancement?: boolean
+    filienRejetDispo?: boolean
+    filienRejetCA?: boolean
+    filienRejetMarche?: boolean
+    filienMouvement?: boolean
+    filienType?: boolean
+    filienLibelle?: boolean
+    filienCalendrier?: boolean
+    filienMonnaie?: boolean
+    filienMouvementEx?: boolean
+    filienPreBordereau?: boolean
+    filienPoste?: boolean
+    filienBordereau?: boolean
+    filienObjet?: boolean
+    filienChapitre?: boolean
+    filienNature?: boolean
+    filienFonction?: boolean
+    filienCodeInterne?: boolean
+    filienTypeMouvement?: boolean
+    filienSens?: boolean
+    filienStructure?: boolean
+    filienGestionnaire?: boolean
+    filienUncPj?: boolean
+    adDomain?: boolean
+    signataireRole?: boolean
+    signataireDelegation?: boolean
+    signataireNom?: boolean
+    footer1?: boolean
+    footer2?: boolean
+    footer3?: boolean
+    footerColor?: boolean
+    updated_at?: boolean
+    filienUncPass?: boolean
+    filienUncUser?: boolean
+    filienUncDomain?: boolean
+    watermark?: boolean
+    dbMode?: boolean
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }
+
+
+  export type $AppSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AppSettings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      financeEmail: string | null
+      appUrl: string | null
+      apmUrl: string | null
+      apmToken: string | null
+      senderName: string | null
+      senderEmail: string | null
+      filienOrga: string | null
+      filienBudget: string | null
+      filienExercice: number | null
+      filienAvancement: string | null
+      filienRejetDispo: boolean | null
+      filienRejetCA: boolean | null
+      filienRejetMarche: boolean | null
+      filienMouvement: string | null
+      filienType: string | null
+      filienLibelle: string | null
+      filienCalendrier: string | null
+      filienMonnaie: string | null
+      filienMouvementEx: string | null
+      filienPreBordereau: string | null
+      filienPoste: string | null
+      filienBordereau: string | null
+      filienObjet: string | null
+      filienChapitre: string | null
+      filienNature: string | null
+      filienFonction: string | null
+      filienCodeInterne: string | null
+      filienTypeMouvement: string | null
+      filienSens: string | null
+      filienStructure: string | null
+      filienGestionnaire: string | null
+      filienUncPj: string | null
+      adDomain: string | null
+      signataireRole: string | null
+      signataireDelegation: string | null
+      signataireNom: string | null
+      footer1: string | null
+      footer2: string | null
+      footer3: string | null
+      footerColor: string | null
+      updated_at: Date
+      filienUncPass: string | null
+      filienUncUser: string | null
+      filienUncDomain: string | null
+      watermark: string | null
+      dbMode: string
+      autoDistributeInvoices: boolean
+      distributeOnlyVerified: boolean
+    }, ExtArgs["result"]["appSettings"]>
+    composites: {}
+  }
+
+  type AppSettingsGetPayload<S extends boolean | null | undefined | AppSettingsDefaultArgs> = $Result.GetResult<Prisma.$AppSettingsPayload, S>
+
+  type AppSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<AppSettingsFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: AppSettingsCountAggregateInputType | true
+    }
+
+  export interface AppSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AppSettings'], meta: { name: 'AppSettings' } }
+    /**
+     * Find zero or one AppSettings that matches the filter.
+     * @param {AppSettingsFindUniqueArgs} args - Arguments to find a AppSettings
+     * @example
+     * // Get one AppSettings
+     * const appSettings = await prisma.appSettings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AppSettingsFindUniqueArgs>(args: SelectSubset<T, AppSettingsFindUniqueArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one AppSettings that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {AppSettingsFindUniqueOrThrowArgs} args - Arguments to find a AppSettings
+     * @example
+     * // Get one AppSettings
+     * const appSettings = await prisma.appSettings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AppSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, AppSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first AppSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsFindFirstArgs} args - Arguments to find a AppSettings
+     * @example
+     * // Get one AppSettings
+     * const appSettings = await prisma.appSettings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AppSettingsFindFirstArgs>(args?: SelectSubset<T, AppSettingsFindFirstArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first AppSettings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsFindFirstOrThrowArgs} args - Arguments to find a AppSettings
+     * @example
+     * // Get one AppSettings
+     * const appSettings = await prisma.appSettings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AppSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, AppSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more AppSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AppSettings
+     * const appSettings = await prisma.appSettings.findMany()
+     * 
+     * // Get first 10 AppSettings
+     * const appSettings = await prisma.appSettings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const appSettingsWithIdOnly = await prisma.appSettings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AppSettingsFindManyArgs>(args?: SelectSubset<T, AppSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a AppSettings.
+     * @param {AppSettingsCreateArgs} args - Arguments to create a AppSettings.
+     * @example
+     * // Create one AppSettings
+     * const AppSettings = await prisma.appSettings.create({
+     *   data: {
+     *     // ... data to create a AppSettings
+     *   }
+     * })
+     * 
+     */
+    create<T extends AppSettingsCreateArgs>(args: SelectSubset<T, AppSettingsCreateArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many AppSettings.
+     * @param {AppSettingsCreateManyArgs} args - Arguments to create many AppSettings.
+     * @example
+     * // Create many AppSettings
+     * const appSettings = await prisma.appSettings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AppSettingsCreateManyArgs>(args?: SelectSubset<T, AppSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AppSettings and returns the data saved in the database.
+     * @param {AppSettingsCreateManyAndReturnArgs} args - Arguments to create many AppSettings.
+     * @example
+     * // Create many AppSettings
+     * const appSettings = await prisma.appSettings.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AppSettings and only return the `id`
+     * const appSettingsWithIdOnly = await prisma.appSettings.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AppSettingsCreateManyAndReturnArgs>(args?: SelectSubset<T, AppSettingsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a AppSettings.
+     * @param {AppSettingsDeleteArgs} args - Arguments to delete one AppSettings.
+     * @example
+     * // Delete one AppSettings
+     * const AppSettings = await prisma.appSettings.delete({
+     *   where: {
+     *     // ... filter to delete one AppSettings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AppSettingsDeleteArgs>(args: SelectSubset<T, AppSettingsDeleteArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one AppSettings.
+     * @param {AppSettingsUpdateArgs} args - Arguments to update one AppSettings.
+     * @example
+     * // Update one AppSettings
+     * const appSettings = await prisma.appSettings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AppSettingsUpdateArgs>(args: SelectSubset<T, AppSettingsUpdateArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more AppSettings.
+     * @param {AppSettingsDeleteManyArgs} args - Arguments to filter AppSettings to delete.
+     * @example
+     * // Delete a few AppSettings
+     * const { count } = await prisma.appSettings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AppSettingsDeleteManyArgs>(args?: SelectSubset<T, AppSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AppSettings
+     * const appSettings = await prisma.appSettings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AppSettingsUpdateManyArgs>(args: SelectSubset<T, AppSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one AppSettings.
+     * @param {AppSettingsUpsertArgs} args - Arguments to update or create a AppSettings.
+     * @example
+     * // Update or create a AppSettings
+     * const appSettings = await prisma.appSettings.upsert({
+     *   create: {
+     *     // ... data to create a AppSettings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AppSettings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AppSettingsUpsertArgs>(args: SelectSubset<T, AppSettingsUpsertArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsCountArgs} args - Arguments to filter AppSettings to count.
+     * @example
+     * // Count the number of AppSettings
+     * const count = await prisma.appSettings.count({
+     *   where: {
+     *     // ... the filter for the AppSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends AppSettingsCountArgs>(
+      args?: Subset<T, AppSettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AppSettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AppSettingsAggregateArgs>(args: Subset<T, AppSettingsAggregateArgs>): Prisma.PrismaPromise<GetAppSettingsAggregateType<T>>
+
+    /**
+     * Group by AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AppSettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AppSettingsGroupByArgs['orderBy'] }
+        : { orderBy?: AppSettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AppSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAppSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AppSettings model
+   */
+  readonly fields: AppSettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AppSettings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AppSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AppSettings model
+   */ 
+  interface AppSettingsFieldRefs {
+    readonly id: FieldRef<"AppSettings", 'Int'>
+    readonly financeEmail: FieldRef<"AppSettings", 'String'>
+    readonly appUrl: FieldRef<"AppSettings", 'String'>
+    readonly apmUrl: FieldRef<"AppSettings", 'String'>
+    readonly apmToken: FieldRef<"AppSettings", 'String'>
+    readonly senderName: FieldRef<"AppSettings", 'String'>
+    readonly senderEmail: FieldRef<"AppSettings", 'String'>
+    readonly filienOrga: FieldRef<"AppSettings", 'String'>
+    readonly filienBudget: FieldRef<"AppSettings", 'String'>
+    readonly filienExercice: FieldRef<"AppSettings", 'Int'>
+    readonly filienAvancement: FieldRef<"AppSettings", 'String'>
+    readonly filienRejetDispo: FieldRef<"AppSettings", 'Boolean'>
+    readonly filienRejetCA: FieldRef<"AppSettings", 'Boolean'>
+    readonly filienRejetMarche: FieldRef<"AppSettings", 'Boolean'>
+    readonly filienMouvement: FieldRef<"AppSettings", 'String'>
+    readonly filienType: FieldRef<"AppSettings", 'String'>
+    readonly filienLibelle: FieldRef<"AppSettings", 'String'>
+    readonly filienCalendrier: FieldRef<"AppSettings", 'String'>
+    readonly filienMonnaie: FieldRef<"AppSettings", 'String'>
+    readonly filienMouvementEx: FieldRef<"AppSettings", 'String'>
+    readonly filienPreBordereau: FieldRef<"AppSettings", 'String'>
+    readonly filienPoste: FieldRef<"AppSettings", 'String'>
+    readonly filienBordereau: FieldRef<"AppSettings", 'String'>
+    readonly filienObjet: FieldRef<"AppSettings", 'String'>
+    readonly filienChapitre: FieldRef<"AppSettings", 'String'>
+    readonly filienNature: FieldRef<"AppSettings", 'String'>
+    readonly filienFonction: FieldRef<"AppSettings", 'String'>
+    readonly filienCodeInterne: FieldRef<"AppSettings", 'String'>
+    readonly filienTypeMouvement: FieldRef<"AppSettings", 'String'>
+    readonly filienSens: FieldRef<"AppSettings", 'String'>
+    readonly filienStructure: FieldRef<"AppSettings", 'String'>
+    readonly filienGestionnaire: FieldRef<"AppSettings", 'String'>
+    readonly filienUncPj: FieldRef<"AppSettings", 'String'>
+    readonly adDomain: FieldRef<"AppSettings", 'String'>
+    readonly signataireRole: FieldRef<"AppSettings", 'String'>
+    readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
+    readonly signataireNom: FieldRef<"AppSettings", 'String'>
+    readonly footer1: FieldRef<"AppSettings", 'String'>
+    readonly footer2: FieldRef<"AppSettings", 'String'>
+    readonly footer3: FieldRef<"AppSettings", 'String'>
+    readonly footerColor: FieldRef<"AppSettings", 'String'>
+    readonly updated_at: FieldRef<"AppSettings", 'DateTime'>
+    readonly filienUncPass: FieldRef<"AppSettings", 'String'>
+    readonly filienUncUser: FieldRef<"AppSettings", 'String'>
+    readonly filienUncDomain: FieldRef<"AppSettings", 'String'>
+    readonly watermark: FieldRef<"AppSettings", 'String'>
+    readonly dbMode: FieldRef<"AppSettings", 'String'>
+    readonly autoDistributeInvoices: FieldRef<"AppSettings", 'Boolean'>
+    readonly distributeOnlyVerified: FieldRef<"AppSettings", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AppSettings findUnique
+   */
+  export type AppSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where: AppSettingsWhereUniqueInput
+  }
+
+  /**
+   * AppSettings findUniqueOrThrow
+   */
+  export type AppSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where: AppSettingsWhereUniqueInput
+  }
+
+  /**
+   * AppSettings findFirst
+   */
+  export type AppSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where?: AppSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppSettings.
+     */
+    cursor?: AppSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppSettings.
+     */
+    distinct?: AppSettingsScalarFieldEnum | AppSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * AppSettings findFirstOrThrow
+   */
+  export type AppSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where?: AppSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppSettings.
+     */
+    cursor?: AppSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppSettings.
+     */
+    distinct?: AppSettingsScalarFieldEnum | AppSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * AppSettings findMany
+   */
+  export type AppSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where?: AppSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AppSettings.
+     */
+    cursor?: AppSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    distinct?: AppSettingsScalarFieldEnum | AppSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * AppSettings create
+   */
+  export type AppSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * The data needed to create a AppSettings.
+     */
+    data: XOR<AppSettingsCreateInput, AppSettingsUncheckedCreateInput>
+  }
+
+  /**
+   * AppSettings createMany
+   */
+  export type AppSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AppSettings.
+     */
+    data: AppSettingsCreateManyInput | AppSettingsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AppSettings createManyAndReturn
+   */
+  export type AppSettingsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many AppSettings.
+     */
+    data: AppSettingsCreateManyInput | AppSettingsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AppSettings update
+   */
+  export type AppSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * The data needed to update a AppSettings.
+     */
+    data: XOR<AppSettingsUpdateInput, AppSettingsUncheckedUpdateInput>
+    /**
+     * Choose, which AppSettings to update.
+     */
+    where: AppSettingsWhereUniqueInput
+  }
+
+  /**
+   * AppSettings updateMany
+   */
+  export type AppSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AppSettings.
+     */
+    data: XOR<AppSettingsUpdateManyMutationInput, AppSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which AppSettings to update
+     */
+    where?: AppSettingsWhereInput
+  }
+
+  /**
+   * AppSettings upsert
+   */
+  export type AppSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * The filter to search for the AppSettings to update in case it exists.
+     */
+    where: AppSettingsWhereUniqueInput
+    /**
+     * In case the AppSettings found by the `where` argument doesn't exist, create a new AppSettings with this data.
+     */
+    create: XOR<AppSettingsCreateInput, AppSettingsUncheckedCreateInput>
+    /**
+     * In case the AppSettings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AppSettingsUpdateInput, AppSettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * AppSettings delete
+   */
+  export type AppSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter which AppSettings to delete.
+     */
+    where: AppSettingsWhereUniqueInput
+  }
+
+  /**
+   * AppSettings deleteMany
+   */
+  export type AppSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppSettings to delete
+     */
+    where?: AppSettingsWhereInput
+  }
+
+  /**
+   * AppSettings without action
+   */
+  export type AppSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -30736,6 +32266,61 @@ export namespace Prisma {
   };
 
   export type SignatureRequestScalarFieldEnum = (typeof SignatureRequestScalarFieldEnum)[keyof typeof SignatureRequestScalarFieldEnum]
+
+
+  export const AppSettingsScalarFieldEnum: {
+    id: 'id',
+    financeEmail: 'financeEmail',
+    appUrl: 'appUrl',
+    apmUrl: 'apmUrl',
+    apmToken: 'apmToken',
+    senderName: 'senderName',
+    senderEmail: 'senderEmail',
+    filienOrga: 'filienOrga',
+    filienBudget: 'filienBudget',
+    filienExercice: 'filienExercice',
+    filienAvancement: 'filienAvancement',
+    filienRejetDispo: 'filienRejetDispo',
+    filienRejetCA: 'filienRejetCA',
+    filienRejetMarche: 'filienRejetMarche',
+    filienMouvement: 'filienMouvement',
+    filienType: 'filienType',
+    filienLibelle: 'filienLibelle',
+    filienCalendrier: 'filienCalendrier',
+    filienMonnaie: 'filienMonnaie',
+    filienMouvementEx: 'filienMouvementEx',
+    filienPreBordereau: 'filienPreBordereau',
+    filienPoste: 'filienPoste',
+    filienBordereau: 'filienBordereau',
+    filienObjet: 'filienObjet',
+    filienChapitre: 'filienChapitre',
+    filienNature: 'filienNature',
+    filienFonction: 'filienFonction',
+    filienCodeInterne: 'filienCodeInterne',
+    filienTypeMouvement: 'filienTypeMouvement',
+    filienSens: 'filienSens',
+    filienStructure: 'filienStructure',
+    filienGestionnaire: 'filienGestionnaire',
+    filienUncPj: 'filienUncPj',
+    adDomain: 'adDomain',
+    signataireRole: 'signataireRole',
+    signataireDelegation: 'signataireDelegation',
+    signataireNom: 'signataireNom',
+    footer1: 'footer1',
+    footer2: 'footer2',
+    footer3: 'footer3',
+    footerColor: 'footerColor',
+    updated_at: 'updated_at',
+    filienUncPass: 'filienUncPass',
+    filienUncUser: 'filienUncUser',
+    filienUncDomain: 'filienUncDomain',
+    watermark: 'watermark',
+    dbMode: 'dbMode',
+    autoDistributeInvoices: 'autoDistributeInvoices',
+    distributeOnlyVerified: 'distributeOnlyVerified'
+  };
+
+  export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -32963,6 +34548,280 @@ export namespace Prisma {
     requestedByLogin?: StringNullableWithAggregatesFilter<"SignatureRequest"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
+  }
+
+  export type AppSettingsWhereInput = {
+    AND?: AppSettingsWhereInput | AppSettingsWhereInput[]
+    OR?: AppSettingsWhereInput[]
+    NOT?: AppSettingsWhereInput | AppSettingsWhereInput[]
+    id?: IntFilter<"AppSettings"> | number
+    financeEmail?: StringNullableFilter<"AppSettings"> | string | null
+    appUrl?: StringNullableFilter<"AppSettings"> | string | null
+    apmUrl?: StringNullableFilter<"AppSettings"> | string | null
+    apmToken?: StringNullableFilter<"AppSettings"> | string | null
+    senderName?: StringNullableFilter<"AppSettings"> | string | null
+    senderEmail?: StringNullableFilter<"AppSettings"> | string | null
+    filienOrga?: StringNullableFilter<"AppSettings"> | string | null
+    filienBudget?: StringNullableFilter<"AppSettings"> | string | null
+    filienExercice?: IntNullableFilter<"AppSettings"> | number | null
+    filienAvancement?: StringNullableFilter<"AppSettings"> | string | null
+    filienRejetDispo?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienRejetCA?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienRejetMarche?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienMouvement?: StringNullableFilter<"AppSettings"> | string | null
+    filienType?: StringNullableFilter<"AppSettings"> | string | null
+    filienLibelle?: StringNullableFilter<"AppSettings"> | string | null
+    filienCalendrier?: StringNullableFilter<"AppSettings"> | string | null
+    filienMonnaie?: StringNullableFilter<"AppSettings"> | string | null
+    filienMouvementEx?: StringNullableFilter<"AppSettings"> | string | null
+    filienPreBordereau?: StringNullableFilter<"AppSettings"> | string | null
+    filienPoste?: StringNullableFilter<"AppSettings"> | string | null
+    filienBordereau?: StringNullableFilter<"AppSettings"> | string | null
+    filienObjet?: StringNullableFilter<"AppSettings"> | string | null
+    filienChapitre?: StringNullableFilter<"AppSettings"> | string | null
+    filienNature?: StringNullableFilter<"AppSettings"> | string | null
+    filienFonction?: StringNullableFilter<"AppSettings"> | string | null
+    filienCodeInterne?: StringNullableFilter<"AppSettings"> | string | null
+    filienTypeMouvement?: StringNullableFilter<"AppSettings"> | string | null
+    filienSens?: StringNullableFilter<"AppSettings"> | string | null
+    filienStructure?: StringNullableFilter<"AppSettings"> | string | null
+    filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
+    adDomain?: StringNullableFilter<"AppSettings"> | string | null
+    signataireRole?: StringNullableFilter<"AppSettings"> | string | null
+    signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
+    signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    footer1?: StringNullableFilter<"AppSettings"> | string | null
+    footer2?: StringNullableFilter<"AppSettings"> | string | null
+    footer3?: StringNullableFilter<"AppSettings"> | string | null
+    footerColor?: StringNullableFilter<"AppSettings"> | string | null
+    updated_at?: DateTimeFilter<"AppSettings"> | Date | string
+    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
+    watermark?: StringNullableFilter<"AppSettings"> | string | null
+    dbMode?: StringFilter<"AppSettings"> | string
+    autoDistributeInvoices?: BoolFilter<"AppSettings"> | boolean
+    distributeOnlyVerified?: BoolFilter<"AppSettings"> | boolean
+  }
+
+  export type AppSettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    financeEmail?: SortOrderInput | SortOrder
+    appUrl?: SortOrderInput | SortOrder
+    apmUrl?: SortOrderInput | SortOrder
+    apmToken?: SortOrderInput | SortOrder
+    senderName?: SortOrderInput | SortOrder
+    senderEmail?: SortOrderInput | SortOrder
+    filienOrga?: SortOrderInput | SortOrder
+    filienBudget?: SortOrderInput | SortOrder
+    filienExercice?: SortOrderInput | SortOrder
+    filienAvancement?: SortOrderInput | SortOrder
+    filienRejetDispo?: SortOrderInput | SortOrder
+    filienRejetCA?: SortOrderInput | SortOrder
+    filienRejetMarche?: SortOrderInput | SortOrder
+    filienMouvement?: SortOrderInput | SortOrder
+    filienType?: SortOrderInput | SortOrder
+    filienLibelle?: SortOrderInput | SortOrder
+    filienCalendrier?: SortOrderInput | SortOrder
+    filienMonnaie?: SortOrderInput | SortOrder
+    filienMouvementEx?: SortOrderInput | SortOrder
+    filienPreBordereau?: SortOrderInput | SortOrder
+    filienPoste?: SortOrderInput | SortOrder
+    filienBordereau?: SortOrderInput | SortOrder
+    filienObjet?: SortOrderInput | SortOrder
+    filienChapitre?: SortOrderInput | SortOrder
+    filienNature?: SortOrderInput | SortOrder
+    filienFonction?: SortOrderInput | SortOrder
+    filienCodeInterne?: SortOrderInput | SortOrder
+    filienTypeMouvement?: SortOrderInput | SortOrder
+    filienSens?: SortOrderInput | SortOrder
+    filienStructure?: SortOrderInput | SortOrder
+    filienGestionnaire?: SortOrderInput | SortOrder
+    filienUncPj?: SortOrderInput | SortOrder
+    adDomain?: SortOrderInput | SortOrder
+    signataireRole?: SortOrderInput | SortOrder
+    signataireDelegation?: SortOrderInput | SortOrder
+    signataireNom?: SortOrderInput | SortOrder
+    footer1?: SortOrderInput | SortOrder
+    footer2?: SortOrderInput | SortOrder
+    footer3?: SortOrderInput | SortOrder
+    footerColor?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrderInput | SortOrder
+    filienUncUser?: SortOrderInput | SortOrder
+    filienUncDomain?: SortOrderInput | SortOrder
+    watermark?: SortOrderInput | SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+  }
+
+  export type AppSettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: AppSettingsWhereInput | AppSettingsWhereInput[]
+    OR?: AppSettingsWhereInput[]
+    NOT?: AppSettingsWhereInput | AppSettingsWhereInput[]
+    financeEmail?: StringNullableFilter<"AppSettings"> | string | null
+    appUrl?: StringNullableFilter<"AppSettings"> | string | null
+    apmUrl?: StringNullableFilter<"AppSettings"> | string | null
+    apmToken?: StringNullableFilter<"AppSettings"> | string | null
+    senderName?: StringNullableFilter<"AppSettings"> | string | null
+    senderEmail?: StringNullableFilter<"AppSettings"> | string | null
+    filienOrga?: StringNullableFilter<"AppSettings"> | string | null
+    filienBudget?: StringNullableFilter<"AppSettings"> | string | null
+    filienExercice?: IntNullableFilter<"AppSettings"> | number | null
+    filienAvancement?: StringNullableFilter<"AppSettings"> | string | null
+    filienRejetDispo?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienRejetCA?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienRejetMarche?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienMouvement?: StringNullableFilter<"AppSettings"> | string | null
+    filienType?: StringNullableFilter<"AppSettings"> | string | null
+    filienLibelle?: StringNullableFilter<"AppSettings"> | string | null
+    filienCalendrier?: StringNullableFilter<"AppSettings"> | string | null
+    filienMonnaie?: StringNullableFilter<"AppSettings"> | string | null
+    filienMouvementEx?: StringNullableFilter<"AppSettings"> | string | null
+    filienPreBordereau?: StringNullableFilter<"AppSettings"> | string | null
+    filienPoste?: StringNullableFilter<"AppSettings"> | string | null
+    filienBordereau?: StringNullableFilter<"AppSettings"> | string | null
+    filienObjet?: StringNullableFilter<"AppSettings"> | string | null
+    filienChapitre?: StringNullableFilter<"AppSettings"> | string | null
+    filienNature?: StringNullableFilter<"AppSettings"> | string | null
+    filienFonction?: StringNullableFilter<"AppSettings"> | string | null
+    filienCodeInterne?: StringNullableFilter<"AppSettings"> | string | null
+    filienTypeMouvement?: StringNullableFilter<"AppSettings"> | string | null
+    filienSens?: StringNullableFilter<"AppSettings"> | string | null
+    filienStructure?: StringNullableFilter<"AppSettings"> | string | null
+    filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
+    adDomain?: StringNullableFilter<"AppSettings"> | string | null
+    signataireRole?: StringNullableFilter<"AppSettings"> | string | null
+    signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
+    signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    footer1?: StringNullableFilter<"AppSettings"> | string | null
+    footer2?: StringNullableFilter<"AppSettings"> | string | null
+    footer3?: StringNullableFilter<"AppSettings"> | string | null
+    footerColor?: StringNullableFilter<"AppSettings"> | string | null
+    updated_at?: DateTimeFilter<"AppSettings"> | Date | string
+    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
+    watermark?: StringNullableFilter<"AppSettings"> | string | null
+    dbMode?: StringFilter<"AppSettings"> | string
+    autoDistributeInvoices?: BoolFilter<"AppSettings"> | boolean
+    distributeOnlyVerified?: BoolFilter<"AppSettings"> | boolean
+  }, "id">
+
+  export type AppSettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    financeEmail?: SortOrderInput | SortOrder
+    appUrl?: SortOrderInput | SortOrder
+    apmUrl?: SortOrderInput | SortOrder
+    apmToken?: SortOrderInput | SortOrder
+    senderName?: SortOrderInput | SortOrder
+    senderEmail?: SortOrderInput | SortOrder
+    filienOrga?: SortOrderInput | SortOrder
+    filienBudget?: SortOrderInput | SortOrder
+    filienExercice?: SortOrderInput | SortOrder
+    filienAvancement?: SortOrderInput | SortOrder
+    filienRejetDispo?: SortOrderInput | SortOrder
+    filienRejetCA?: SortOrderInput | SortOrder
+    filienRejetMarche?: SortOrderInput | SortOrder
+    filienMouvement?: SortOrderInput | SortOrder
+    filienType?: SortOrderInput | SortOrder
+    filienLibelle?: SortOrderInput | SortOrder
+    filienCalendrier?: SortOrderInput | SortOrder
+    filienMonnaie?: SortOrderInput | SortOrder
+    filienMouvementEx?: SortOrderInput | SortOrder
+    filienPreBordereau?: SortOrderInput | SortOrder
+    filienPoste?: SortOrderInput | SortOrder
+    filienBordereau?: SortOrderInput | SortOrder
+    filienObjet?: SortOrderInput | SortOrder
+    filienChapitre?: SortOrderInput | SortOrder
+    filienNature?: SortOrderInput | SortOrder
+    filienFonction?: SortOrderInput | SortOrder
+    filienCodeInterne?: SortOrderInput | SortOrder
+    filienTypeMouvement?: SortOrderInput | SortOrder
+    filienSens?: SortOrderInput | SortOrder
+    filienStructure?: SortOrderInput | SortOrder
+    filienGestionnaire?: SortOrderInput | SortOrder
+    filienUncPj?: SortOrderInput | SortOrder
+    adDomain?: SortOrderInput | SortOrder
+    signataireRole?: SortOrderInput | SortOrder
+    signataireDelegation?: SortOrderInput | SortOrder
+    signataireNom?: SortOrderInput | SortOrder
+    footer1?: SortOrderInput | SortOrder
+    footer2?: SortOrderInput | SortOrder
+    footer3?: SortOrderInput | SortOrder
+    footerColor?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrderInput | SortOrder
+    filienUncUser?: SortOrderInput | SortOrder
+    filienUncDomain?: SortOrderInput | SortOrder
+    watermark?: SortOrderInput | SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+    _count?: AppSettingsCountOrderByAggregateInput
+    _avg?: AppSettingsAvgOrderByAggregateInput
+    _max?: AppSettingsMaxOrderByAggregateInput
+    _min?: AppSettingsMinOrderByAggregateInput
+    _sum?: AppSettingsSumOrderByAggregateInput
+  }
+
+  export type AppSettingsScalarWhereWithAggregatesInput = {
+    AND?: AppSettingsScalarWhereWithAggregatesInput | AppSettingsScalarWhereWithAggregatesInput[]
+    OR?: AppSettingsScalarWhereWithAggregatesInput[]
+    NOT?: AppSettingsScalarWhereWithAggregatesInput | AppSettingsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"AppSettings"> | number
+    financeEmail?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    appUrl?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    apmUrl?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    apmToken?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    senderName?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    senderEmail?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienOrga?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienBudget?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienExercice?: IntNullableWithAggregatesFilter<"AppSettings"> | number | null
+    filienAvancement?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienRejetDispo?: BoolNullableWithAggregatesFilter<"AppSettings"> | boolean | null
+    filienRejetCA?: BoolNullableWithAggregatesFilter<"AppSettings"> | boolean | null
+    filienRejetMarche?: BoolNullableWithAggregatesFilter<"AppSettings"> | boolean | null
+    filienMouvement?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienType?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienLibelle?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienCalendrier?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienMonnaie?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienMouvementEx?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienPreBordereau?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienPoste?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienBordereau?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienObjet?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienChapitre?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienNature?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienFonction?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienCodeInterne?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienTypeMouvement?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienSens?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienStructure?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienGestionnaire?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncPj?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    adDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footer1?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footer2?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footer3?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footerColor?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    updated_at?: DateTimeWithAggregatesFilter<"AppSettings"> | Date | string
+    filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    watermark?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    dbMode?: StringWithAggregatesFilter<"AppSettings"> | string
+    autoDistributeInvoices?: BoolWithAggregatesFilter<"AppSettings"> | boolean
+    distributeOnlyVerified?: BoolWithAggregatesFilter<"AppSettings"> | boolean
   }
 
   export type TiersCreateInput = {
@@ -35267,6 +37126,367 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AppSettingsCreateInput = {
+    financeEmail?: string | null
+    appUrl?: string | null
+    apmUrl?: string | null
+    apmToken?: string | null
+    senderName?: string | null
+    senderEmail?: string | null
+    filienOrga?: string | null
+    filienBudget?: string | null
+    filienExercice?: number | null
+    filienAvancement?: string | null
+    filienRejetDispo?: boolean | null
+    filienRejetCA?: boolean | null
+    filienRejetMarche?: boolean | null
+    filienMouvement?: string | null
+    filienType?: string | null
+    filienLibelle?: string | null
+    filienCalendrier?: string | null
+    filienMonnaie?: string | null
+    filienMouvementEx?: string | null
+    filienPreBordereau?: string | null
+    filienPoste?: string | null
+    filienBordereau?: string | null
+    filienObjet?: string | null
+    filienChapitre?: string | null
+    filienNature?: string | null
+    filienFonction?: string | null
+    filienCodeInterne?: string | null
+    filienTypeMouvement?: string | null
+    filienSens?: string | null
+    filienStructure?: string | null
+    filienGestionnaire?: string | null
+    filienUncPj?: string | null
+    adDomain?: string | null
+    signataireRole?: string | null
+    signataireDelegation?: string | null
+    signataireNom?: string | null
+    footer1?: string | null
+    footer2?: string | null
+    footer3?: string | null
+    footerColor?: string | null
+    updated_at?: Date | string
+    filienUncPass?: string | null
+    filienUncUser?: string | null
+    filienUncDomain?: string | null
+    watermark?: string | null
+    dbMode?: string
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }
+
+  export type AppSettingsUncheckedCreateInput = {
+    id?: number
+    financeEmail?: string | null
+    appUrl?: string | null
+    apmUrl?: string | null
+    apmToken?: string | null
+    senderName?: string | null
+    senderEmail?: string | null
+    filienOrga?: string | null
+    filienBudget?: string | null
+    filienExercice?: number | null
+    filienAvancement?: string | null
+    filienRejetDispo?: boolean | null
+    filienRejetCA?: boolean | null
+    filienRejetMarche?: boolean | null
+    filienMouvement?: string | null
+    filienType?: string | null
+    filienLibelle?: string | null
+    filienCalendrier?: string | null
+    filienMonnaie?: string | null
+    filienMouvementEx?: string | null
+    filienPreBordereau?: string | null
+    filienPoste?: string | null
+    filienBordereau?: string | null
+    filienObjet?: string | null
+    filienChapitre?: string | null
+    filienNature?: string | null
+    filienFonction?: string | null
+    filienCodeInterne?: string | null
+    filienTypeMouvement?: string | null
+    filienSens?: string | null
+    filienStructure?: string | null
+    filienGestionnaire?: string | null
+    filienUncPj?: string | null
+    adDomain?: string | null
+    signataireRole?: string | null
+    signataireDelegation?: string | null
+    signataireNom?: string | null
+    footer1?: string | null
+    footer2?: string | null
+    footer3?: string | null
+    footerColor?: string | null
+    updated_at?: Date | string
+    filienUncPass?: string | null
+    filienUncUser?: string | null
+    filienUncDomain?: string | null
+    watermark?: string | null
+    dbMode?: string
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }
+
+  export type AppSettingsUpdateInput = {
+    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
+    senderName?: NullableStringFieldUpdateOperationsInput | string | null
+    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
+    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
+    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienType?: NullableStringFieldUpdateOperationsInput | string | null
+    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
+    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
+    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
+    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
+    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
+    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
+    dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type AppSettingsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
+    senderName?: NullableStringFieldUpdateOperationsInput | string | null
+    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
+    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
+    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienType?: NullableStringFieldUpdateOperationsInput | string | null
+    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
+    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
+    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
+    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
+    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
+    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
+    dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type AppSettingsCreateManyInput = {
+    id?: number
+    financeEmail?: string | null
+    appUrl?: string | null
+    apmUrl?: string | null
+    apmToken?: string | null
+    senderName?: string | null
+    senderEmail?: string | null
+    filienOrga?: string | null
+    filienBudget?: string | null
+    filienExercice?: number | null
+    filienAvancement?: string | null
+    filienRejetDispo?: boolean | null
+    filienRejetCA?: boolean | null
+    filienRejetMarche?: boolean | null
+    filienMouvement?: string | null
+    filienType?: string | null
+    filienLibelle?: string | null
+    filienCalendrier?: string | null
+    filienMonnaie?: string | null
+    filienMouvementEx?: string | null
+    filienPreBordereau?: string | null
+    filienPoste?: string | null
+    filienBordereau?: string | null
+    filienObjet?: string | null
+    filienChapitre?: string | null
+    filienNature?: string | null
+    filienFonction?: string | null
+    filienCodeInterne?: string | null
+    filienTypeMouvement?: string | null
+    filienSens?: string | null
+    filienStructure?: string | null
+    filienGestionnaire?: string | null
+    filienUncPj?: string | null
+    adDomain?: string | null
+    signataireRole?: string | null
+    signataireDelegation?: string | null
+    signataireNom?: string | null
+    footer1?: string | null
+    footer2?: string | null
+    footer3?: string | null
+    footerColor?: string | null
+    updated_at?: Date | string
+    filienUncPass?: string | null
+    filienUncUser?: string | null
+    filienUncDomain?: string | null
+    watermark?: string | null
+    dbMode?: string
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }
+
+  export type AppSettingsUpdateManyMutationInput = {
+    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
+    senderName?: NullableStringFieldUpdateOperationsInput | string | null
+    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
+    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
+    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienType?: NullableStringFieldUpdateOperationsInput | string | null
+    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
+    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
+    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
+    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
+    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
+    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
+    dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type AppSettingsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
+    senderName?: NullableStringFieldUpdateOperationsInput | string | null
+    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
+    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
+    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienType?: NullableStringFieldUpdateOperationsInput | string | null
+    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
+    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
+    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
+    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
+    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
+    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
+    dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -36978,6 +39198,185 @@ export namespace Prisma {
     signatoriesId?: SortOrder
   }
 
+  export type BoolNullableFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+  }
+
+  export type AppSettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    financeEmail?: SortOrder
+    appUrl?: SortOrder
+    apmUrl?: SortOrder
+    apmToken?: SortOrder
+    senderName?: SortOrder
+    senderEmail?: SortOrder
+    filienOrga?: SortOrder
+    filienBudget?: SortOrder
+    filienExercice?: SortOrder
+    filienAvancement?: SortOrder
+    filienRejetDispo?: SortOrder
+    filienRejetCA?: SortOrder
+    filienRejetMarche?: SortOrder
+    filienMouvement?: SortOrder
+    filienType?: SortOrder
+    filienLibelle?: SortOrder
+    filienCalendrier?: SortOrder
+    filienMonnaie?: SortOrder
+    filienMouvementEx?: SortOrder
+    filienPreBordereau?: SortOrder
+    filienPoste?: SortOrder
+    filienBordereau?: SortOrder
+    filienObjet?: SortOrder
+    filienChapitre?: SortOrder
+    filienNature?: SortOrder
+    filienFonction?: SortOrder
+    filienCodeInterne?: SortOrder
+    filienTypeMouvement?: SortOrder
+    filienSens?: SortOrder
+    filienStructure?: SortOrder
+    filienGestionnaire?: SortOrder
+    filienUncPj?: SortOrder
+    adDomain?: SortOrder
+    signataireRole?: SortOrder
+    signataireDelegation?: SortOrder
+    signataireNom?: SortOrder
+    footer1?: SortOrder
+    footer2?: SortOrder
+    footer3?: SortOrder
+    footerColor?: SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncDomain?: SortOrder
+    watermark?: SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+  }
+
+  export type AppSettingsAvgOrderByAggregateInput = {
+    id?: SortOrder
+    filienExercice?: SortOrder
+  }
+
+  export type AppSettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    financeEmail?: SortOrder
+    appUrl?: SortOrder
+    apmUrl?: SortOrder
+    apmToken?: SortOrder
+    senderName?: SortOrder
+    senderEmail?: SortOrder
+    filienOrga?: SortOrder
+    filienBudget?: SortOrder
+    filienExercice?: SortOrder
+    filienAvancement?: SortOrder
+    filienRejetDispo?: SortOrder
+    filienRejetCA?: SortOrder
+    filienRejetMarche?: SortOrder
+    filienMouvement?: SortOrder
+    filienType?: SortOrder
+    filienLibelle?: SortOrder
+    filienCalendrier?: SortOrder
+    filienMonnaie?: SortOrder
+    filienMouvementEx?: SortOrder
+    filienPreBordereau?: SortOrder
+    filienPoste?: SortOrder
+    filienBordereau?: SortOrder
+    filienObjet?: SortOrder
+    filienChapitre?: SortOrder
+    filienNature?: SortOrder
+    filienFonction?: SortOrder
+    filienCodeInterne?: SortOrder
+    filienTypeMouvement?: SortOrder
+    filienSens?: SortOrder
+    filienStructure?: SortOrder
+    filienGestionnaire?: SortOrder
+    filienUncPj?: SortOrder
+    adDomain?: SortOrder
+    signataireRole?: SortOrder
+    signataireDelegation?: SortOrder
+    signataireNom?: SortOrder
+    footer1?: SortOrder
+    footer2?: SortOrder
+    footer3?: SortOrder
+    footerColor?: SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncDomain?: SortOrder
+    watermark?: SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+  }
+
+  export type AppSettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    financeEmail?: SortOrder
+    appUrl?: SortOrder
+    apmUrl?: SortOrder
+    apmToken?: SortOrder
+    senderName?: SortOrder
+    senderEmail?: SortOrder
+    filienOrga?: SortOrder
+    filienBudget?: SortOrder
+    filienExercice?: SortOrder
+    filienAvancement?: SortOrder
+    filienRejetDispo?: SortOrder
+    filienRejetCA?: SortOrder
+    filienRejetMarche?: SortOrder
+    filienMouvement?: SortOrder
+    filienType?: SortOrder
+    filienLibelle?: SortOrder
+    filienCalendrier?: SortOrder
+    filienMonnaie?: SortOrder
+    filienMouvementEx?: SortOrder
+    filienPreBordereau?: SortOrder
+    filienPoste?: SortOrder
+    filienBordereau?: SortOrder
+    filienObjet?: SortOrder
+    filienChapitre?: SortOrder
+    filienNature?: SortOrder
+    filienFonction?: SortOrder
+    filienCodeInterne?: SortOrder
+    filienTypeMouvement?: SortOrder
+    filienSens?: SortOrder
+    filienStructure?: SortOrder
+    filienGestionnaire?: SortOrder
+    filienUncPj?: SortOrder
+    adDomain?: SortOrder
+    signataireRole?: SortOrder
+    signataireDelegation?: SortOrder
+    signataireNom?: SortOrder
+    footer1?: SortOrder
+    footer2?: SortOrder
+    footer3?: SortOrder
+    footerColor?: SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncDomain?: SortOrder
+    watermark?: SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+  }
+
+  export type AppSettingsSumOrderByAggregateInput = {
+    id?: SortOrder
+    filienExercice?: SortOrder
+  }
+
+  export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedBoolNullableFilter<$PrismaModel>
+    _max?: NestedBoolNullableFilter<$PrismaModel>
+  }
+
   export type ContactCreateNestedManyWithoutTiersInput = {
     create?: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput> | ContactCreateWithoutTiersInput[] | ContactUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutTiersInput | ContactCreateOrConnectWithoutTiersInput[]
@@ -38112,6 +40511,10 @@ export namespace Prisma {
     update?: XOR<XOR<SignatoryUpdateToOneWithWhereWithoutSignatureRequestsInput, SignatoryUpdateWithoutSignatureRequestsInput>, SignatoryUncheckedUpdateWithoutSignatureRequestsInput>
   }
 
+  export type NullableBoolFieldUpdateOperationsInput = {
+    set?: boolean | null
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -38343,6 +40746,19 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedBoolNullableFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+  }
+
+  export type NestedBoolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedBoolNullableFilter<$PrismaModel>
+    _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
   export type ContactCreateWithoutTiersInput = {
@@ -42729,6 +45145,10 @@ export namespace Prisma {
      * @deprecated Use SignatureRequestDefaultArgs instead
      */
     export type SignatureRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SignatureRequestDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use AppSettingsDefaultArgs instead
+     */
+    export type AppSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AppSettingsDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, prismaLocal } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
-    const { query, db } = await request.json();
-    const dbType = db || 'main'; // 'main' or 'local'
+    const { query } = await request.json();
 
     if (!query) {
       return NextResponse.json({ error: 'Query is required' }, { status: 400 });
     }
 
-    const client = dbType === 'local' ? prismaLocal : prisma;
+    const client = prisma;
 
     // Determine if it's a SELECT or other
     const upperQuery = query.trim().toUpperCase();
