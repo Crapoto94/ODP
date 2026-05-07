@@ -11,6 +11,7 @@ export interface BillingResult {
   numero: string;
   path: string;
   tiers: string;
+  tiersCode?: string;
   total: number;
   lignes: any[];
 }
@@ -265,7 +266,7 @@ export async function exportToUnc(params: {
         }
 
         // AOT
-        const occ = dossiers.find((d: any) => d.id === res.id);
+        const occ = dossiers?.find((d: any) => d.id === res.id);
         if (occ?.aotFinalPath) {
           const aotName = occ.aotFinalPath.split(/[\\/]/).pop() || `AOT_${occ.id}.pdf`;
           const aotSrc = occ.aotFinalPath.startsWith('/') ? join(publicPath, occ.aotFinalPath) : occ.aotFinalPath;
@@ -349,7 +350,7 @@ export async function exportToUnc(params: {
         }
 
         // AOT
-        const occ = dossiers.find((d: any) => d.id === res.id);
+        const occ = dossiers?.find((d: any) => d.id === res.id);
         if (occ?.aotFinalPath) {
           const aotName = occ.aotFinalPath.split(/[\\/]/).pop() || `AOT_${occ.id}.pdf`;
           const aotSrc = occ.aotFinalPath.startsWith('/') ? join(publicPath, occ.aotFinalPath) : occ.aotFinalPath;

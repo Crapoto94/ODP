@@ -263,6 +263,7 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
         <OdpDocsModal 
           isOpen={docsModalOpen}
           onClose={() => setDocsModalOpen(false)}
+          onSuccess={() => setDocsModalOpen(false)}
         />
       )}
     </div>

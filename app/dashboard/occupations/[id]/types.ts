@@ -31,6 +31,7 @@ export interface LigneArticle {
   dateFinConstatee?: string;
   montant: number;
   photos?: string;
+  note?: string;
   article?: Article;
 }
 

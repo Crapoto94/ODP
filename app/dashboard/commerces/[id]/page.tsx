@@ -277,7 +277,7 @@ export default function CommerceDetailPage({ params }: Props) {
       <CommerceYearTimeline
         years={years}
         getDispositivesTimeline={getDispositivesTimeline}
-        selectedYear={selectedYear}
+        selectedYear={selectedYear ?? undefined}
         onSelectYear={setSelectedYear}
       />
 
@@ -318,7 +318,6 @@ export default function CommerceDetailPage({ params }: Props) {
               key={noteKey}
               tiersId={parseInt(paramId)}
               currentUser={currentUser}
-              isReadOnly={isArchived}
             />
           )}
         </div>
@@ -329,7 +328,7 @@ export default function CommerceDetailPage({ params }: Props) {
           contacts={contacts}
           documents={documents}
           isFactured={isReadOnly}
-          onOpenContactModal={isReadOnly ? undefined : () => setIsContactModalOpen(true)}
+          onOpenContactModal={isReadOnly ? () => {} : () => setIsContactModalOpen(true)}
           onDeleteContact={handleDeleteContact}
           onEditContact={handleOpenEditContact}
           isContactsLoading={false}
@@ -374,7 +373,7 @@ export default function CommerceDetailPage({ params }: Props) {
           setNewContact({ nom: '', prenom: '', email: '', telephone: '', titre: '', entreprise: '', role: 'CONTACT_DIRECT', pjPath: '' });
         }}
         newContact={newContact}
-        setNewContact={setNewContact}
+        setNewContact={(c) => setNewContact(c as any)}
         isSubmittingContact={isSubmittingContact}
         onAddContact={handleAddContact}
         onPhotoContact={handlePhotoContact}
@@ -391,7 +390,7 @@ export default function CommerceDetailPage({ params }: Props) {
         isOpen={isAotFinalModalOpen}
         onClose={() => setIsAotFinalModalOpen(false)}
         isUploading={isUploadingAotFinal}
-        onUpload={(file, isSigned) => {
+        onUpload={async (file, isSigned) => {
           const occ = occupations.find((o: any) => o.statut === 'PREP' || o.statut === 'PREPARATION_AOT') || occupations[0];
           if (occ) handleUploadAotFinal(occ.id, file, isSigned);
         }}
