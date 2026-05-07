@@ -33,11 +33,10 @@ async function getPostgresUrl() {
     const { user, password, host, port, database, schema, schemaDev } = config;
     const settings = await prismaLocal.appSettings.findFirst();
     const currentMode = settings?.dbMode || 'PROD';
-    
     const targetSchema = (currentMode === 'DEV' && schemaDev) ? schemaDev : (schema || 'public');
     return `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:${port}/${database}?schema=${targetSchema}`;
-  } catch (e) {
-    console.error('[PRISMA] Failed to read PostgresConfig:', e.message);
+  } catch (e: any) {
+    console.error('[PRISMA] Failed to read PostgresConfig:', e?.message || e);
     return process.env.DATABASE_URL;
   }
 }

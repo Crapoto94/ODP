@@ -70,12 +70,15 @@ export async function updateOccupationTotal(occupationId: number) {
     // Récupérer le seuil d'exonération pour l'année (via queryRaw car le modèle TlpeConfig peut être instable dans le client)
     let threshold = 12; // Valeur par défaut légale
     try {
-      const configs: any[] = await (prisma as any).$queryRaw`SELECT exoneration FROM TlpeConfig WHERE annee = ${anneeTaxation} LIMIT 1`;
-      if (configs && configs.length > 0) {
-        threshold = configs[0].exoneration;
+      const config = await (prisma as any).tlpeConfig.findFirst({
+        where: { annee: anneeTaxation },
+        select: { exoneration: true }
+      });
+      if (config) {
+        threshold = config.exoneration;
       }
-    } catch (e) {
-      console.error('Erreur récupération TlpeConfig:', e);
+    } catch (e: any) {
+      console.error('Erreur récupération TlpeConfig:', e?.message || e);
     }
 
     // Calculer la surface totale des ENSEIGNES pour l'exonération globale
@@ -111,8 +114,8 @@ export async function updateOccupationTotal(occupationId: number) {
     });
 
     return netTotal;
-  } catch (error) {
-    console.error(`Erreur updateOccupationTotal for ID ${occupationId}:`, error);
+  } catch (error: any) {
+    console.error(`Erreur updateOccupationTotal for ID ${occupationId}:`, error?.message || error);
     return 0;
   }
 }
