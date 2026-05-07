@@ -272,7 +272,7 @@ export async function POST(req: NextRequest) {
     // Fetch regulatory paths (delib, tarifs) from OdpConfig for all years involved
     const uniqueYears = Array.from(new Set(dossiers.map((occ: any) => 
       occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || year)
-    )));
+    ))) as number[];
 
     const odpConfigs = await prisma.odpConfig.findMany({
       where: { annee: { in: uniqueYears } }

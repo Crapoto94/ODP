@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 
     const uniqueYears = Array.from(new Set(occupations.map(occ => 
       occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || currentYear)
-    )));
+    ))) as number[];
 
     const odpConfigs = await prisma.odpConfig.findMany({
       where: { annee: { in: uniqueYears } }
