@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Mail, Phone, Calendar, ExternalLink, Navigation, Building2, Pencil } from 'lucide-react';
+import { MapPin, Mail, Phone, Calendar, ExternalLink, Navigation, Building2, Pencil, AlertCircle } from 'lucide-react';
 
 interface Props {
   commerce: any;
