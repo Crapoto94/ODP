@@ -74,40 +74,52 @@ const createClient = (url: string) => {
 
 export const prisma = new Proxy({} as PrismaClient, {
   get: (target, prop) => {
-    if (!_prisma) {
+    // Always use the latest client from global state
+    const activeClient = globalForPrisma.prisma || _prisma;
+
+    if (!activeClient) {
       const fallbackUrl = process.env.DATABASE_URL;
       if (fallbackUrl && fallbackUrl !== '""' && fallbackUrl !== "''") {
         _prisma = createClient(fallbackUrl);
-        if (_prisma) globalForPrisma.prisma = _prisma;
+        if (_prisma) (globalForPrisma as any).prisma = _prisma;
       }
     }
     
-    if (!_prisma) {
-      // If we reach here, we'll try to initialize synchronously if it's the first time
-      // But we can't await here. So we just throw a better error.
+    const clientToUse = globalForPrisma.prisma || _prisma;
+    if (!clientToUse) {
       throw new Error('[PRISMA] Le client Postgres n\'est pas encore initialisé. Veuillez patienter ou vérifier la configuration.');
     }
     
-    return (_prisma as any)[prop];
+    return (clientToUse as any)[prop];
   }
 });
 
 export async function initializePrisma(force = false) {
   if (!force && globalForPrisma.isInitialized && _prisma) return _prisma;
   
+  console.log(`[PRISMA] Initializing client (force=${force})...`);
   const url = await getPostgresUrl();
   if (url) {
+    console.log(`[PRISMA] Creating client with URL: ${url.replace(/:[^:@]+@/, ':****@')}`);
     const oldClient = _prisma;
     const newClient = createClient(url);
     
-    _prisma = newClient;
-    globalForPrisma.prisma = _prisma;
-    globalForPrisma.isInitialized = true;
+    if (newClient) {
+      _prisma = newClient;
+      (globalForPrisma as any).prisma = _prisma;
+      globalForPrisma.isInitialized = true;
+      console.log('[PRISMA] Client initialized successfully');
 
-    // Disconnect old client in background to free resources
-    if (oldClient) {
-      oldClient.$disconnect().catch(err => console.warn('[PRISMA] Error disconnecting old client:', err.message));
+      // Disconnect old client in background to free resources
+      if (oldClient) {
+        console.log('[PRISMA] Disconnecting old client...');
+        oldClient.$disconnect().catch(err => console.warn('[PRISMA] Error disconnecting old client:', err.message));
+      }
+    } else {
+      console.error('[PRISMA] Failed to create new client');
     }
+  } else {
+    console.warn('[PRISMA] No connection URL available for initialization');
   }
   return _prisma;
 }
