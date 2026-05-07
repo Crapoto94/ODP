@@ -245,7 +245,7 @@ export default function CommerceDetailPage({ params }: Props) {
       <CommerceStepper
         totalAmount={totalAmount}
         currentStatus={currentStatus}
-        onStatusChange={isReadOnly ? () => {} : handleStatusChange}
+        onStatusChange={isReadOnly ? async () => {} : handleStatusChange}
         isUpdating={isUpdatingStatus}
         isReadOnly={isReadOnly}
         stepDates={getStepDates()}
