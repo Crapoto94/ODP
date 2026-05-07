@@ -36,6 +36,7 @@ export async function generateInvoicePdfBuffer(
     tiersId?: number; 
     annee?: number;
     occupationIds?: number[];
+    forceRed?: boolean;
   }
 ): Promise<{ buffer: Buffer; filename: string }> {
   // 1. Fetch data
