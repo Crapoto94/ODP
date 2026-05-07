@@ -60,9 +60,33 @@ export async function POST(req: NextRequest) {
     const typeConfigs = await (prisma as any).typeDossierConfig.findMany();
     const typeConfigMap: Record<string, any> = typeConfigs.reduce((acc: any, tc: any) => ({ ...acc, [tc.type]: tc }), {});
 
-    const regulatoryConfig = await prisma.odpConfig.findFirst({
-      where: { annee: currentYear }
+    const uniqueYears = Array.from(new Set(occupations.map(occ => 
+      occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || currentYear)
+    )));
+
+    const odpConfigs = await prisma.odpConfig.findMany({
+      where: { annee: { in: uniqueYears } }
     });
+    const odpConfigMap: Record<number, any> = odpConfigs.reduce((acc, cfg) => ({ ...acc, [cfg.annee]: cfg }), {});
+
+    // Validation
+    for (const occ of occupations) {
+      if (occ.type === 'CHANTIER' || occ.type === 'TOURNAGE') {
+        const year = occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || currentYear);
+        const cfg = odpConfigMap[year];
+        
+        if (!cfg) {
+          throw new Error(`Configuration réglementaire (tarifs/délib) manquante pour l'année ${year}`);
+        }
+        if (!cfg.deliberationPath) {
+          throw new Error(`Délibération manquante pour l'année ${year}`);
+        }
+        const tPath = occ.type === 'TOURNAGE' ? cfg.tarifsTournagesPath : cfg.tarifsOdpPath;
+        if (!tPath) {
+          throw new Error(`Tarifs ODP manquants pour l'année ${year}`);
+        }
+      }
+    }
 
     // Prepare standardized results for the shared service
     const results = occupations.map(occ => {
@@ -99,7 +123,7 @@ export async function POST(req: NextRequest) {
       settings,
       typeConfigMap,
       null, // tlpeConfig (ignored for now)
-      regulatoryConfig, // odpConfig
+      odpConfigMap, // Multiple ODP configs
       currentYear,
       runName
     );
@@ -114,7 +138,7 @@ export async function POST(req: NextRequest) {
           filienFilename,
           results,
           tlpeConfig: null,
-          odpConfig: regulatoryConfig,
+          odpConfigs: odpConfigMap,
           facturesDir,
           appSettings: settings,
           dossiers: occupations

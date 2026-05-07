@@ -15,7 +15,7 @@ Ce document récapitule les règles de mapping technique pour la génération de
 - **/02/** : **Type**. Valeur par défaut `R` (Recette).
 - **/03/** : **Code Tiers Sedit**.
 - **/04/** : **Objet**. Format : `ODP - {Type} - {Année}` (ex: `ODP - Chantier - 2024`). Priorité à la surcharge par type de dossier.
-- **/11/** : **N° de pré-bordereau**. Récupéré depuis la configuration par type de dossier.
+- **/11/** : **N° de pré-bordereau**. Valeur par défaut `800`. Ne pas ajouter de zéros de complétion (ex: `800` et non `00800`).
 - **/20/** : **Libellé Tiers**. Format : `ODP - {Type} - {Année}`.
 - **/21/** : **Libellé complémentaire**. Pour les chantiers : `Chantier : {Libellé du dossier}`.
 

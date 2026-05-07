@@ -48,6 +48,10 @@ export default function FacturationPage() {
   const [warningMessage, setWarningMessage] = useState('');
   const [warningDossiers, setWarningDossiers] = useState<any[]>([]);
   const [warningAction, setWarningAction] = useState<() => void>(() => {});
+  
+  // État pour la modal d'erreur de configuration Filien
+  const [isFilienErrorModalOpen, setIsFilienErrorModalOpen] = useState(false);
+  const [filienErrorMessage, setFilienErrorMessage] = useState('');
 
   // Steps handling
   const nextStep = () => setStep(s => s + 1);
@@ -113,8 +117,9 @@ export default function FacturationPage() {
     try {
       await axios.delete(`/api/billing/history?id=${id}`);
       fetchHistory();
-    } catch (err) {
-      alert("Erreur lors de la suppression");
+    } catch (err: any) {
+      setFilienErrorMessage(err.response?.data?.error || err.message || "Erreur lors de la suppression");
+      setIsFilienErrorModalOpen(true);
     }
   };
 
@@ -163,9 +168,10 @@ export default function FacturationPage() {
 
       setDossiers(data);
       setSelectedIds(data.map((d: any) => d.id));
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Erreur lors de la récupération des dossiers");
+      setFilienErrorMessage(err.response?.data?.error || err.message || "Erreur lors de la récupération des dossiers");
+      setIsFilienErrorModalOpen(true);
     } finally {
       setLoading(false);
     }
@@ -220,6 +226,9 @@ export default function FacturationPage() {
             setStep(4);
           } catch (err: any) {
             console.error('Billing error:', err);
+            const errorText = err.response?.data?.error || err.message || "Erreur lors du processus de facturation";
+            setFilienErrorMessage(errorText);
+            setIsFilienErrorModalOpen(true);
           } finally {
             setProcessing(false);
           }
@@ -236,7 +245,9 @@ export default function FacturationPage() {
       setResult(res.data);
       setStep(4);
     } catch (err: any) {
-       alert(err.response?.data?.error || "Erreur lors du processus de facturation");
+       const errorText = err.response?.data?.error || err.message || "Erreur lors du processus de facturation";
+       setFilienErrorMessage(errorText);
+       setIsFilienErrorModalOpen(true);
     } finally {
       setProcessing(false);
     }
@@ -737,6 +748,50 @@ export default function FacturationPage() {
               >
                 Continuer
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isFilienErrorModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-[2.5rem] shadow-2xl max-w-lg w-full p-10 animate-in zoom-in duration-300 border border-rose-100">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-rose-50 text-rose-600 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
+                <AlertTriangle size={40} />
+              </div>
+              
+              <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">Configuration Incomplète</h2>
+              <p className="text-slate-500 font-bold mb-8">
+                L'export Filien ne peut pas être généré car des documents réglementaires obligatoires sont manquants.
+              </p>
+
+              <div className="w-full bg-rose-50 border border-rose-100 rounded-3xl p-6 mb-8 text-left">
+                <div className="flex items-start gap-3">
+                  <Info className="text-rose-600 mt-0.5 shrink-0" size={16} />
+                  <p className="text-sm font-bold text-rose-800 leading-relaxed">
+                    {filienErrorMessage}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                <button
+                  onClick={() => setIsFilienErrorModalOpen(false)}
+                  className="px-8 py-4 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-slate-900 transition-all"
+                >
+                  Fermer
+                </button>
+                <button
+                  onClick={() => {
+                    setIsFilienErrorModalOpen(false);
+                    setView('config');
+                  }}
+                  className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-slate-900/20 active:scale-95 transition-all"
+                >
+                  Régler les paramètres
+                </button>
+              </div>
             </div>
           </div>
         </div>

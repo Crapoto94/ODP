@@ -269,10 +269,34 @@ export async function POST(req: NextRequest) {
       if (tc.type) typeConfigMap[tc.type] = tc;
     });
 
-    // Fetch regulatory paths (delib, tarifs) from OdpConfig
-    const odpConfig = await prisma.odpConfig.findFirst({
-      where: { annee: year }
+    // Fetch regulatory paths (delib, tarifs) from OdpConfig for all years involved
+    const uniqueYears = Array.from(new Set(dossiers.map((occ: any) => 
+      occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || year)
+    )));
+
+    const odpConfigs = await prisma.odpConfig.findMany({
+      where: { annee: { in: uniqueYears } }
     });
+    const odpConfigMap: Record<number, any> = odpConfigs.reduce((acc, cfg) => ({ ...acc, [cfg.annee]: cfg }), {});
+
+    // Validation
+    for (const occ of dossiers) {
+      if (occ.type === 'CHANTIER' || occ.type === 'TOURNAGE') {
+        const movYear = occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || year);
+        const cfg = odpConfigMap[movYear];
+        
+        if (!cfg) {
+          throw new Error(`Configuration réglementaire manquante pour l'année ${movYear} (Dossier ${occ.id})`);
+        }
+        if (!cfg.deliberationPath) {
+          throw new Error(`Délibération manquante pour l'année ${movYear} (Dossier ${occ.id})`);
+        }
+        const tPath = occ.type === 'TOURNAGE' ? cfg.tarifsTournagesPath : cfg.tarifsOdpPath;
+        if (!tPath) {
+          throw new Error(`Tarifs ODP manquants pour l'année ${movYear} (Dossier ${occ.id})`);
+        }
+      }
+    }
 
     const filienContent = getFullFilienContent(
       results,
@@ -280,7 +304,7 @@ export async function POST(req: NextRequest) {
       appSettings,
       typeConfigMap,
       null, // tlpeConfig (ignored for now)
-      odpConfig,
+      odpConfigMap,
       year,
       runName
     );
@@ -298,7 +322,7 @@ export async function POST(req: NextRequest) {
         filienFilename,
         results,
         tlpeConfig: null,
-        odpConfig,
+        odpConfigs: odpConfigMap,
         recapFilename,
         recapPath,
         facturesDir,

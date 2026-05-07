@@ -24,7 +24,7 @@ export function getFullFilienContent(
   appSettings: any,
   typeConfigMap: Record<string, any>,
   tlpeConfig: any,
-  odpConfig: any,
+  odpConfigs: Record<number, any>,
   year: number,
   runName: string
 ): string {
@@ -46,7 +46,7 @@ export function getFullFilienContent(
     filienGestionnaire: appSettings?.filienGestionnaire || '',
   };
 
-  const movements = prepareFilienMovements(results, dossiers, appSettings, tlpeConfig, odpConfig, year, runName);
+  const movements = prepareFilienMovements(results, dossiers, appSettings, tlpeConfig, odpConfigs, year, runName);
 
   // Apply specific analytical overrides from typeConfigs
   movements.forEach((mov, idx) => {
@@ -78,7 +78,7 @@ export function prepareFilienMovements(
   dossiers: any[], 
   appSettings: any, 
   tlpeConfig: any,
-  odpConfig: any,
+  odpConfigs: Record<number, any>,
   year: number,
   runName: string
 ): FilienMovement[] {
@@ -95,7 +95,8 @@ export function prepareFilienMovements(
   return results.map((r, idx) => {
     const occ = dossiers.find((d: any) => d.id === r.id);
     const isOdp = occ?.type === 'CHANTIER' || occ?.type === 'TOURNAGE';
-    const regConfig = isOdp ? odpConfig : tlpeConfig;
+    const movYear = occ?.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ?.anneeTaxation || year);
+    const regConfig = isOdp ? (odpConfigs[movYear] || odpConfigs[year]) : tlpeConfig;
     
     const attachments = [];
     const mouvementId = prefix + (startNum + idx).toString().padStart(padding, '0');
@@ -145,19 +146,22 @@ export function prepareFilienMovements(
       path: runUncPath ? join(runUncPath, `${r.numero}.pdf`) : r.path,
     });
 
+    const startBordereauRaw = appSettings?.filienBordereau || '1';
+    const startBordereau = parseInt(startBordereauRaw.replace(/\D/g, '')) || 1;
+
     return {
       id: mouvementId,
       type: appSettings?.filienType || 'R',
       businessType: occ?.type,
-      year: occ?.dateDebut ? new Date(occ.dateDebut).getFullYear() : occ?.anneeTaxation,
+      year: movYear,
       tiersCode: r.tiersCode || (occ?.debiteur || occ?.tiers)?.code_sedit || 'TIERS_INCONNU',
       libelle: `Chantier ${appSettings?.filienLibelle || occ?.nom || `Dossier #${occ?.id}`}`,
       calendrier: appSettings?.filienCalendrier || '01',
       monnaie: appSettings?.filienMonnaie || 'E',
       existant: appSettings?.filienMouvementEx || 'N',
-      preBordereau: appSettings?.filienPreBordereau || '1235',
+      preBordereau: appSettings?.filienPreBordereau || '800',
       poste: appSettings?.filienPoste || '0001',
-      bordereau: appSettings?.filienBordereau || '0001',
+      bordereau: (startBordereau + idx).toString().padStart(5, '0'),
       objet: appSettings?.filienObjet || '',
       attachments,
       lines: [{
@@ -192,14 +196,14 @@ export async function exportToUnc(params: {
   filienFilename: string;
   results: BillingResult[];
   tlpeConfig: any;
-  odpConfig: any;
+  odpConfigs: Record<number, any>;
   recapFilename?: string;
   recapPath?: string;
   facturesDir: string;
   appSettings?: any;
   dossiers?: any[];
 }): Promise<boolean> {
-  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, odpConfig, recapFilename, recapPath, facturesDir, appSettings, dossiers } = params;
+  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, odpConfigs, recapFilename, recapPath, facturesDir, appSettings, dossiers } = params;
   const publicPath = join(process.cwd(), 'public');
   
   try {
@@ -281,10 +285,13 @@ export async function exportToUnc(params: {
 
       // 4. Copy Regulatory documents (Deliberation and Tarifs)
       // Since a run can have both ODP and TLPE, we try to copy both types of docs if configs are provided
-      const configsToProcess = [
-        { cfg: odpConfig, isOdp: true },
-        { cfg: tlpeConfig, isOdp: false }
-      ];
+      const configsToProcess = [];
+      if (tlpeConfig) configsToProcess.push({ cfg: tlpeConfig, isOdp: false });
+      if (odpConfigs) {
+        Object.values(odpConfigs).forEach(cfg => {
+          configsToProcess.push({ cfg, isOdp: true });
+        });
+      }
 
       for (const { cfg, isOdp } of configsToProcess) {
         if (!cfg) continue;
@@ -358,20 +365,44 @@ export async function exportToUnc(params: {
       
       await writeFile(join(targetDir, filienFilename), Buffer.from(filienContent, 'latin1'));
 
-      if (tlpeConfig?.deliberationPath) {
-        const delibName = tlpeConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
-        const delibSrc = tlpeConfig.deliberationPath.startsWith('/') ? join(publicPath, tlpeConfig.deliberationPath) : tlpeConfig.deliberationPath;
-        if (existsSync(delibSrc)) {
-          await writeFile(join(targetDir, delibName), await readFile(delibSrc));
-        }
+      // 4. Copy Regulatory documents (Deliberation and Tarifs)
+      const configsToProcess = [];
+      if (tlpeConfig) configsToProcess.push({ cfg: tlpeConfig, isOdp: false });
+      if (odpConfigs) {
+        Object.values(odpConfigs).forEach(cfg => {
+          configsToProcess.push({ cfg, isOdp: true });
+        });
       }
 
-      const tarifsPath = tlpeConfig?.tarifsOdpPath || tlpeConfig?.tarifsPath;
-      if (tarifsPath) {
-        const tarifsName = tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
-        const tarifsSrc = tarifsPath.startsWith('/') ? join(publicPath, tarifsPath) : tarifsPath;
-        if (existsSync(tarifsSrc)) {
-          await writeFile(join(targetDir, tarifsName), await readFile(tarifsSrc));
+      for (const { cfg, isOdp } of configsToProcess) {
+        if (!cfg) continue;
+
+        // Deliberation
+        if (cfg.deliberationPath) {
+          const delibName = cfg.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
+          const delibSrc = cfg.deliberationPath.startsWith('/') ? join(publicPath, cfg.deliberationPath) : cfg.deliberationPath;
+          if (existsSync(delibSrc)) {
+            await writeFile(join(targetDir, delibName), await readFile(delibSrc));
+          }
+        }
+
+        // Tarifs
+        const tPath = isOdp ? cfg.tarifsOdpPath : cfg.tarifsPath;
+        if (tPath) {
+          const tarifsName = tPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
+          const tarifsSrc = tPath.startsWith('/') ? join(publicPath, tPath) : tPath;
+          if (existsSync(tarifsSrc)) {
+            await writeFile(join(targetDir, tarifsName), await readFile(tarifsSrc));
+          }
+        }
+        
+        // Specifique Tournages
+        if (isOdp && cfg.tarifsTournagesPath) {
+          const ttName = cfg.tarifsTournagesPath.split(/[\\/]/).pop() || 'Tarifs_Tournages.pdf';
+          const ttSrc = cfg.tarifsTournagesPath.startsWith('/') ? join(publicPath, cfg.tarifsTournagesPath) : cfg.tarifsTournagesPath;
+          if (existsSync(ttSrc)) {
+            await writeFile(join(targetDir, ttName), await readFile(ttSrc));
+          }
         }
       }
 
