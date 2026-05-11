@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prismaShared } from '@/lib/prisma-shared';
 import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const items = await prisma.backlogItem.findMany({
+    const items = await prismaShared.backlogItem.findMany({
       include: {
         version: true,
         comments: {
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       console.error('[POST /api/backlog] Error decrypting session:', e);
     }
 
-    const item = await prisma.backlogItem.create({
+    const item = await prismaShared.backlogItem.create({
       data: {
         title: body.title,
         description: body.description,

@@ -202,6 +202,26 @@ export default function FacturationPage() {
   const handleStartBilling = async () => {
     setProcessing(true);
     try {
+      // 1. Verify required documents before billing
+      const verifyRes = await axios.post('/api/billing/verify-documents', {
+        ids: selectedIds,
+        type: type
+      });
+
+      if (!verifyRes.data.success) {
+        const missingDocs = verifyRes.data.missingDocuments;
+        let errorMsg = 'Documents obligatoires manquants pour la facturation:\n\n';
+        missingDocs.forEach((missing: any) => {
+          errorMsg += `Année ${missing.year}: ${missing.documents.join(', ')}\n`;
+        });
+        errorMsg += '\nVous devez configurer ces documents avant de pouvoir facturer.';
+
+        setFilienErrorMessage(errorMsg);
+        setIsFilienErrorModalOpen(true);
+        setProcessing(false);
+        return;
+      }
+
       const selectedDossiers = dossiers.filter(d => selectedIds.includes(d.id));
       const problematicDossiers = [];
 
@@ -775,23 +795,12 @@ export default function FacturationPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                <button
-                  onClick={() => setIsFilienErrorModalOpen(false)}
-                  className="px-8 py-4 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-slate-900 transition-all"
-                >
-                  Fermer
-                </button>
-                <button
-                  onClick={() => {
-                    setIsFilienErrorModalOpen(false);
-                    setView('config');
-                  }}
-                  className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-slate-900/20 active:scale-95 transition-all"
-                >
-                  Régler les paramètres
-                </button>
-              </div>
+              <button
+                onClick={() => setIsFilienErrorModalOpen(false)}
+                className="w-full px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-slate-900/20 active:scale-95 transition-all"
+              >
+                Fermer
+              </button>
             </div>
           </div>
         </div>

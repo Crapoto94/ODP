@@ -83,6 +83,7 @@ interface MarkerData {
   statut: string;
   isTier?: boolean;
   rawId: number;
+  tiersId?: number;
 }
 
 export default function SigMap({ occupations = [], tiers = [] }: { occupations: any[], tiers?: any[] }) {
@@ -97,8 +98,17 @@ export default function SigMap({ occupations = [], tiers = [] }: { occupations: 
   useEffect(() => {
     if (!mounted) return;
 
+    // Deduplicate COMMERCEs: one marker per tiersId regardless of how many yearly occupations exist
+    const seenCommerceIds = new Set<number>();
+    const dedupedOccupations = occupations.filter(o => {
+      if (o.type !== 'COMMERCE') return true;
+      if (seenCommerceIds.has(o.tiersId)) return false;
+      seenCommerceIds.add(o.tiersId);
+      return true;
+    });
+
     const allItems: MarkerData[] = [
-      ...occupations.map(o => ({
+      ...dedupedOccupations.map(o => ({
         id: `occ-${o.id}`,
         latitude: o.latitude ?? o.tiers?.latitude,
         longitude: o.longitude ?? o.tiers?.longitude,
@@ -107,7 +117,8 @@ export default function SigMap({ occupations = [], tiers = [] }: { occupations: 
         type: o.type,
         statut: o.statut,
         isTier: false,
-        rawId: o.id
+        rawId: o.id,
+        tiersId: o.tiersId
       })),
       ...tiers.map(t => ({
         id: `tier-${t.id}`,
@@ -207,8 +218,12 @@ export default function SigMap({ occupations = [], tiers = [] }: { occupations: 
                       </div>
                       <p className="text-[10px] font-bold text-slate-400">{m.adresse}</p>
                       {!m.isTier && (
-                        <button 
-                          onClick={() => router.push(`/dashboard/occupations/${m.rawId}`)}
+                        <button
+                          onClick={() => router.push(
+                            m.type === 'COMMERCE'
+                              ? `/dashboard/commerces/${m.tiersId}`
+                              : `/dashboard/occupations/${m.rawId}`
+                          )}
                           className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95"
                         >
                           Accéder au dossier

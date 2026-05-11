@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prismaShared } from '@/lib/prisma-shared';
 import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
 
@@ -25,7 +25,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: 'Only admins can modify backlog items' }, { status: 403 });
     }
 
-    const item = await prisma.backlogItem.update({
+    const item = await prismaShared.backlogItem.update({
       where: { id },
       data: body
     });
@@ -40,7 +40,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   try {
     const { id: idStr } = await params;
     const id = parseInt(idStr);
-    await prisma.backlogItem.delete({ where: { id } });
+    await prismaShared.backlogItem.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[DELETE /api/backlog/[id]]', error);

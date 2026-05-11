@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prismaShared } from '@/lib/prisma-shared';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -7,7 +7,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     const id = parseInt(idStr);
 
     // 1. Check if version has items
-    const version = await prisma.versionRelease.findUnique({
+    const version = await prismaShared.versionRelease.findUnique({
       where: { id },
       include: { _count: { select: { backlogItems: true } } }
     });
@@ -23,7 +23,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     }
 
     // 2. Delete version
-    await prisma.versionRelease.delete({ where: { id } });
+    await prismaShared.versionRelease.delete({ where: { id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {

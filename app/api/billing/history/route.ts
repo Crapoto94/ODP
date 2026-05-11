@@ -1,125 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import { unlink, readdir, readFile } from 'fs/promises';
+import { unlink } from 'fs/promises';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const idFilter = searchParams.get('id');
   try {
-    // 1. Fetch from Database
     const dbRuns = await (prisma as any).billingRun.findMany({
-      include: { invoices: true },
       orderBy: { date: 'desc' }
     });
 
-    const dbHistory = dbRuns.map((run: any) => ({
+    const history = dbRuns.map((run: any) => ({
       ...run,
-      date: run.date ? new Date(run.date).toLocaleString('fr-FR') : 'Date inconnue',
-      source: 'db'
+      invoices: [],
+      date: run.date ? new Date(run.date).toLocaleString('fr-FR') : 'Date inconnue'
     }));
 
-    // 2. Fetch from Filesystem (Legacy)
-    const facturesDir = join(process.cwd(), 'public', 'Factures');
-    const legacyHistory: any[] = [];
-    
-    if (existsSync(facturesDir)) {
-      const items = await readdir(facturesDir, { withFileTypes: true });
-      const filienFiles = items
-        .filter(item => !item.isDirectory() && item.name.startsWith('FACT-') && item.name.endsWith('.filien'))
-        .map(item => item.name);
-      
-      const subDirs = items.filter(item => item.isDirectory()).map(item => item.name);
-      
-      // Filter out files that already exist in DB to avoid duplicates
-      const dbIds = new Set(dbRuns.map((r: any) => r.id));
-      const legacyFiles = filienFiles.filter((f: string) => !dbIds.has(f.replace('.filien', '')));
-
-      const parsedLegacy = await Promise.all(legacyFiles.map(async (filename: string) => {
-        try {
-          const content = await readFile(join(facturesDir, filename), 'utf-8');
-          const lines = content.split('\n');
-          const baseName = filename.replace('.filien', '');
-          
-          let date = '';
-          const dateParts = baseName.split('-');
-          if (dateParts.length >= 5) {
-            date = `${dateParts[3]}/${dateParts[2]}/${dateParts[1]} ${dateParts[4].slice(0, 2)}:${dateParts[4].slice(2)}`;
-          }
-
-          let type = 'Inconnu';
-          let total = 0;
-          let count = 0;
-          const invoices: any[] = [];
-
-          const isFilienFormat = content.includes('/PARAM/') || content.startsWith('/##/');
-
-          if (isFilienFormat) {
-            for (const line of lines) {
-              if (line.startsWith('/01/')) {
-                count++;
-                const raw = line.replace('/01/', '').trim();
-                let numero = raw;
-                if (raw.includes('ODP')) {
-                  const p = raw.split('ODP');
-                  numero = `${p[0]}-ODP-${p[1]}`;
-                }
-                let pdfPath = `/Factures/${numero}.pdf`;
-                // Try to find it in subfolders if not in root
-                if (!existsSync(join(facturesDir, `${numero}.pdf`))) {
-                  for (const sd of subDirs) {
-                    if (existsSync(join(facturesDir, sd, `${numero}.pdf`))) {
-                      pdfPath = `/Factures/${sd}/${numero}.pdf`;
-                      break;
-                    }
-                  }
-                }
-                invoices.push({ numero, tiers: '...', total: 0, pdfPath });
-              } else if (line.startsWith('/66/')) {
-                total += parseFloat(line.replace('/66/', '').replace(',', '.') || '0');
-              } else if (line.startsWith('/PARAM/')) {
-                const p = line.split('/');
-                if (p[2] === '30') type = 'TLPE';
-                else if (p[2] === '01') type = 'Commerce / ODP';
-                else type = 'Facturation';
-              }
-            }
-          }
-
-          return {
-            id: baseName,
-            type,
-            date,
-            agent: 'Système (Ancien)',
-            total,
-            count,
-            recapPath: `/Factures/${baseName}.pdf`,
-            filienPath: `/Factures/${filename}`,
-            invoices,
-            source: 'file'
-          };
-        } catch (e) {
-          return null;
-        }
-      }));
-      
-      parsedLegacy.forEach(h => { if (h) legacyHistory.push(h); });
+    // Fetch invoices separately with error handling
+    for (const run of history as any[]) {
+      try {
+        run.invoices = await (prisma as any).billingRunInvoice.findMany({
+          where: { billingRunId: run.id }
+        });
+      } catch (err: any) {
+        console.error(`[HISTORY] Failed to fetch invoices for run ${run.id}:`, err.message);
+        run.invoices = [];
+      }
     }
 
-    // 3. Merge and Sort
-    const combined = [...dbHistory, ...legacyHistory].sort((a, b) => {
-      // Sort by chronological ID (FACT-YYYY-MM-DD-HHmm)
-      return b.id.localeCompare(a.id);
-    });
-
-    // 4. Filter by ID if requested
     if (idFilter) {
-      const filtered = combined.filter(run => run.id === idFilter);
+      const filtered = history.filter((run: any) => run.id === idFilter);
       return NextResponse.json(filtered);
     }
 
-    return NextResponse.json(combined);
+    return NextResponse.json(history);
   } catch (error: any) {
     console.error('[HISTORY ERROR]', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -130,19 +46,35 @@ export async function DELETE(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const id = searchParams.get('id');
-    
+
     if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
 
-    // 1. Find the run and associated invoices
-    const run = await (prisma as any).billingRun.findUnique({
-      where: { id },
-      include: { invoices: true }
-    });
+    // 1. Find the run first without invoices to avoid data corruption issues
+    let run: any;
+    try {
+      run = await (prisma as any).billingRun.findUnique({
+        where: { id }
+      });
+    } catch (err: any) {
+      console.error(`[DELETE] Error finding billingRun ${id}:`, err.message);
+      return NextResponse.json({ error: 'Erreur lors de la lecture du train de facturation' }, { status: 500 });
+    }
 
     if (!run) return NextResponse.json({ error: 'Train de facturation introuvable' }, { status: 404 });
 
-    // 2. Revert dossier statuses
-    const invoiceIds = run.invoices.map((inv: any) => inv.dossierId);
+    // 2. Fetch invoices separately to avoid corruption errors
+    let invoiceIds: number[] = [];
+    try {
+      const invoices = await (prisma as any).billingRunInvoice.findMany({
+        where: { billingRunId: id },
+        select: { dossierId: true }
+      });
+      invoiceIds = invoices.map((inv: any) => inv.dossierId).filter((id: any) => id != null);
+    } catch (err: any) {
+      console.error(`[DELETE] Error fetching invoices for ${id}:`, err.message);
+    }
+
+    // 3. Revert dossier statuses
     if (invoiceIds.length > 0) {
       await (prisma as any).occupation.updateMany({
         where: { id: { in: invoiceIds } },
@@ -154,13 +86,23 @@ export async function DELETE(req: NextRequest) {
       });
     }
 
-    // 3. Delete files from disk
+    // 4. Delete files from disk
     const facturesDir = join(process.cwd(), 'public', 'Factures');
-    
-    // Delete individual invoices
-    for (const inv of run.invoices) {
-      const filePath = join(process.cwd(), 'public', inv.pdfPath);
-      if (existsSync(filePath)) await unlink(filePath).catch(() => {});
+
+    // Delete individual invoice files
+    try {
+      const invoiceFiles = await (prisma as any).billingRunInvoice.findMany({
+        where: { billingRunId: id },
+        select: { pdfPath: true }
+      });
+      for (const inv of invoiceFiles) {
+        if (inv.pdfPath) {
+          const filePath = join(process.cwd(), 'public', inv.pdfPath);
+          if (existsSync(filePath)) await unlink(filePath).catch(() => {});
+        }
+      }
+    } catch (err: any) {
+      console.error(`[DELETE] Error deleting invoice files for ${id}:`, err.message);
     }
 
     // Delete recap and filien files
@@ -173,8 +115,19 @@ export async function DELETE(req: NextRequest) {
       if (existsSync(filienPath)) await unlink(filienPath).catch(() => {});
     }
 
-    // 4. Delete the record from DB
-    await (prisma as any).billingRun.delete({ where: { id } });
+    // 5. Delete invoices and the run from DB
+    try {
+      // Delete invoices first
+      await (prisma as any).billingRunInvoice.deleteMany({
+        where: { billingRunId: id }
+      });
+      // Then delete the run
+      await (prisma as any).billingRun.delete({ where: { id } });
+      console.log(`[DELETE] Successfully deleted billing run ${id}`);
+    } catch (err: any) {
+      console.error(`[DELETE] Error deleting from database:`, err.message);
+      return NextResponse.json({ error: 'Erreur lors de la suppression' }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

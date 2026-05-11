@@ -78,22 +78,22 @@ export async function processFilienExport(params: {
   const filienPath = join(facturesDir, filienFilename);
   await writeFile(filienPath, Buffer.from(filienContent, 'latin1'));
 
-  if (appSettings?.filienUncPj) {
-    await exportToUnc({
-      uncDir: appSettings.filienUncPj,
-      runName,
-      filienContent,
-      filienFilename,
-      results,
-      tlpeConfig: null,
-      odpConfigs: odpConfigMap,
-      recapFilename,
-      recapPath,
-      facturesDir,
-      appSettings,
-      dossiers
-    });
-  }
+  // Always export regulatory documents and AOT files to the factures directory
+  const exportDir = appSettings?.filienUncPj || join(process.cwd(), 'public', 'Factures');
+  await exportToUnc({
+    uncDir: exportDir,
+    runName,
+    filienContent,
+    filienFilename,
+    results,
+    tlpeConfig: null,
+    odpConfigs: odpConfigMap,
+    recapFilename,
+    recapPath,
+    facturesDir,
+    appSettings,
+    dossiers
+  });
 
   return filienPath;
 }

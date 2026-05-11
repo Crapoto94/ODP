@@ -29,8 +29,8 @@ import {
 const menuItems = [
   { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard' },
   { icon: HardHat, label: 'Chantiers et tournages', href: '/dashboard/occupations' },
-  { icon: Store, label: 'Commerces', href: '/dashboard/commerces', adminOnly: true },
-  { icon: ShoppingBag, label: 'T.L.P.E.', href: '/dashboard/tlpe', adminOnly: true },
+  { icon: Store, label: 'Commerces', href: '/dashboard/commerces' },
+  { icon: ShoppingBag, label: 'T.L.P.E.', href: '/dashboard/tlpe' },
   { icon: Users, label: 'Gestion des Tiers', href: '/dashboard/tiers' },
   { icon: Euro, label: 'Tarifs & Articles', href: '/dashboard/tarifs' },
   { icon: LayoutTemplate, label: 'Gabarits', href: '/dashboard/gabarit' },

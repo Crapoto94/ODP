@@ -1,6 +1,19 @@
 import { join } from 'path';
 import { FilienMovement, FilienParams, generateFilienFile } from '../filien';
 
+// Helper to remove accents and replace spaces with underscores
+function cleanFilename(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/\s+/g, '_');
+}
+
+// Helper to remove year suffix from dossier name (e.g., "TEST_2023" -> "TEST")
+function removeYearSuffix(name: string): string {
+  return name.replace(/_\d{4}$/, '').replace(/-\d{4}$/, '');
+}
+
 export interface BillingResult {
   id: number;
   numero: string;
@@ -63,8 +76,8 @@ export function getFullFilienContent(
 
 export function prepareFilienMovements(
   results: BillingResult[],
-  dossiers: any[], 
-  appSettings: any, 
+  dossiers: any[],
+  appSettings: any,
   tlpeConfig: any,
   odpConfigs: Record<number, any>,
   year: number,
@@ -90,7 +103,8 @@ export function prepareFilienMovements(
     const mouvementId = prefix + (startNum + idx).toString().padStart(padding, '0');
 
     if (regConfig?.deliberationPath) {
-      const delibName = regConfig.deliberationPath.split(/[\\/]/).pop() || 'Deliberation.pdf';
+      const ext = regConfig.deliberationPath.split('.').pop();
+      const delibName = cleanFilename(`Deliberation_${movYear}.${ext}`);
       console.log(`[Filien] Found Delib for ${occ.id} (Year ${movYear}): ${delibName}`);
       attachments.push({
         name: 'Délibération',
@@ -102,12 +116,15 @@ export function prepareFilienMovements(
       console.warn(`[Filien] Missing Delib for ${occ.id} (Year ${movYear})`);
     }
 
-    const tarifsPath = isOdp 
+    const tarifsPath = isOdp
       ? (occ?.type === 'TOURNAGE' ? regConfig?.tarifsTournagesPath : regConfig?.tarifsOdpPath)
       : regConfig?.tarifsPath;
 
     if (tarifsPath) {
-      const tarifsName = tarifsPath.split(/[\\/]/).pop() || 'Tarifs.pdf';
+      const ext = tarifsPath.split('.').pop();
+      const tarifsName = cleanFilename(isOdp
+        ? (occ?.type === 'TOURNAGE' ? `Tarifs_Tournages_${movYear}.${ext}` : `Tarifs_ODP_${movYear}.${ext}`)
+        : `Tarifs_${movYear}.${ext}`);
       console.log(`[Filien] Found Tarifs for ${occ.id} (Year ${movYear}): ${tarifsName}`);
       attachments.push({
         name: 'Tarifs',
@@ -120,7 +137,9 @@ export function prepareFilienMovements(
     }
 
     if (occ?.aotFinalPath) {
-      const aotName = occ.aotFinalPath.split(/[\\/]/).pop() || `AOT_${occ.id}.pdf`;
+      const ext = occ.aotFinalPath.split('.').pop();
+      const baseName = occ?.nom ? removeYearSuffix(occ.nom) : `Dossier_${occ?.id}`;
+      const aotName = cleanFilename(`AOT_${baseName}_${movYear}.${ext}`);
       attachments.push({
         name: 'AOT',
         filename: aotName,

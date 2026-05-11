@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prismaShared } from '@/lib/prisma-shared';
 import fs from 'fs';
 import path from 'path';
 
 export async function GET() {
   try {
-    const releases = await prisma.versionRelease.findMany({
+    const releases = await prismaShared.versionRelease.findMany({
       include: { backlogItems: true },
       orderBy: { releasedAt: 'desc' }
     });
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     const { versionNumber, notes, backlogItemIds } = body;
 
     // 1. Transaction to create release and update items
-    const release = await prisma.$transaction(async (tx) => {
+    const release = await prismaShared.$transaction(async (tx) => {
       const newRelease = await tx.versionRelease.create({
         data: {
           versionNumber,

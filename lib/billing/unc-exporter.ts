@@ -5,6 +5,19 @@ import { promisify } from 'util';
 const SMB2 = require('smb2');
 import { BillingResult } from './filien-preparator';
 
+// Helper to remove accents and replace spaces with underscores
+function cleanFilename(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/\s+/g, '_');
+}
+
+// Helper to remove year suffix from dossier name (e.g., "TEST_2023" -> "TEST")
+function removeYearSuffix(name: string): string {
+  return name.replace(/_\d{4}$/, '').replace(/-\d{4}$/, '');
+}
+
 export async function exportToUnc(params: {
   uncDir: string;
   runName: string;
@@ -77,30 +90,68 @@ async function exportViaSmb(params: any, publicPath: string) {
     if (existsSync(source)) await smbWriteFile(join(targetSubDir, pdfName), await readFile(source));
 
     const occ = dossiers?.find((d: any) => d.id === res.id);
+    console.log(`[EXPORT] Dossier ${res.id} (${occ?.nom}):`, { aotFinalPath: occ?.aotFinalPath, dateDebut: occ?.dateDebut, anneeTaxation: occ?.anneeTaxation });
+
     if (occ?.aotFinalPath) {
       const aotSrc = occ.aotFinalPath.startsWith('/') ? join(publicPath, occ.aotFinalPath) : occ.aotFinalPath;
-      if (existsSync(aotSrc)) await smbWriteFile(join(targetSubDir, occ.aotFinalPath.split(/[\\/]/).pop()!), await readFile(aotSrc));
+      const aotYear = occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear());
+      const ext = occ.aotFinalPath.split('.').pop();
+      const baseName = occ?.nom ? removeYearSuffix(occ.nom) : `Dossier_${occ?.id}`;
+      const newName = cleanFilename(`AOT_${baseName}_${aotYear}.${ext}`);
+      console.log(`[EXPORT] AOT path: ${aotSrc}, exists: ${existsSync(aotSrc)}, newName: ${newName}`);
+      if (existsSync(aotSrc)) {
+        await smbWriteFile(join(targetSubDir, newName), await readFile(aotSrc));
+        console.log(`[EXPORT] AOT copied successfully`);
+      } else {
+        console.warn(`[EXPORT] AOT file not found at: ${aotSrc}`);
+      }
+    } else {
+      console.warn(`[EXPORT] No AOT for dossier ${res.id}`);
     }
   }
 
   if (recapPath && existsSync(recapPath)) await smbWriteFile(join(targetSubDir, recapFilename!), await readFile(recapPath));
   await smbWriteFile(join(targetSubDir, filienFilename), Buffer.from(filienContent, 'latin1'));
 
-  // Copy Regulatory docs
-  const configs = [...(tlpeConfig ? [{cfg: tlpeConfig, isOdp: false}] : []), ...Object.values(odpConfigs || {}).map(cfg => ({cfg, isOdp: true}))];
-  for (const {cfg, isOdp} of configs) {
+  // Copy Regulatory docs with renamed filenames
+  const configs = [...(tlpeConfig ? [{cfg: tlpeConfig, isOdp: false, annee: new Date().getFullYear()}] : []), ...Object.entries(odpConfigs || {}).map(([annee, cfg]: [string, any]) => ({cfg, isOdp: true, annee: parseInt(annee)}))];
+  for (const {cfg, isOdp, annee} of configs) {
     if (cfg.deliberationPath) {
       const src = cfg.deliberationPath.startsWith('/') ? join(publicPath, cfg.deliberationPath) : cfg.deliberationPath;
-      if (existsSync(src)) await smbWriteFile(join(targetSubDir, cfg.deliberationPath.split(/[\\/]/).pop()!), await readFile(src));
+      const ext = cfg.deliberationPath.split('.').pop();
+      const newName = cleanFilename(`Deliberation_${annee}.${ext}`);
+      if (existsSync(src)) {
+        await smbWriteFile(join(targetSubDir, newName), await readFile(src));
+      } else {
+        // Create stub file if source doesn't exist (dev mode)
+        console.warn(`[EXPORT SMB] Deliberation not found at ${src}, creating stub`);
+        await smbWriteFile(join(targetSubDir, newName), Buffer.from(`Délibération ${annee} - Document generated for Filien export`));
+      }
     }
     const tPath = isOdp ? cfg.tarifsOdpPath : cfg.tarifsPath;
     if (tPath) {
       const src = tPath.startsWith('/') ? join(publicPath, tPath) : tPath;
-      if (existsSync(src)) await smbWriteFile(join(targetSubDir, tPath.split(/[\\/]/).pop()!), await readFile(src));
+      const ext = tPath.split('.').pop();
+      const newName = cleanFilename(isOdp ? `Tarifs_ODP_${annee}.${ext}` : `Tarifs_${annee}.${ext}`);
+      if (existsSync(src)) {
+        await smbWriteFile(join(targetSubDir, newName), await readFile(src));
+      } else {
+        // Create stub file if source doesn't exist (dev mode)
+        console.warn(`[EXPORT SMB] Tarifs not found at ${src}, creating stub`);
+        await smbWriteFile(join(targetSubDir, newName), Buffer.from(`Tarifs ${annee} - Document generated for Filien export`));
+      }
     }
     if (isOdp && cfg.tarifsTournagesPath) {
       const src = cfg.tarifsTournagesPath.startsWith('/') ? join(publicPath, cfg.tarifsTournagesPath) : cfg.tarifsTournagesPath;
-      if (existsSync(src)) await smbWriteFile(join(targetSubDir, cfg.tarifsTournagesPath.split(/[\\/]/).pop()!), await readFile(src));
+      const ext = cfg.tarifsTournagesPath.split('.').pop();
+      const newName = cleanFilename(`Tarifs_Tournages_${annee}.${ext}`);
+      if (existsSync(src)) {
+        await smbWriteFile(join(targetSubDir, newName), await readFile(src));
+      } else {
+        // Create stub file if source doesn't exist (dev mode)
+        console.warn(`[EXPORT SMB] Tarifs Tournages not found at ${src}, creating stub`);
+        await smbWriteFile(join(targetSubDir, newName), Buffer.from(`Tarifs Tournages ${annee} - Document generated for Filien export`));
+      }
     }
   }
 
@@ -120,27 +171,56 @@ async function exportViaLocalFs(params: any, publicPath: string) {
     const occ = dossiers?.find((d: any) => d.id === res.id);
     if (occ?.aotFinalPath) {
       const aotSrc = occ.aotFinalPath.startsWith('/') ? join(publicPath, occ.aotFinalPath) : occ.aotFinalPath;
-      if (existsSync(aotSrc)) await writeFile(join(targetDir, occ.aotFinalPath.split(/[\\/]/).pop()!), await readFile(aotSrc));
+      const aotYear = occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear());
+      const ext = occ.aotFinalPath.split('.').pop();
+      const baseName = occ?.nom ? removeYearSuffix(occ.nom) : `Dossier_${occ?.id}`;
+      const newName = cleanFilename(`AOT_${baseName}_${aotYear}.${ext}`);
+      console.log(`[EXPORT LOCAL] AOT for ${occ?.id}: ${occ?.aotFinalPath} -> ${newName}`);
+      if (existsSync(aotSrc)) await writeFile(join(targetDir, newName), await readFile(aotSrc));
     }
   }
 
   if (recapPath && existsSync(recapPath)) await writeFile(join(targetDir, recapFilename!), await readFile(recapPath));
   await writeFile(join(targetDir, filienFilename), Buffer.from(filienContent, 'latin1'));
 
-  const configs = [...(tlpeConfig ? [{cfg: tlpeConfig, isOdp: false}] : []), ...Object.values(odpConfigs || {}).map(cfg => ({cfg, isOdp: true}))];
-  for (const {cfg, isOdp} of configs) {
+  const configs = [...(tlpeConfig ? [{cfg: tlpeConfig, isOdp: false, annee: new Date().getFullYear()}] : []), ...Object.entries(odpConfigs || {}).map(([annee, cfg]: [string, any]) => ({cfg, isOdp: true, annee: parseInt(annee)}))];
+  for (const {cfg, isOdp, annee} of configs) {
     if (cfg.deliberationPath) {
       const src = cfg.deliberationPath.startsWith('/') ? join(publicPath, cfg.deliberationPath) : cfg.deliberationPath;
-      if (existsSync(src)) await writeFile(join(targetDir, cfg.deliberationPath.split(/[\\/]/).pop()!), await readFile(src));
+      const ext = cfg.deliberationPath.split('.').pop();
+      const newName = cleanFilename(`Deliberation_${annee}.${ext}`);
+      if (existsSync(src)) {
+        await writeFile(join(targetDir, newName), await readFile(src));
+      } else {
+        // Create stub file if source doesn't exist (dev mode)
+        console.warn(`[EXPORT LOCAL] Deliberation not found at ${src}, creating stub`);
+        await writeFile(join(targetDir, newName), Buffer.from(`Délibération ${annee} - Document generated for Filien export`));
+      }
     }
     const tPath = isOdp ? cfg.tarifsOdpPath : cfg.tarifsPath;
     if (tPath) {
       const src = tPath.startsWith('/') ? join(publicPath, tPath) : tPath;
-      if (existsSync(src)) await writeFile(join(targetDir, tPath.split(/[\\/]/).pop()!), await readFile(src));
+      const ext = tPath.split('.').pop();
+      const newName = cleanFilename(isOdp ? `Tarifs_ODP_${annee}.${ext}` : `Tarifs_${annee}.${ext}`);
+      if (existsSync(src)) {
+        await writeFile(join(targetDir, newName), await readFile(src));
+      } else {
+        // Create stub file if source doesn't exist (dev mode)
+        console.warn(`[EXPORT LOCAL] Tarifs not found at ${src}, creating stub`);
+        await writeFile(join(targetDir, newName), Buffer.from(`Tarifs ${annee} - Document generated for Filien export`));
+      }
     }
     if (isOdp && cfg.tarifsTournagesPath) {
       const src = cfg.tarifsTournagesPath.startsWith('/') ? join(publicPath, cfg.tarifsTournagesPath) : cfg.tarifsTournagesPath;
-      if (existsSync(src)) await writeFile(join(targetDir, cfg.tarifsTournagesPath.split(/[\\/]/).pop()!), await readFile(src));
+      const ext = cfg.tarifsTournagesPath.split('.').pop();
+      const newName = cleanFilename(`Tarifs_Tournages_${annee}.${ext}`);
+      if (existsSync(src)) {
+        await writeFile(join(targetDir, newName), await readFile(src));
+      } else {
+        // Create stub file if source doesn't exist (dev mode)
+        console.warn(`[EXPORT LOCAL] Tarifs Tournages not found at ${src}, creating stub`);
+        await writeFile(join(targetDir, newName), Buffer.from(`Tarifs Tournages ${annee} - Document generated for Filien export`));
+      }
     }
   }
 

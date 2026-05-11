@@ -130,7 +130,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     });
 
     if (isCourtMetrage !== undefined) {
-      await (prisma as any).$executeRaw`UPDATE Occupation SET isCourtMetrage = ${!!isCourtMetrage} WHERE id = ${id}`;
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isCourtMetrage" = ${!!isCourtMetrage} WHERE id = ${id}`;
     }
 
     // Add automatic notes for changes

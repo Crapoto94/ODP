@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     // 2. Process each dossier
     for (const occ of dossiers) {
       const invoiceNumber = `${year}-ODP-${nextIndex++}`;
-      
+
       const processed = await processDossier({
         occ,
         invoiceNumber,
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
 
     // 4. Batch level operations
     const recap = await generateRecapPdf({ results, type: type || 'Batch', grandTotal, now, facturesDir, timestampStr });
-    
+
     const odpConfigs = await (prisma as any).odpConfig.findMany({
       where: { annee: { in: Array.from(new Set(dossiers.map((d: any) => d.anneeTaxation || year))) } }
     });
@@ -175,7 +175,19 @@ async function getNextInvoiceIndex(year: number) {
 
 async function recordBillingRun(id: string, type: string, date: Date, results: ProcessedInvoice[], total: number, agent: string, recapFilename: string, runName: string, timestampStr: string) {
   try {
-    await (prisma as any).billingRun.create({
+    console.log(`[BILLING RUN] Starting record with ID: ${id}`);
+
+    // Check if billingRun table exists
+    try {
+      const existing = await (prisma as any).billingRun.findFirst();
+      console.log(`[BILLING RUN] Table check passed`);
+    } catch (tableErr: any) {
+      console.error(`[BILLING RUN] Table check failed:`, tableErr.message);
+      throw new Error(`billingRun table may not exist: ${tableErr.message}`);
+    }
+
+    // Create billing run
+    const result = await (prisma as any).billingRun.create({
       data: {
         id,
         type: type || 'Facturation',
@@ -184,19 +196,27 @@ async function recordBillingRun(id: string, type: string, date: Date, results: P
         total,
         agent,
         recapPath: `/Factures/${runName}/${recapFilename}`,
-        filienPath: `/Factures/${runName}/FACT-${timestampStr}.filien.txt`,
-        invoices: {
-          create: results.map(r => ({
-            dossierId: r.id,
-            numero: r.numero,
-            tiers: r.tiers,
-            total: r.total,
-            pdfPath: r.path
-          }))
-        }
+        filienPath: `/Factures/${runName}/FACT-${timestampStr}.filien.txt`
       }
     });
-  } catch (err) {
-    console.error('[DB RUN RECORD ERROR]', err);
+
+    // Create invoices separately
+    if (results.length > 0) {
+      await (prisma as any).billingRunInvoice.createMany({
+        data: results.map(r => ({
+          billingRunId: id,
+          dossierId: r.id,
+          numero: r.numero,
+          tiers: r.tiers,
+          total: r.total,
+          pdfPath: r.path
+        }))
+      });
+    }
+
+    console.log(`[BILLING RUN RECORDED] ID: ${id}, Count: ${results.length}, Total: ${total}, Result:`, result);
+  } catch (err: any) {
+    console.error('[DB RUN RECORD ERROR]', err.message);
+    console.error('[DB RUN RECORD ERROR FULL]', err);
   }
 }

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prismaShared } from '@/lib/prisma-shared';
 import { getSession } from '@/lib/auth';
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: backlogItemId } = await params;
-    const comments = await prisma.backlogComment.findMany({
+    const comments = await prismaShared.backlogComment.findMany({
       where: { backlogItemId: parseInt(backlogItemId) },
       orderBy: { created_at: 'asc' }
     });
@@ -26,7 +26,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: 'Content is required' }, { status: 400 });
     }
 
-    const comment = await prisma.backlogComment.create({
+    const comment = await prismaShared.backlogComment.create({
       data: {
         backlogItemId: parseInt(backlogItemId),
         content: body.content,
