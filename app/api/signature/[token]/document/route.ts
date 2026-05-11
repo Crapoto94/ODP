@@ -112,8 +112,15 @@ export async function GET(
       );
     }
 
-    // If already a PDF, return directly
+    // If already a PDF, verify the file exists before returning
     if (!aotFinalPath.toLowerCase().endsWith('.docx')) {
+      const absPath = path.join(process.cwd(), 'public', aotFinalPath.replace(/^\//, ''));
+      if (!fs.existsSync(absPath)) {
+        return NextResponse.json(
+          { error: 'Document introuvable sur le serveur. Veuillez contacter l\'administrateur pour re-téléverser le document AOT.' },
+          { status: 404 }
+        );
+      }
       return NextResponse.json({ pdfUrl: aotFinalPath });
     }
 

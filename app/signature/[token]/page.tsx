@@ -67,18 +67,10 @@ export default function SignaturePage() {
   };
 
   // Load/convert document to PDF when we have signatureRequest
+  // Always go through the document API so file existence is verified server-side
   useEffect(() => {
     if (!signatureRequest?.occupation?.aotFinalPath) return;
 
-    const aotPath: string = signatureRequest.occupation.aotFinalPath;
-
-    if (!aotPath.toLowerCase().endsWith('.docx')) {
-      // Already a PDF — use directly
-      setPdfUrl(aotPath);
-      return;
-    }
-
-    // Need to convert DOCX → PDF via API
     setConvertingPdf(true);
     setConvertError(null);
 
@@ -87,7 +79,7 @@ export default function SignaturePage() {
         setPdfUrl(res.data.pdfUrl);
       })
       .catch(err => {
-        setConvertError(err.response?.data?.error || 'Erreur lors de la conversion du document');
+        setConvertError(err.response?.data?.error || 'Document introuvable ou erreur de chargement');
       })
       .finally(() => {
         setConvertingPdf(false);
@@ -420,7 +412,7 @@ export default function SignaturePage() {
           {convertingPdf ? (
             <div className="p-12 bg-slate-50 text-center min-h-64 flex items-center justify-center flex-col gap-4">
               <Loader2 className="animate-spin text-blue-600" size={48} />
-              <p className="text-slate-600 font-bold">Conversion du document en cours...</p>
+              <p className="text-slate-600 font-bold">Chargement du document...</p>
               <p className="text-[10px] text-slate-400 uppercase tracking-widest">Préparation du PDF pour affichage</p>
             </div>
           ) : convertError ? (

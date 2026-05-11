@@ -6,7 +6,8 @@
     "schema": "ODP",
     "schemaDev": "ODP_DEV",
     "user": "postgres",
-    "password": "ivrypassword"
+    "password": "ivrypassword",
+    "mode": "PROD"
   },
   "admin": {
     "login": "admin",
