@@ -135,7 +135,6 @@ export default function Sidebar() {
           const isActive = pathname === item.href;
           if (item.adminOnly && user?.role && user.role !== 'ADMIN') return null;
           if (item.href === '/dashboard/settings' && user?.role && user.role !== 'ADMIN') return null;
-          if (item.href === '/dashboard/facturation' && user?.role && (user.role !== 'ADMIN' && user.role !== 'AGENT_COMPTABLE')) return null;
           if ((item.adminOnly || item.href === '/dashboard/settings') && !user) return null;
 
           return (

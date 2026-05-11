@@ -35,10 +35,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
-    // Only Comptable and Admin can access facturation
-    if (path.startsWith('/dashboard/facturation') && (role !== 'AGENT_COMPTABLE' && role !== 'ADMIN')) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
   }
 
   return NextResponse.next();
