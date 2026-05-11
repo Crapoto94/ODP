@@ -7,8 +7,9 @@ export const httpsAgent = new https.Agent({
 });
 
 export async function getApmSettings() {
-  const rows = await (prisma as any).$queryRaw`SELECT * FROM AppSettings WHERE id = 1`;
-  const settings: any = (rows as any[])[0] || null;
+  const settings = await (prisma as any).appSettings.findFirst({
+    where: { id: 1 }
+  });
 
   let url = (settings?.apmUrl || 'http://localhost:8001/api/v1').trim().replace(/\/$/, '');
 

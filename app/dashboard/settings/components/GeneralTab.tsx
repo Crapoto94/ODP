@@ -225,43 +225,21 @@ export default function GeneralTab({
             </div>
           </div>
 
-          {/* Signature Arrêtés */}
-          <FormSection icon={FileText} title="Signature des Arrêtés" accentColor="blue" className="pt-8 border-t border-slate-50">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Rôle principal</label>
-                <input
-                  type="text"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                  placeholder="Pour le Maire d'Ivry-sur-Seine,"
-                  value={settings.signataireRole || ''}
-                  onChange={e => setSettings({...settings, signataireRole: e.target.value})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Délégation</label>
-                <input
-                  type="text"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                  placeholder="et par délégation,"
-                  value={settings.signataireDelegation || ''}
-                  onChange={e => setSettings({...settings, signataireDelegation: e.target.value})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Nom et Fonction</label>
-                <input
-                  type="text"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                  placeholder="Dominique Montet - DGA"
-                  value={settings.signataireNom || ''}
-                  onChange={e => setSettings({...settings, signataireNom: e.target.value})}
-                />
-              </div>
+          {/* Factures et Documents */}
+          <FormSection icon={FileText} title="Factures et Documents" accentColor="blue" className="pt-8 border-t border-slate-50">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Filigranne (Watermark)</label>
+              <input
+                type="text"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                placeholder="ex: BROUILLON"
+                value={settings.watermark || ''}
+                onChange={e => setSettings({...settings, watermark: e.target.value})}
+              />
             </div>
           </FormSection>
+
+
 
           {message && (
             <div className={`p-4 rounded-xl flex items-center gap-3 animate-in zoom-in-95 duration-300 ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>

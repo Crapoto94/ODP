@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getPostgresClient } from '@/lib/postgresClient';
+import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const pgPrisma = await getPostgresClient();
     const { id: backlogItemId } = await params;
-    const comments = await pgPrisma.backlogComment.findMany({
+    const comments = await prisma.backlogComment.findMany({
       where: { backlogItemId: parseInt(backlogItemId) },
       orderBy: { created_at: 'asc' }
     });
@@ -19,7 +18,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const pgPrisma = await getPostgresClient();
     const { id: backlogItemId } = await params;
     const session = await getSession();
     const body = await req.json();
@@ -28,7 +26,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: 'Content is required' }, { status: 400 });
     }
 
-    const comment = await pgPrisma.backlogComment.create({
+    const comment = await prisma.backlogComment.create({
       data: {
         backlogItemId: parseInt(backlogItemId),
         content: body.content,

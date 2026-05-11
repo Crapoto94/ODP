@@ -90,14 +90,18 @@ export async function DELETE(
     const { id: rawId, ligneId: rawLigneId } = await params;
     const occupationId = parseInt(rawId);
     const id = parseInt(rawLigneId);
-    
-    const ligneToDelete = await (prisma as any).ligneOccupation.findUnique({ 
+
+    const ligneToDelete = await (prisma as any).ligneOccupation.findUnique({
       where: { id },
       include: { occupation: true }
     });
     const occId = ligneToDelete?.occupationId || occupationId;
 
-    await (prisma as any).ligneOccupation.delete({ where: { id } });
+    // Soft delete: mark with deletedAt instead of hard delete
+    await (prisma as any).ligneOccupation.update({
+      where: { id },
+      data: { deletedAt: new Date() }
+    });
 
     if (occId) {
        await updateOccupationTotal(occId);

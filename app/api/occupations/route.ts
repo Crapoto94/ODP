@@ -7,18 +7,45 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
+    const minStatus = searchParams.get('minStatus');
     const type = searchParams.get('type');
     const anneeTaxation = searchParams.get('anneeTaxation');
+    const tiersId = searchParams.get('tiersId');
+    const excludeArchived = searchParams.get('excludeArchived') === 'true';
 
     const where: any = {};
-    if (status) where.statut = status;
+
+    // Status hierarchy for minStatus filtering
+    const statusHierarchy: Record<string, string[]> = {
+      'FACTURE': ['FACTURE', 'FACTURÉ', 'TITRE', 'TITRÉ', 'PAYE', 'PAYÉ', 'CLOS'],
+      'FACTURÉ': ['FACTURÉ', 'TITRE', 'TITRÉ', 'PAYE', 'PAYÉ', 'CLOS'],
+      'TITRE': ['TITRE', 'TITRÉ', 'PAYE', 'PAYÉ', 'CLOS'],
+      'TITRÉ': ['TITRÉ', 'PAYE', 'PAYÉ', 'CLOS'],
+      'PAYE': ['PAYE', 'PAYÉ', 'CLOS'],
+      'PAYÉ': ['PAYÉ', 'CLOS'],
+      'CLOS': ['CLOS']
+    };
+
+    if (minStatus && statusHierarchy[minStatus]) {
+      where.statut = { in: statusHierarchy[minStatus] };
+    } else if (status) {
+      where.statut = status;
+    }
+
     if (type) where.type = type;
     if (anneeTaxation) where.anneeTaxation = parseInt(anneeTaxation);
+    if (tiersId) where.tiersId = parseInt(tiersId);
+    
+    if (excludeArchived) {
+      where.tiers = {
+        statut: { not: 'ARCHIVE' }
+      };
+    }
 
     console.log('[GET Occupations] Filter:', where);
 
     // Fetch occupations with minimal includes
-    console.log('[GET Occupations] Fetching occupations with tiers only...');
+    console.log('[GET Occupations] Fetching occupations with tiers and lignes...');
     const occupations = await (prisma as any).occupation.findMany({
       where,
       include: {
@@ -27,12 +54,24 @@ export async function GET(req: Request) {
             id: true,
             nom: true,
             code_sedit: true,
-            etatAdministratif: true
+            etatAdministratif: true,
+            latitude: true,
+            longitude: true
+          }
+        },
+        lignes: {
+          include: {
+            article: true
+          }
+        },
+        _count: {
+          select: {
+            notes: true
           }
         }
       },
       orderBy: { created_at: 'desc' },
-      take: 1000 // Limit to prevent huge responses
+      take: 5000 // Increased limit for map view
     });
 
     console.log('[GET Occupations] ✅ Success! Found:', occupations.length, 'occupations');
@@ -94,6 +133,7 @@ export async function POST(req: Request) {
       description,
       photos,
       isCourtMetrage,
+      isAgissantPourBillable,
       agissantPour
     } = body;
 
@@ -124,14 +164,15 @@ export async function POST(req: Request) {
         description,
         photos,
         montantCalcule: 0,
-        agissantPour
+        agissantPour,
+        isAgissantPourBillable: !!isAgissantPourBillable
       }
     });
 
     console.log('[POST Occupations] Created occupation:', occupation.id);
 
     if (isCourtMetrage !== undefined) {
-      await (prisma as any).$executeRaw`UPDATE Occupation SET isCourtMetrage = ${!!isCourtMetrage} WHERE id = ${occupation.id}`;
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isCourtMetrage" = ${!!isCourtMetrage} WHERE id = ${occupation.id}`;
     }
 
     return NextResponse.json(occupation);

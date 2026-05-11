@@ -7,7 +7,7 @@ export async function initializeTypeDossierConfigs() {
 
     console.log('[Init] No configurations found. Starting initialization...');
 
-    const settings = await prisma.appSettings.findFirst();
+    const settings = await (prisma as any).appSettings.findFirst();
     const defaultGabarit = await (prisma as any).gabarit.findFirst({
       where: { isDefault: true }
     });

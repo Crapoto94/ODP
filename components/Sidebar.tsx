@@ -5,24 +5,32 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  LayoutDashboard, 
-  Users, 
-  FileText, 
-  Map as MapIcon, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Users,
+  FileText,
+  Map as MapIcon,
+  Settings,
   LogOut,
   Euro,
   ClipboardCheck,
   LayoutTemplate,
   CopyPlus,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Store,
+  ShoppingBag,
+  HardHat,
+  Database,
+  Zap,
+  Loader2
 } from 'lucide-react';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard' },
-  { icon: FileText, label: 'Dossiers', href: '/dashboard/occupations' },
+  { icon: HardHat, label: 'Chantiers et tournages', href: '/dashboard/occupations' },
+  { icon: Store, label: 'Commerces', href: '/dashboard/commerces', adminOnly: true },
+  { icon: ShoppingBag, label: 'T.L.P.E.', href: '/dashboard/tlpe', adminOnly: true },
   { icon: Users, label: 'Gestion des Tiers', href: '/dashboard/tiers' },
   { icon: Euro, label: 'Tarifs & Articles', href: '/dashboard/tarifs' },
   { icon: LayoutTemplate, label: 'Gabarits', href: '/dashboard/gabarit' },
@@ -38,6 +46,8 @@ export default function Sidebar() {
   const [user, setUser] = useState<any>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [version, setVersion] = useState("...");
+  const [dbMode, setDbMode] = useState<'PROD' | 'DEV'>('PROD');
+  const [switchingMode, setSwitchingMode] = useState(false);
   
   useEffect(() => {
     // Load initial state
@@ -46,7 +56,10 @@ export default function Sidebar() {
     
     axios.get('/api/auth/me').then(res => setUser(res.data)).catch(() => {});
     
-    // Fetch latest version with fallback to package.json
+    // Fetch DB mode
+    axios.get('/api/settings/db-mode').then(res => setDbMode(res.data.mode)).catch(() => {});
+
+    // Fetch latest version
     Promise.all([
       axios.get('/api/releases').catch(() => ({ data: [] })),
       axios.get('/api/version').catch(() => ({ data: { version: "0.2.0" } })),
@@ -60,7 +73,6 @@ export default function Sidebar() {
   }, []);
 
   useEffect(() => {
-    // Update body class and localStorage
     localStorage.setItem('sidebar-collapsed', isCollapsed.toString());
     if (isCollapsed) {
       document.body.classList.add('sidebar-collapsed');
@@ -75,6 +87,22 @@ export default function Sidebar() {
       router.push('/login');
       router.refresh();
     } catch (err) {}
+  };
+
+  const handleToggleMode = async () => {
+    const newMode = dbMode === 'PROD' ? 'DEV' : 'PROD';
+    setSwitchingMode(true);
+    try {
+      await axios.post('/api/settings/db-mode', { mode: newMode });
+      setDbMode(newMode);
+      // Refresh the page to reload all data from the new schema
+      router.refresh();
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSwitchingMode(false);
+    }
   };
 
   const isVerifyPage = pathname?.includes('/dashboard/tiers/verify/');
@@ -102,27 +130,24 @@ export default function Sidebar() {
         </button>
       </div>
 
-      <nav className={`flex-1 p-4 space-y-1.5 overflow-hidden ${isCollapsed ? 'items-center' : ''}`}>
-        {menuItems.map((item) => {
+      <nav className={`flex-1 p-4 space-y-1 overflow-hidden ${isCollapsed ? 'items-center' : ''}`}>
+        {menuItems.map((item: any) => {
           const isActive = pathname === item.href;
-
-          // Access controls - more robust with href checks
+          if (item.adminOnly && user?.role && user.role !== 'ADMIN') return null;
           if (item.href === '/dashboard/settings' && user?.role && user.role !== 'ADMIN') return null;
           if (item.href === '/dashboard/facturation' && user?.role && (user.role !== 'ADMIN' && user.role !== 'AGENT_COMPTABLE')) return null;
-
-          // Hide until user is loaded for sensitive menus to avoid flicker, or show if user is likely admin
-          if (item.href === '/dashboard/settings' && !user) return null;
+          if ((item.adminOnly || item.href === '/dashboard/settings') && !user) return null;
 
           return (
-            <Link 
+            <Link
               key={item.href}
               href={item.href}
               title={isCollapsed ? item.label : ''}
-              className={`flex items-center gap-4 transition-all group font-bold text-sm h-12 rounded-2xl ${
+              className={`flex items-center gap-4 transition-all group font-bold text-sm h-10 rounded-2xl ${
                 isCollapsed ? 'justify-center w-full px-0' : 'px-4'
               } ${
-                isActive 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                isActive
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
@@ -133,7 +158,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className={`p-4 border-t border-slate-800 space-y-4`}>
+      <div className={`p-4 border-t border-slate-800 space-y-2`}>
         {user ? (
           <div className={`bg-slate-800/30 rounded-2xl border border-slate-800/50 flex items-center gap-3 ${isCollapsed ? 'justify-center p-2' : 'p-3'}`}>
             <div className={`rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 font-black border border-blue-500/20 shrink-0 ${isCollapsed ? 'w-10 h-10 text-xs' : 'w-10 h-10 text-sm'}`}>
@@ -150,6 +175,32 @@ export default function Sidebar() {
           <div className="h-12 bg-slate-800/20 animate-pulse rounded-2xl" />
         )}
         
+        {/* PROD/DEV Toggle */}
+        <button 
+          onClick={handleToggleMode}
+          disabled={switchingMode}
+          className={`group flex items-center gap-4 transition-all font-black text-[10px] uppercase tracking-widest h-12 rounded-2xl w-full ${isCollapsed ? 'justify-center' : 'px-4'} ${
+            dbMode === 'PROD' 
+              ? 'text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10' 
+              : 'text-indigo-400 bg-indigo-400/5 hover:bg-indigo-400/10 border border-indigo-400/10'
+          }`}
+          title={dbMode === 'PROD' ? 'Passer en mode DEV' : 'Passer en mode PROD'}
+        >
+          {switchingMode ? (
+            <Loader2 size={18} className="animate-spin" />
+          ) : (
+            <Zap size={18} className={`${dbMode === 'PROD' ? 'text-rose-500' : 'text-indigo-400'} ${dbMode === 'DEV' ? 'animate-pulse' : ''}`} />
+          )}
+          {!isCollapsed && (
+            <div className="flex flex-1 items-center justify-between">
+              <span>Mode {dbMode}</span>
+              <div className={`w-8 h-4 rounded-full relative transition-colors ${dbMode === 'PROD' ? 'bg-rose-900/50' : 'bg-indigo-900/50'}`}>
+                <div className={`absolute top-1 w-2 h-2 rounded-full transition-all ${dbMode === 'PROD' ? 'left-1 bg-rose-500' : 'right-1 bg-indigo-400'}`} />
+              </div>
+            </div>
+          )}
+        </button>
+
         <button 
           onClick={handleLogout}
           className={`group flex items-center gap-4 text-slate-500 hover:text-rose-400 transition-all font-black text-[10px] uppercase tracking-widest h-12 rounded-2xl w-full ${isCollapsed ? 'justify-center' : 'px-4'}`}

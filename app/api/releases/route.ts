@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getPostgresClient } from '@/lib/postgresClient';
+import { prisma } from '@/lib/prisma';
 import fs from 'fs';
 import path from 'path';
 
 export async function GET() {
   try {
-    const pgPrisma = await getPostgresClient();
-    const releases = await pgPrisma.versionRelease.findMany({
+    const releases = await prisma.versionRelease.findMany({
       include: { backlogItems: true },
       orderBy: { releasedAt: 'desc' }
     });
@@ -21,10 +20,9 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { versionNumber, notes, backlogItemIds } = body;
-    const pgPrisma = await getPostgresClient();
 
     // 1. Transaction to create release and update items
-    const release = await pgPrisma.$transaction(async (tx) => {
+    const release = await prisma.$transaction(async (tx) => {
       const newRelease = await tx.versionRelease.create({
         data: {
           versionNumber,

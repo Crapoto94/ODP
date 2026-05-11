@@ -1,7 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { differenceInDays, isLeapYear } from 'date-fns';
 import { X, Check, Save, Loader2, Euro, Upload, Image as ImageIcon, Trash2, Plus, Info, Hash, Tag, Search, Calendar, Maximize2 } from 'lucide-react';
 import axios from 'axios';
+
+function getDaysInMonth(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}
+
+function calculateMonthlyProrata(startDate: Date, endDate: Date): number {
+  let fullStartDate = new Date(startDate);
+  if (fullStartDate.getDate() !== 1) {
+    fullStartDate = new Date(fullStartDate.getFullYear(), fullStartDate.getMonth() + 1, 1);
+  }
+
+  let fullEndDate = new Date(endDate);
+  if (fullEndDate.getDate() !== getDaysInMonth(fullEndDate)) {
+    fullEndDate = new Date(fullEndDate.getFullYear(), fullEndDate.getMonth(), 0);
+  }
+
+  if (fullEndDate < fullStartDate) return 0;
+
+  const months = (fullEndDate.getFullYear() - fullStartDate.getFullYear()) * 12
+                 + (fullEndDate.getMonth() - fullStartDate.getMonth()) + 1;
+
+  return months / 12;
+}
 
 interface Article {
   id: number;
@@ -120,16 +142,14 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
   const unitPrice = calculateMontant();
   const s = parseFloat(surface.replace(',', '.')) || 0;
   
-  // Prorata calculation
+  // Prorata calculation based on full months
   const getProrata = () => {
     try {
       const d1 = new Date(dateDebut);
       const d2 = new Date(dateFin);
       if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 1;
-      
-      const daysInYear = isLeapYear(new Date(annee, 0, 1)) ? 366 : 365;
-      const daysActive = differenceInDays(d2, d1) + 1;
-      return Math.min(1, Math.max(0, daysActive / daysInYear));
+
+      return Math.min(1, Math.max(0, calculateMonthlyProrata(d1, d2)));
     } catch (e) {
       return 1;
     }

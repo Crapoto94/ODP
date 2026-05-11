@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS deps
+FROM node:20-bullseye-slim AS deps
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
@@ -6,14 +6,13 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # Rebuild the source code only when needed
-FROM node:20-bookworm-slim AS builder
+FROM node:20-bullseye-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Generate Prisma Clients
+# Generate Prisma Client
 RUN npx prisma generate
-RUN npx prisma generate --schema=prisma/schema-postgres.prisma
 
 # Disable telemetry during the build
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -27,11 +26,13 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Install OpenSSL 1.1, SMB/CIFS support, and LibreOffice for DOCX→PDF conversion
-RUN apt-get update && apt-get install -y \
-    libssl1.1 ca-certificates cifs-utils smbclient \
-    libreoffice-writer libreoffice-common \
-    && rm -rf /var/lib/apt/lists/*
+# Install SMB/CIFS support, ca-certificates and openssl
+# Using || true to avoid blocking the build if mirrors are unreachable, 
+# as Bullseye already contains libssl1.1 which is the main requirement.
+RUN apt-get update -y || true && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates cifs-utils smbclient openssl libssl1.1 \
+    || true && rm -rf /var/lib/apt/lists/*
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -49,6 +50,7 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules ./node_modules
 RUN chown -R nextjs:nodejs /app/prisma
 
 # Run as root to avoid host volume permission issues (SQLite & Uploads)
@@ -62,6 +64,9 @@ ENV HOSTNAME "0.0.0.0"
 # Enable legacy OpenSSL provider for SMB2 compatibility
 ENV NODE_OPTIONS="--openssl-legacy-provider"
 
+# Create startup script that runs migrations then starts the app
+RUN echo '#!/bin/sh\nset -e\necho "Running Prisma migrations..."\nnpx prisma migrate deploy || npx prisma db push || true\necho "Starting application..."\nexec node server.js' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"]
+CMD ["/app/entrypoint.sh"]

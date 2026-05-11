@@ -31,6 +31,7 @@ export interface LigneArticle {
   dateFinConstatee?: string;
   montant: number;
   photos?: string;
+  note?: string;
   article?: Article;
 }
 
@@ -66,6 +67,7 @@ export interface Occupation {
   anneeTaxation?: number;
   adresse: string;
   agissantPour?: string | null;
+  agissantPourTier?: Tiers | null;
   latitude?: number;
   longitude?: number;
   observations?: string;

@@ -19,7 +19,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
           lignes: { include: { article: { include: { modeTaxation: true } } } }
         }
       }),
-      prisma.appSettings.findFirst()
+      (prisma as any).appSettings.findFirst()
     ]);
 
     if (!occ) return NextResponse.json({ error: 'Occupation non trouvée' }, { status: 404 });

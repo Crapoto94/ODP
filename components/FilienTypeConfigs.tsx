@@ -34,7 +34,8 @@ export default function FilienTypeConfigs() {
             filienTypeMouvement: '',
             filienSens: '',
             filienStructure: '',
-            filienGestionnaire: ''
+            filienGestionnaire: '',
+            filienPreBordereau: ''
           };
         }
       });
@@ -85,7 +86,8 @@ export default function FilienTypeConfigs() {
     filienTypeMouvement: '',
     filienSens: '',
     filienStructure: '',
-    filienGestionnaire: ''
+    filienGestionnaire: '',
+    filienPreBordereau: ''
   };
 
   return (
@@ -120,7 +122,7 @@ export default function FilienTypeConfigs() {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Objet du Mouvement (/20/)</label>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Objet du Mouvement (/04/)</label>
             <input 
               type="text" 
               maxLength={40}
@@ -128,6 +130,19 @@ export default function FilienTypeConfigs() {
               placeholder="Utiliser le global si vide"
               value={currentConfig.filienObjet || ''}
               onChange={e => handleChange('filienObjet', e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">N° de pré-bordereau (/11/)</label>
+            <input 
+              type="text" 
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-6 outline-none focus:border-indigo-500 transition-all font-bold text-sm"
+              placeholder="Utiliser le global si vide"
+              value={currentConfig.filienPreBordereau || ''}
+              onChange={e => handleChange('filienPreBordereau', e.target.value)}
             />
           </div>
         </div>

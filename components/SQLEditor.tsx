@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Database, Play, Table as TableIcon, AlertCircle, CheckCircle2, ChevronRight, Terminal, Search, Copy, Download } from 'lucide-react';
+import { Database, Play, Table as TableIcon, AlertCircle, ChevronRight, Terminal, Search, Copy, Download, Layers } from 'lucide-react';
 import axios from 'axios';
 
 interface TableSchema {
@@ -9,8 +9,9 @@ interface TableSchema {
 }
 
 export default function SQLEditor() {
+  const [dbType, setDbType] = useState<'main' | 'local'>('local');
   const [schema, setSchema] = useState<TableSchema[]>([]);
-  const [query, setQuery] = useState('SELECT * FROM Tiers LIMIT 10;');
+  const [query, setQuery] = useState('SELECT * FROM AppSettings LIMIT 10;');
   const [results, setResults] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -18,11 +19,17 @@ export default function SQLEditor() {
 
   useEffect(() => {
     fetchSchema();
-  }, []);
+    // Default query based on DB type
+    if (dbType === 'local') {
+      setQuery('SELECT * FROM AppSettings LIMIT 10;');
+    } else {
+      setQuery('SELECT * FROM "User" LIMIT 10;');
+    }
+  }, [dbType]);
 
   const fetchSchema = async () => {
     try {
-      const res = await axios.get('/api/settings/db-schema');
+      const res = await axios.get(`/api/settings/db-schema?db=${dbType}`);
       setSchema(res.data);
     } catch (err: any) {
       setError("Erreur lors de la lecture du schéma : " + (err.response?.data?.error || err.message));
@@ -35,7 +42,7 @@ export default function SQLEditor() {
     setError(null);
     setResults([]);
     try {
-      const res = await axios.post('/api/settings/sql-query', { query: q });
+      const res = await axios.post('/api/settings/sql-query', { query: q, db: dbType });
       if (Array.isArray(res.data.result)) {
         setResults(res.data.result);
       } else {
@@ -50,7 +57,9 @@ export default function SQLEditor() {
 
   const handleTableClick = (tableName: string) => {
     setActiveTable(tableName);
-    const newQuery = `SELECT * FROM ${tableName} LIMIT 100;`;
+    // Add quotes for Postgres compatibility if table name has special chars or case
+    const formattedName = dbType === 'main' ? `"${tableName}"` : tableName;
+    const newQuery = `SELECT * FROM ${formattedName} LIMIT 100;`;
     setQuery(newQuery);
     handleRunQuery(newQuery);
   };
@@ -60,15 +69,32 @@ export default function SQLEditor() {
       {/* Sidebar: Tables */}
       <div className="lg:col-span-3 space-y-4">
         <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-6 overflow-hidden h-[600px] flex flex-col">
-          <div className="flex items-center gap-3 mb-6 px-2">
+          
+          {/* DB Selector */}
+          <div className="mb-6 flex p-1 bg-slate-100 rounded-2xl">
+            <button 
+              onClick={() => setDbType('main')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[10px] font-black transition-all ${dbType === 'main' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              <Database size={12} /> POSTGRES
+            </button>
+            <button 
+              onClick={() => setDbType('local')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[10px] font-black transition-all ${dbType === 'local' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              <Layers size={12} /> SQLITE
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3 mb-4 px-2">
             <div className="p-2 bg-slate-900 rounded-lg text-white">
-              <Database size={16} />
+              <TableIcon size={14} />
             </div>
-            <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest">Base de Données</h3>
+            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Tables ({dbType})</h3>
           </div>
           
           <div className="flex-1 overflow-y-auto space-y-1 pr-2 custom-scrollbar">
-            {schema.map((table) => (
+            {schema.length > 0 ? schema.map((table) => (
               <button
                 key={table.name}
                 onClick={() => handleTableClick(table.name)}
@@ -82,7 +108,9 @@ export default function SQLEditor() {
                 </div>
                 <ChevronRight size={14} className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTable === table.name ? 'text-white' : 'text-slate-300'}`} />
               </button>
-            ))}
+            )) : (
+              <div className="py-10 text-center opacity-30 italic text-[10px]">Aucune table</div>
+            )}
           </div>
         </div>
       </div>
@@ -94,7 +122,7 @@ export default function SQLEditor() {
           <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-3">
               <Terminal size={18} className="text-indigo-400" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Éditeur SQL Raw</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Éditeur SQL ({dbType})</span>
             </div>
             <button 
               onClick={() => handleRunQuery()}
@@ -113,10 +141,8 @@ export default function SQLEditor() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Saisissez votre code SQL ici..."
             />
-            <div className="absolute top-4 right-4 text-slate-600 font-black text-[10px] uppercase opacity-30">SQLite v3</div>
+            <div className="absolute top-4 right-4 text-slate-600 font-black text-[10px] uppercase opacity-30">{dbType === 'main' ? 'PostgreSQL' : 'SQLite v3'}</div>
           </div>
-          
-          <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
         </div>
 
         {/* Status & Messages */}
@@ -137,16 +163,6 @@ export default function SQLEditor() {
               <Search size={16} className="text-slate-400" />
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Résultats {results.length > 0 ? `(${results.length} lignes)` : ''}</span>
             </div>
-            {results.length > 0 && (
-              <div className="flex gap-2">
-                <button className="p-2.5 text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl transition-all border border-transparent hover:border-slate-200">
-                  <Copy size={16} />
-                </button>
-                <button className="p-2.5 text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl transition-all border border-transparent hover:border-slate-200 font-bold text-[10px] flex items-center gap-2">
-                  <Download size={16} /> EXPORT
-                </button>
-              </div>
-            )}
           </div>
 
           <div className="flex-1 overflow-auto max-h-[500px] custom-scrollbar">

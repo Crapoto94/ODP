@@ -13,6 +13,7 @@ import {
   Download,
   FileBadge,
   AlertCircle,
+  AlertTriangle,
   Check,
   Info,
   Calendar,
@@ -41,6 +42,16 @@ export default function FacturationPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<any>(null);
+
+  // État pour la modal d'avertissement du tiers
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+  const [warningMessage, setWarningMessage] = useState('');
+  const [warningDossiers, setWarningDossiers] = useState<any[]>([]);
+  const [warningAction, setWarningAction] = useState<() => void>(() => {});
+  
+  // État pour la modal d'erreur de configuration Filien
+  const [isFilienErrorModalOpen, setIsFilienErrorModalOpen] = useState(false);
+  const [filienErrorMessage, setFilienErrorMessage] = useState('');
 
   // Steps handling
   const nextStep = () => setStep(s => s + 1);
@@ -106,21 +117,61 @@ export default function FacturationPage() {
     try {
       await axios.delete(`/api/billing/history?id=${id}`);
       fetchHistory();
-    } catch (err) {
-      alert("Erreur lors de la suppression");
+    } catch (err: any) {
+      setFilienErrorMessage(err.response?.data?.error || err.message || "Erreur lors de la suppression");
+      setIsFilienErrorModalOpen(true);
     }
   };
 
   const fetchEligibleDossiers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/occupations?status=VERIFIE&type=${type}`);
-      const data = res.data;
+      let data: any[] = [];
+      if (type === 'COMMERCE') {
+        // Fetch all commerce occupations and filter client-side to be precise
+        const res = await axios.get(`/api/occupations?type=${type}`);
+        data = (res.data || []).filter((occ: any) => 
+          ['VERIFIE', 'VALIDE', 'VALIDÉ'].includes(occ.statut)
+        );
+      } else {
+        const res = await axios.get(`/api/occupations?status=VERIFIE&type=${type}`);
+        data = res.data;
+      }
+
+      if (type === 'COMMERCE') {
+        const grouped = new Map();
+        data.forEach((occ: any) => {
+          if (!occ.tiers) return;
+          const tId = occ.tiers.id;
+          const isClosed = ['Fermée', 'Cessée'].includes(occ.tiers.etatAdministratif);
+          
+          if (!grouped.has(tId)) {
+            grouped.set(tId, {
+              id: tId,
+              isCommerceGroup: true,
+              isClosed: isClosed,
+              nom: occ.tiers.nom, 
+              tiers: occ.tiers,
+              lignes: [...(occ.lignes || [])],
+              montantCalcule: occ.montantCalcule || 0
+            });
+          } else {
+            const g = grouped.get(tId);
+            g.lignes.push(...(occ.lignes || []));
+            g.montantCalcule += (occ.montantCalcule || 0);
+            // Si une des occupations appartient à un tiers fermé, le groupe est marqué fermé
+            if (isClosed) g.isClosed = true;
+          }
+        });
+        data = Array.from(grouped.values());
+      }
+
       setDossiers(data);
       setSelectedIds(data.map((d: any) => d.id));
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Erreur lors de la récupération des dossiers");
+      setFilienErrorMessage(err.response?.data?.error || err.message || "Erreur lors de la récupération des dossiers");
+      setIsFilienErrorModalOpen(true);
     } finally {
       setLoading(false);
     }
@@ -130,9 +181,63 @@ export default function FacturationPage() {
     .filter(d => selectedIds.includes(d.id))
     .reduce((sum, d) => sum + (d.montantCalcule || d.lignes?.reduce((s: number, l: any) => s + l.montant, 0) || 0), 0);
 
+  const verifyTiersBeforeBilling = async (dossierId: number): Promise<boolean> => {
+    try {
+      const dossier = dossiers.find(d => d.id === dossierId);
+      if (!dossier) return true;
+      const tiersId = dossier.isCommerceGroup ? dossier.id : (dossier.tiers?.id);
+      if (!tiersId) return true;
+      const res = await axios.post(`/api/admin/verify-tiers/${tiersId}`);
+      const status = res.data.status;
+
+      if (status === 'Fermée' || status === 'Cessée') {
+        return false;
+      }
+      return true;
+    } catch (err) {
+      return false;
+    }
+  };
+
   const handleStartBilling = async () => {
     setProcessing(true);
     try {
+      const selectedDossiers = dossiers.filter(d => selectedIds.includes(d.id));
+      const problematicDossiers = [];
+
+      // Verify all tiers before generating invoices
+      for (const dossier of selectedDossiers) {
+        const isValid = await verifyTiersBeforeBilling(dossier.id);
+        if (!isValid) {
+          problematicDossiers.push(dossier);
+        }
+      }
+
+      if (problematicDossiers.length > 0) {
+        setWarningMessage(`${problematicDossiers.length} dossier(s) ont un tiers inexistant ou fermé.`);
+        setWarningDossiers(problematicDossiers);
+        setWarningAction(() => async () => {
+          try {
+            const res = await axios.post('/api/billing/process', {
+              ids: selectedIds,
+              type: type
+            });
+            setResult(res.data);
+            setStep(4);
+          } catch (err: any) {
+            console.error('Billing error:', err);
+            const errorText = err.response?.data?.error || err.message || "Erreur lors du processus de facturation";
+            setFilienErrorMessage(errorText);
+            setIsFilienErrorModalOpen(true);
+          } finally {
+            setProcessing(false);
+          }
+        });
+        setIsWarningModalOpen(true);
+        setProcessing(false);
+        return;
+      }
+
       const res = await axios.post('/api/billing/process', {
         ids: selectedIds,
         type: type
@@ -140,7 +245,9 @@ export default function FacturationPage() {
       setResult(res.data);
       setStep(4);
     } catch (err: any) {
-       alert(err.response?.data?.error || "Erreur lors du processus de facturation");
+       const errorText = err.response?.data?.error || err.message || "Erreur lors du processus de facturation";
+       setFilienErrorMessage(errorText);
+       setIsFilienErrorModalOpen(true);
     } finally {
       setProcessing(false);
     }
@@ -336,8 +443,16 @@ export default function FacturationPage() {
               <div className="p-8 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Dossiers éligibles ({type})</h2>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">État: VÉRIFIÉ uniquement</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                    État: VÉRIFIÉ / VALIDÉ ({dossiers.length} groupés)
+                  </p>
                 </div>
+                {dossiers.some(d => d.isClosed) && (
+                  <div className="flex items-center gap-2 bg-red-50 border border-red-100 px-4 py-2 rounded-xl text-red-600 animate-pulse">
+                    <AlertTriangle size={16} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Attention: Commerces fermés détectés</span>
+                  </div>
+                )}
                 <div className="sm:text-right">
                   <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Montant du train</p>
                   <p className="text-2xl font-black text-blue-700">{totalAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</p>
@@ -387,7 +502,14 @@ export default function FacturationPage() {
                             />
                           </td>
                           <td className="px-8 py-4 border-b border-slate-50">
-                            <p className="text-sm font-black text-slate-900">{d.nom || `Dossier #${d.id}`}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-black text-slate-900">{d.nom || `Dossier #${d.id}`}</p>
+                              {d.isClosed && (
+                                <div className="px-2 py-0.5 bg-red-100 text-red-600 rounded text-[8px] font-black uppercase tracking-tighter flex items-center gap-1">
+                                  <AlertCircle size={10} /> Fermé
+                                </div>
+                              )}
+                            </div>
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">ID {d.id}</p>
                           </td>
                           <td className="px-8 py-4 border-b border-slate-50 text-sm font-bold text-slate-600">
@@ -577,6 +699,100 @@ export default function FacturationPage() {
               </div>
             </div>
           )}
+          </div>
+        </div>
+      )}
+
+      {isWarningModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-in fade-in scale-in duration-300 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertCircle className="text-amber-600" size={24} />
+              <h2 className="text-lg font-black text-slate-900">Avertissement</h2>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-sm text-slate-700 mb-4">
+                {warningMessage}
+              </p>
+              {warningDossiers.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+                  <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-2">Dossiers affectés :</p>
+                  <ul className="space-y-1">
+                    {warningDossiers.map((d) => (
+                      <li key={d.id} className="text-xs text-amber-700">
+                        • {d.nom}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <p className="text-xs text-slate-600">
+                Voulez-vous continuer malgré tout ?
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsWarningModalOpen(false)}
+                className="flex-1 px-4 py-3 text-slate-700 border border-slate-200 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => {
+                  setIsWarningModalOpen(false);
+                  warningAction();
+                }}
+                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors"
+              >
+                Continuer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isFilienErrorModalOpen && (
+        <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-[2.5rem] shadow-2xl max-w-lg w-full p-10 animate-in zoom-in duration-300 border border-rose-100">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-rose-50 text-rose-600 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
+                <AlertTriangle size={40} />
+              </div>
+              
+              <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">Configuration Incomplète</h2>
+              <p className="text-slate-500 font-bold mb-8">
+                L'export Filien ne peut pas être généré car des documents réglementaires obligatoires sont manquants.
+              </p>
+
+              <div className="w-full bg-rose-50 border border-rose-100 rounded-3xl p-6 mb-8 text-left">
+                <div className="flex items-start gap-3">
+                  <Info className="text-rose-600 mt-0.5 shrink-0" size={16} />
+                  <p className="text-sm font-bold text-rose-800 leading-relaxed">
+                    {filienErrorMessage}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                <button
+                  onClick={() => setIsFilienErrorModalOpen(false)}
+                  className="px-8 py-4 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-slate-900 transition-all"
+                >
+                  Fermer
+                </button>
+                <button
+                  onClick={() => {
+                    setIsFilienErrorModalOpen(false);
+                    setView('config');
+                  }}
+                  className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-slate-900/20 active:scale-95 transition-all"
+                >
+                  Régler les paramètres
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

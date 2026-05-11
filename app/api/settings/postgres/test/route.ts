@@ -1,36 +1,58 @@
 import { NextResponse } from 'next/server';
-import { getPostgresClient } from '@/lib/postgresClient';
-import { prisma } from '@/lib/prisma';
+import { getLocalConfig } from '@/lib/prisma';
+import { PrismaClient } from '@/lib/prisma-client';
 
-export async function GET() {
-  let pgClient;
-  
-  // 1. Initialize Postgres Client
+async function testConnection(config: any) {
+  const { host, port, database, user, password, schema, schemaDev } = config;
+  const isDev = process.env.NODE_ENV === 'development';
+  const targetSchema = (isDev && schemaDev) ? schemaDev : (schema || 'public');
+  const url = `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:${port}/${database}?schema=${targetSchema}`;
+
+  const tempClient = new PrismaClient({
+    datasources: {
+      db: { url }
+    }
+  });
+
   try {
-    pgClient = await getPostgresClient();
-  } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 400 });
-  }
-
-  // 2. Query tables using config schema
-  try {
-    const config = await prisma.postgresConfig.findFirst();
-    const targetSchema = config?.schema || 'public';
-
-    const result = await pgClient.$queryRawUnsafe<any[]>(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema=$1;`,
+    // Attempt a simple query
+    const result = await tempClient.$queryRawUnsafe<any[]>(
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = $1 AND table_type = 'BASE TABLE' LIMIT 50;`,
       targetSchema
     );
     
-    return NextResponse.json({ 
+    return { 
       success: true, 
-      tables: result.map(t => t.table_name || t.TABLE_NAME) 
-    });
+      tables: result.map(t => t.table_name) 
+    };
   } catch (error: any) {
-    console.error('[GET /api/settings/postgres/test] Error testing connection:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: 'La connexion à la base a échoué. Vérifiez vos identifiants.' 
-    }, { status: 500 });
+    console.error('[POSTGRES TEST ERROR]', error.message);
+    throw new Error(error.message);
+  } finally {
+    await tempClient.$disconnect();
+  }
+}
+
+export async function GET() {
+  try {
+    const config = getLocalConfig();
+    const pg = config?.postgres;
+    if (!pg) {
+      return NextResponse.json({ success: false, error: 'Aucune configuration trouvée' }, { status: 404 });
+    }
+    const result = await testConnection(pg);
+    return NextResponse.json(result);
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const config = await req.json();
+    const result = await testConnection(config);
+    return NextResponse.json(result);
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

@@ -209,6 +209,40 @@ export default function TarifsPage() {
     }
   };
 
+  const handleDeleteTlpeDocument = async (type: 'deliberation' | 'tarifs') => {
+    const docName = type === 'deliberation' ? 'la Délibération' : 'le Fichier Tarifs';
+    if (!confirm(`Supprimer ${docName} ?`)) return;
+    try {
+      await axios.patch('/api/articles/tlpe', {
+        annee: selectedYear,
+        [type === 'deliberation' ? 'deleteDelib' : 'deleteTarifs']: true
+      });
+      fetchData();
+    } catch (err) {
+      alert('Erreur lors de la suppression');
+    }
+  };
+
+  const handleDeleteOdpDocument = async (type: 'delib' | 'tournages' | 'odp') => {
+    const docNames = {
+      delib: 'la Délibération',
+      tournages: 'les Tarifs Tournages',
+      odp: 'les Tarifs ODP'
+    };
+    if (!confirm(`Supprimer ${docNames[type]} ?`)) return;
+    try {
+      await axios.patch('/api/settings/odp-docs', {
+        annee: selectedYear,
+        ...(type === 'delib' && { deleteDelib: true }),
+        ...(type === 'tournages' && { deleteTournages: true }),
+        ...(type === 'odp' && { deleteOdp: true })
+      });
+      fetchData();
+    } catch (err) {
+      alert('Erreur lors de la suppression');
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       id: null,
@@ -267,11 +301,11 @@ export default function TarifsPage() {
 
   const groupedArticles = useMemo(() => {
     const groups: Record<string, Record<string, Article[]>> = {};
-    
+
     filtered.forEach(art => {
       let typeName = 'Non classé';
       let subTypeName = 'Divers';
-      
+
       if (art.categorie) {
         if (art.categorie.niveau === 1) {
           typeName = art.categorie.nom;
@@ -284,12 +318,23 @@ export default function TarifsPage() {
           typeName = (art.categorie.parent as any)?.parent?.nom || art.categorie.parent?.nom || 'Autre';
         }
       }
-      
+
       if (!groups[typeName]) groups[typeName] = {};
       if (!groups[typeName][subTypeName]) groups[typeName][subTypeName] = [];
       groups[typeName][subTypeName].push(art);
     });
-    
+
+    // Tri par numéro d'article dans chaque sous-catégorie
+    Object.keys(groups).forEach(typeName => {
+      Object.keys(groups[typeName]).forEach(subTypeName => {
+        groups[typeName][subTypeName].sort((a, b) => {
+          const numA = a.numero ? parseFloat(a.numero) : Infinity;
+          const numB = b.numero ? parseFloat(b.numero) : Infinity;
+          return numA - numB;
+        });
+      });
+    });
+
     return groups;
   }, [filtered]);
 
@@ -375,24 +420,42 @@ export default function TarifsPage() {
             </div>
             <div className="flex items-center gap-3">
               {tlpeConfig.deliberationPath && (
-                <a 
-                  href={tlpeConfig.deliberationPath} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
-                >
-                  Délibération (PDF)
-                </a>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={tlpeConfig.deliberationPath}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
+                  >
+                    Délibération (PDF)
+                  </a>
+                  <button
+                    onClick={() => handleDeleteTlpeDocument('deliberation')}
+                    className="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                    title="Supprimer"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               )}
               {tlpeConfig.tarifsPath && (
-                <a 
-                  href={tlpeConfig.tarifsPath} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
-                >
-                  Fichier Tarifs (PDF)
-                </a>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={tlpeConfig.tarifsPath}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 bg-white border border-purple-200 text-purple-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-100 transition-all shadow-sm"
+                  >
+                    Fichier Tarifs (PDF)
+                  </a>
+                  <button
+                    onClick={() => handleDeleteTlpeDocument('tarifs')}
+                    className="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                    title="Supprimer"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               )}
               <div className="ml-4 pl-4 border-l border-purple-200">
                 <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-none mb-1">Seuil exonération</p>
@@ -402,10 +465,11 @@ export default function TarifsPage() {
           </div>
         )}
 
-        <OdpDocsBanner 
-          year={selectedYear} 
-          config={odpConfig} 
+        <OdpDocsBanner
+          year={selectedYear}
+          config={odpConfig}
           onEdit={() => setIsOdpModalOpen(true)}
+          onDelete={handleDeleteOdpDocument}
         />
       </div>
 

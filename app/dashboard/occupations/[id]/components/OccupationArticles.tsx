@@ -48,7 +48,15 @@ export default function OccupationArticles({
         <div>
           <h2 className="text-3xl font-black text-slate-950 tracking-tight">Détail des Articles</h2>
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">
-            {isFactured ? 'Consultation uniquement (Facture émise)' : isLocked ? 'Consultation uniquement (Dossier validé)' : isInit ? 'En attente de réception de la demande' : 'Articles taxables rattachés au dossier'}
+            {occupation.anneeTaxation === 2019 
+              ? 'Modification autorisée pour historique 2019' 
+              : isFactured 
+                ? 'Consultation uniquement (Facture émise)' 
+                : isLocked 
+                  ? 'Consultation uniquement (Dossier validé)' 
+                  : isInit 
+                    ? 'En attente de réception de la demande' 
+                    : 'Articles taxables rattachés au dossier'}
           </p>
         </div>
 
@@ -62,7 +70,7 @@ export default function OccupationArticles({
           </button>
         )}
 
-        {!isLocked && !isFactured && !isInit && (
+        {(!isLocked && !isFactured && !isInit || occupation.anneeTaxation === 2019) && (
           <button
             onClick={onAddArticle}
             className="flex items-center gap-3 bg-slate-950 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl active:scale-95 group"
@@ -172,52 +180,90 @@ export default function OccupationArticles({
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-3 text-slate-500">
-                        <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
-                          <Clock size={14} />
-                        </div>
-                        <span className="text-xs font-bold uppercase tracking-wide flex flex-col gap-1">
-                          <span>
-                            {occupation.type === 'TLPE' 
-                              ? `Exercice ${occupation.anneeTaxation || new Date(ligne.dateDebut).getFullYear()}`
-                              : `Prévu : Du ${(() => { try { return ligne.dateDebut ? format(new Date(ligne.dateDebut), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()} au ${(() => { try { return ligne.dateFin ? format(new Date(ligne.dateFin), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()}`
-                            }
-                          </span>
-                          {(ligne.dateDebutConstatee || ligne.dateFinConstatee) && (
-                            <span className="text-[10px] text-emerald-600">
-                              Réel : Du {(() => {
-                                  if (!ligne.dateDebutConstatee) return '--';
-                                  try { return format(new Date(ligne.dateDebutConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
-                                })()} au {(() => {
-                                  if (!ligne.dateFinConstatee) return '--';
-                                  try { return format(new Date(ligne.dateFinConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
-                                })()}
-                            </span>
-                          )}
-                        </span>
+                  <div className="space-y-3">
+                    {/* Dates */}
+                    <div className="flex items-start gap-3 text-slate-500">
+                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 flex-shrink-0">
+                        <Clock size={14} />
                       </div>
+                      <span className="text-xs font-bold uppercase tracking-wide">
+                        {occupation.type === 'TLPE'
+                          ? `Exercice ${occupation.anneeTaxation || new Date(ligne.dateDebut).getFullYear()}`
+                          : `Du ${(() => { try { return ligne.dateDebut ? format(new Date(ligne.dateDebut), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()} au ${(() => { try { return ligne.dateFin ? format(new Date(ligne.dateFin), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()}`
+                        }
+                        {(ligne.dateDebutConstatee || ligne.dateFinConstatee) && (
+                          <div className="text-[10px] text-emerald-600 mt-1">
+                            Réel : Du {(() => {
+                                if (!ligne.dateDebutConstatee) return '--';
+                                try { return format(new Date(ligne.dateDebutConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
+                              })()} au {(() => {
+                                if (!ligne.dateFinConstatee) return '--';
+                                try { return format(new Date(ligne.dateFinConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
+                              })()}
+                          </div>
+                        )}
+                      </span>
                     </div>
 
-                    <div className="flex items-center gap-3 text-slate-500">
-                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                    {/* Quantities and Price */}
+                    <div className="flex items-start gap-3 text-slate-500">
+                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 flex-shrink-0">
                         <Hash size={14} />
                       </div>
-                      <div className="text-xs font-bold uppercase tracking-wide leading-relaxed">
+                      <div className="text-xs font-bold uppercase tracking-wide space-y-1.5">
                         {(() => {
                           const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
                           const parts = rawMode.split('/').filter(Boolean).map((p: string) => p.trim().toLowerCase());
                           const u1 = parts[0] || 'unités';
                           const u2 = parts[1] || 'unités';
-                          
+
+                          const unitPrice = ligne.article?.montant || 0;
+                          const subTotal = ligne.montant;
+
                           if (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') {
-                            return <span>{ligne.quantite1} {u1} x {ligne.quantite2} {u2} à {ligne.article?.montant}€</span>;
+                            return (
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-slate-400">Quantités :</span>
+                                  <span className="text-blue-600 font-black">{ligne.quantite1}</span>
+                                  <span className="text-slate-300">{u1}</span>
+                                  <span className="text-slate-300">×</span>
+                                  <span className="text-blue-600 font-black">{ligne.quantite2}</span>
+                                  <span className="text-slate-300">{u2}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-slate-400">Tarif :</span>
+                                  <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
+                                </div>
+                              </div>
+                            );
                           }
-                          return <span>{ligne.quantite1} {u1} à {ligne.article?.montant}€</span>;
+                          return (
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-slate-400">Quantité :</span>
+                                <span className="text-blue-600 font-black">{ligne.quantite1}</span>
+                                <span className="text-slate-300">{u1}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-slate-400">Tarif :</span>
+                                <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
+                              </div>
+                            </div>
+                          );
                         })()}
                       </div>
                     </div>
+
+                    {/* Note */}
+                    {ligne.note && (
+                      <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 ml-11">
+                        <p className="text-[10px] text-amber-800 leading-relaxed italic">
+                          <span className="font-black uppercase mr-2 tracking-tighter">Note :</span>
+                          {ligne.note}
+                        </p>
+                      </div>
+                    )}
                   </div>
                   
                   {ligne.photos && (
@@ -247,7 +293,7 @@ export default function OccupationArticles({
                   </p>
                 </div>
                 
-                {!isLocked && !isFactured && (
+                {(!isLocked && !isFactured || occupation.anneeTaxation === 2019) && (
                   <div className="flex gap-3">
                     <button 
                       onClick={() => onEditArticle(ligne)}

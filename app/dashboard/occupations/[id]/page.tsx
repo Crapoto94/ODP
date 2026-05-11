@@ -91,6 +91,9 @@ export default function OccupationDetailPage({ params }: Props) {
     isPublishingAot,
     handleDeleteAotFinal,
     handleSaveObservations,
+    isSendingEmail,
+    sendInvoiceByEmail,
+    noteKey,
   } = useOccupationLogic(paramId);
 
   // Load TLPE config when needed (for enseigne exemption display)
@@ -119,6 +122,7 @@ export default function OccupationDetailPage({ params }: Props) {
         // non-fatal: signature status is optional display
       });
   }, [paramId]);
+
 
   if (loading) {
     return (
@@ -163,6 +167,7 @@ export default function OccupationDetailPage({ params }: Props) {
             statusInfo={statusInfo}
             typeInfo={typeInfo}
             latestSignatureRequest={latestSignatureRequest}
+            onTierClick={(tierId) => router.push(`/dashboard/tiers/${tierId}`)}
           />
           {!(occ.type === 'CHANTIER' && (occ.statut === 'INIT' || occ.statut === 'INITIALISATION' || occ.statut === 'EN_ATTENTE')) && (
             <OccupationFinancialCard
@@ -209,6 +214,7 @@ export default function OccupationDetailPage({ params }: Props) {
               />
             )}
             <OccupationNotes 
+              key={noteKey}
               occupationId={occ.id} 
               currentUser={currentUser} 
             />
@@ -224,6 +230,8 @@ export default function OccupationDetailPage({ params }: Props) {
             onDeletePhoto={handleDeletePhoto}
             onDeleteAotFinal={handleDeleteAotFinal}
             onSaveObservations={handleSaveObservations}
+            onSendInvoice={sendInvoiceByEmail}
+            isSendingInvoice={isSendingEmail}
           />
         </div>
       </div>
@@ -235,7 +243,11 @@ export default function OccupationDetailPage({ params }: Props) {
             isOpen={isLigneModalOpen}
             onClose={() => setIsLigneModalOpen(false)}
             occupationId={occ.id}
-            annee={occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear())}
+            annee={
+              occ.type === 'TLPE' 
+                ? (occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear()))
+                : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear()))
+            }
             onSuccess={fetchOccupation}
             editingLigne={editingLigne}
           />
@@ -246,7 +258,11 @@ export default function OccupationDetailPage({ params }: Props) {
             occupationId={occ.id}
             onSave={() => fetchOccupation()}
             initialData={editingLigne}
-            annee={occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear())}
+            annee={
+              occ.type === 'TLPE' 
+                ? (occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear()))
+                : (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear()))
+            }
             defaultDates={{ 
               start: occ.dateDebut?.split('T')[0] || new Date().toISOString().split('T')[0], 
               end: occ.dateFin?.split('T')[0] || new Date().toISOString().split('T')[0] 

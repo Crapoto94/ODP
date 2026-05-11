@@ -15,17 +15,19 @@ export interface SireneInfo {
   longitude?: number | null;
 }
 
+// API configuration with timeout
+const inseeApi = axios.create({
+  timeout: 10000 // 10 seconds
+});
+
 export async function fetchSiretInfo(siret: string): Promise<SireneInfo | null> {
   try {
-    // Clean SIRET (remove spaces)
     const cleanSiret = siret.replace(/\s+/g, '');
-    
     if (cleanSiret.length !== 14) {
       throw new Error('SIRET doit faire 14 chiffres');
     }
 
-    // Using the public API Sirene from data.gouv.fr (recherche-entreprises)
-    const response = await axios.get(`https://recherche-entreprises.api.gouv.fr/search?q=${cleanSiret}`);
+    const response = await inseeApi.get(`https://recherche-entreprises.api.gouv.fr/search?q=${cleanSiret}`);
     const data = response.data;
     
     if (data.results && data.results.length > 0) {
@@ -51,10 +53,10 @@ export async function fetchSiretInfo(siret: string): Promise<SireneInfo | null> 
     return null;
   }
 }
-export async function fetchBusinessesByCity(codeCommune: string, page: number = 1): Promise<SireneInfo[]> {
+
+export async function fetchBusinessesByCity(codeCommune: string, page: number = 1): Promise<any> {
   try {
-    // API Recherche Entreprises limits per_page to 25
-    const response = await axios.get(`https://recherche-entreprises.api.gouv.fr/search?code_commune=${codeCommune}&per_page=25&page=${page}`);
+    const response = await inseeApi.get(`https://recherche-entreprises.api.gouv.fr/search?code_commune=${codeCommune}&per_page=25&page=${page}`);
     const data = response.data;
     
     if (data.results && data.results.length > 0) {
@@ -85,11 +87,11 @@ export async function fetchBusinessesByCity(codeCommune: string, page: number = 
         results: allBusinesses, 
         totalPages: data.total_pages || 1,
         totalResults: data.total_results || allBusinesses.length
-      } as any;
+      };
     }
-    return { results: [], totalPages: 0, totalResults: 0 } as any;
+    return { results: [], totalPages: 0, totalResults: 0 };
   } catch (error) {
     console.error('[INSEE] Failed to fetch city businesses:', error);
-    return [];
+    return { results: [], totalPages: 0, totalResults: 0 };
   }
 }

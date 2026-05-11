@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { validateSignatureToken } from '@/lib/signature-token';
 import { sendApmMail } from '@/lib/apm';
 import { getContextualMessageData } from '@/lib/contextual-messages';
+import { getSession } from '@/lib/auth';
 
 /**
  * POST /api/signature/[token]/reject
@@ -85,7 +86,7 @@ export async function POST(
     });
 
     // Get settings for admin email + appUrl
-    const settings = await prisma.appSettings.findFirst({
+    const settings = await (prisma as any).appSettings.findFirst({
       where: { id: 1 }
     });
     const baseUrl = (settings?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
@@ -140,6 +141,24 @@ export async function POST(
       }
     } catch (notifErr) {
       console.warn('[Reject] Notification demandeur échouée:', notifErr);
+    }
+
+    // Add automatic note for signature rejection
+    try {
+      const year = signatureRequest.occupation.anneeTaxation || new Date().getFullYear();
+      const noteContent = `❌ Document refusé par ${signatureRequest.signatory.nom}${comment ? ' - Motif : ' + comment : ''} (${year})`;
+      await (prisma as any).note.create({
+        data: {
+          occupationId: signatureRequest.occupation.id,
+          content: noteContent,
+          author: 'Système',
+          isEmail: false,
+          origin: 'desktop',
+          created_at: now
+        }
+      });
+    } catch (noteError) {
+      console.error('[Reject] Failed to create note:', noteError);
     }
 
     return NextResponse.json({

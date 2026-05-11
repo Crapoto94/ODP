@@ -7,7 +7,9 @@ export async function GET(req: Request) {
     const annee = searchParams.get('annee');
 
     // 1. Fetch available years (configs)
-    const configs = await prisma.$queryRaw`SELECT * FROM OdpConfig ORDER BY annee DESC` as any[];
+    const configs = await (prisma as any).odpConfig.findMany({
+      orderBy: { annee: 'desc' }
+    });
 
     if (!annee) {
       return NextResponse.json({ configs });
@@ -16,8 +18,9 @@ export async function GET(req: Request) {
     const anneeInt = parseInt(annee);
 
     // 2. Fetch Config for specific year
-    const configRecords = await prisma.$queryRaw`SELECT * FROM OdpConfig WHERE annee = ${anneeInt}` as any[];
-    const config = configRecords[0] || null;
+    const config = await (prisma as any).odpConfig.findUnique({
+      where: { annee: anneeInt }
+    });
 
     return NextResponse.json({ 
       configs,
@@ -38,19 +41,60 @@ export async function POST(req: Request) {
     const anneeInt = parseInt(annee);
     if (!anneeInt) return NextResponse.json({ error: "L'année est requise" }, { status: 400 });
 
-    // Create/Update Config in SQLite using raw query to avoid issues with un-generated Prisma types
-    await prisma.$executeRaw`
-      INSERT INTO OdpConfig (annee, deliberationPath, tarifsTournagesPath, tarifsOdpPath)
-      VALUES (${anneeInt}, ${deliberationPath}, ${tarifsTournagesPath}, ${tarifsOdpPath})
-      ON CONFLICT(annee) DO UPDATE SET
-        deliberationPath = EXCLUDED.deliberationPath,
-        tarifsTournagesPath = EXCLUDED.tarifsTournagesPath,
-        tarifsOdpPath = EXCLUDED.tarifsOdpPath
-    `;
+    // 1. Check if config exists
+    const existing = await (prisma as any).odpConfig.findUnique({
+      where: { annee: anneeInt }
+    });
+
+    const data = {
+      annee: anneeInt,
+      deliberationPath: deliberationPath || null,
+      tarifsTournagesPath: tarifsTournagesPath || null,
+      tarifsOdpPath: tarifsOdpPath || null
+    };
+
+    if (existing) {
+      await (prisma as any).odpConfig.update({
+        where: { annee: anneeInt },
+        data
+      });
+    } else {
+      await (prisma as any).odpConfig.create({
+        data
+      });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error('ODP Docs POST Error:', error);
+    console.error('[ODP-DOCS-POST-ERROR]', error.message);
+    if (error.stack) console.error(error.stack);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const body = await req.json();
+    const { annee, deleteDelib, deleteTournages, deleteOdp } = body;
+
+    const anneeInt = parseInt(annee);
+    if (!anneeInt) return NextResponse.json({ error: "L'année est requise" }, { status: 400 });
+
+    const data: any = {};
+    if (deleteDelib) data.deliberationPath = null;
+    if (deleteTournages) data.tarifsTournagesPath = null;
+    if (deleteOdp) data.tarifsOdpPath = null;
+
+    if (Object.keys(data).length > 0) {
+      await (prisma as any).odpConfig.update({
+        where: { annee: anneeInt },
+        data
+      });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('ODP Docs PATCH Error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

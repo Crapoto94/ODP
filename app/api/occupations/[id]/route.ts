@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { updateOccupationTotal } from '@/lib/tlpe-utils';
+import { getSession } from '@/lib/auth';
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -18,6 +19,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     });
 
     if (!occupation) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+    // 1.5 Fetch agissantPour tier if exists
+    if (occupation.agissantPour) {
+      const apId = parseInt(occupation.agissantPour);
+      if (!isNaN(apId)) {
+        occupation.agissantPourTier = await prisma.tiers.findUnique({ 
+          where: { id: apId } 
+        });
+      }
+    }
 
     // 2. Parse meta for articles
     if (occupation.lignes) {
@@ -76,11 +87,19 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       facturePath,
       datePaiement,
       isCourtMetrage,
+      isAgissantPourBillable,
       agissantPour,
       aotGabaritId,
       aotFinalPath,
-      aotSigned
+      aotSigned,
+      observations
     } = body;
+
+    // Fetch old occupation to detect status change and AOT upload
+    const oldOccupation = await (prisma as any).occupation.findUnique({ where: { id } });
+    const statusChanged = statut && oldOccupation && oldOccupation.statut !== statut;
+    const aotUploaded = aotFinalPath && oldOccupation && !oldOccupation.aotFinalPath && aotFinalPath !== oldOccupation.aotFinalPath;
+    const aotNowSigned = aotSigned && oldOccupation && !oldOccupation.aotSigned;
 
     const updateData: any = {
       nom,
@@ -95,7 +114,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       longitude: longitude !== undefined ? (longitude ? parseFloat(longitude) : null) : undefined,
       description,
       photos,
+      observations: observations !== undefined ? observations : undefined,
       agissantPour: agissantPour !== undefined ? agissantPour : undefined,
+      isAgissantPourBillable: isAgissantPourBillable !== undefined ? !!isAgissantPourBillable : undefined,
       numeroFacture: numeroFacture !== undefined ? numeroFacture : undefined,
       facturePath: facturePath !== undefined ? facturePath : undefined,
       aotGabaritId: aotGabaritId !== undefined ? (aotGabaritId ? parseInt(aotGabaritId) : null) : undefined,
@@ -112,6 +133,40 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       await (prisma as any).$executeRaw`UPDATE Occupation SET isCourtMetrage = ${!!isCourtMetrage} WHERE id = ${id}`;
     }
 
+    // Add automatic notes for changes
+    const session = await getSession();
+    const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Conseiller';
+    const now = new Date().toISOString();
+    const year = oldOccupation.anneeTaxation || new Date().getFullYear();
+
+    if (statusChanged) {
+      const noteContent = `📊 Passage de statut : ${oldOccupation.statut} → ${statut} (${year})`;
+      await (prisma as any).note.create({
+        data: {
+          occupationId: id,
+          content: noteContent,
+          author: author,
+          isEmail: false,
+          origin: 'desktop',
+          created_at: new Date(now)
+        }
+      });
+    }
+
+    if (aotUploaded) {
+      const noteContent = `📄 Document AOT uploadé${aotNowSigned ? ' et signé' : ' (en brouillon)'} (${year})`;
+      await (prisma as any).note.create({
+        data: {
+          occupationId: id,
+          content: noteContent,
+          author: author,
+          isEmail: false,
+          origin: 'desktop',
+          created_at: new Date(now)
+        }
+      });
+    }
+
     // Recalculer le montant net total (exonération globale, etc.)
     await updateOccupationTotal(id);
 
@@ -124,6 +179,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const session = await getSession();
+    if (!session || session.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Seul un administrateur peut supprimer un dossier' }, { status: 403 });
+    }
+
     const { id: paramId } = await params;
     const id = parseInt(paramId);
     await (prisma as any).occupation.delete({

@@ -15,7 +15,8 @@ import {
   Paperclip, 
   X, 
   Mic, 
-  Send 
+  Send,
+  Trash2
 } from 'lucide-react';
 import { useNotesLogic } from '../hooks/useNotesLogic';
 
@@ -44,6 +45,7 @@ export default function OccupationNotes({ occupationId, currentUser }: Props) {
     handleHarvest,
     handleFileUpload,
     startDictation,
+    handleDeleteNote,
     handleSubmit
   } = useNotesLogic(occupationId, currentUser);
 
@@ -51,7 +53,7 @@ export default function OccupationNotes({ occupationId, currentUser }: Props) {
     <div className="bg-slate-50/50 rounded-2xl border border-slate-100 p-8 flex flex-col gap-8 min-h-[400px]">
       <div className="flex items-center justify-between pb-2 border-b border-slate-200/50">
         <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-          <MessageSquare size={14} /> Fil de discussion
+          <MessageSquare size={14} /> Fil d'événements
         </h3>
         <button 
           onClick={handleHarvest}
@@ -131,9 +133,20 @@ export default function OccupationNotes({ occupationId, currentUser }: Props) {
                         </span>
                       )}
                     </div>
-                    <span className={`text-[8px] font-bold ${dateColor}`}>
-                      {note.created_at ? format(new Date(note.created_at), 'dd MMM HH:mm', { locale: fr }) : ''}
-                    </span>
+                    <div className="flex items-center gap-4">
+                      {currentUser?.role === 'ADMIN' && (
+                        <button 
+                          onClick={() => handleDeleteNote(note.id)}
+                          className={`p-1 rounded hover:bg-white/20 transition-colors ${isMe ? 'text-white/40 hover:text-white' : 'text-slate-300 hover:text-rose-500'}`}
+                          title="Supprimer la note"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      )}
+                      <span className={`text-[8px] font-bold ${dateColor}`}>
+                        {note.created_at ? format(new Date(note.created_at), 'dd MMM HH:mm', { locale: fr }) : ''}
+                      </span>
+                    </div>
                   </div>
                   {note.content === 'Photo terrain' || note.content === '' ? (
                     <div className="flex items-center gap-2 text-[var(--text-dim)] opacity-40 italic py-2">

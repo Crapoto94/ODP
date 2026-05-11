@@ -59,15 +59,20 @@ export type Article = $Result.DefaultSelection<Prisma.$ArticlePayload>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model FavoriteCommerce
+ * 
+ */
+export type FavoriteCommerce = $Result.DefaultSelection<Prisma.$FavoriteCommercePayload>
+/**
  * Model MobileLog
  * 
  */
 export type MobileLog = $Result.DefaultSelection<Prisma.$MobileLogPayload>
 /**
- * Model AppSettings
+ * Model ContextualMessage
  * 
  */
-export type AppSettings = $Result.DefaultSelection<Prisma.$AppSettingsPayload>
+export type ContextualMessage = $Result.DefaultSelection<Prisma.$ContextualMessagePayload>
 /**
  * Model LigneOccupation
  * 
@@ -109,10 +114,10 @@ export type BacklogComment = $Result.DefaultSelection<Prisma.$BacklogCommentPayl
  */
 export type VersionRelease = $Result.DefaultSelection<Prisma.$VersionReleasePayload>
 /**
- * Model PostgresConfig
+ * Model ContactRoleConfig
  * 
  */
-export type PostgresConfig = $Result.DefaultSelection<Prisma.$PostgresConfigPayload>
+export type ContactRoleConfig = $Result.DefaultSelection<Prisma.$ContactRoleConfigPayload>
 /**
  * Model OdpConfig
  * 
@@ -138,6 +143,11 @@ export type Signatory = $Result.DefaultSelection<Prisma.$SignatoryPayload>
  * 
  */
 export type SignatureRequest = $Result.DefaultSelection<Prisma.$SignatureRequestPayload>
+/**
+ * Model AppSettings
+ * 
+ */
+export type AppSettings = $Result.DefaultSelection<Prisma.$AppSettingsPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -353,6 +363,16 @@ export class PrismaClient<
   get user(): Prisma.UserDelegate<ExtArgs>;
 
   /**
+   * `prisma.favoriteCommerce`: Exposes CRUD operations for the **FavoriteCommerce** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FavoriteCommerces
+    * const favoriteCommerces = await prisma.favoriteCommerce.findMany()
+    * ```
+    */
+  get favoriteCommerce(): Prisma.FavoriteCommerceDelegate<ExtArgs>;
+
+  /**
    * `prisma.mobileLog`: Exposes CRUD operations for the **MobileLog** model.
     * Example usage:
     * ```ts
@@ -363,14 +383,14 @@ export class PrismaClient<
   get mobileLog(): Prisma.MobileLogDelegate<ExtArgs>;
 
   /**
-   * `prisma.appSettings`: Exposes CRUD operations for the **AppSettings** model.
+   * `prisma.contextualMessage`: Exposes CRUD operations for the **ContextualMessage** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more AppSettings
-    * const appSettings = await prisma.appSettings.findMany()
+    * // Fetch zero or more ContextualMessages
+    * const contextualMessages = await prisma.contextualMessage.findMany()
     * ```
     */
-  get appSettings(): Prisma.AppSettingsDelegate<ExtArgs>;
+  get contextualMessage(): Prisma.ContextualMessageDelegate<ExtArgs>;
 
   /**
    * `prisma.ligneOccupation`: Exposes CRUD operations for the **LigneOccupation** model.
@@ -453,14 +473,14 @@ export class PrismaClient<
   get versionRelease(): Prisma.VersionReleaseDelegate<ExtArgs>;
 
   /**
-   * `prisma.postgresConfig`: Exposes CRUD operations for the **PostgresConfig** model.
+   * `prisma.contactRoleConfig`: Exposes CRUD operations for the **ContactRoleConfig** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more PostgresConfigs
-    * const postgresConfigs = await prisma.postgresConfig.findMany()
+    * // Fetch zero or more ContactRoleConfigs
+    * const contactRoleConfigs = await prisma.contactRoleConfig.findMany()
     * ```
     */
-  get postgresConfig(): Prisma.PostgresConfigDelegate<ExtArgs>;
+  get contactRoleConfig(): Prisma.ContactRoleConfigDelegate<ExtArgs>;
 
   /**
    * `prisma.odpConfig`: Exposes CRUD operations for the **OdpConfig** model.
@@ -511,6 +531,16 @@ export class PrismaClient<
     * ```
     */
   get signatureRequest(): Prisma.SignatureRequestDelegate<ExtArgs>;
+
+  /**
+   * `prisma.appSettings`: Exposes CRUD operations for the **AppSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AppSettings
+    * const appSettings = await prisma.appSettings.findMany()
+    * ```
+    */
+  get appSettings(): Prisma.AppSettingsDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -961,8 +991,9 @@ export namespace Prisma {
     ModeTaxation: 'ModeTaxation',
     Article: 'Article',
     User: 'User',
+    FavoriteCommerce: 'FavoriteCommerce',
     MobileLog: 'MobileLog',
-    AppSettings: 'AppSettings',
+    ContextualMessage: 'ContextualMessage',
     LigneOccupation: 'LigneOccupation',
     Dispositif: 'Dispositif',
     Gabarit: 'Gabarit',
@@ -971,12 +1002,13 @@ export namespace Prisma {
     BacklogItem: 'BacklogItem',
     BacklogComment: 'BacklogComment',
     VersionRelease: 'VersionRelease',
-    PostgresConfig: 'PostgresConfig',
+    ContactRoleConfig: 'ContactRoleConfig',
     OdpConfig: 'OdpConfig',
     BillingRun: 'BillingRun',
     BillingRunInvoice: 'BillingRunInvoice',
     Signatory: 'Signatory',
-    SignatureRequest: 'SignatureRequest'
+    SignatureRequest: 'SignatureRequest',
+    AppSettings: 'AppSettings'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -992,7 +1024,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "mobileLog" | "appSettings" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "postgresConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1626,6 +1658,76 @@ export namespace Prisma {
           }
         }
       }
+      FavoriteCommerce: {
+        payload: Prisma.$FavoriteCommercePayload<ExtArgs>
+        fields: Prisma.FavoriteCommerceFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FavoriteCommerceFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FavoriteCommerceFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          findFirst: {
+            args: Prisma.FavoriteCommerceFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FavoriteCommerceFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          findMany: {
+            args: Prisma.FavoriteCommerceFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>[]
+          }
+          create: {
+            args: Prisma.FavoriteCommerceCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          createMany: {
+            args: Prisma.FavoriteCommerceCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FavoriteCommerceCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>[]
+          }
+          delete: {
+            args: Prisma.FavoriteCommerceDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          update: {
+            args: Prisma.FavoriteCommerceUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          deleteMany: {
+            args: Prisma.FavoriteCommerceDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FavoriteCommerceUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.FavoriteCommerceUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FavoriteCommercePayload>
+          }
+          aggregate: {
+            args: Prisma.FavoriteCommerceAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFavoriteCommerce>
+          }
+          groupBy: {
+            args: Prisma.FavoriteCommerceGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FavoriteCommerceGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FavoriteCommerceCountArgs<ExtArgs>
+            result: $Utils.Optional<FavoriteCommerceCountAggregateOutputType> | number
+          }
+        }
+      }
       MobileLog: {
         payload: Prisma.$MobileLogPayload<ExtArgs>
         fields: Prisma.MobileLogFieldRefs
@@ -1696,73 +1798,73 @@ export namespace Prisma {
           }
         }
       }
-      AppSettings: {
-        payload: Prisma.$AppSettingsPayload<ExtArgs>
-        fields: Prisma.AppSettingsFieldRefs
+      ContextualMessage: {
+        payload: Prisma.$ContextualMessagePayload<ExtArgs>
+        fields: Prisma.ContextualMessageFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.AppSettingsFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload> | null
+            args: Prisma.ContextualMessageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.AppSettingsFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+            args: Prisma.ContextualMessageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
           }
           findFirst: {
-            args: Prisma.AppSettingsFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload> | null
+            args: Prisma.ContextualMessageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.AppSettingsFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+            args: Prisma.ContextualMessageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
           }
           findMany: {
-            args: Prisma.AppSettingsFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>[]
+            args: Prisma.ContextualMessageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>[]
           }
           create: {
-            args: Prisma.AppSettingsCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+            args: Prisma.ContextualMessageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
           }
           createMany: {
-            args: Prisma.AppSettingsCreateManyArgs<ExtArgs>
+            args: Prisma.ContextualMessageCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           createManyAndReturn: {
-            args: Prisma.AppSettingsCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>[]
+            args: Prisma.ContextualMessageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>[]
           }
           delete: {
-            args: Prisma.AppSettingsDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+            args: Prisma.ContextualMessageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
           }
           update: {
-            args: Prisma.AppSettingsUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+            args: Prisma.ContextualMessageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
           }
           deleteMany: {
-            args: Prisma.AppSettingsDeleteManyArgs<ExtArgs>
+            args: Prisma.ContextualMessageDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.AppSettingsUpdateManyArgs<ExtArgs>
+            args: Prisma.ContextualMessageUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           upsert: {
-            args: Prisma.AppSettingsUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+            args: Prisma.ContextualMessageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContextualMessagePayload>
           }
           aggregate: {
-            args: Prisma.AppSettingsAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateAppSettings>
+            args: Prisma.ContextualMessageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateContextualMessage>
           }
           groupBy: {
-            args: Prisma.AppSettingsGroupByArgs<ExtArgs>
-            result: $Utils.Optional<AppSettingsGroupByOutputType>[]
+            args: Prisma.ContextualMessageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ContextualMessageGroupByOutputType>[]
           }
           count: {
-            args: Prisma.AppSettingsCountArgs<ExtArgs>
-            result: $Utils.Optional<AppSettingsCountAggregateOutputType> | number
+            args: Prisma.ContextualMessageCountArgs<ExtArgs>
+            result: $Utils.Optional<ContextualMessageCountAggregateOutputType> | number
           }
         }
       }
@@ -2326,73 +2428,73 @@ export namespace Prisma {
           }
         }
       }
-      PostgresConfig: {
-        payload: Prisma.$PostgresConfigPayload<ExtArgs>
-        fields: Prisma.PostgresConfigFieldRefs
+      ContactRoleConfig: {
+        payload: Prisma.$ContactRoleConfigPayload<ExtArgs>
+        fields: Prisma.ContactRoleConfigFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.PostgresConfigFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload> | null
+            args: Prisma.ContactRoleConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.PostgresConfigFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+            args: Prisma.ContactRoleConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
           }
           findFirst: {
-            args: Prisma.PostgresConfigFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload> | null
+            args: Prisma.ContactRoleConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.PostgresConfigFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+            args: Prisma.ContactRoleConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
           }
           findMany: {
-            args: Prisma.PostgresConfigFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>[]
+            args: Prisma.ContactRoleConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>[]
           }
           create: {
-            args: Prisma.PostgresConfigCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+            args: Prisma.ContactRoleConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
           }
           createMany: {
-            args: Prisma.PostgresConfigCreateManyArgs<ExtArgs>
+            args: Prisma.ContactRoleConfigCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           createManyAndReturn: {
-            args: Prisma.PostgresConfigCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>[]
+            args: Prisma.ContactRoleConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>[]
           }
           delete: {
-            args: Prisma.PostgresConfigDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+            args: Prisma.ContactRoleConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
           }
           update: {
-            args: Prisma.PostgresConfigUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+            args: Prisma.ContactRoleConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
           }
           deleteMany: {
-            args: Prisma.PostgresConfigDeleteManyArgs<ExtArgs>
+            args: Prisma.ContactRoleConfigDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.PostgresConfigUpdateManyArgs<ExtArgs>
+            args: Prisma.ContactRoleConfigUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           upsert: {
-            args: Prisma.PostgresConfigUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PostgresConfigPayload>
+            args: Prisma.ContactRoleConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactRoleConfigPayload>
           }
           aggregate: {
-            args: Prisma.PostgresConfigAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregatePostgresConfig>
+            args: Prisma.ContactRoleConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateContactRoleConfig>
           }
           groupBy: {
-            args: Prisma.PostgresConfigGroupByArgs<ExtArgs>
-            result: $Utils.Optional<PostgresConfigGroupByOutputType>[]
+            args: Prisma.ContactRoleConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ContactRoleConfigGroupByOutputType>[]
           }
           count: {
-            args: Prisma.PostgresConfigCountArgs<ExtArgs>
-            result: $Utils.Optional<PostgresConfigCountAggregateOutputType> | number
+            args: Prisma.ContactRoleConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<ContactRoleConfigCountAggregateOutputType> | number
           }
         }
       }
@@ -2746,6 +2848,76 @@ export namespace Prisma {
           }
         }
       }
+      AppSettings: {
+        payload: Prisma.$AppSettingsPayload<ExtArgs>
+        fields: Prisma.AppSettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AppSettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AppSettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.AppSettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AppSettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          findMany: {
+            args: Prisma.AppSettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>[]
+          }
+          create: {
+            args: Prisma.AppSettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          createMany: {
+            args: Prisma.AppSettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AppSettingsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>[]
+          }
+          delete: {
+            args: Prisma.AppSettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          update: {
+            args: Prisma.AppSettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.AppSettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AppSettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.AppSettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppSettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.AppSettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAppSettings>
+          }
+          groupBy: {
+            args: Prisma.AppSettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AppSettingsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AppSettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<AppSettingsCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2909,11 +3081,15 @@ export namespace Prisma {
   export type TiersCountOutputType = {
     contacts: number
     occupations: number
+    notes: number
+    favoritedBy: number
   }
 
   export type TiersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     contacts?: boolean | TiersCountOutputTypeCountContactsArgs
     occupations?: boolean | TiersCountOutputTypeCountOccupationsArgs
+    notes?: boolean | TiersCountOutputTypeCountNotesArgs
+    favoritedBy?: boolean | TiersCountOutputTypeCountFavoritedByArgs
   }
 
   // Custom InputTypes
@@ -2939,6 +3115,20 @@ export namespace Prisma {
    */
   export type TiersCountOutputTypeCountOccupationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OccupationWhereInput
+  }
+
+  /**
+   * TiersCountOutputType without action
+   */
+  export type TiersCountOutputTypeCountNotesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NoteWhereInput
+  }
+
+  /**
+   * TiersCountOutputType without action
+   */
+  export type TiersCountOutputTypeCountFavoritedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FavoriteCommerceWhereInput
   }
 
 
@@ -3117,10 +3307,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     logs: number
+    favoriteCommerces: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     logs?: boolean | UserCountOutputTypeCountLogsArgs
+    favoriteCommerces?: boolean | UserCountOutputTypeCountFavoriteCommercesArgs
   }
 
   // Custom InputTypes
@@ -3139,6 +3331,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MobileLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFavoriteCommercesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FavoriteCommerceWhereInput
   }
 
 
@@ -3308,6 +3507,8 @@ export namespace Prisma {
     updated_at: Date | null
     natureJuridique: string | null
     etatAdministratif: string | null
+    observations: string | null
+    photo: string | null
   }
 
   export type TiersMaxAggregateOutputType = {
@@ -3324,6 +3525,8 @@ export namespace Prisma {
     updated_at: Date | null
     natureJuridique: string | null
     etatAdministratif: string | null
+    observations: string | null
+    photo: string | null
   }
 
   export type TiersCountAggregateOutputType = {
@@ -3340,6 +3543,8 @@ export namespace Prisma {
     updated_at: number
     natureJuridique: number
     etatAdministratif: number
+    observations: number
+    photo: number
     _all: number
   }
 
@@ -3370,6 +3575,8 @@ export namespace Prisma {
     updated_at?: true
     natureJuridique?: true
     etatAdministratif?: true
+    observations?: true
+    photo?: true
   }
 
   export type TiersMaxAggregateInputType = {
@@ -3386,6 +3593,8 @@ export namespace Prisma {
     updated_at?: true
     natureJuridique?: true
     etatAdministratif?: true
+    observations?: true
+    photo?: true
   }
 
   export type TiersCountAggregateInputType = {
@@ -3402,6 +3611,8 @@ export namespace Prisma {
     updated_at?: true
     natureJuridique?: true
     etatAdministratif?: true
+    observations?: true
+    photo?: true
     _all?: true
   }
 
@@ -3505,6 +3716,8 @@ export namespace Prisma {
     updated_at: Date
     natureJuridique: string | null
     etatAdministratif: string | null
+    observations: string | null
+    photo: string | null
     _count: TiersCountAggregateOutputType | null
     _avg: TiersAvgAggregateOutputType | null
     _sum: TiersSumAggregateOutputType | null
@@ -3540,8 +3753,12 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
+    observations?: boolean
+    photo?: boolean
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
     occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
+    notes?: boolean | Tiers$notesArgs<ExtArgs>
+    favoritedBy?: boolean | Tiers$favoritedByArgs<ExtArgs>
     _count?: boolean | TiersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tiers"]>
 
@@ -3559,6 +3776,8 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
+    observations?: boolean
+    photo?: boolean
   }, ExtArgs["result"]["tiers"]>
 
   export type TiersSelectScalar = {
@@ -3575,11 +3794,15 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
+    observations?: boolean
+    photo?: boolean
   }
 
   export type TiersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
     occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
+    notes?: boolean | Tiers$notesArgs<ExtArgs>
+    favoritedBy?: boolean | Tiers$favoritedByArgs<ExtArgs>
     _count?: boolean | TiersCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TiersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3589,6 +3812,8 @@ export namespace Prisma {
     objects: {
       contacts: Prisma.$ContactPayload<ExtArgs>[]
       occupations: Prisma.$OccupationPayload<ExtArgs>[]
+      notes: Prisma.$NotePayload<ExtArgs>[]
+      favoritedBy: Prisma.$FavoriteCommercePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -3604,6 +3829,8 @@ export namespace Prisma {
       updated_at: Date
       natureJuridique: string | null
       etatAdministratif: string | null
+      observations: string | null
+      photo: string | null
     }, ExtArgs["result"]["tiers"]>
     composites: {}
   }
@@ -3970,6 +4197,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     contacts<T extends Tiers$contactsArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$contactsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactPayload<ExtArgs>, T, "findMany"> | Null>
     occupations<T extends Tiers$occupationsArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$occupationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findMany"> | Null>
+    notes<T extends Tiers$notesArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$notesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany"> | Null>
+    favoritedBy<T extends Tiers$favoritedByArgs<ExtArgs> = {}>(args?: Subset<T, Tiers$favoritedByArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4012,6 +4241,8 @@ export namespace Prisma {
     readonly updated_at: FieldRef<"Tiers", 'DateTime'>
     readonly natureJuridique: FieldRef<"Tiers", 'String'>
     readonly etatAdministratif: FieldRef<"Tiers", 'String'>
+    readonly observations: FieldRef<"Tiers", 'String'>
+    readonly photo: FieldRef<"Tiers", 'String'>
   }
     
 
@@ -4217,6 +4448,7 @@ export namespace Prisma {
      * The data used to create many Tiers.
      */
     data: TiersCreateManyInput | TiersCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -4231,6 +4463,7 @@ export namespace Prisma {
      * The data used to create many Tiers.
      */
     data: TiersCreateManyInput | TiersCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -4364,6 +4597,46 @@ export namespace Prisma {
   }
 
   /**
+   * Tiers.notes
+   */
+  export type Tiers$notesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Note
+     */
+    select?: NoteSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NoteInclude<ExtArgs> | null
+    where?: NoteWhereInput
+    orderBy?: NoteOrderByWithRelationInput | NoteOrderByWithRelationInput[]
+    cursor?: NoteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NoteScalarFieldEnum | NoteScalarFieldEnum[]
+  }
+
+  /**
+   * Tiers.favoritedBy
+   */
+  export type Tiers$favoritedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    where?: FavoriteCommerceWhereInput
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    cursor?: FavoriteCommerceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
+  }
+
+  /**
    * Tiers without action
    */
   export type TiersDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4425,6 +4698,7 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     description: string | null
+    observations: string | null
     photos: string | null
     montantCalcule: number | null
     facturePath: string | null
@@ -4434,10 +4708,19 @@ export namespace Prisma {
     dossierParentId: number | null
     isCourtMetrage: boolean | null
     agissantPour: string | null
+    isAgissantPourBillable: boolean | null
     aotGabaritId: number | null
     aotFinalPath: string | null
     aotSigned: boolean | null
     datePaiement: Date | null
+    dateINIT: Date | null
+    dateINST: Date | null
+    datePREP: Date | null
+    dateEN_COURS: Date | null
+    dateVALIDE: Date | null
+    dateFACTURE: Date | null
+    dateTITRE: Date | null
+    dateCLOS: Date | null
   }
 
   export type OccupationMaxAggregateOutputType = {
@@ -4453,6 +4736,7 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     description: string | null
+    observations: string | null
     photos: string | null
     montantCalcule: number | null
     facturePath: string | null
@@ -4462,10 +4746,19 @@ export namespace Prisma {
     dossierParentId: number | null
     isCourtMetrage: boolean | null
     agissantPour: string | null
+    isAgissantPourBillable: boolean | null
     aotGabaritId: number | null
     aotFinalPath: string | null
     aotSigned: boolean | null
     datePaiement: Date | null
+    dateINIT: Date | null
+    dateINST: Date | null
+    datePREP: Date | null
+    dateEN_COURS: Date | null
+    dateVALIDE: Date | null
+    dateFACTURE: Date | null
+    dateTITRE: Date | null
+    dateCLOS: Date | null
   }
 
   export type OccupationCountAggregateOutputType = {
@@ -4481,6 +4774,7 @@ export namespace Prisma {
     latitude: number
     longitude: number
     description: number
+    observations: number
     photos: number
     montantCalcule: number
     facturePath: number
@@ -4490,10 +4784,19 @@ export namespace Prisma {
     dossierParentId: number
     isCourtMetrage: number
     agissantPour: number
+    isAgissantPourBillable: number
     aotGabaritId: number
     aotFinalPath: number
     aotSigned: number
     datePaiement: number
+    dateINIT: number
+    dateINST: number
+    datePREP: number
+    dateEN_COURS: number
+    dateVALIDE: number
+    dateFACTURE: number
+    dateTITRE: number
+    dateCLOS: number
     _all: number
   }
 
@@ -4533,6 +4836,7 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     description?: true
+    observations?: true
     photos?: true
     montantCalcule?: true
     facturePath?: true
@@ -4542,10 +4846,19 @@ export namespace Prisma {
     dossierParentId?: true
     isCourtMetrage?: true
     agissantPour?: true
+    isAgissantPourBillable?: true
     aotGabaritId?: true
     aotFinalPath?: true
     aotSigned?: true
     datePaiement?: true
+    dateINIT?: true
+    dateINST?: true
+    datePREP?: true
+    dateEN_COURS?: true
+    dateVALIDE?: true
+    dateFACTURE?: true
+    dateTITRE?: true
+    dateCLOS?: true
   }
 
   export type OccupationMaxAggregateInputType = {
@@ -4561,6 +4874,7 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     description?: true
+    observations?: true
     photos?: true
     montantCalcule?: true
     facturePath?: true
@@ -4570,10 +4884,19 @@ export namespace Prisma {
     dossierParentId?: true
     isCourtMetrage?: true
     agissantPour?: true
+    isAgissantPourBillable?: true
     aotGabaritId?: true
     aotFinalPath?: true
     aotSigned?: true
     datePaiement?: true
+    dateINIT?: true
+    dateINST?: true
+    datePREP?: true
+    dateEN_COURS?: true
+    dateVALIDE?: true
+    dateFACTURE?: true
+    dateTITRE?: true
+    dateCLOS?: true
   }
 
   export type OccupationCountAggregateInputType = {
@@ -4589,6 +4912,7 @@ export namespace Prisma {
     latitude?: true
     longitude?: true
     description?: true
+    observations?: true
     photos?: true
     montantCalcule?: true
     facturePath?: true
@@ -4598,10 +4922,19 @@ export namespace Prisma {
     dossierParentId?: true
     isCourtMetrage?: true
     agissantPour?: true
+    isAgissantPourBillable?: true
     aotGabaritId?: true
     aotFinalPath?: true
     aotSigned?: true
     datePaiement?: true
+    dateINIT?: true
+    dateINST?: true
+    datePREP?: true
+    dateEN_COURS?: true
+    dateVALIDE?: true
+    dateFACTURE?: true
+    dateTITRE?: true
+    dateCLOS?: true
     _all?: true
   }
 
@@ -4704,6 +5037,7 @@ export namespace Prisma {
     latitude: number | null
     longitude: number | null
     description: string | null
+    observations: string | null
     photos: string | null
     montantCalcule: number
     facturePath: string | null
@@ -4713,10 +5047,19 @@ export namespace Prisma {
     dossierParentId: number | null
     isCourtMetrage: boolean
     agissantPour: string | null
+    isAgissantPourBillable: boolean
     aotGabaritId: number | null
     aotFinalPath: string | null
     aotSigned: boolean
     datePaiement: Date | null
+    dateINIT: Date | null
+    dateINST: Date | null
+    datePREP: Date | null
+    dateEN_COURS: Date | null
+    dateVALIDE: Date | null
+    dateFACTURE: Date | null
+    dateTITRE: Date | null
+    dateCLOS: Date | null
     _count: OccupationCountAggregateOutputType | null
     _avg: OccupationAvgAggregateOutputType | null
     _sum: OccupationSumAggregateOutputType | null
@@ -4751,6 +5094,7 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     description?: boolean
+    observations?: boolean
     photos?: boolean
     montantCalcule?: boolean
     facturePath?: boolean
@@ -4760,10 +5104,19 @@ export namespace Prisma {
     dossierParentId?: boolean
     isCourtMetrage?: boolean
     agissantPour?: boolean
+    isAgissantPourBillable?: boolean
     aotGabaritId?: boolean
     aotFinalPath?: boolean
     aotSigned?: boolean
     datePaiement?: boolean
+    dateINIT?: boolean
+    dateINST?: boolean
+    datePREP?: boolean
+    dateEN_COURS?: boolean
+    dateVALIDE?: boolean
+    dateFACTURE?: boolean
+    dateTITRE?: boolean
+    dateCLOS?: boolean
     contacts?: boolean | Occupation$contactsArgs<ExtArgs>
     dispositifs?: boolean | Occupation$dispositifsArgs<ExtArgs>
     lignes?: boolean | Occupation$lignesArgs<ExtArgs>
@@ -4786,6 +5139,7 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     description?: boolean
+    observations?: boolean
     photos?: boolean
     montantCalcule?: boolean
     facturePath?: boolean
@@ -4795,10 +5149,19 @@ export namespace Prisma {
     dossierParentId?: boolean
     isCourtMetrage?: boolean
     agissantPour?: boolean
+    isAgissantPourBillable?: boolean
     aotGabaritId?: boolean
     aotFinalPath?: boolean
     aotSigned?: boolean
     datePaiement?: boolean
+    dateINIT?: boolean
+    dateINST?: boolean
+    datePREP?: boolean
+    dateEN_COURS?: boolean
+    dateVALIDE?: boolean
+    dateFACTURE?: boolean
+    dateTITRE?: boolean
+    dateCLOS?: boolean
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["occupation"]>
 
@@ -4815,6 +5178,7 @@ export namespace Prisma {
     latitude?: boolean
     longitude?: boolean
     description?: boolean
+    observations?: boolean
     photos?: boolean
     montantCalcule?: boolean
     facturePath?: boolean
@@ -4824,10 +5188,19 @@ export namespace Prisma {
     dossierParentId?: boolean
     isCourtMetrage?: boolean
     agissantPour?: boolean
+    isAgissantPourBillable?: boolean
     aotGabaritId?: boolean
     aotFinalPath?: boolean
     aotSigned?: boolean
     datePaiement?: boolean
+    dateINIT?: boolean
+    dateINST?: boolean
+    datePREP?: boolean
+    dateEN_COURS?: boolean
+    dateVALIDE?: boolean
+    dateFACTURE?: boolean
+    dateTITRE?: boolean
+    dateCLOS?: boolean
   }
 
   export type OccupationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4866,6 +5239,7 @@ export namespace Prisma {
       latitude: number | null
       longitude: number | null
       description: string | null
+      observations: string | null
       photos: string | null
       montantCalcule: number
       facturePath: string | null
@@ -4875,10 +5249,19 @@ export namespace Prisma {
       dossierParentId: number | null
       isCourtMetrage: boolean
       agissantPour: string | null
+      isAgissantPourBillable: boolean
       aotGabaritId: number | null
       aotFinalPath: string | null
       aotSigned: boolean
       datePaiement: Date | null
+      dateINIT: Date | null
+      dateINST: Date | null
+      datePREP: Date | null
+      dateEN_COURS: Date | null
+      dateVALIDE: Date | null
+      dateFACTURE: Date | null
+      dateTITRE: Date | null
+      dateCLOS: Date | null
     }, ExtArgs["result"]["occupation"]>
     composites: {}
   }
@@ -5290,6 +5673,7 @@ export namespace Prisma {
     readonly latitude: FieldRef<"Occupation", 'Float'>
     readonly longitude: FieldRef<"Occupation", 'Float'>
     readonly description: FieldRef<"Occupation", 'String'>
+    readonly observations: FieldRef<"Occupation", 'String'>
     readonly photos: FieldRef<"Occupation", 'String'>
     readonly montantCalcule: FieldRef<"Occupation", 'Float'>
     readonly facturePath: FieldRef<"Occupation", 'String'>
@@ -5299,10 +5683,19 @@ export namespace Prisma {
     readonly dossierParentId: FieldRef<"Occupation", 'Int'>
     readonly isCourtMetrage: FieldRef<"Occupation", 'Boolean'>
     readonly agissantPour: FieldRef<"Occupation", 'String'>
+    readonly isAgissantPourBillable: FieldRef<"Occupation", 'Boolean'>
     readonly aotGabaritId: FieldRef<"Occupation", 'Int'>
     readonly aotFinalPath: FieldRef<"Occupation", 'String'>
     readonly aotSigned: FieldRef<"Occupation", 'Boolean'>
     readonly datePaiement: FieldRef<"Occupation", 'DateTime'>
+    readonly dateINIT: FieldRef<"Occupation", 'DateTime'>
+    readonly dateINST: FieldRef<"Occupation", 'DateTime'>
+    readonly datePREP: FieldRef<"Occupation", 'DateTime'>
+    readonly dateEN_COURS: FieldRef<"Occupation", 'DateTime'>
+    readonly dateVALIDE: FieldRef<"Occupation", 'DateTime'>
+    readonly dateFACTURE: FieldRef<"Occupation", 'DateTime'>
+    readonly dateTITRE: FieldRef<"Occupation", 'DateTime'>
+    readonly dateCLOS: FieldRef<"Occupation", 'DateTime'>
   }
     
 
@@ -5508,6 +5901,7 @@ export namespace Prisma {
      * The data used to create many Occupations.
      */
     data: OccupationCreateManyInput | OccupationCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -5522,6 +5916,7 @@ export namespace Prisma {
      * The data used to create many Occupations.
      */
     data: OccupationCreateManyInput | OccupationCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -5749,12 +6144,14 @@ export namespace Prisma {
     id: number | null
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
   }
 
   export type ContactSumAggregateOutputType = {
     id: number | null
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
   }
 
   export type ContactMinAggregateOutputType = {
@@ -5767,6 +6164,7 @@ export namespace Prisma {
     role: string | null
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
     pjPath: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -5783,6 +6181,7 @@ export namespace Prisma {
     role: string | null
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
     pjPath: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -5799,6 +6198,7 @@ export namespace Prisma {
     role: number
     occupationId: number
     tiersId: number
+    commerceId: number
     pjPath: number
     created_at: number
     updated_at: number
@@ -5811,12 +6211,14 @@ export namespace Prisma {
     id?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
   }
 
   export type ContactSumAggregateInputType = {
     id?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
   }
 
   export type ContactMinAggregateInputType = {
@@ -5829,6 +6231,7 @@ export namespace Prisma {
     role?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
     pjPath?: true
     created_at?: true
     updated_at?: true
@@ -5845,6 +6248,7 @@ export namespace Prisma {
     role?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
     pjPath?: true
     created_at?: true
     updated_at?: true
@@ -5861,6 +6265,7 @@ export namespace Prisma {
     role?: true
     occupationId?: true
     tiersId?: true
+    commerceId?: true
     pjPath?: true
     created_at?: true
     updated_at?: true
@@ -5964,6 +6369,7 @@ export namespace Prisma {
     role: string
     occupationId: number | null
     tiersId: number | null
+    commerceId: number | null
     pjPath: string | null
     created_at: Date
     updated_at: Date
@@ -5999,6 +6405,7 @@ export namespace Prisma {
     role?: boolean
     occupationId?: boolean
     tiersId?: boolean
+    commerceId?: boolean
     pjPath?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -6017,6 +6424,7 @@ export namespace Prisma {
     role?: boolean
     occupationId?: boolean
     tiersId?: boolean
+    commerceId?: boolean
     pjPath?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -6035,6 +6443,7 @@ export namespace Prisma {
     role?: boolean
     occupationId?: boolean
     tiersId?: boolean
+    commerceId?: boolean
     pjPath?: boolean
     created_at?: boolean
     updated_at?: boolean
@@ -6066,6 +6475,7 @@ export namespace Prisma {
       role: string
       occupationId: number | null
       tiersId: number | null
+      commerceId: number | null
       pjPath: string | null
       created_at: Date
       updated_at: Date
@@ -6474,6 +6884,7 @@ export namespace Prisma {
     readonly role: FieldRef<"Contact", 'String'>
     readonly occupationId: FieldRef<"Contact", 'Int'>
     readonly tiersId: FieldRef<"Contact", 'Int'>
+    readonly commerceId: FieldRef<"Contact", 'Int'>
     readonly pjPath: FieldRef<"Contact", 'String'>
     readonly created_at: FieldRef<"Contact", 'DateTime'>
     readonly updated_at: FieldRef<"Contact", 'DateTime'>
@@ -6683,6 +7094,7 @@ export namespace Prisma {
      * The data used to create many Contacts.
      */
     data: ContactCreateManyInput | ContactCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -6697,6 +7109,7 @@ export namespace Prisma {
      * The data used to create many Contacts.
      */
     data: ContactCreateManyInput | ContactCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -6853,16 +7266,19 @@ export namespace Prisma {
   export type NoteAvgAggregateOutputType = {
     id: number | null
     occupationId: number | null
+    tiersId: number | null
   }
 
   export type NoteSumAggregateOutputType = {
     id: number | null
     occupationId: number | null
+    tiersId: number | null
   }
 
   export type NoteMinAggregateOutputType = {
     id: number | null
     occupationId: number | null
+    tiersId: number | null
     content: string | null
     author: string | null
     pjPath: string | null
@@ -6879,6 +7295,7 @@ export namespace Prisma {
   export type NoteMaxAggregateOutputType = {
     id: number | null
     occupationId: number | null
+    tiersId: number | null
     content: string | null
     author: string | null
     pjPath: string | null
@@ -6895,6 +7312,7 @@ export namespace Prisma {
   export type NoteCountAggregateOutputType = {
     id: number
     occupationId: number
+    tiersId: number
     content: number
     author: number
     pjPath: number
@@ -6913,16 +7331,19 @@ export namespace Prisma {
   export type NoteAvgAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
   }
 
   export type NoteSumAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
   }
 
   export type NoteMinAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
     content?: true
     author?: true
     pjPath?: true
@@ -6939,6 +7360,7 @@ export namespace Prisma {
   export type NoteMaxAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
     content?: true
     author?: true
     pjPath?: true
@@ -6955,6 +7377,7 @@ export namespace Prisma {
   export type NoteCountAggregateInputType = {
     id?: true
     occupationId?: true
+    tiersId?: true
     content?: true
     author?: true
     pjPath?: true
@@ -7057,7 +7480,8 @@ export namespace Prisma {
 
   export type NoteGroupByOutputType = {
     id: number
-    occupationId: number
+    occupationId: number | null
+    tiersId: number | null
     content: string
     author: string | null
     pjPath: string | null
@@ -7093,6 +7517,7 @@ export namespace Prisma {
   export type NoteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     occupationId?: boolean
+    tiersId?: boolean
     content?: boolean
     author?: boolean
     pjPath?: boolean
@@ -7104,12 +7529,14 @@ export namespace Prisma {
     toEmail?: boolean
     origin?: boolean
     created_at?: boolean
-    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    occupation?: boolean | Note$occupationArgs<ExtArgs>
+    tiers?: boolean | Note$tiersArgs<ExtArgs>
   }, ExtArgs["result"]["note"]>
 
   export type NoteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     occupationId?: boolean
+    tiersId?: boolean
     content?: boolean
     author?: boolean
     pjPath?: boolean
@@ -7121,12 +7548,14 @@ export namespace Prisma {
     toEmail?: boolean
     origin?: boolean
     created_at?: boolean
-    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    occupation?: boolean | Note$occupationArgs<ExtArgs>
+    tiers?: boolean | Note$tiersArgs<ExtArgs>
   }, ExtArgs["result"]["note"]>
 
   export type NoteSelectScalar = {
     id?: boolean
     occupationId?: boolean
+    tiersId?: boolean
     content?: boolean
     author?: boolean
     pjPath?: boolean
@@ -7141,20 +7570,24 @@ export namespace Prisma {
   }
 
   export type NoteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    occupation?: boolean | Note$occupationArgs<ExtArgs>
+    tiers?: boolean | Note$tiersArgs<ExtArgs>
   }
   export type NoteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+    occupation?: boolean | Note$occupationArgs<ExtArgs>
+    tiers?: boolean | Note$tiersArgs<ExtArgs>
   }
 
   export type $NotePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Note"
     objects: {
-      occupation: Prisma.$OccupationPayload<ExtArgs>
+      occupation: Prisma.$OccupationPayload<ExtArgs> | null
+      tiers: Prisma.$TiersPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      occupationId: number
+      occupationId: number | null
+      tiersId: number | null
       content: string
       author: string | null
       pjPath: string | null
@@ -7530,7 +7963,8 @@ export namespace Prisma {
    */
   export interface Prisma__NoteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    occupation<T extends OccupationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OccupationDefaultArgs<ExtArgs>>): Prisma__OccupationClient<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    occupation<T extends Note$occupationArgs<ExtArgs> = {}>(args?: Subset<T, Note$occupationArgs<ExtArgs>>): Prisma__OccupationClient<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    tiers<T extends Note$tiersArgs<ExtArgs> = {}>(args?: Subset<T, Note$tiersArgs<ExtArgs>>): Prisma__TiersClient<$Result.GetResult<Prisma.$TiersPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7562,6 +7996,7 @@ export namespace Prisma {
   interface NoteFieldRefs {
     readonly id: FieldRef<"Note", 'Int'>
     readonly occupationId: FieldRef<"Note", 'Int'>
+    readonly tiersId: FieldRef<"Note", 'Int'>
     readonly content: FieldRef<"Note", 'String'>
     readonly author: FieldRef<"Note", 'String'>
     readonly pjPath: FieldRef<"Note", 'String'>
@@ -7778,6 +8213,7 @@ export namespace Prisma {
      * The data used to create many Notes.
      */
     data: NoteCreateManyInput | NoteCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -7792,6 +8228,7 @@ export namespace Prisma {
      * The data used to create many Notes.
      */
     data: NoteCreateManyInput | NoteCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7886,6 +8323,36 @@ export namespace Prisma {
      * Filter which Notes to delete
      */
     where?: NoteWhereInput
+  }
+
+  /**
+   * Note.occupation
+   */
+  export type Note$occupationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Occupation
+     */
+    select?: OccupationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OccupationInclude<ExtArgs> | null
+    where?: OccupationWhereInput
+  }
+
+  /**
+   * Note.tiers
+   */
+  export type Note$tiersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tiers
+     */
+    select?: TiersSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TiersInclude<ExtArgs> | null
+    where?: TiersWhereInput
   }
 
   /**
@@ -8710,6 +9177,7 @@ export namespace Prisma {
      * The data used to create many O365Messages.
      */
     data: O365MessageCreateManyInput | O365MessageCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -8724,6 +9192,7 @@ export namespace Prisma {
      * The data used to create many O365Messages.
      */
     data: O365MessageCreateManyInput | O365MessageCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -9673,6 +10142,7 @@ export namespace Prisma {
      * The data used to create many Categories.
      */
     data: CategorieCreateManyInput | CategorieCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -9687,6 +10157,7 @@ export namespace Prisma {
      * The data used to create many Categories.
      */
     data: CategorieCreateManyInput | CategorieCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -10656,6 +11127,7 @@ export namespace Prisma {
      * The data used to create many ModeTaxations.
      */
     data: ModeTaxationCreateManyInput | ModeTaxationCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -10670,6 +11142,7 @@ export namespace Prisma {
      * The data used to create many ModeTaxations.
      */
     data: ModeTaxationCreateManyInput | ModeTaxationCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -11821,6 +12294,7 @@ export namespace Prisma {
      * The data used to create many Articles.
      */
     data: ArticleCreateManyInput | ArticleCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -11835,6 +12309,7 @@ export namespace Prisma {
      * The data used to create many Articles.
      */
     data: ArticleCreateManyInput | ArticleCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -12024,6 +12499,7 @@ export namespace Prisma {
     login: string | null
     password: string | null
     role: string | null
+    isAd: boolean | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -12036,6 +12512,7 @@ export namespace Prisma {
     login: string | null
     password: string | null
     role: string | null
+    isAd: boolean | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -12048,6 +12525,7 @@ export namespace Prisma {
     login: number
     password: number
     role: number
+    isAd: number
     created_at: number
     updated_at: number
     _all: number
@@ -12070,6 +12548,7 @@ export namespace Prisma {
     login?: true
     password?: true
     role?: true
+    isAd?: true
     created_at?: true
     updated_at?: true
   }
@@ -12082,6 +12561,7 @@ export namespace Prisma {
     login?: true
     password?: true
     role?: true
+    isAd?: true
     created_at?: true
     updated_at?: true
   }
@@ -12094,6 +12574,7 @@ export namespace Prisma {
     login?: true
     password?: true
     role?: true
+    isAd?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -12193,6 +12674,7 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd: boolean
     created_at: Date
     updated_at: Date
     _count: UserCountAggregateOutputType | null
@@ -12224,9 +12706,11 @@ export namespace Prisma {
     login?: boolean
     password?: boolean
     role?: boolean
+    isAd?: boolean
     created_at?: boolean
     updated_at?: boolean
     logs?: boolean | User$logsArgs<ExtArgs>
+    favoriteCommerces?: boolean | User$favoriteCommercesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -12238,6 +12722,7 @@ export namespace Prisma {
     login?: boolean
     password?: boolean
     role?: boolean
+    isAd?: boolean
     created_at?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["user"]>
@@ -12250,12 +12735,14 @@ export namespace Prisma {
     login?: boolean
     password?: boolean
     role?: boolean
+    isAd?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     logs?: boolean | User$logsArgs<ExtArgs>
+    favoriteCommerces?: boolean | User$favoriteCommercesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -12264,6 +12751,7 @@ export namespace Prisma {
     name: "User"
     objects: {
       logs: Prisma.$MobileLogPayload<ExtArgs>[]
+      favoriteCommerces: Prisma.$FavoriteCommercePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -12273,6 +12761,7 @@ export namespace Prisma {
       login: string
       password: string
       role: string
+      isAd: boolean
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["user"]>
@@ -12640,6 +13129,7 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     logs<T extends User$logsArgs<ExtArgs> = {}>(args?: Subset<T, User$logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MobileLogPayload<ExtArgs>, T, "findMany"> | Null>
+    favoriteCommerces<T extends User$favoriteCommercesArgs<ExtArgs> = {}>(args?: Subset<T, User$favoriteCommercesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12676,6 +13166,7 @@ export namespace Prisma {
     readonly login: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'String'>
+    readonly isAd: FieldRef<"User", 'Boolean'>
     readonly created_at: FieldRef<"User", 'DateTime'>
     readonly updated_at: FieldRef<"User", 'DateTime'>
   }
@@ -12883,6 +13374,7 @@ export namespace Prisma {
      * The data used to create many Users.
      */
     data: UserCreateManyInput | UserCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -12897,6 +13389,7 @@ export namespace Prisma {
      * The data used to create many Users.
      */
     data: UserCreateManyInput | UserCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -13010,6 +13503,26 @@ export namespace Prisma {
   }
 
   /**
+   * User.favoriteCommerces
+   */
+  export type User$favoriteCommercesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    where?: FavoriteCommerceWhereInput
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    cursor?: FavoriteCommerceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13021,6 +13534,975 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FavoriteCommerce
+   */
+
+  export type AggregateFavoriteCommerce = {
+    _count: FavoriteCommerceCountAggregateOutputType | null
+    _avg: FavoriteCommerceAvgAggregateOutputType | null
+    _sum: FavoriteCommerceSumAggregateOutputType | null
+    _min: FavoriteCommerceMinAggregateOutputType | null
+    _max: FavoriteCommerceMaxAggregateOutputType | null
+  }
+
+  export type FavoriteCommerceAvgAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    tiersId: number | null
+  }
+
+  export type FavoriteCommerceSumAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    tiersId: number | null
+  }
+
+  export type FavoriteCommerceMinAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    tiersId: number | null
+    created_at: Date | null
+  }
+
+  export type FavoriteCommerceMaxAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    tiersId: number | null
+    created_at: Date | null
+  }
+
+  export type FavoriteCommerceCountAggregateOutputType = {
+    id: number
+    userId: number
+    tiersId: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type FavoriteCommerceAvgAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+  }
+
+  export type FavoriteCommerceSumAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+  }
+
+  export type FavoriteCommerceMinAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+    created_at?: true
+  }
+
+  export type FavoriteCommerceMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+    created_at?: true
+  }
+
+  export type FavoriteCommerceCountAggregateInputType = {
+    id?: true
+    userId?: true
+    tiersId?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type FavoriteCommerceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FavoriteCommerce to aggregate.
+     */
+    where?: FavoriteCommerceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FavoriteCommerces to fetch.
+     */
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FavoriteCommerceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FavoriteCommerces from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FavoriteCommerces.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FavoriteCommerces
+    **/
+    _count?: true | FavoriteCommerceCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: FavoriteCommerceAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FavoriteCommerceSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FavoriteCommerceMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FavoriteCommerceMaxAggregateInputType
+  }
+
+  export type GetFavoriteCommerceAggregateType<T extends FavoriteCommerceAggregateArgs> = {
+        [P in keyof T & keyof AggregateFavoriteCommerce]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFavoriteCommerce[P]>
+      : GetScalarType<T[P], AggregateFavoriteCommerce[P]>
+  }
+
+
+
+
+  export type FavoriteCommerceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FavoriteCommerceWhereInput
+    orderBy?: FavoriteCommerceOrderByWithAggregationInput | FavoriteCommerceOrderByWithAggregationInput[]
+    by: FavoriteCommerceScalarFieldEnum[] | FavoriteCommerceScalarFieldEnum
+    having?: FavoriteCommerceScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FavoriteCommerceCountAggregateInputType | true
+    _avg?: FavoriteCommerceAvgAggregateInputType
+    _sum?: FavoriteCommerceSumAggregateInputType
+    _min?: FavoriteCommerceMinAggregateInputType
+    _max?: FavoriteCommerceMaxAggregateInputType
+  }
+
+  export type FavoriteCommerceGroupByOutputType = {
+    id: number
+    userId: number
+    tiersId: number
+    created_at: Date
+    _count: FavoriteCommerceCountAggregateOutputType | null
+    _avg: FavoriteCommerceAvgAggregateOutputType | null
+    _sum: FavoriteCommerceSumAggregateOutputType | null
+    _min: FavoriteCommerceMinAggregateOutputType | null
+    _max: FavoriteCommerceMaxAggregateOutputType | null
+  }
+
+  type GetFavoriteCommerceGroupByPayload<T extends FavoriteCommerceGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FavoriteCommerceGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FavoriteCommerceGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FavoriteCommerceGroupByOutputType[P]>
+            : GetScalarType<T[P], FavoriteCommerceGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FavoriteCommerceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tiersId?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tiers?: boolean | TiersDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["favoriteCommerce"]>
+
+  export type FavoriteCommerceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tiersId?: boolean
+    created_at?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tiers?: boolean | TiersDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["favoriteCommerce"]>
+
+  export type FavoriteCommerceSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    tiersId?: boolean
+    created_at?: boolean
+  }
+
+  export type FavoriteCommerceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tiers?: boolean | TiersDefaultArgs<ExtArgs>
+  }
+  export type FavoriteCommerceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tiers?: boolean | TiersDefaultArgs<ExtArgs>
+  }
+
+  export type $FavoriteCommercePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FavoriteCommerce"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      tiers: Prisma.$TiersPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: number
+      tiersId: number
+      created_at: Date
+    }, ExtArgs["result"]["favoriteCommerce"]>
+    composites: {}
+  }
+
+  type FavoriteCommerceGetPayload<S extends boolean | null | undefined | FavoriteCommerceDefaultArgs> = $Result.GetResult<Prisma.$FavoriteCommercePayload, S>
+
+  type FavoriteCommerceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<FavoriteCommerceFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: FavoriteCommerceCountAggregateInputType | true
+    }
+
+  export interface FavoriteCommerceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FavoriteCommerce'], meta: { name: 'FavoriteCommerce' } }
+    /**
+     * Find zero or one FavoriteCommerce that matches the filter.
+     * @param {FavoriteCommerceFindUniqueArgs} args - Arguments to find a FavoriteCommerce
+     * @example
+     * // Get one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FavoriteCommerceFindUniqueArgs>(args: SelectSubset<T, FavoriteCommerceFindUniqueArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one FavoriteCommerce that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {FavoriteCommerceFindUniqueOrThrowArgs} args - Arguments to find a FavoriteCommerce
+     * @example
+     * // Get one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FavoriteCommerceFindUniqueOrThrowArgs>(args: SelectSubset<T, FavoriteCommerceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first FavoriteCommerce that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceFindFirstArgs} args - Arguments to find a FavoriteCommerce
+     * @example
+     * // Get one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FavoriteCommerceFindFirstArgs>(args?: SelectSubset<T, FavoriteCommerceFindFirstArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first FavoriteCommerce that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceFindFirstOrThrowArgs} args - Arguments to find a FavoriteCommerce
+     * @example
+     * // Get one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FavoriteCommerceFindFirstOrThrowArgs>(args?: SelectSubset<T, FavoriteCommerceFindFirstOrThrowArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more FavoriteCommerces that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FavoriteCommerces
+     * const favoriteCommerces = await prisma.favoriteCommerce.findMany()
+     * 
+     * // Get first 10 FavoriteCommerces
+     * const favoriteCommerces = await prisma.favoriteCommerce.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const favoriteCommerceWithIdOnly = await prisma.favoriteCommerce.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FavoriteCommerceFindManyArgs>(args?: SelectSubset<T, FavoriteCommerceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a FavoriteCommerce.
+     * @param {FavoriteCommerceCreateArgs} args - Arguments to create a FavoriteCommerce.
+     * @example
+     * // Create one FavoriteCommerce
+     * const FavoriteCommerce = await prisma.favoriteCommerce.create({
+     *   data: {
+     *     // ... data to create a FavoriteCommerce
+     *   }
+     * })
+     * 
+     */
+    create<T extends FavoriteCommerceCreateArgs>(args: SelectSubset<T, FavoriteCommerceCreateArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many FavoriteCommerces.
+     * @param {FavoriteCommerceCreateManyArgs} args - Arguments to create many FavoriteCommerces.
+     * @example
+     * // Create many FavoriteCommerces
+     * const favoriteCommerce = await prisma.favoriteCommerce.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FavoriteCommerceCreateManyArgs>(args?: SelectSubset<T, FavoriteCommerceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FavoriteCommerces and returns the data saved in the database.
+     * @param {FavoriteCommerceCreateManyAndReturnArgs} args - Arguments to create many FavoriteCommerces.
+     * @example
+     * // Create many FavoriteCommerces
+     * const favoriteCommerce = await prisma.favoriteCommerce.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FavoriteCommerces and only return the `id`
+     * const favoriteCommerceWithIdOnly = await prisma.favoriteCommerce.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FavoriteCommerceCreateManyAndReturnArgs>(args?: SelectSubset<T, FavoriteCommerceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a FavoriteCommerce.
+     * @param {FavoriteCommerceDeleteArgs} args - Arguments to delete one FavoriteCommerce.
+     * @example
+     * // Delete one FavoriteCommerce
+     * const FavoriteCommerce = await prisma.favoriteCommerce.delete({
+     *   where: {
+     *     // ... filter to delete one FavoriteCommerce
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FavoriteCommerceDeleteArgs>(args: SelectSubset<T, FavoriteCommerceDeleteArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one FavoriteCommerce.
+     * @param {FavoriteCommerceUpdateArgs} args - Arguments to update one FavoriteCommerce.
+     * @example
+     * // Update one FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FavoriteCommerceUpdateArgs>(args: SelectSubset<T, FavoriteCommerceUpdateArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more FavoriteCommerces.
+     * @param {FavoriteCommerceDeleteManyArgs} args - Arguments to filter FavoriteCommerces to delete.
+     * @example
+     * // Delete a few FavoriteCommerces
+     * const { count } = await prisma.favoriteCommerce.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FavoriteCommerceDeleteManyArgs>(args?: SelectSubset<T, FavoriteCommerceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FavoriteCommerces.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FavoriteCommerces
+     * const favoriteCommerce = await prisma.favoriteCommerce.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FavoriteCommerceUpdateManyArgs>(args: SelectSubset<T, FavoriteCommerceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one FavoriteCommerce.
+     * @param {FavoriteCommerceUpsertArgs} args - Arguments to update or create a FavoriteCommerce.
+     * @example
+     * // Update or create a FavoriteCommerce
+     * const favoriteCommerce = await prisma.favoriteCommerce.upsert({
+     *   create: {
+     *     // ... data to create a FavoriteCommerce
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FavoriteCommerce we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FavoriteCommerceUpsertArgs>(args: SelectSubset<T, FavoriteCommerceUpsertArgs<ExtArgs>>): Prisma__FavoriteCommerceClient<$Result.GetResult<Prisma.$FavoriteCommercePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of FavoriteCommerces.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceCountArgs} args - Arguments to filter FavoriteCommerces to count.
+     * @example
+     * // Count the number of FavoriteCommerces
+     * const count = await prisma.favoriteCommerce.count({
+     *   where: {
+     *     // ... the filter for the FavoriteCommerces we want to count
+     *   }
+     * })
+    **/
+    count<T extends FavoriteCommerceCountArgs>(
+      args?: Subset<T, FavoriteCommerceCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FavoriteCommerceCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FavoriteCommerce.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FavoriteCommerceAggregateArgs>(args: Subset<T, FavoriteCommerceAggregateArgs>): Prisma.PrismaPromise<GetFavoriteCommerceAggregateType<T>>
+
+    /**
+     * Group by FavoriteCommerce.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FavoriteCommerceGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FavoriteCommerceGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FavoriteCommerceGroupByArgs['orderBy'] }
+        : { orderBy?: FavoriteCommerceGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FavoriteCommerceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFavoriteCommerceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FavoriteCommerce model
+   */
+  readonly fields: FavoriteCommerceFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FavoriteCommerce.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FavoriteCommerceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    tiers<T extends TiersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TiersDefaultArgs<ExtArgs>>): Prisma__TiersClient<$Result.GetResult<Prisma.$TiersPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FavoriteCommerce model
+   */ 
+  interface FavoriteCommerceFieldRefs {
+    readonly id: FieldRef<"FavoriteCommerce", 'Int'>
+    readonly userId: FieldRef<"FavoriteCommerce", 'Int'>
+    readonly tiersId: FieldRef<"FavoriteCommerce", 'Int'>
+    readonly created_at: FieldRef<"FavoriteCommerce", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FavoriteCommerce findUnique
+   */
+  export type FavoriteCommerceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerce to fetch.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+  }
+
+  /**
+   * FavoriteCommerce findUniqueOrThrow
+   */
+  export type FavoriteCommerceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerce to fetch.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+  }
+
+  /**
+   * FavoriteCommerce findFirst
+   */
+  export type FavoriteCommerceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerce to fetch.
+     */
+    where?: FavoriteCommerceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FavoriteCommerces to fetch.
+     */
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FavoriteCommerces.
+     */
+    cursor?: FavoriteCommerceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FavoriteCommerces from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FavoriteCommerces.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FavoriteCommerces.
+     */
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
+  }
+
+  /**
+   * FavoriteCommerce findFirstOrThrow
+   */
+  export type FavoriteCommerceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerce to fetch.
+     */
+    where?: FavoriteCommerceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FavoriteCommerces to fetch.
+     */
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FavoriteCommerces.
+     */
+    cursor?: FavoriteCommerceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FavoriteCommerces from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FavoriteCommerces.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FavoriteCommerces.
+     */
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
+  }
+
+  /**
+   * FavoriteCommerce findMany
+   */
+  export type FavoriteCommerceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter, which FavoriteCommerces to fetch.
+     */
+    where?: FavoriteCommerceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FavoriteCommerces to fetch.
+     */
+    orderBy?: FavoriteCommerceOrderByWithRelationInput | FavoriteCommerceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FavoriteCommerces.
+     */
+    cursor?: FavoriteCommerceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FavoriteCommerces from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FavoriteCommerces.
+     */
+    skip?: number
+    distinct?: FavoriteCommerceScalarFieldEnum | FavoriteCommerceScalarFieldEnum[]
+  }
+
+  /**
+   * FavoriteCommerce create
+   */
+  export type FavoriteCommerceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FavoriteCommerce.
+     */
+    data: XOR<FavoriteCommerceCreateInput, FavoriteCommerceUncheckedCreateInput>
+  }
+
+  /**
+   * FavoriteCommerce createMany
+   */
+  export type FavoriteCommerceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FavoriteCommerces.
+     */
+    data: FavoriteCommerceCreateManyInput | FavoriteCommerceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FavoriteCommerce createManyAndReturn
+   */
+  export type FavoriteCommerceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many FavoriteCommerces.
+     */
+    data: FavoriteCommerceCreateManyInput | FavoriteCommerceCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FavoriteCommerce update
+   */
+  export type FavoriteCommerceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FavoriteCommerce.
+     */
+    data: XOR<FavoriteCommerceUpdateInput, FavoriteCommerceUncheckedUpdateInput>
+    /**
+     * Choose, which FavoriteCommerce to update.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+  }
+
+  /**
+   * FavoriteCommerce updateMany
+   */
+  export type FavoriteCommerceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FavoriteCommerces.
+     */
+    data: XOR<FavoriteCommerceUpdateManyMutationInput, FavoriteCommerceUncheckedUpdateManyInput>
+    /**
+     * Filter which FavoriteCommerces to update
+     */
+    where?: FavoriteCommerceWhereInput
+  }
+
+  /**
+   * FavoriteCommerce upsert
+   */
+  export type FavoriteCommerceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FavoriteCommerce to update in case it exists.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+    /**
+     * In case the FavoriteCommerce found by the `where` argument doesn't exist, create a new FavoriteCommerce with this data.
+     */
+    create: XOR<FavoriteCommerceCreateInput, FavoriteCommerceUncheckedCreateInput>
+    /**
+     * In case the FavoriteCommerce was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FavoriteCommerceUpdateInput, FavoriteCommerceUncheckedUpdateInput>
+  }
+
+  /**
+   * FavoriteCommerce delete
+   */
+  export type FavoriteCommerceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
+    /**
+     * Filter which FavoriteCommerce to delete.
+     */
+    where: FavoriteCommerceWhereUniqueInput
+  }
+
+  /**
+   * FavoriteCommerce deleteMany
+   */
+  export type FavoriteCommerceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FavoriteCommerces to delete
+     */
+    where?: FavoriteCommerceWhereInput
+  }
+
+  /**
+   * FavoriteCommerce without action
+   */
+  export type FavoriteCommerceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FavoriteCommerce
+     */
+    select?: FavoriteCommerceSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FavoriteCommerceInclude<ExtArgs> | null
   }
 
 
@@ -13892,6 +15374,7 @@ export namespace Prisma {
      * The data used to create many MobileLogs.
      */
     data: MobileLogCreateManyInput | MobileLogCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -13906,6 +15389,7 @@ export namespace Prisma {
      * The data used to create many MobileLogs.
      */
     data: MobileLogCreateManyInput | MobileLogCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -14033,794 +15517,372 @@ export namespace Prisma {
 
 
   /**
-   * Model AppSettings
+   * Model ContextualMessage
    */
 
-  export type AggregateAppSettings = {
-    _count: AppSettingsCountAggregateOutputType | null
-    _avg: AppSettingsAvgAggregateOutputType | null
-    _sum: AppSettingsSumAggregateOutputType | null
-    _min: AppSettingsMinAggregateOutputType | null
-    _max: AppSettingsMaxAggregateOutputType | null
+  export type AggregateContextualMessage = {
+    _count: ContextualMessageCountAggregateOutputType | null
+    _avg: ContextualMessageAvgAggregateOutputType | null
+    _sum: ContextualMessageSumAggregateOutputType | null
+    _min: ContextualMessageMinAggregateOutputType | null
+    _max: ContextualMessageMaxAggregateOutputType | null
   }
 
-  export type AppSettingsAvgAggregateOutputType = {
+  export type ContextualMessageAvgAggregateOutputType = {
     id: number | null
-    filienExercice: number | null
   }
 
-  export type AppSettingsSumAggregateOutputType = {
+  export type ContextualMessageSumAggregateOutputType = {
     id: number | null
-    filienExercice: number | null
   }
 
-  export type AppSettingsMinAggregateOutputType = {
+  export type ContextualMessageMinAggregateOutputType = {
     id: number | null
-    financeEmail: string | null
-    appUrl: string | null
-    apmUrl: string | null
-    apmToken: string | null
-    senderName: string | null
-    senderEmail: string | null
-    filienOrga: string | null
-    filienBudget: string | null
-    filienExercice: number | null
-    filienAvancement: string | null
-    filienRejetDispo: boolean | null
-    filienRejetCA: boolean | null
-    filienRejetMarche: boolean | null
-    filienMouvement: string | null
-    filienType: string | null
-    filienLibelle: string | null
-    filienCalendrier: string | null
-    filienMonnaie: string | null
-    filienMouvementEx: string | null
-    filienPreBordereau: string | null
-    filienPoste: string | null
-    filienBordereau: string | null
-    filienObjet: string | null
-    filienChapitre: string | null
-    filienNature: string | null
-    filienFonction: string | null
-    filienCodeInterne: string | null
-    filienTypeMouvement: string | null
-    filienSens: string | null
-    filienStructure: string | null
-    filienGestionnaire: string | null
-    filienUncPj: string | null
-    signataireRole: string | null
-    signataireDelegation: string | null
-    signataireNom: string | null
-    footer1: string | null
-    footer2: string | null
-    footer3: string | null
-    footerColor: string | null
-    updated_at: Date | null
-    filienUncPass: string | null
-    filienUncUser: string | null
-    filienUncDomain: string | null
+    cle: string | null
+    label: string | null
+    sujet: string | null
+    valeur: string | null
+    disabled: boolean | null
   }
 
-  export type AppSettingsMaxAggregateOutputType = {
+  export type ContextualMessageMaxAggregateOutputType = {
     id: number | null
-    financeEmail: string | null
-    appUrl: string | null
-    apmUrl: string | null
-    apmToken: string | null
-    senderName: string | null
-    senderEmail: string | null
-    filienOrga: string | null
-    filienBudget: string | null
-    filienExercice: number | null
-    filienAvancement: string | null
-    filienRejetDispo: boolean | null
-    filienRejetCA: boolean | null
-    filienRejetMarche: boolean | null
-    filienMouvement: string | null
-    filienType: string | null
-    filienLibelle: string | null
-    filienCalendrier: string | null
-    filienMonnaie: string | null
-    filienMouvementEx: string | null
-    filienPreBordereau: string | null
-    filienPoste: string | null
-    filienBordereau: string | null
-    filienObjet: string | null
-    filienChapitre: string | null
-    filienNature: string | null
-    filienFonction: string | null
-    filienCodeInterne: string | null
-    filienTypeMouvement: string | null
-    filienSens: string | null
-    filienStructure: string | null
-    filienGestionnaire: string | null
-    filienUncPj: string | null
-    signataireRole: string | null
-    signataireDelegation: string | null
-    signataireNom: string | null
-    footer1: string | null
-    footer2: string | null
-    footer3: string | null
-    footerColor: string | null
-    updated_at: Date | null
-    filienUncPass: string | null
-    filienUncUser: string | null
-    filienUncDomain: string | null
+    cle: string | null
+    label: string | null
+    sujet: string | null
+    valeur: string | null
+    disabled: boolean | null
   }
 
-  export type AppSettingsCountAggregateOutputType = {
+  export type ContextualMessageCountAggregateOutputType = {
     id: number
-    financeEmail: number
-    appUrl: number
-    apmUrl: number
-    apmToken: number
-    senderName: number
-    senderEmail: number
-    filienOrga: number
-    filienBudget: number
-    filienExercice: number
-    filienAvancement: number
-    filienRejetDispo: number
-    filienRejetCA: number
-    filienRejetMarche: number
-    filienMouvement: number
-    filienType: number
-    filienLibelle: number
-    filienCalendrier: number
-    filienMonnaie: number
-    filienMouvementEx: number
-    filienPreBordereau: number
-    filienPoste: number
-    filienBordereau: number
-    filienObjet: number
-    filienChapitre: number
-    filienNature: number
-    filienFonction: number
-    filienCodeInterne: number
-    filienTypeMouvement: number
-    filienSens: number
-    filienStructure: number
-    filienGestionnaire: number
-    filienUncPj: number
-    signataireRole: number
-    signataireDelegation: number
-    signataireNom: number
-    footer1: number
-    footer2: number
-    footer3: number
-    footerColor: number
-    updated_at: number
-    filienUncPass: number
-    filienUncUser: number
-    filienUncDomain: number
+    cle: number
+    label: number
+    sujet: number
+    valeur: number
+    disabled: number
     _all: number
   }
 
 
-  export type AppSettingsAvgAggregateInputType = {
+  export type ContextualMessageAvgAggregateInputType = {
     id?: true
-    filienExercice?: true
   }
 
-  export type AppSettingsSumAggregateInputType = {
+  export type ContextualMessageSumAggregateInputType = {
     id?: true
-    filienExercice?: true
   }
 
-  export type AppSettingsMinAggregateInputType = {
+  export type ContextualMessageMinAggregateInputType = {
     id?: true
-    financeEmail?: true
-    appUrl?: true
-    apmUrl?: true
-    apmToken?: true
-    senderName?: true
-    senderEmail?: true
-    filienOrga?: true
-    filienBudget?: true
-    filienExercice?: true
-    filienAvancement?: true
-    filienRejetDispo?: true
-    filienRejetCA?: true
-    filienRejetMarche?: true
-    filienMouvement?: true
-    filienType?: true
-    filienLibelle?: true
-    filienCalendrier?: true
-    filienMonnaie?: true
-    filienMouvementEx?: true
-    filienPreBordereau?: true
-    filienPoste?: true
-    filienBordereau?: true
-    filienObjet?: true
-    filienChapitre?: true
-    filienNature?: true
-    filienFonction?: true
-    filienCodeInterne?: true
-    filienTypeMouvement?: true
-    filienSens?: true
-    filienStructure?: true
-    filienGestionnaire?: true
-    filienUncPj?: true
-    signataireRole?: true
-    signataireDelegation?: true
-    signataireNom?: true
-    footer1?: true
-    footer2?: true
-    footer3?: true
-    footerColor?: true
-    updated_at?: true
-    filienUncPass?: true
-    filienUncUser?: true
-    filienUncDomain?: true
+    cle?: true
+    label?: true
+    sujet?: true
+    valeur?: true
+    disabled?: true
   }
 
-  export type AppSettingsMaxAggregateInputType = {
+  export type ContextualMessageMaxAggregateInputType = {
     id?: true
-    financeEmail?: true
-    appUrl?: true
-    apmUrl?: true
-    apmToken?: true
-    senderName?: true
-    senderEmail?: true
-    filienOrga?: true
-    filienBudget?: true
-    filienExercice?: true
-    filienAvancement?: true
-    filienRejetDispo?: true
-    filienRejetCA?: true
-    filienRejetMarche?: true
-    filienMouvement?: true
-    filienType?: true
-    filienLibelle?: true
-    filienCalendrier?: true
-    filienMonnaie?: true
-    filienMouvementEx?: true
-    filienPreBordereau?: true
-    filienPoste?: true
-    filienBordereau?: true
-    filienObjet?: true
-    filienChapitre?: true
-    filienNature?: true
-    filienFonction?: true
-    filienCodeInterne?: true
-    filienTypeMouvement?: true
-    filienSens?: true
-    filienStructure?: true
-    filienGestionnaire?: true
-    filienUncPj?: true
-    signataireRole?: true
-    signataireDelegation?: true
-    signataireNom?: true
-    footer1?: true
-    footer2?: true
-    footer3?: true
-    footerColor?: true
-    updated_at?: true
-    filienUncPass?: true
-    filienUncUser?: true
-    filienUncDomain?: true
+    cle?: true
+    label?: true
+    sujet?: true
+    valeur?: true
+    disabled?: true
   }
 
-  export type AppSettingsCountAggregateInputType = {
+  export type ContextualMessageCountAggregateInputType = {
     id?: true
-    financeEmail?: true
-    appUrl?: true
-    apmUrl?: true
-    apmToken?: true
-    senderName?: true
-    senderEmail?: true
-    filienOrga?: true
-    filienBudget?: true
-    filienExercice?: true
-    filienAvancement?: true
-    filienRejetDispo?: true
-    filienRejetCA?: true
-    filienRejetMarche?: true
-    filienMouvement?: true
-    filienType?: true
-    filienLibelle?: true
-    filienCalendrier?: true
-    filienMonnaie?: true
-    filienMouvementEx?: true
-    filienPreBordereau?: true
-    filienPoste?: true
-    filienBordereau?: true
-    filienObjet?: true
-    filienChapitre?: true
-    filienNature?: true
-    filienFonction?: true
-    filienCodeInterne?: true
-    filienTypeMouvement?: true
-    filienSens?: true
-    filienStructure?: true
-    filienGestionnaire?: true
-    filienUncPj?: true
-    signataireRole?: true
-    signataireDelegation?: true
-    signataireNom?: true
-    footer1?: true
-    footer2?: true
-    footer3?: true
-    footerColor?: true
-    updated_at?: true
-    filienUncPass?: true
-    filienUncUser?: true
-    filienUncDomain?: true
+    cle?: true
+    label?: true
+    sujet?: true
+    valeur?: true
+    disabled?: true
     _all?: true
   }
 
-  export type AppSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which AppSettings to aggregate.
+     * Filter which ContextualMessage to aggregate.
      */
-    where?: AppSettingsWhereInput
+    where?: ContextualMessageWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of AppSettings to fetch.
+     * Determine the order of ContextualMessages to fetch.
      */
-    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    orderBy?: ContextualMessageOrderByWithRelationInput | ContextualMessageOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: AppSettingsWhereUniqueInput
+    cursor?: ContextualMessageWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` AppSettings from the position of the cursor.
+     * Take `±n` ContextualMessages from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` AppSettings.
+     * Skip the first `n` ContextualMessages.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned AppSettings
+     * Count returned ContextualMessages
     **/
-    _count?: true | AppSettingsCountAggregateInputType
+    _count?: true | ContextualMessageCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to average
     **/
-    _avg?: AppSettingsAvgAggregateInputType
+    _avg?: ContextualMessageAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to sum
     **/
-    _sum?: AppSettingsSumAggregateInputType
+    _sum?: ContextualMessageSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: AppSettingsMinAggregateInputType
+    _min?: ContextualMessageMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: AppSettingsMaxAggregateInputType
+    _max?: ContextualMessageMaxAggregateInputType
   }
 
-  export type GetAppSettingsAggregateType<T extends AppSettingsAggregateArgs> = {
-        [P in keyof T & keyof AggregateAppSettings]: P extends '_count' | 'count'
+  export type GetContextualMessageAggregateType<T extends ContextualMessageAggregateArgs> = {
+        [P in keyof T & keyof AggregateContextualMessage]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateAppSettings[P]>
-      : GetScalarType<T[P], AggregateAppSettings[P]>
+        : GetScalarType<T[P], AggregateContextualMessage[P]>
+      : GetScalarType<T[P], AggregateContextualMessage[P]>
   }
 
 
 
 
-  export type AppSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AppSettingsWhereInput
-    orderBy?: AppSettingsOrderByWithAggregationInput | AppSettingsOrderByWithAggregationInput[]
-    by: AppSettingsScalarFieldEnum[] | AppSettingsScalarFieldEnum
-    having?: AppSettingsScalarWhereWithAggregatesInput
+  export type ContextualMessageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContextualMessageWhereInput
+    orderBy?: ContextualMessageOrderByWithAggregationInput | ContextualMessageOrderByWithAggregationInput[]
+    by: ContextualMessageScalarFieldEnum[] | ContextualMessageScalarFieldEnum
+    having?: ContextualMessageScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: AppSettingsCountAggregateInputType | true
-    _avg?: AppSettingsAvgAggregateInputType
-    _sum?: AppSettingsSumAggregateInputType
-    _min?: AppSettingsMinAggregateInputType
-    _max?: AppSettingsMaxAggregateInputType
+    _count?: ContextualMessageCountAggregateInputType | true
+    _avg?: ContextualMessageAvgAggregateInputType
+    _sum?: ContextualMessageSumAggregateInputType
+    _min?: ContextualMessageMinAggregateInputType
+    _max?: ContextualMessageMaxAggregateInputType
   }
 
-  export type AppSettingsGroupByOutputType = {
+  export type ContextualMessageGroupByOutputType = {
     id: number
-    financeEmail: string | null
-    appUrl: string | null
-    apmUrl: string | null
-    apmToken: string | null
-    senderName: string | null
-    senderEmail: string | null
-    filienOrga: string | null
-    filienBudget: string | null
-    filienExercice: number | null
-    filienAvancement: string | null
-    filienRejetDispo: boolean | null
-    filienRejetCA: boolean | null
-    filienRejetMarche: boolean | null
-    filienMouvement: string | null
-    filienType: string | null
-    filienLibelle: string | null
-    filienCalendrier: string | null
-    filienMonnaie: string | null
-    filienMouvementEx: string | null
-    filienPreBordereau: string | null
-    filienPoste: string | null
-    filienBordereau: string | null
-    filienObjet: string | null
-    filienChapitre: string | null
-    filienNature: string | null
-    filienFonction: string | null
-    filienCodeInterne: string | null
-    filienTypeMouvement: string | null
-    filienSens: string | null
-    filienStructure: string | null
-    filienGestionnaire: string | null
-    filienUncPj: string | null
-    signataireRole: string | null
-    signataireDelegation: string | null
-    signataireNom: string | null
-    footer1: string | null
-    footer2: string | null
-    footer3: string | null
-    footerColor: string | null
-    updated_at: Date
-    filienUncPass: string | null
-    filienUncUser: string | null
-    filienUncDomain: string | null
-    _count: AppSettingsCountAggregateOutputType | null
-    _avg: AppSettingsAvgAggregateOutputType | null
-    _sum: AppSettingsSumAggregateOutputType | null
-    _min: AppSettingsMinAggregateOutputType | null
-    _max: AppSettingsMaxAggregateOutputType | null
+    cle: string
+    label: string | null
+    sujet: string | null
+    valeur: string
+    disabled: boolean
+    _count: ContextualMessageCountAggregateOutputType | null
+    _avg: ContextualMessageAvgAggregateOutputType | null
+    _sum: ContextualMessageSumAggregateOutputType | null
+    _min: ContextualMessageMinAggregateOutputType | null
+    _max: ContextualMessageMaxAggregateOutputType | null
   }
 
-  type GetAppSettingsGroupByPayload<T extends AppSettingsGroupByArgs> = Prisma.PrismaPromise<
+  type GetContextualMessageGroupByPayload<T extends ContextualMessageGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<AppSettingsGroupByOutputType, T['by']> &
+      PickEnumerable<ContextualMessageGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof AppSettingsGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof ContextualMessageGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], AppSettingsGroupByOutputType[P]>
-            : GetScalarType<T[P], AppSettingsGroupByOutputType[P]>
+              : GetScalarType<T[P], ContextualMessageGroupByOutputType[P]>
+            : GetScalarType<T[P], ContextualMessageGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type AppSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ContextualMessageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    financeEmail?: boolean
-    appUrl?: boolean
-    apmUrl?: boolean
-    apmToken?: boolean
-    senderName?: boolean
-    senderEmail?: boolean
-    filienOrga?: boolean
-    filienBudget?: boolean
-    filienExercice?: boolean
-    filienAvancement?: boolean
-    filienRejetDispo?: boolean
-    filienRejetCA?: boolean
-    filienRejetMarche?: boolean
-    filienMouvement?: boolean
-    filienType?: boolean
-    filienLibelle?: boolean
-    filienCalendrier?: boolean
-    filienMonnaie?: boolean
-    filienMouvementEx?: boolean
-    filienPreBordereau?: boolean
-    filienPoste?: boolean
-    filienBordereau?: boolean
-    filienObjet?: boolean
-    filienChapitre?: boolean
-    filienNature?: boolean
-    filienFonction?: boolean
-    filienCodeInterne?: boolean
-    filienTypeMouvement?: boolean
-    filienSens?: boolean
-    filienStructure?: boolean
-    filienGestionnaire?: boolean
-    filienUncPj?: boolean
-    signataireRole?: boolean
-    signataireDelegation?: boolean
-    signataireNom?: boolean
-    footer1?: boolean
-    footer2?: boolean
-    footer3?: boolean
-    footerColor?: boolean
-    updated_at?: boolean
-    filienUncPass?: boolean
-    filienUncUser?: boolean
-    filienUncDomain?: boolean
-  }, ExtArgs["result"]["appSettings"]>
+    cle?: boolean
+    label?: boolean
+    sujet?: boolean
+    valeur?: boolean
+    disabled?: boolean
+  }, ExtArgs["result"]["contextualMessage"]>
 
-  export type AppSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ContextualMessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    financeEmail?: boolean
-    appUrl?: boolean
-    apmUrl?: boolean
-    apmToken?: boolean
-    senderName?: boolean
-    senderEmail?: boolean
-    filienOrga?: boolean
-    filienBudget?: boolean
-    filienExercice?: boolean
-    filienAvancement?: boolean
-    filienRejetDispo?: boolean
-    filienRejetCA?: boolean
-    filienRejetMarche?: boolean
-    filienMouvement?: boolean
-    filienType?: boolean
-    filienLibelle?: boolean
-    filienCalendrier?: boolean
-    filienMonnaie?: boolean
-    filienMouvementEx?: boolean
-    filienPreBordereau?: boolean
-    filienPoste?: boolean
-    filienBordereau?: boolean
-    filienObjet?: boolean
-    filienChapitre?: boolean
-    filienNature?: boolean
-    filienFonction?: boolean
-    filienCodeInterne?: boolean
-    filienTypeMouvement?: boolean
-    filienSens?: boolean
-    filienStructure?: boolean
-    filienGestionnaire?: boolean
-    filienUncPj?: boolean
-    signataireRole?: boolean
-    signataireDelegation?: boolean
-    signataireNom?: boolean
-    footer1?: boolean
-    footer2?: boolean
-    footer3?: boolean
-    footerColor?: boolean
-    updated_at?: boolean
-    filienUncPass?: boolean
-    filienUncUser?: boolean
-    filienUncDomain?: boolean
-  }, ExtArgs["result"]["appSettings"]>
+    cle?: boolean
+    label?: boolean
+    sujet?: boolean
+    valeur?: boolean
+    disabled?: boolean
+  }, ExtArgs["result"]["contextualMessage"]>
 
-  export type AppSettingsSelectScalar = {
+  export type ContextualMessageSelectScalar = {
     id?: boolean
-    financeEmail?: boolean
-    appUrl?: boolean
-    apmUrl?: boolean
-    apmToken?: boolean
-    senderName?: boolean
-    senderEmail?: boolean
-    filienOrga?: boolean
-    filienBudget?: boolean
-    filienExercice?: boolean
-    filienAvancement?: boolean
-    filienRejetDispo?: boolean
-    filienRejetCA?: boolean
-    filienRejetMarche?: boolean
-    filienMouvement?: boolean
-    filienType?: boolean
-    filienLibelle?: boolean
-    filienCalendrier?: boolean
-    filienMonnaie?: boolean
-    filienMouvementEx?: boolean
-    filienPreBordereau?: boolean
-    filienPoste?: boolean
-    filienBordereau?: boolean
-    filienObjet?: boolean
-    filienChapitre?: boolean
-    filienNature?: boolean
-    filienFonction?: boolean
-    filienCodeInterne?: boolean
-    filienTypeMouvement?: boolean
-    filienSens?: boolean
-    filienStructure?: boolean
-    filienGestionnaire?: boolean
-    filienUncPj?: boolean
-    signataireRole?: boolean
-    signataireDelegation?: boolean
-    signataireNom?: boolean
-    footer1?: boolean
-    footer2?: boolean
-    footer3?: boolean
-    footerColor?: boolean
-    updated_at?: boolean
-    filienUncPass?: boolean
-    filienUncUser?: boolean
-    filienUncDomain?: boolean
+    cle?: boolean
+    label?: boolean
+    sujet?: boolean
+    valeur?: boolean
+    disabled?: boolean
   }
 
 
-  export type $AppSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "AppSettings"
+  export type $ContextualMessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ContextualMessage"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      financeEmail: string | null
-      appUrl: string | null
-      apmUrl: string | null
-      apmToken: string | null
-      senderName: string | null
-      senderEmail: string | null
-      filienOrga: string | null
-      filienBudget: string | null
-      filienExercice: number | null
-      filienAvancement: string | null
-      filienRejetDispo: boolean | null
-      filienRejetCA: boolean | null
-      filienRejetMarche: boolean | null
-      filienMouvement: string | null
-      filienType: string | null
-      filienLibelle: string | null
-      filienCalendrier: string | null
-      filienMonnaie: string | null
-      filienMouvementEx: string | null
-      filienPreBordereau: string | null
-      filienPoste: string | null
-      filienBordereau: string | null
-      filienObjet: string | null
-      filienChapitre: string | null
-      filienNature: string | null
-      filienFonction: string | null
-      filienCodeInterne: string | null
-      filienTypeMouvement: string | null
-      filienSens: string | null
-      filienStructure: string | null
-      filienGestionnaire: string | null
-      filienUncPj: string | null
-      signataireRole: string | null
-      signataireDelegation: string | null
-      signataireNom: string | null
-      footer1: string | null
-      footer2: string | null
-      footer3: string | null
-      footerColor: string | null
-      updated_at: Date
-      filienUncPass: string | null
-      filienUncUser: string | null
-      filienUncDomain: string | null
-    }, ExtArgs["result"]["appSettings"]>
+      cle: string
+      label: string | null
+      sujet: string | null
+      valeur: string
+      disabled: boolean
+    }, ExtArgs["result"]["contextualMessage"]>
     composites: {}
   }
 
-  type AppSettingsGetPayload<S extends boolean | null | undefined | AppSettingsDefaultArgs> = $Result.GetResult<Prisma.$AppSettingsPayload, S>
+  type ContextualMessageGetPayload<S extends boolean | null | undefined | ContextualMessageDefaultArgs> = $Result.GetResult<Prisma.$ContextualMessagePayload, S>
 
-  type AppSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<AppSettingsFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: AppSettingsCountAggregateInputType | true
+  type ContextualMessageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ContextualMessageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ContextualMessageCountAggregateInputType | true
     }
 
-  export interface AppSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AppSettings'], meta: { name: 'AppSettings' } }
+  export interface ContextualMessageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ContextualMessage'], meta: { name: 'ContextualMessage' } }
     /**
-     * Find zero or one AppSettings that matches the filter.
-     * @param {AppSettingsFindUniqueArgs} args - Arguments to find a AppSettings
+     * Find zero or one ContextualMessage that matches the filter.
+     * @param {ContextualMessageFindUniqueArgs} args - Arguments to find a ContextualMessage
      * @example
-     * // Get one AppSettings
-     * const appSettings = await prisma.appSettings.findUnique({
+     * // Get one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends AppSettingsFindUniqueArgs>(args: SelectSubset<T, AppSettingsFindUniqueArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ContextualMessageFindUniqueArgs>(args: SelectSubset<T, ContextualMessageFindUniqueArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
-     * Find one AppSettings that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one ContextualMessage that matches the filter or throw an error with `error.code='P2025'` 
      * if no matches were found.
-     * @param {AppSettingsFindUniqueOrThrowArgs} args - Arguments to find a AppSettings
+     * @param {ContextualMessageFindUniqueOrThrowArgs} args - Arguments to find a ContextualMessage
      * @example
-     * // Get one AppSettings
-     * const appSettings = await prisma.appSettings.findUniqueOrThrow({
+     * // Get one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends AppSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, AppSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ContextualMessageFindUniqueOrThrowArgs>(args: SelectSubset<T, ContextualMessageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
-     * Find the first AppSettings that matches the filter.
+     * Find the first ContextualMessage that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {AppSettingsFindFirstArgs} args - Arguments to find a AppSettings
+     * @param {ContextualMessageFindFirstArgs} args - Arguments to find a ContextualMessage
      * @example
-     * // Get one AppSettings
-     * const appSettings = await prisma.appSettings.findFirst({
+     * // Get one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends AppSettingsFindFirstArgs>(args?: SelectSubset<T, AppSettingsFindFirstArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ContextualMessageFindFirstArgs>(args?: SelectSubset<T, ContextualMessageFindFirstArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
-     * Find the first AppSettings that matches the filter or
+     * Find the first ContextualMessage that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {AppSettingsFindFirstOrThrowArgs} args - Arguments to find a AppSettings
+     * @param {ContextualMessageFindFirstOrThrowArgs} args - Arguments to find a ContextualMessage
      * @example
-     * // Get one AppSettings
-     * const appSettings = await prisma.appSettings.findFirstOrThrow({
+     * // Get one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends AppSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, AppSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ContextualMessageFindFirstOrThrowArgs>(args?: SelectSubset<T, ContextualMessageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
-     * Find zero or more AppSettings that matches the filter.
+     * Find zero or more ContextualMessages that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {AppSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {ContextualMessageFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all AppSettings
-     * const appSettings = await prisma.appSettings.findMany()
+     * // Get all ContextualMessages
+     * const contextualMessages = await prisma.contextualMessage.findMany()
      * 
-     * // Get first 10 AppSettings
-     * const appSettings = await prisma.appSettings.findMany({ take: 10 })
+     * // Get first 10 ContextualMessages
+     * const contextualMessages = await prisma.contextualMessage.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const appSettingsWithIdOnly = await prisma.appSettings.findMany({ select: { id: true } })
+     * const contextualMessageWithIdOnly = await prisma.contextualMessage.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends AppSettingsFindManyArgs>(args?: SelectSubset<T, AppSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ContextualMessageFindManyArgs>(args?: SelectSubset<T, ContextualMessageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "findMany">>
 
     /**
-     * Create a AppSettings.
-     * @param {AppSettingsCreateArgs} args - Arguments to create a AppSettings.
+     * Create a ContextualMessage.
+     * @param {ContextualMessageCreateArgs} args - Arguments to create a ContextualMessage.
      * @example
-     * // Create one AppSettings
-     * const AppSettings = await prisma.appSettings.create({
+     * // Create one ContextualMessage
+     * const ContextualMessage = await prisma.contextualMessage.create({
      *   data: {
-     *     // ... data to create a AppSettings
+     *     // ... data to create a ContextualMessage
      *   }
      * })
      * 
      */
-    create<T extends AppSettingsCreateArgs>(args: SelectSubset<T, AppSettingsCreateArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ContextualMessageCreateArgs>(args: SelectSubset<T, ContextualMessageCreateArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
-     * Create many AppSettings.
-     * @param {AppSettingsCreateManyArgs} args - Arguments to create many AppSettings.
+     * Create many ContextualMessages.
+     * @param {ContextualMessageCreateManyArgs} args - Arguments to create many ContextualMessages.
      * @example
-     * // Create many AppSettings
-     * const appSettings = await prisma.appSettings.createMany({
+     * // Create many ContextualMessages
+     * const contextualMessage = await prisma.contextualMessage.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends AppSettingsCreateManyArgs>(args?: SelectSubset<T, AppSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends ContextualMessageCreateManyArgs>(args?: SelectSubset<T, ContextualMessageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many AppSettings and returns the data saved in the database.
-     * @param {AppSettingsCreateManyAndReturnArgs} args - Arguments to create many AppSettings.
+     * Create many ContextualMessages and returns the data saved in the database.
+     * @param {ContextualMessageCreateManyAndReturnArgs} args - Arguments to create many ContextualMessages.
      * @example
-     * // Create many AppSettings
-     * const appSettings = await prisma.appSettings.createManyAndReturn({
+     * // Create many ContextualMessages
+     * const contextualMessage = await prisma.contextualMessage.createManyAndReturn({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      * 
-     * // Create many AppSettings and only return the `id`
-     * const appSettingsWithIdOnly = await prisma.appSettings.createManyAndReturn({ 
+     * // Create many ContextualMessages and only return the `id`
+     * const contextualMessageWithIdOnly = await prisma.contextualMessage.createManyAndReturn({ 
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -14830,28 +15892,28 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends AppSettingsCreateManyAndReturnArgs>(args?: SelectSubset<T, AppSettingsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends ContextualMessageCreateManyAndReturnArgs>(args?: SelectSubset<T, ContextualMessageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "createManyAndReturn">>
 
     /**
-     * Delete a AppSettings.
-     * @param {AppSettingsDeleteArgs} args - Arguments to delete one AppSettings.
+     * Delete a ContextualMessage.
+     * @param {ContextualMessageDeleteArgs} args - Arguments to delete one ContextualMessage.
      * @example
-     * // Delete one AppSettings
-     * const AppSettings = await prisma.appSettings.delete({
+     * // Delete one ContextualMessage
+     * const ContextualMessage = await prisma.contextualMessage.delete({
      *   where: {
-     *     // ... filter to delete one AppSettings
+     *     // ... filter to delete one ContextualMessage
      *   }
      * })
      * 
      */
-    delete<T extends AppSettingsDeleteArgs>(args: SelectSubset<T, AppSettingsDeleteArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ContextualMessageDeleteArgs>(args: SelectSubset<T, ContextualMessageDeleteArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
-     * Update one AppSettings.
-     * @param {AppSettingsUpdateArgs} args - Arguments to update one AppSettings.
+     * Update one ContextualMessage.
+     * @param {ContextualMessageUpdateArgs} args - Arguments to update one ContextualMessage.
      * @example
-     * // Update one AppSettings
-     * const appSettings = await prisma.appSettings.update({
+     * // Update one ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -14861,30 +15923,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends AppSettingsUpdateArgs>(args: SelectSubset<T, AppSettingsUpdateArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ContextualMessageUpdateArgs>(args: SelectSubset<T, ContextualMessageUpdateArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
-     * Delete zero or more AppSettings.
-     * @param {AppSettingsDeleteManyArgs} args - Arguments to filter AppSettings to delete.
+     * Delete zero or more ContextualMessages.
+     * @param {ContextualMessageDeleteManyArgs} args - Arguments to filter ContextualMessages to delete.
      * @example
-     * // Delete a few AppSettings
-     * const { count } = await prisma.appSettings.deleteMany({
+     * // Delete a few ContextualMessages
+     * const { count } = await prisma.contextualMessage.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends AppSettingsDeleteManyArgs>(args?: SelectSubset<T, AppSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends ContextualMessageDeleteManyArgs>(args?: SelectSubset<T, ContextualMessageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more AppSettings.
+     * Update zero or more ContextualMessages.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {AppSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {ContextualMessageUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many AppSettings
-     * const appSettings = await prisma.appSettings.updateMany({
+     * // Update many ContextualMessages
+     * const contextualMessage = await prisma.contextualMessage.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -14894,56 +15956,56 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends AppSettingsUpdateManyArgs>(args: SelectSubset<T, AppSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends ContextualMessageUpdateManyArgs>(args: SelectSubset<T, ContextualMessageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create or update one AppSettings.
-     * @param {AppSettingsUpsertArgs} args - Arguments to update or create a AppSettings.
+     * Create or update one ContextualMessage.
+     * @param {ContextualMessageUpsertArgs} args - Arguments to update or create a ContextualMessage.
      * @example
-     * // Update or create a AppSettings
-     * const appSettings = await prisma.appSettings.upsert({
+     * // Update or create a ContextualMessage
+     * const contextualMessage = await prisma.contextualMessage.upsert({
      *   create: {
-     *     // ... data to create a AppSettings
+     *     // ... data to create a ContextualMessage
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the AppSettings we want to update
+     *     // ... the filter for the ContextualMessage we want to update
      *   }
      * })
      */
-    upsert<T extends AppSettingsUpsertArgs>(args: SelectSubset<T, AppSettingsUpsertArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ContextualMessageUpsertArgs>(args: SelectSubset<T, ContextualMessageUpsertArgs<ExtArgs>>): Prisma__ContextualMessageClient<$Result.GetResult<Prisma.$ContextualMessagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
 
     /**
-     * Count the number of AppSettings.
+     * Count the number of ContextualMessages.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {AppSettingsCountArgs} args - Arguments to filter AppSettings to count.
+     * @param {ContextualMessageCountArgs} args - Arguments to filter ContextualMessages to count.
      * @example
-     * // Count the number of AppSettings
-     * const count = await prisma.appSettings.count({
+     * // Count the number of ContextualMessages
+     * const count = await prisma.contextualMessage.count({
      *   where: {
-     *     // ... the filter for the AppSettings we want to count
+     *     // ... the filter for the ContextualMessages we want to count
      *   }
      * })
     **/
-    count<T extends AppSettingsCountArgs>(
-      args?: Subset<T, AppSettingsCountArgs>,
+    count<T extends ContextualMessageCountArgs>(
+      args?: Subset<T, ContextualMessageCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], AppSettingsCountAggregateOutputType>
+          : GetScalarType<T['select'], ContextualMessageCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a AppSettings.
+     * Allows you to perform aggregations operations on a ContextualMessage.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {AppSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {ContextualMessageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -14963,13 +16025,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends AppSettingsAggregateArgs>(args: Subset<T, AppSettingsAggregateArgs>): Prisma.PrismaPromise<GetAppSettingsAggregateType<T>>
+    aggregate<T extends ContextualMessageAggregateArgs>(args: Subset<T, ContextualMessageAggregateArgs>): Prisma.PrismaPromise<GetContextualMessageAggregateType<T>>
 
     /**
-     * Group by AppSettings.
+     * Group by ContextualMessage.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {AppSettingsGroupByArgs} args - Group by arguments.
+     * @param {ContextualMessageGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -14984,14 +16046,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends AppSettingsGroupByArgs,
+      T extends ContextualMessageGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: AppSettingsGroupByArgs['orderBy'] }
-        : { orderBy?: AppSettingsGroupByArgs['orderBy'] },
+        ? { orderBy: ContextualMessageGroupByArgs['orderBy'] }
+        : { orderBy?: ContextualMessageGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -15040,20 +16102,20 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, AppSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAppSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, ContextualMessageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetContextualMessageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the AppSettings model
+   * Fields of the ContextualMessage model
    */
-  readonly fields: AppSettingsFieldRefs;
+  readonly fields: ContextualMessageFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for AppSettings.
+   * The delegate class that acts as a "Promise-like" for ContextualMessage.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__AppSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ContextualMessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -15081,336 +16143,300 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the AppSettings model
+   * Fields of the ContextualMessage model
    */ 
-  interface AppSettingsFieldRefs {
-    readonly id: FieldRef<"AppSettings", 'Int'>
-    readonly financeEmail: FieldRef<"AppSettings", 'String'>
-    readonly appUrl: FieldRef<"AppSettings", 'String'>
-    readonly apmUrl: FieldRef<"AppSettings", 'String'>
-    readonly apmToken: FieldRef<"AppSettings", 'String'>
-    readonly senderName: FieldRef<"AppSettings", 'String'>
-    readonly senderEmail: FieldRef<"AppSettings", 'String'>
-    readonly filienOrga: FieldRef<"AppSettings", 'String'>
-    readonly filienBudget: FieldRef<"AppSettings", 'String'>
-    readonly filienExercice: FieldRef<"AppSettings", 'Int'>
-    readonly filienAvancement: FieldRef<"AppSettings", 'String'>
-    readonly filienRejetDispo: FieldRef<"AppSettings", 'Boolean'>
-    readonly filienRejetCA: FieldRef<"AppSettings", 'Boolean'>
-    readonly filienRejetMarche: FieldRef<"AppSettings", 'Boolean'>
-    readonly filienMouvement: FieldRef<"AppSettings", 'String'>
-    readonly filienType: FieldRef<"AppSettings", 'String'>
-    readonly filienLibelle: FieldRef<"AppSettings", 'String'>
-    readonly filienCalendrier: FieldRef<"AppSettings", 'String'>
-    readonly filienMonnaie: FieldRef<"AppSettings", 'String'>
-    readonly filienMouvementEx: FieldRef<"AppSettings", 'String'>
-    readonly filienPreBordereau: FieldRef<"AppSettings", 'String'>
-    readonly filienPoste: FieldRef<"AppSettings", 'String'>
-    readonly filienBordereau: FieldRef<"AppSettings", 'String'>
-    readonly filienObjet: FieldRef<"AppSettings", 'String'>
-    readonly filienChapitre: FieldRef<"AppSettings", 'String'>
-    readonly filienNature: FieldRef<"AppSettings", 'String'>
-    readonly filienFonction: FieldRef<"AppSettings", 'String'>
-    readonly filienCodeInterne: FieldRef<"AppSettings", 'String'>
-    readonly filienTypeMouvement: FieldRef<"AppSettings", 'String'>
-    readonly filienSens: FieldRef<"AppSettings", 'String'>
-    readonly filienStructure: FieldRef<"AppSettings", 'String'>
-    readonly filienGestionnaire: FieldRef<"AppSettings", 'String'>
-    readonly filienUncPj: FieldRef<"AppSettings", 'String'>
-    readonly signataireRole: FieldRef<"AppSettings", 'String'>
-    readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
-    readonly signataireNom: FieldRef<"AppSettings", 'String'>
-    readonly footer1: FieldRef<"AppSettings", 'String'>
-    readonly footer2: FieldRef<"AppSettings", 'String'>
-    readonly footer3: FieldRef<"AppSettings", 'String'>
-    readonly footerColor: FieldRef<"AppSettings", 'String'>
-    readonly updated_at: FieldRef<"AppSettings", 'DateTime'>
-    readonly filienUncPass: FieldRef<"AppSettings", 'String'>
-    readonly filienUncUser: FieldRef<"AppSettings", 'String'>
-    readonly filienUncDomain: FieldRef<"AppSettings", 'String'>
+  interface ContextualMessageFieldRefs {
+    readonly id: FieldRef<"ContextualMessage", 'Int'>
+    readonly cle: FieldRef<"ContextualMessage", 'String'>
+    readonly label: FieldRef<"ContextualMessage", 'String'>
+    readonly sujet: FieldRef<"ContextualMessage", 'String'>
+    readonly valeur: FieldRef<"ContextualMessage", 'String'>
+    readonly disabled: FieldRef<"ContextualMessage", 'Boolean'>
   }
     
 
   // Custom InputTypes
   /**
-   * AppSettings findUnique
+   * ContextualMessage findUnique
    */
-  export type AppSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
     /**
-     * Filter, which AppSettings to fetch.
+     * Filter, which ContextualMessage to fetch.
      */
-    where: AppSettingsWhereUniqueInput
+    where: ContextualMessageWhereUniqueInput
   }
 
   /**
-   * AppSettings findUniqueOrThrow
+   * ContextualMessage findUniqueOrThrow
    */
-  export type AppSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
     /**
-     * Filter, which AppSettings to fetch.
+     * Filter, which ContextualMessage to fetch.
      */
-    where: AppSettingsWhereUniqueInput
+    where: ContextualMessageWhereUniqueInput
   }
 
   /**
-   * AppSettings findFirst
+   * ContextualMessage findFirst
    */
-  export type AppSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
     /**
-     * Filter, which AppSettings to fetch.
+     * Filter, which ContextualMessage to fetch.
      */
-    where?: AppSettingsWhereInput
+    where?: ContextualMessageWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of AppSettings to fetch.
+     * Determine the order of ContextualMessages to fetch.
      */
-    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    orderBy?: ContextualMessageOrderByWithRelationInput | ContextualMessageOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for AppSettings.
+     * Sets the position for searching for ContextualMessages.
      */
-    cursor?: AppSettingsWhereUniqueInput
+    cursor?: ContextualMessageWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` AppSettings from the position of the cursor.
+     * Take `±n` ContextualMessages from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` AppSettings.
+     * Skip the first `n` ContextualMessages.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of AppSettings.
+     * Filter by unique combinations of ContextualMessages.
      */
-    distinct?: AppSettingsScalarFieldEnum | AppSettingsScalarFieldEnum[]
+    distinct?: ContextualMessageScalarFieldEnum | ContextualMessageScalarFieldEnum[]
   }
 
   /**
-   * AppSettings findFirstOrThrow
+   * ContextualMessage findFirstOrThrow
    */
-  export type AppSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
     /**
-     * Filter, which AppSettings to fetch.
+     * Filter, which ContextualMessage to fetch.
      */
-    where?: AppSettingsWhereInput
+    where?: ContextualMessageWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of AppSettings to fetch.
+     * Determine the order of ContextualMessages to fetch.
      */
-    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    orderBy?: ContextualMessageOrderByWithRelationInput | ContextualMessageOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for AppSettings.
+     * Sets the position for searching for ContextualMessages.
      */
-    cursor?: AppSettingsWhereUniqueInput
+    cursor?: ContextualMessageWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` AppSettings from the position of the cursor.
+     * Take `±n` ContextualMessages from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` AppSettings.
+     * Skip the first `n` ContextualMessages.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of AppSettings.
+     * Filter by unique combinations of ContextualMessages.
      */
-    distinct?: AppSettingsScalarFieldEnum | AppSettingsScalarFieldEnum[]
+    distinct?: ContextualMessageScalarFieldEnum | ContextualMessageScalarFieldEnum[]
   }
 
   /**
-   * AppSettings findMany
+   * ContextualMessage findMany
    */
-  export type AppSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
     /**
-     * Filter, which AppSettings to fetch.
+     * Filter, which ContextualMessages to fetch.
      */
-    where?: AppSettingsWhereInput
+    where?: ContextualMessageWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of AppSettings to fetch.
+     * Determine the order of ContextualMessages to fetch.
      */
-    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    orderBy?: ContextualMessageOrderByWithRelationInput | ContextualMessageOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing AppSettings.
+     * Sets the position for listing ContextualMessages.
      */
-    cursor?: AppSettingsWhereUniqueInput
+    cursor?: ContextualMessageWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` AppSettings from the position of the cursor.
+     * Take `±n` ContextualMessages from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` AppSettings.
+     * Skip the first `n` ContextualMessages.
      */
     skip?: number
-    distinct?: AppSettingsScalarFieldEnum | AppSettingsScalarFieldEnum[]
+    distinct?: ContextualMessageScalarFieldEnum | ContextualMessageScalarFieldEnum[]
   }
 
   /**
-   * AppSettings create
+   * ContextualMessage create
    */
-  export type AppSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
     /**
-     * The data needed to create a AppSettings.
+     * The data needed to create a ContextualMessage.
      */
-    data: XOR<AppSettingsCreateInput, AppSettingsUncheckedCreateInput>
+    data: XOR<ContextualMessageCreateInput, ContextualMessageUncheckedCreateInput>
   }
 
   /**
-   * AppSettings createMany
+   * ContextualMessage createMany
    */
-  export type AppSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many AppSettings.
+     * The data used to create many ContextualMessages.
      */
-    data: AppSettingsCreateManyInput | AppSettingsCreateManyInput[]
+    data: ContextualMessageCreateManyInput | ContextualMessageCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
-   * AppSettings createManyAndReturn
+   * ContextualMessage createManyAndReturn
    */
-  export type AppSettingsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelectCreateManyAndReturn<ExtArgs> | null
+    select?: ContextualMessageSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * The data used to create many AppSettings.
+     * The data used to create many ContextualMessages.
      */
-    data: AppSettingsCreateManyInput | AppSettingsCreateManyInput[]
+    data: ContextualMessageCreateManyInput | ContextualMessageCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
-   * AppSettings update
+   * ContextualMessage update
    */
-  export type AppSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
     /**
-     * The data needed to update a AppSettings.
+     * The data needed to update a ContextualMessage.
      */
-    data: XOR<AppSettingsUpdateInput, AppSettingsUncheckedUpdateInput>
+    data: XOR<ContextualMessageUpdateInput, ContextualMessageUncheckedUpdateInput>
     /**
-     * Choose, which AppSettings to update.
+     * Choose, which ContextualMessage to update.
      */
-    where: AppSettingsWhereUniqueInput
+    where: ContextualMessageWhereUniqueInput
   }
 
   /**
-   * AppSettings updateMany
+   * ContextualMessage updateMany
    */
-  export type AppSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update AppSettings.
+     * The data used to update ContextualMessages.
      */
-    data: XOR<AppSettingsUpdateManyMutationInput, AppSettingsUncheckedUpdateManyInput>
+    data: XOR<ContextualMessageUpdateManyMutationInput, ContextualMessageUncheckedUpdateManyInput>
     /**
-     * Filter which AppSettings to update
+     * Filter which ContextualMessages to update
      */
-    where?: AppSettingsWhereInput
+    where?: ContextualMessageWhereInput
   }
 
   /**
-   * AppSettings upsert
+   * ContextualMessage upsert
    */
-  export type AppSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
     /**
-     * The filter to search for the AppSettings to update in case it exists.
+     * The filter to search for the ContextualMessage to update in case it exists.
      */
-    where: AppSettingsWhereUniqueInput
+    where: ContextualMessageWhereUniqueInput
     /**
-     * In case the AppSettings found by the `where` argument doesn't exist, create a new AppSettings with this data.
+     * In case the ContextualMessage found by the `where` argument doesn't exist, create a new ContextualMessage with this data.
      */
-    create: XOR<AppSettingsCreateInput, AppSettingsUncheckedCreateInput>
+    create: XOR<ContextualMessageCreateInput, ContextualMessageUncheckedCreateInput>
     /**
-     * In case the AppSettings was found with the provided `where` argument, update it with this data.
+     * In case the ContextualMessage was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<AppSettingsUpdateInput, AppSettingsUncheckedUpdateInput>
+    update: XOR<ContextualMessageUpdateInput, ContextualMessageUncheckedUpdateInput>
   }
 
   /**
-   * AppSettings delete
+   * ContextualMessage delete
    */
-  export type AppSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
     /**
-     * Filter which AppSettings to delete.
+     * Filter which ContextualMessage to delete.
      */
-    where: AppSettingsWhereUniqueInput
+    where: ContextualMessageWhereUniqueInput
   }
 
   /**
-   * AppSettings deleteMany
+   * ContextualMessage deleteMany
    */
-  export type AppSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which AppSettings to delete
+     * Filter which ContextualMessages to delete
      */
-    where?: AppSettingsWhereInput
+    where?: ContextualMessageWhereInput
   }
 
   /**
-   * AppSettings without action
+   * ContextualMessage without action
    */
-  export type AppSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContextualMessageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AppSettings
+     * Select specific fields to fetch from the ContextualMessage
      */
-    select?: AppSettingsSelect<ExtArgs> | null
+    select?: ContextualMessageSelect<ExtArgs> | null
   }
 
 
@@ -15457,6 +16483,7 @@ export namespace Prisma {
     montant: number | null
     created_at: Date | null
     updated_at: Date | null
+    deletedAt: Date | null
     photos: string | null
     note: string | null
   }
@@ -15474,6 +16501,7 @@ export namespace Prisma {
     montant: number | null
     created_at: Date | null
     updated_at: Date | null
+    deletedAt: Date | null
     photos: string | null
     note: string | null
   }
@@ -15491,6 +16519,7 @@ export namespace Prisma {
     montant: number
     created_at: number
     updated_at: number
+    deletedAt: number
     photos: number
     note: number
     _all: number
@@ -15528,6 +16557,7 @@ export namespace Prisma {
     montant?: true
     created_at?: true
     updated_at?: true
+    deletedAt?: true
     photos?: true
     note?: true
   }
@@ -15545,6 +16575,7 @@ export namespace Prisma {
     montant?: true
     created_at?: true
     updated_at?: true
+    deletedAt?: true
     photos?: true
     note?: true
   }
@@ -15562,6 +16593,7 @@ export namespace Prisma {
     montant?: true
     created_at?: true
     updated_at?: true
+    deletedAt?: true
     photos?: true
     note?: true
     _all?: true
@@ -15666,6 +16698,7 @@ export namespace Prisma {
     montant: number
     created_at: Date
     updated_at: Date
+    deletedAt: Date | null
     photos: string | null
     note: string | null
     _count: LigneOccupationCountAggregateOutputType | null
@@ -15702,6 +16735,7 @@ export namespace Prisma {
     montant?: boolean
     created_at?: boolean
     updated_at?: boolean
+    deletedAt?: boolean
     photos?: boolean
     note?: boolean
     article?: boolean | ArticleDefaultArgs<ExtArgs>
@@ -15721,6 +16755,7 @@ export namespace Prisma {
     montant?: boolean
     created_at?: boolean
     updated_at?: boolean
+    deletedAt?: boolean
     photos?: boolean
     note?: boolean
     article?: boolean | ArticleDefaultArgs<ExtArgs>
@@ -15740,6 +16775,7 @@ export namespace Prisma {
     montant?: boolean
     created_at?: boolean
     updated_at?: boolean
+    deletedAt?: boolean
     photos?: boolean
     note?: boolean
   }
@@ -15772,6 +16808,7 @@ export namespace Prisma {
       montant: number
       created_at: Date
       updated_at: Date
+      deletedAt: Date | null
       photos: string | null
       note: string | null
     }, ExtArgs["result"]["ligneOccupation"]>
@@ -16181,6 +17218,7 @@ export namespace Prisma {
     readonly montant: FieldRef<"LigneOccupation", 'Float'>
     readonly created_at: FieldRef<"LigneOccupation", 'DateTime'>
     readonly updated_at: FieldRef<"LigneOccupation", 'DateTime'>
+    readonly deletedAt: FieldRef<"LigneOccupation", 'DateTime'>
     readonly photos: FieldRef<"LigneOccupation", 'String'>
     readonly note: FieldRef<"LigneOccupation", 'String'>
   }
@@ -16388,6 +17426,7 @@ export namespace Prisma {
      * The data used to create many LigneOccupations.
      */
     data: LigneOccupationCreateManyInput | LigneOccupationCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -16402,6 +17441,7 @@ export namespace Prisma {
      * The data used to create many LigneOccupations.
      */
     data: LigneOccupationCreateManyInput | LigneOccupationCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -17369,6 +18409,7 @@ export namespace Prisma {
      * The data used to create many Dispositifs.
      */
     data: DispositifCreateManyInput | DispositifCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -17383,6 +18424,7 @@ export namespace Prisma {
      * The data used to create many Dispositifs.
      */
     data: DispositifCreateManyInput | DispositifCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -18335,6 +19377,7 @@ export namespace Prisma {
      * The data used to create many Gabarits.
      */
     data: GabaritCreateManyInput | GabaritCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -18349,6 +19392,7 @@ export namespace Prisma {
      * The data used to create many Gabarits.
      */
     data: GabaritCreateManyInput | GabaritCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -19237,6 +20281,7 @@ export namespace Prisma {
      * The data used to create many TlpeConfigs.
      */
     data: TlpeConfigCreateManyInput | TlpeConfigCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -19251,6 +20296,7 @@ export namespace Prisma {
      * The data used to create many TlpeConfigs.
      */
     data: TlpeConfigCreateManyInput | TlpeConfigCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -19374,6 +20420,7 @@ export namespace Prisma {
     filienSens: string | null
     filienStructure: string | null
     filienGestionnaire: string | null
+    filienPreBordereau: string | null
     invoiceTemplateId: string | null
     updated_at: Date | null
   }
@@ -19390,6 +20437,7 @@ export namespace Prisma {
     filienSens: string | null
     filienStructure: string | null
     filienGestionnaire: string | null
+    filienPreBordereau: string | null
     invoiceTemplateId: string | null
     updated_at: Date | null
   }
@@ -19406,6 +20454,7 @@ export namespace Prisma {
     filienSens: number
     filienStructure: number
     filienGestionnaire: number
+    filienPreBordereau: number
     invoiceTemplateId: number
     updated_at: number
     _all: number
@@ -19432,6 +20481,7 @@ export namespace Prisma {
     filienSens?: true
     filienStructure?: true
     filienGestionnaire?: true
+    filienPreBordereau?: true
     invoiceTemplateId?: true
     updated_at?: true
   }
@@ -19448,6 +20498,7 @@ export namespace Prisma {
     filienSens?: true
     filienStructure?: true
     filienGestionnaire?: true
+    filienPreBordereau?: true
     invoiceTemplateId?: true
     updated_at?: true
   }
@@ -19464,6 +20515,7 @@ export namespace Prisma {
     filienSens?: true
     filienStructure?: true
     filienGestionnaire?: true
+    filienPreBordereau?: true
     invoiceTemplateId?: true
     updated_at?: true
     _all?: true
@@ -19567,6 +20619,7 @@ export namespace Prisma {
     filienSens: string | null
     filienStructure: string | null
     filienGestionnaire: string | null
+    filienPreBordereau: string | null
     invoiceTemplateId: string | null
     updated_at: Date
     _count: TypeDossierConfigCountAggregateOutputType | null
@@ -19602,6 +20655,7 @@ export namespace Prisma {
     filienSens?: boolean
     filienStructure?: boolean
     filienGestionnaire?: boolean
+    filienPreBordereau?: boolean
     invoiceTemplateId?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["typeDossierConfig"]>
@@ -19618,6 +20672,7 @@ export namespace Prisma {
     filienSens?: boolean
     filienStructure?: boolean
     filienGestionnaire?: boolean
+    filienPreBordereau?: boolean
     invoiceTemplateId?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["typeDossierConfig"]>
@@ -19634,6 +20689,7 @@ export namespace Prisma {
     filienSens?: boolean
     filienStructure?: boolean
     filienGestionnaire?: boolean
+    filienPreBordereau?: boolean
     invoiceTemplateId?: boolean
     updated_at?: boolean
   }
@@ -19654,6 +20710,7 @@ export namespace Prisma {
       filienSens: string | null
       filienStructure: string | null
       filienGestionnaire: string | null
+      filienPreBordereau: string | null
       invoiceTemplateId: string | null
       updated_at: Date
     }, ExtArgs["result"]["typeDossierConfig"]>
@@ -20060,6 +21117,7 @@ export namespace Prisma {
     readonly filienSens: FieldRef<"TypeDossierConfig", 'String'>
     readonly filienStructure: FieldRef<"TypeDossierConfig", 'String'>
     readonly filienGestionnaire: FieldRef<"TypeDossierConfig", 'String'>
+    readonly filienPreBordereau: FieldRef<"TypeDossierConfig", 'String'>
     readonly invoiceTemplateId: FieldRef<"TypeDossierConfig", 'String'>
     readonly updated_at: FieldRef<"TypeDossierConfig", 'DateTime'>
   }
@@ -20243,6 +21301,7 @@ export namespace Prisma {
      * The data used to create many TypeDossierConfigs.
      */
     data: TypeDossierConfigCreateManyInput | TypeDossierConfigCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -20257,6 +21316,7 @@ export namespace Prisma {
      * The data used to create many TypeDossierConfigs.
      */
     data: TypeDossierConfigCreateManyInput | TypeDossierConfigCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -20378,6 +21438,7 @@ export namespace Prisma {
     priority: string | null
     status: string | null
     versionId: number | null
+    requestedBy: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -20390,6 +21451,7 @@ export namespace Prisma {
     priority: string | null
     status: string | null
     versionId: number | null
+    requestedBy: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -20402,6 +21464,7 @@ export namespace Prisma {
     priority: number
     status: number
     versionId: number
+    requestedBy: number
     created_at: number
     updated_at: number
     _all: number
@@ -20426,6 +21489,7 @@ export namespace Prisma {
     priority?: true
     status?: true
     versionId?: true
+    requestedBy?: true
     created_at?: true
     updated_at?: true
   }
@@ -20438,6 +21502,7 @@ export namespace Prisma {
     priority?: true
     status?: true
     versionId?: true
+    requestedBy?: true
     created_at?: true
     updated_at?: true
   }
@@ -20450,6 +21515,7 @@ export namespace Prisma {
     priority?: true
     status?: true
     versionId?: true
+    requestedBy?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -20549,6 +21615,7 @@ export namespace Prisma {
     priority: string
     status: string
     versionId: number | null
+    requestedBy: string | null
     created_at: Date
     updated_at: Date
     _count: BacklogItemCountAggregateOutputType | null
@@ -20580,6 +21647,7 @@ export namespace Prisma {
     priority?: boolean
     status?: boolean
     versionId?: boolean
+    requestedBy?: boolean
     created_at?: boolean
     updated_at?: boolean
     comments?: boolean | BacklogItem$commentsArgs<ExtArgs>
@@ -20595,6 +21663,7 @@ export namespace Prisma {
     priority?: boolean
     status?: boolean
     versionId?: boolean
+    requestedBy?: boolean
     created_at?: boolean
     updated_at?: boolean
     version?: boolean | BacklogItem$versionArgs<ExtArgs>
@@ -20608,6 +21677,7 @@ export namespace Prisma {
     priority?: boolean
     status?: boolean
     versionId?: boolean
+    requestedBy?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
@@ -20635,6 +21705,7 @@ export namespace Prisma {
       priority: string
       status: string
       versionId: number | null
+      requestedBy: string | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["backlogItem"]>
@@ -21039,6 +22110,7 @@ export namespace Prisma {
     readonly priority: FieldRef<"BacklogItem", 'String'>
     readonly status: FieldRef<"BacklogItem", 'String'>
     readonly versionId: FieldRef<"BacklogItem", 'Int'>
+    readonly requestedBy: FieldRef<"BacklogItem", 'String'>
     readonly created_at: FieldRef<"BacklogItem", 'DateTime'>
     readonly updated_at: FieldRef<"BacklogItem", 'DateTime'>
   }
@@ -21246,6 +22318,7 @@ export namespace Prisma {
      * The data used to create many BacklogItems.
      */
     data: BacklogItemCreateManyInput | BacklogItemCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -21260,6 +22333,7 @@ export namespace Prisma {
      * The data used to create many BacklogItems.
      */
     data: BacklogItemCreateManyInput | BacklogItemCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -22250,6 +23324,7 @@ export namespace Prisma {
      * The data used to create many BacklogComments.
      */
     data: BacklogCommentCreateManyInput | BacklogCommentCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -22264,6 +23339,7 @@ export namespace Prisma {
      * The data used to create many BacklogComments.
      */
     data: BacklogCommentCreateManyInput | BacklogCommentCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -23214,6 +24290,7 @@ export namespace Prisma {
      * The data used to create many VersionReleases.
      */
     data: VersionReleaseCreateManyInput | VersionReleaseCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -23228,6 +24305,7 @@ export namespace Prisma {
      * The data used to create many VersionReleases.
      */
     data: VersionReleaseCreateManyInput | VersionReleaseCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -23356,387 +24434,376 @@ export namespace Prisma {
 
 
   /**
-   * Model PostgresConfig
+   * Model ContactRoleConfig
    */
 
-  export type AggregatePostgresConfig = {
-    _count: PostgresConfigCountAggregateOutputType | null
-    _avg: PostgresConfigAvgAggregateOutputType | null
-    _sum: PostgresConfigSumAggregateOutputType | null
-    _min: PostgresConfigMinAggregateOutputType | null
-    _max: PostgresConfigMaxAggregateOutputType | null
+  export type AggregateContactRoleConfig = {
+    _count: ContactRoleConfigCountAggregateOutputType | null
+    _avg: ContactRoleConfigAvgAggregateOutputType | null
+    _sum: ContactRoleConfigSumAggregateOutputType | null
+    _min: ContactRoleConfigMinAggregateOutputType | null
+    _max: ContactRoleConfigMaxAggregateOutputType | null
   }
 
-  export type PostgresConfigAvgAggregateOutputType = {
+  export type ContactRoleConfigAvgAggregateOutputType = {
     id: number | null
-    port: number | null
+    ordre: number | null
   }
 
-  export type PostgresConfigSumAggregateOutputType = {
+  export type ContactRoleConfigSumAggregateOutputType = {
     id: number | null
-    port: number | null
+    ordre: number | null
   }
 
-  export type PostgresConfigMinAggregateOutputType = {
+  export type ContactRoleConfigMinAggregateOutputType = {
     id: number | null
-    host: string | null
-    port: number | null
-    database: string | null
-    schema: string | null
-    user: string | null
-    password: string | null
+    nom: string | null
+    isSendAot: boolean | null
+    ordre: number | null
+    created_at: Date | null
+    updated_at: Date | null
   }
 
-  export type PostgresConfigMaxAggregateOutputType = {
+  export type ContactRoleConfigMaxAggregateOutputType = {
     id: number | null
-    host: string | null
-    port: number | null
-    database: string | null
-    schema: string | null
-    user: string | null
-    password: string | null
+    nom: string | null
+    isSendAot: boolean | null
+    ordre: number | null
+    created_at: Date | null
+    updated_at: Date | null
   }
 
-  export type PostgresConfigCountAggregateOutputType = {
+  export type ContactRoleConfigCountAggregateOutputType = {
     id: number
-    host: number
-    port: number
-    database: number
-    schema: number
-    user: number
-    password: number
+    nom: number
+    isSendAot: number
+    ordre: number
+    created_at: number
+    updated_at: number
     _all: number
   }
 
 
-  export type PostgresConfigAvgAggregateInputType = {
+  export type ContactRoleConfigAvgAggregateInputType = {
     id?: true
-    port?: true
+    ordre?: true
   }
 
-  export type PostgresConfigSumAggregateInputType = {
+  export type ContactRoleConfigSumAggregateInputType = {
     id?: true
-    port?: true
+    ordre?: true
   }
 
-  export type PostgresConfigMinAggregateInputType = {
+  export type ContactRoleConfigMinAggregateInputType = {
     id?: true
-    host?: true
-    port?: true
-    database?: true
-    schema?: true
-    user?: true
-    password?: true
+    nom?: true
+    isSendAot?: true
+    ordre?: true
+    created_at?: true
+    updated_at?: true
   }
 
-  export type PostgresConfigMaxAggregateInputType = {
+  export type ContactRoleConfigMaxAggregateInputType = {
     id?: true
-    host?: true
-    port?: true
-    database?: true
-    schema?: true
-    user?: true
-    password?: true
+    nom?: true
+    isSendAot?: true
+    ordre?: true
+    created_at?: true
+    updated_at?: true
   }
 
-  export type PostgresConfigCountAggregateInputType = {
+  export type ContactRoleConfigCountAggregateInputType = {
     id?: true
-    host?: true
-    port?: true
-    database?: true
-    schema?: true
-    user?: true
-    password?: true
+    nom?: true
+    isSendAot?: true
+    ordre?: true
+    created_at?: true
+    updated_at?: true
     _all?: true
   }
 
-  export type PostgresConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which PostgresConfig to aggregate.
+     * Filter which ContactRoleConfig to aggregate.
      */
-    where?: PostgresConfigWhereInput
+    where?: ContactRoleConfigWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of PostgresConfigs to fetch.
+     * Determine the order of ContactRoleConfigs to fetch.
      */
-    orderBy?: PostgresConfigOrderByWithRelationInput | PostgresConfigOrderByWithRelationInput[]
+    orderBy?: ContactRoleConfigOrderByWithRelationInput | ContactRoleConfigOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: PostgresConfigWhereUniqueInput
+    cursor?: ContactRoleConfigWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` PostgresConfigs from the position of the cursor.
+     * Take `±n` ContactRoleConfigs from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` PostgresConfigs.
+     * Skip the first `n` ContactRoleConfigs.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned PostgresConfigs
+     * Count returned ContactRoleConfigs
     **/
-    _count?: true | PostgresConfigCountAggregateInputType
+    _count?: true | ContactRoleConfigCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to average
     **/
-    _avg?: PostgresConfigAvgAggregateInputType
+    _avg?: ContactRoleConfigAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to sum
     **/
-    _sum?: PostgresConfigSumAggregateInputType
+    _sum?: ContactRoleConfigSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: PostgresConfigMinAggregateInputType
+    _min?: ContactRoleConfigMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: PostgresConfigMaxAggregateInputType
+    _max?: ContactRoleConfigMaxAggregateInputType
   }
 
-  export type GetPostgresConfigAggregateType<T extends PostgresConfigAggregateArgs> = {
-        [P in keyof T & keyof AggregatePostgresConfig]: P extends '_count' | 'count'
+  export type GetContactRoleConfigAggregateType<T extends ContactRoleConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateContactRoleConfig]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregatePostgresConfig[P]>
-      : GetScalarType<T[P], AggregatePostgresConfig[P]>
+        : GetScalarType<T[P], AggregateContactRoleConfig[P]>
+      : GetScalarType<T[P], AggregateContactRoleConfig[P]>
   }
 
 
 
 
-  export type PostgresConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PostgresConfigWhereInput
-    orderBy?: PostgresConfigOrderByWithAggregationInput | PostgresConfigOrderByWithAggregationInput[]
-    by: PostgresConfigScalarFieldEnum[] | PostgresConfigScalarFieldEnum
-    having?: PostgresConfigScalarWhereWithAggregatesInput
+  export type ContactRoleConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContactRoleConfigWhereInput
+    orderBy?: ContactRoleConfigOrderByWithAggregationInput | ContactRoleConfigOrderByWithAggregationInput[]
+    by: ContactRoleConfigScalarFieldEnum[] | ContactRoleConfigScalarFieldEnum
+    having?: ContactRoleConfigScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: PostgresConfigCountAggregateInputType | true
-    _avg?: PostgresConfigAvgAggregateInputType
-    _sum?: PostgresConfigSumAggregateInputType
-    _min?: PostgresConfigMinAggregateInputType
-    _max?: PostgresConfigMaxAggregateInputType
+    _count?: ContactRoleConfigCountAggregateInputType | true
+    _avg?: ContactRoleConfigAvgAggregateInputType
+    _sum?: ContactRoleConfigSumAggregateInputType
+    _min?: ContactRoleConfigMinAggregateInputType
+    _max?: ContactRoleConfigMaxAggregateInputType
   }
 
-  export type PostgresConfigGroupByOutputType = {
+  export type ContactRoleConfigGroupByOutputType = {
     id: number
-    host: string
-    port: number
-    database: string
-    schema: string
-    user: string
-    password: string
-    _count: PostgresConfigCountAggregateOutputType | null
-    _avg: PostgresConfigAvgAggregateOutputType | null
-    _sum: PostgresConfigSumAggregateOutputType | null
-    _min: PostgresConfigMinAggregateOutputType | null
-    _max: PostgresConfigMaxAggregateOutputType | null
+    nom: string
+    isSendAot: boolean
+    ordre: number
+    created_at: Date
+    updated_at: Date
+    _count: ContactRoleConfigCountAggregateOutputType | null
+    _avg: ContactRoleConfigAvgAggregateOutputType | null
+    _sum: ContactRoleConfigSumAggregateOutputType | null
+    _min: ContactRoleConfigMinAggregateOutputType | null
+    _max: ContactRoleConfigMaxAggregateOutputType | null
   }
 
-  type GetPostgresConfigGroupByPayload<T extends PostgresConfigGroupByArgs> = Prisma.PrismaPromise<
+  type GetContactRoleConfigGroupByPayload<T extends ContactRoleConfigGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<PostgresConfigGroupByOutputType, T['by']> &
+      PickEnumerable<ContactRoleConfigGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof PostgresConfigGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof ContactRoleConfigGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], PostgresConfigGroupByOutputType[P]>
-            : GetScalarType<T[P], PostgresConfigGroupByOutputType[P]>
+              : GetScalarType<T[P], ContactRoleConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], ContactRoleConfigGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type PostgresConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ContactRoleConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    host?: boolean
-    port?: boolean
-    database?: boolean
-    schema?: boolean
-    user?: boolean
-    password?: boolean
-  }, ExtArgs["result"]["postgresConfig"]>
+    nom?: boolean
+    isSendAot?: boolean
+    ordre?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["contactRoleConfig"]>
 
-  export type PostgresConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ContactRoleConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    host?: boolean
-    port?: boolean
-    database?: boolean
-    schema?: boolean
-    user?: boolean
-    password?: boolean
-  }, ExtArgs["result"]["postgresConfig"]>
+    nom?: boolean
+    isSendAot?: boolean
+    ordre?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["contactRoleConfig"]>
 
-  export type PostgresConfigSelectScalar = {
+  export type ContactRoleConfigSelectScalar = {
     id?: boolean
-    host?: boolean
-    port?: boolean
-    database?: boolean
-    schema?: boolean
-    user?: boolean
-    password?: boolean
+    nom?: boolean
+    isSendAot?: boolean
+    ordre?: boolean
+    created_at?: boolean
+    updated_at?: boolean
   }
 
 
-  export type $PostgresConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "PostgresConfig"
+  export type $ContactRoleConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ContactRoleConfig"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      host: string
-      port: number
-      database: string
-      schema: string
-      user: string
-      password: string
-    }, ExtArgs["result"]["postgresConfig"]>
+      nom: string
+      isSendAot: boolean
+      ordre: number
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["contactRoleConfig"]>
     composites: {}
   }
 
-  type PostgresConfigGetPayload<S extends boolean | null | undefined | PostgresConfigDefaultArgs> = $Result.GetResult<Prisma.$PostgresConfigPayload, S>
+  type ContactRoleConfigGetPayload<S extends boolean | null | undefined | ContactRoleConfigDefaultArgs> = $Result.GetResult<Prisma.$ContactRoleConfigPayload, S>
 
-  type PostgresConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<PostgresConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: PostgresConfigCountAggregateInputType | true
+  type ContactRoleConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ContactRoleConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ContactRoleConfigCountAggregateInputType | true
     }
 
-  export interface PostgresConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PostgresConfig'], meta: { name: 'PostgresConfig' } }
+  export interface ContactRoleConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ContactRoleConfig'], meta: { name: 'ContactRoleConfig' } }
     /**
-     * Find zero or one PostgresConfig that matches the filter.
-     * @param {PostgresConfigFindUniqueArgs} args - Arguments to find a PostgresConfig
+     * Find zero or one ContactRoleConfig that matches the filter.
+     * @param {ContactRoleConfigFindUniqueArgs} args - Arguments to find a ContactRoleConfig
      * @example
-     * // Get one PostgresConfig
-     * const postgresConfig = await prisma.postgresConfig.findUnique({
+     * // Get one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends PostgresConfigFindUniqueArgs>(args: SelectSubset<T, PostgresConfigFindUniqueArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ContactRoleConfigFindUniqueArgs>(args: SelectSubset<T, ContactRoleConfigFindUniqueArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
 
     /**
-     * Find one PostgresConfig that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one ContactRoleConfig that matches the filter or throw an error with `error.code='P2025'` 
      * if no matches were found.
-     * @param {PostgresConfigFindUniqueOrThrowArgs} args - Arguments to find a PostgresConfig
+     * @param {ContactRoleConfigFindUniqueOrThrowArgs} args - Arguments to find a ContactRoleConfig
      * @example
-     * // Get one PostgresConfig
-     * const postgresConfig = await prisma.postgresConfig.findUniqueOrThrow({
+     * // Get one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends PostgresConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, PostgresConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ContactRoleConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, ContactRoleConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
 
     /**
-     * Find the first PostgresConfig that matches the filter.
+     * Find the first ContactRoleConfig that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostgresConfigFindFirstArgs} args - Arguments to find a PostgresConfig
+     * @param {ContactRoleConfigFindFirstArgs} args - Arguments to find a ContactRoleConfig
      * @example
-     * // Get one PostgresConfig
-     * const postgresConfig = await prisma.postgresConfig.findFirst({
+     * // Get one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends PostgresConfigFindFirstArgs>(args?: SelectSubset<T, PostgresConfigFindFirstArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ContactRoleConfigFindFirstArgs>(args?: SelectSubset<T, ContactRoleConfigFindFirstArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
 
     /**
-     * Find the first PostgresConfig that matches the filter or
+     * Find the first ContactRoleConfig that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostgresConfigFindFirstOrThrowArgs} args - Arguments to find a PostgresConfig
+     * @param {ContactRoleConfigFindFirstOrThrowArgs} args - Arguments to find a ContactRoleConfig
      * @example
-     * // Get one PostgresConfig
-     * const postgresConfig = await prisma.postgresConfig.findFirstOrThrow({
+     * // Get one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends PostgresConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, PostgresConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ContactRoleConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, ContactRoleConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
 
     /**
-     * Find zero or more PostgresConfigs that matches the filter.
+     * Find zero or more ContactRoleConfigs that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostgresConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {ContactRoleConfigFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all PostgresConfigs
-     * const postgresConfigs = await prisma.postgresConfig.findMany()
+     * // Get all ContactRoleConfigs
+     * const contactRoleConfigs = await prisma.contactRoleConfig.findMany()
      * 
-     * // Get first 10 PostgresConfigs
-     * const postgresConfigs = await prisma.postgresConfig.findMany({ take: 10 })
+     * // Get first 10 ContactRoleConfigs
+     * const contactRoleConfigs = await prisma.contactRoleConfig.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const postgresConfigWithIdOnly = await prisma.postgresConfig.findMany({ select: { id: true } })
+     * const contactRoleConfigWithIdOnly = await prisma.contactRoleConfig.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends PostgresConfigFindManyArgs>(args?: SelectSubset<T, PostgresConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ContactRoleConfigFindManyArgs>(args?: SelectSubset<T, ContactRoleConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "findMany">>
 
     /**
-     * Create a PostgresConfig.
-     * @param {PostgresConfigCreateArgs} args - Arguments to create a PostgresConfig.
+     * Create a ContactRoleConfig.
+     * @param {ContactRoleConfigCreateArgs} args - Arguments to create a ContactRoleConfig.
      * @example
-     * // Create one PostgresConfig
-     * const PostgresConfig = await prisma.postgresConfig.create({
+     * // Create one ContactRoleConfig
+     * const ContactRoleConfig = await prisma.contactRoleConfig.create({
      *   data: {
-     *     // ... data to create a PostgresConfig
+     *     // ... data to create a ContactRoleConfig
      *   }
      * })
      * 
      */
-    create<T extends PostgresConfigCreateArgs>(args: SelectSubset<T, PostgresConfigCreateArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ContactRoleConfigCreateArgs>(args: SelectSubset<T, ContactRoleConfigCreateArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
 
     /**
-     * Create many PostgresConfigs.
-     * @param {PostgresConfigCreateManyArgs} args - Arguments to create many PostgresConfigs.
+     * Create many ContactRoleConfigs.
+     * @param {ContactRoleConfigCreateManyArgs} args - Arguments to create many ContactRoleConfigs.
      * @example
-     * // Create many PostgresConfigs
-     * const postgresConfig = await prisma.postgresConfig.createMany({
+     * // Create many ContactRoleConfigs
+     * const contactRoleConfig = await prisma.contactRoleConfig.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends PostgresConfigCreateManyArgs>(args?: SelectSubset<T, PostgresConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends ContactRoleConfigCreateManyArgs>(args?: SelectSubset<T, ContactRoleConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many PostgresConfigs and returns the data saved in the database.
-     * @param {PostgresConfigCreateManyAndReturnArgs} args - Arguments to create many PostgresConfigs.
+     * Create many ContactRoleConfigs and returns the data saved in the database.
+     * @param {ContactRoleConfigCreateManyAndReturnArgs} args - Arguments to create many ContactRoleConfigs.
      * @example
-     * // Create many PostgresConfigs
-     * const postgresConfig = await prisma.postgresConfig.createManyAndReturn({
+     * // Create many ContactRoleConfigs
+     * const contactRoleConfig = await prisma.contactRoleConfig.createManyAndReturn({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      * 
-     * // Create many PostgresConfigs and only return the `id`
-     * const postgresConfigWithIdOnly = await prisma.postgresConfig.createManyAndReturn({ 
+     * // Create many ContactRoleConfigs and only return the `id`
+     * const contactRoleConfigWithIdOnly = await prisma.contactRoleConfig.createManyAndReturn({ 
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -23746,28 +24813,28 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends PostgresConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, PostgresConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends ContactRoleConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, ContactRoleConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "createManyAndReturn">>
 
     /**
-     * Delete a PostgresConfig.
-     * @param {PostgresConfigDeleteArgs} args - Arguments to delete one PostgresConfig.
+     * Delete a ContactRoleConfig.
+     * @param {ContactRoleConfigDeleteArgs} args - Arguments to delete one ContactRoleConfig.
      * @example
-     * // Delete one PostgresConfig
-     * const PostgresConfig = await prisma.postgresConfig.delete({
+     * // Delete one ContactRoleConfig
+     * const ContactRoleConfig = await prisma.contactRoleConfig.delete({
      *   where: {
-     *     // ... filter to delete one PostgresConfig
+     *     // ... filter to delete one ContactRoleConfig
      *   }
      * })
      * 
      */
-    delete<T extends PostgresConfigDeleteArgs>(args: SelectSubset<T, PostgresConfigDeleteArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ContactRoleConfigDeleteArgs>(args: SelectSubset<T, ContactRoleConfigDeleteArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
 
     /**
-     * Update one PostgresConfig.
-     * @param {PostgresConfigUpdateArgs} args - Arguments to update one PostgresConfig.
+     * Update one ContactRoleConfig.
+     * @param {ContactRoleConfigUpdateArgs} args - Arguments to update one ContactRoleConfig.
      * @example
-     * // Update one PostgresConfig
-     * const postgresConfig = await prisma.postgresConfig.update({
+     * // Update one ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -23777,30 +24844,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends PostgresConfigUpdateArgs>(args: SelectSubset<T, PostgresConfigUpdateArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ContactRoleConfigUpdateArgs>(args: SelectSubset<T, ContactRoleConfigUpdateArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
 
     /**
-     * Delete zero or more PostgresConfigs.
-     * @param {PostgresConfigDeleteManyArgs} args - Arguments to filter PostgresConfigs to delete.
+     * Delete zero or more ContactRoleConfigs.
+     * @param {ContactRoleConfigDeleteManyArgs} args - Arguments to filter ContactRoleConfigs to delete.
      * @example
-     * // Delete a few PostgresConfigs
-     * const { count } = await prisma.postgresConfig.deleteMany({
+     * // Delete a few ContactRoleConfigs
+     * const { count } = await prisma.contactRoleConfig.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends PostgresConfigDeleteManyArgs>(args?: SelectSubset<T, PostgresConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends ContactRoleConfigDeleteManyArgs>(args?: SelectSubset<T, ContactRoleConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more PostgresConfigs.
+     * Update zero or more ContactRoleConfigs.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostgresConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {ContactRoleConfigUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many PostgresConfigs
-     * const postgresConfig = await prisma.postgresConfig.updateMany({
+     * // Update many ContactRoleConfigs
+     * const contactRoleConfig = await prisma.contactRoleConfig.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -23810,56 +24877,56 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends PostgresConfigUpdateManyArgs>(args: SelectSubset<T, PostgresConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends ContactRoleConfigUpdateManyArgs>(args: SelectSubset<T, ContactRoleConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create or update one PostgresConfig.
-     * @param {PostgresConfigUpsertArgs} args - Arguments to update or create a PostgresConfig.
+     * Create or update one ContactRoleConfig.
+     * @param {ContactRoleConfigUpsertArgs} args - Arguments to update or create a ContactRoleConfig.
      * @example
-     * // Update or create a PostgresConfig
-     * const postgresConfig = await prisma.postgresConfig.upsert({
+     * // Update or create a ContactRoleConfig
+     * const contactRoleConfig = await prisma.contactRoleConfig.upsert({
      *   create: {
-     *     // ... data to create a PostgresConfig
+     *     // ... data to create a ContactRoleConfig
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the PostgresConfig we want to update
+     *     // ... the filter for the ContactRoleConfig we want to update
      *   }
      * })
      */
-    upsert<T extends PostgresConfigUpsertArgs>(args: SelectSubset<T, PostgresConfigUpsertArgs<ExtArgs>>): Prisma__PostgresConfigClient<$Result.GetResult<Prisma.$PostgresConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ContactRoleConfigUpsertArgs>(args: SelectSubset<T, ContactRoleConfigUpsertArgs<ExtArgs>>): Prisma__ContactRoleConfigClient<$Result.GetResult<Prisma.$ContactRoleConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
 
 
     /**
-     * Count the number of PostgresConfigs.
+     * Count the number of ContactRoleConfigs.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostgresConfigCountArgs} args - Arguments to filter PostgresConfigs to count.
+     * @param {ContactRoleConfigCountArgs} args - Arguments to filter ContactRoleConfigs to count.
      * @example
-     * // Count the number of PostgresConfigs
-     * const count = await prisma.postgresConfig.count({
+     * // Count the number of ContactRoleConfigs
+     * const count = await prisma.contactRoleConfig.count({
      *   where: {
-     *     // ... the filter for the PostgresConfigs we want to count
+     *     // ... the filter for the ContactRoleConfigs we want to count
      *   }
      * })
     **/
-    count<T extends PostgresConfigCountArgs>(
-      args?: Subset<T, PostgresConfigCountArgs>,
+    count<T extends ContactRoleConfigCountArgs>(
+      args?: Subset<T, ContactRoleConfigCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], PostgresConfigCountAggregateOutputType>
+          : GetScalarType<T['select'], ContactRoleConfigCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a PostgresConfig.
+     * Allows you to perform aggregations operations on a ContactRoleConfig.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostgresConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {ContactRoleConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -23879,13 +24946,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends PostgresConfigAggregateArgs>(args: Subset<T, PostgresConfigAggregateArgs>): Prisma.PrismaPromise<GetPostgresConfigAggregateType<T>>
+    aggregate<T extends ContactRoleConfigAggregateArgs>(args: Subset<T, ContactRoleConfigAggregateArgs>): Prisma.PrismaPromise<GetContactRoleConfigAggregateType<T>>
 
     /**
-     * Group by PostgresConfig.
+     * Group by ContactRoleConfig.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {PostgresConfigGroupByArgs} args - Group by arguments.
+     * @param {ContactRoleConfigGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -23900,14 +24967,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends PostgresConfigGroupByArgs,
+      T extends ContactRoleConfigGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: PostgresConfigGroupByArgs['orderBy'] }
-        : { orderBy?: PostgresConfigGroupByArgs['orderBy'] },
+        ? { orderBy: ContactRoleConfigGroupByArgs['orderBy'] }
+        : { orderBy?: ContactRoleConfigGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -23956,20 +25023,20 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, PostgresConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPostgresConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, ContactRoleConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetContactRoleConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the PostgresConfig model
+   * Fields of the ContactRoleConfig model
    */
-  readonly fields: PostgresConfigFieldRefs;
+  readonly fields: ContactRoleConfigFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for PostgresConfig.
+   * The delegate class that acts as a "Promise-like" for ContactRoleConfig.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__PostgresConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ContactRoleConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -23997,299 +25064,300 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the PostgresConfig model
+   * Fields of the ContactRoleConfig model
    */ 
-  interface PostgresConfigFieldRefs {
-    readonly id: FieldRef<"PostgresConfig", 'Int'>
-    readonly host: FieldRef<"PostgresConfig", 'String'>
-    readonly port: FieldRef<"PostgresConfig", 'Int'>
-    readonly database: FieldRef<"PostgresConfig", 'String'>
-    readonly schema: FieldRef<"PostgresConfig", 'String'>
-    readonly user: FieldRef<"PostgresConfig", 'String'>
-    readonly password: FieldRef<"PostgresConfig", 'String'>
+  interface ContactRoleConfigFieldRefs {
+    readonly id: FieldRef<"ContactRoleConfig", 'Int'>
+    readonly nom: FieldRef<"ContactRoleConfig", 'String'>
+    readonly isSendAot: FieldRef<"ContactRoleConfig", 'Boolean'>
+    readonly ordre: FieldRef<"ContactRoleConfig", 'Int'>
+    readonly created_at: FieldRef<"ContactRoleConfig", 'DateTime'>
+    readonly updated_at: FieldRef<"ContactRoleConfig", 'DateTime'>
   }
     
 
   // Custom InputTypes
   /**
-   * PostgresConfig findUnique
+   * ContactRoleConfig findUnique
    */
-  export type PostgresConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
     /**
-     * Filter, which PostgresConfig to fetch.
+     * Filter, which ContactRoleConfig to fetch.
      */
-    where: PostgresConfigWhereUniqueInput
+    where: ContactRoleConfigWhereUniqueInput
   }
 
   /**
-   * PostgresConfig findUniqueOrThrow
+   * ContactRoleConfig findUniqueOrThrow
    */
-  export type PostgresConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
     /**
-     * Filter, which PostgresConfig to fetch.
+     * Filter, which ContactRoleConfig to fetch.
      */
-    where: PostgresConfigWhereUniqueInput
+    where: ContactRoleConfigWhereUniqueInput
   }
 
   /**
-   * PostgresConfig findFirst
+   * ContactRoleConfig findFirst
    */
-  export type PostgresConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
     /**
-     * Filter, which PostgresConfig to fetch.
+     * Filter, which ContactRoleConfig to fetch.
      */
-    where?: PostgresConfigWhereInput
+    where?: ContactRoleConfigWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of PostgresConfigs to fetch.
+     * Determine the order of ContactRoleConfigs to fetch.
      */
-    orderBy?: PostgresConfigOrderByWithRelationInput | PostgresConfigOrderByWithRelationInput[]
+    orderBy?: ContactRoleConfigOrderByWithRelationInput | ContactRoleConfigOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for PostgresConfigs.
+     * Sets the position for searching for ContactRoleConfigs.
      */
-    cursor?: PostgresConfigWhereUniqueInput
+    cursor?: ContactRoleConfigWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` PostgresConfigs from the position of the cursor.
+     * Take `±n` ContactRoleConfigs from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` PostgresConfigs.
+     * Skip the first `n` ContactRoleConfigs.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of PostgresConfigs.
+     * Filter by unique combinations of ContactRoleConfigs.
      */
-    distinct?: PostgresConfigScalarFieldEnum | PostgresConfigScalarFieldEnum[]
+    distinct?: ContactRoleConfigScalarFieldEnum | ContactRoleConfigScalarFieldEnum[]
   }
 
   /**
-   * PostgresConfig findFirstOrThrow
+   * ContactRoleConfig findFirstOrThrow
    */
-  export type PostgresConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
     /**
-     * Filter, which PostgresConfig to fetch.
+     * Filter, which ContactRoleConfig to fetch.
      */
-    where?: PostgresConfigWhereInput
+    where?: ContactRoleConfigWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of PostgresConfigs to fetch.
+     * Determine the order of ContactRoleConfigs to fetch.
      */
-    orderBy?: PostgresConfigOrderByWithRelationInput | PostgresConfigOrderByWithRelationInput[]
+    orderBy?: ContactRoleConfigOrderByWithRelationInput | ContactRoleConfigOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for PostgresConfigs.
+     * Sets the position for searching for ContactRoleConfigs.
      */
-    cursor?: PostgresConfigWhereUniqueInput
+    cursor?: ContactRoleConfigWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` PostgresConfigs from the position of the cursor.
+     * Take `±n` ContactRoleConfigs from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` PostgresConfigs.
+     * Skip the first `n` ContactRoleConfigs.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of PostgresConfigs.
+     * Filter by unique combinations of ContactRoleConfigs.
      */
-    distinct?: PostgresConfigScalarFieldEnum | PostgresConfigScalarFieldEnum[]
+    distinct?: ContactRoleConfigScalarFieldEnum | ContactRoleConfigScalarFieldEnum[]
   }
 
   /**
-   * PostgresConfig findMany
+   * ContactRoleConfig findMany
    */
-  export type PostgresConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
     /**
-     * Filter, which PostgresConfigs to fetch.
+     * Filter, which ContactRoleConfigs to fetch.
      */
-    where?: PostgresConfigWhereInput
+    where?: ContactRoleConfigWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of PostgresConfigs to fetch.
+     * Determine the order of ContactRoleConfigs to fetch.
      */
-    orderBy?: PostgresConfigOrderByWithRelationInput | PostgresConfigOrderByWithRelationInput[]
+    orderBy?: ContactRoleConfigOrderByWithRelationInput | ContactRoleConfigOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing PostgresConfigs.
+     * Sets the position for listing ContactRoleConfigs.
      */
-    cursor?: PostgresConfigWhereUniqueInput
+    cursor?: ContactRoleConfigWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` PostgresConfigs from the position of the cursor.
+     * Take `±n` ContactRoleConfigs from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` PostgresConfigs.
+     * Skip the first `n` ContactRoleConfigs.
      */
     skip?: number
-    distinct?: PostgresConfigScalarFieldEnum | PostgresConfigScalarFieldEnum[]
+    distinct?: ContactRoleConfigScalarFieldEnum | ContactRoleConfigScalarFieldEnum[]
   }
 
   /**
-   * PostgresConfig create
+   * ContactRoleConfig create
    */
-  export type PostgresConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
     /**
-     * The data needed to create a PostgresConfig.
+     * The data needed to create a ContactRoleConfig.
      */
-    data: XOR<PostgresConfigCreateInput, PostgresConfigUncheckedCreateInput>
+    data: XOR<ContactRoleConfigCreateInput, ContactRoleConfigUncheckedCreateInput>
   }
 
   /**
-   * PostgresConfig createMany
+   * ContactRoleConfig createMany
    */
-  export type PostgresConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many PostgresConfigs.
+     * The data used to create many ContactRoleConfigs.
      */
-    data: PostgresConfigCreateManyInput | PostgresConfigCreateManyInput[]
+    data: ContactRoleConfigCreateManyInput | ContactRoleConfigCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
-   * PostgresConfig createManyAndReturn
+   * ContactRoleConfig createManyAndReturn
    */
-  export type PostgresConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelectCreateManyAndReturn<ExtArgs> | null
+    select?: ContactRoleConfigSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * The data used to create many PostgresConfigs.
+     * The data used to create many ContactRoleConfigs.
      */
-    data: PostgresConfigCreateManyInput | PostgresConfigCreateManyInput[]
+    data: ContactRoleConfigCreateManyInput | ContactRoleConfigCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
-   * PostgresConfig update
+   * ContactRoleConfig update
    */
-  export type PostgresConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
     /**
-     * The data needed to update a PostgresConfig.
+     * The data needed to update a ContactRoleConfig.
      */
-    data: XOR<PostgresConfigUpdateInput, PostgresConfigUncheckedUpdateInput>
+    data: XOR<ContactRoleConfigUpdateInput, ContactRoleConfigUncheckedUpdateInput>
     /**
-     * Choose, which PostgresConfig to update.
+     * Choose, which ContactRoleConfig to update.
      */
-    where: PostgresConfigWhereUniqueInput
+    where: ContactRoleConfigWhereUniqueInput
   }
 
   /**
-   * PostgresConfig updateMany
+   * ContactRoleConfig updateMany
    */
-  export type PostgresConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update PostgresConfigs.
+     * The data used to update ContactRoleConfigs.
      */
-    data: XOR<PostgresConfigUpdateManyMutationInput, PostgresConfigUncheckedUpdateManyInput>
+    data: XOR<ContactRoleConfigUpdateManyMutationInput, ContactRoleConfigUncheckedUpdateManyInput>
     /**
-     * Filter which PostgresConfigs to update
+     * Filter which ContactRoleConfigs to update
      */
-    where?: PostgresConfigWhereInput
+    where?: ContactRoleConfigWhereInput
   }
 
   /**
-   * PostgresConfig upsert
+   * ContactRoleConfig upsert
    */
-  export type PostgresConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
     /**
-     * The filter to search for the PostgresConfig to update in case it exists.
+     * The filter to search for the ContactRoleConfig to update in case it exists.
      */
-    where: PostgresConfigWhereUniqueInput
+    where: ContactRoleConfigWhereUniqueInput
     /**
-     * In case the PostgresConfig found by the `where` argument doesn't exist, create a new PostgresConfig with this data.
+     * In case the ContactRoleConfig found by the `where` argument doesn't exist, create a new ContactRoleConfig with this data.
      */
-    create: XOR<PostgresConfigCreateInput, PostgresConfigUncheckedCreateInput>
+    create: XOR<ContactRoleConfigCreateInput, ContactRoleConfigUncheckedCreateInput>
     /**
-     * In case the PostgresConfig was found with the provided `where` argument, update it with this data.
+     * In case the ContactRoleConfig was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<PostgresConfigUpdateInput, PostgresConfigUncheckedUpdateInput>
+    update: XOR<ContactRoleConfigUpdateInput, ContactRoleConfigUncheckedUpdateInput>
   }
 
   /**
-   * PostgresConfig delete
+   * ContactRoleConfig delete
    */
-  export type PostgresConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
     /**
-     * Filter which PostgresConfig to delete.
+     * Filter which ContactRoleConfig to delete.
      */
-    where: PostgresConfigWhereUniqueInput
+    where: ContactRoleConfigWhereUniqueInput
   }
 
   /**
-   * PostgresConfig deleteMany
+   * ContactRoleConfig deleteMany
    */
-  export type PostgresConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which PostgresConfigs to delete
+     * Filter which ContactRoleConfigs to delete
      */
-    where?: PostgresConfigWhereInput
+    where?: ContactRoleConfigWhereInput
   }
 
   /**
-   * PostgresConfig without action
+   * ContactRoleConfig without action
    */
-  export type PostgresConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ContactRoleConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the PostgresConfig
+     * Select specific fields to fetch from the ContactRoleConfig
      */
-    select?: PostgresConfigSelect<ExtArgs> | null
+    select?: ContactRoleConfigSelect<ExtArgs> | null
   }
 
 
@@ -25086,6 +26154,7 @@ export namespace Prisma {
      * The data used to create many OdpConfigs.
      */
     data: OdpConfigCreateManyInput | OdpConfigCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -25100,6 +26169,7 @@ export namespace Prisma {
      * The data used to create many OdpConfigs.
      */
     data: OdpConfigCreateManyInput | OdpConfigCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -26070,6 +27140,7 @@ export namespace Prisma {
      * The data used to create many BillingRuns.
      */
     data: BillingRunCreateManyInput | BillingRunCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -26084,6 +27155,7 @@ export namespace Prisma {
      * The data used to create many BillingRuns.
      */
     data: BillingRunCreateManyInput | BillingRunCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -27083,6 +28155,7 @@ export namespace Prisma {
      * The data used to create many BillingRunInvoices.
      */
     data: BillingRunInvoiceCreateManyInput | BillingRunInvoiceCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -27097,6 +28170,7 @@ export namespace Prisma {
      * The data used to create many BillingRunInvoices.
      */
     data: BillingRunInvoiceCreateManyInput | BillingRunInvoiceCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -28131,6 +29205,7 @@ export namespace Prisma {
      * The data used to create many Signatories.
      */
     data: SignatoryCreateManyInput | SignatoryCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -28145,6 +29220,7 @@ export namespace Prisma {
      * The data used to create many Signatories.
      */
     data: SignatoryCreateManyInput | SignatoryCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -28305,6 +29381,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | null
     rejectionComment: string | null
     signedAt: Date | null
+    requestedByLogin: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -28318,6 +29395,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | null
     rejectionComment: string | null
     signedAt: Date | null
+    requestedByLogin: string | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -28331,6 +29409,7 @@ export namespace Prisma {
     tokenExpiresAt: number
     rejectionComment: number
     signedAt: number
+    requestedByLogin: number
     created_at: number
     updated_at: number
     _all: number
@@ -28358,6 +29437,7 @@ export namespace Prisma {
     tokenExpiresAt?: true
     rejectionComment?: true
     signedAt?: true
+    requestedByLogin?: true
     created_at?: true
     updated_at?: true
   }
@@ -28371,6 +29451,7 @@ export namespace Prisma {
     tokenExpiresAt?: true
     rejectionComment?: true
     signedAt?: true
+    requestedByLogin?: true
     created_at?: true
     updated_at?: true
   }
@@ -28384,6 +29465,7 @@ export namespace Prisma {
     tokenExpiresAt?: true
     rejectionComment?: true
     signedAt?: true
+    requestedByLogin?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -28484,6 +29566,7 @@ export namespace Prisma {
     tokenExpiresAt: Date
     rejectionComment: string | null
     signedAt: Date | null
+    requestedByLogin: string | null
     created_at: Date
     updated_at: Date
     _count: SignatureRequestCountAggregateOutputType | null
@@ -28516,6 +29599,7 @@ export namespace Prisma {
     tokenExpiresAt?: boolean
     rejectionComment?: boolean
     signedAt?: boolean
+    requestedByLogin?: boolean
     created_at?: boolean
     updated_at?: boolean
     occupation?: boolean | OccupationDefaultArgs<ExtArgs>
@@ -28531,6 +29615,7 @@ export namespace Prisma {
     tokenExpiresAt?: boolean
     rejectionComment?: boolean
     signedAt?: boolean
+    requestedByLogin?: boolean
     created_at?: boolean
     updated_at?: boolean
     occupation?: boolean | OccupationDefaultArgs<ExtArgs>
@@ -28546,6 +29631,7 @@ export namespace Prisma {
     tokenExpiresAt?: boolean
     rejectionComment?: boolean
     signedAt?: boolean
+    requestedByLogin?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
@@ -28574,6 +29660,7 @@ export namespace Prisma {
       tokenExpiresAt: Date
       rejectionComment: string | null
       signedAt: Date | null
+      requestedByLogin: string | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["signatureRequest"]>
@@ -28979,6 +30066,7 @@ export namespace Prisma {
     readonly tokenExpiresAt: FieldRef<"SignatureRequest", 'DateTime'>
     readonly rejectionComment: FieldRef<"SignatureRequest", 'String'>
     readonly signedAt: FieldRef<"SignatureRequest", 'DateTime'>
+    readonly requestedByLogin: FieldRef<"SignatureRequest", 'String'>
     readonly created_at: FieldRef<"SignatureRequest", 'DateTime'>
     readonly updated_at: FieldRef<"SignatureRequest", 'DateTime'>
   }
@@ -29186,6 +30274,7 @@ export namespace Prisma {
      * The data used to create many SignatureRequests.
      */
     data: SignatureRequestCreateManyInput | SignatureRequestCreateManyInput[]
+    skipDuplicates?: boolean
   }
 
   /**
@@ -29200,6 +30289,7 @@ export namespace Prisma {
      * The data used to create many SignatureRequests.
      */
     data: SignatureRequestCreateManyInput | SignatureRequestCreateManyInput[]
+    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -29312,10 +30402,1457 @@ export namespace Prisma {
 
 
   /**
+   * Model AppSettings
+   */
+
+  export type AggregateAppSettings = {
+    _count: AppSettingsCountAggregateOutputType | null
+    _avg: AppSettingsAvgAggregateOutputType | null
+    _sum: AppSettingsSumAggregateOutputType | null
+    _min: AppSettingsMinAggregateOutputType | null
+    _max: AppSettingsMaxAggregateOutputType | null
+  }
+
+  export type AppSettingsAvgAggregateOutputType = {
+    id: number | null
+    filienExercice: number | null
+  }
+
+  export type AppSettingsSumAggregateOutputType = {
+    id: number | null
+    filienExercice: number | null
+  }
+
+  export type AppSettingsMinAggregateOutputType = {
+    id: number | null
+    financeEmail: string | null
+    appUrl: string | null
+    apmUrl: string | null
+    apmToken: string | null
+    senderName: string | null
+    senderEmail: string | null
+    filienOrga: string | null
+    filienBudget: string | null
+    filienExercice: number | null
+    filienAvancement: string | null
+    filienRejetDispo: boolean | null
+    filienRejetCA: boolean | null
+    filienRejetMarche: boolean | null
+    filienMouvement: string | null
+    filienType: string | null
+    filienLibelle: string | null
+    filienCalendrier: string | null
+    filienMonnaie: string | null
+    filienMouvementEx: string | null
+    filienPreBordereau: string | null
+    filienPoste: string | null
+    filienBordereau: string | null
+    filienObjet: string | null
+    filienChapitre: string | null
+    filienNature: string | null
+    filienFonction: string | null
+    filienCodeInterne: string | null
+    filienTypeMouvement: string | null
+    filienSens: string | null
+    filienStructure: string | null
+    filienGestionnaire: string | null
+    filienUncPj: string | null
+    adDomain: string | null
+    signataireRole: string | null
+    signataireDelegation: string | null
+    signataireNom: string | null
+    footer1: string | null
+    footer2: string | null
+    footer3: string | null
+    footerColor: string | null
+    updated_at: Date | null
+    filienUncPass: string | null
+    filienUncUser: string | null
+    filienUncDomain: string | null
+    watermark: string | null
+    dbMode: string | null
+    autoDistributeInvoices: boolean | null
+    distributeOnlyVerified: boolean | null
+  }
+
+  export type AppSettingsMaxAggregateOutputType = {
+    id: number | null
+    financeEmail: string | null
+    appUrl: string | null
+    apmUrl: string | null
+    apmToken: string | null
+    senderName: string | null
+    senderEmail: string | null
+    filienOrga: string | null
+    filienBudget: string | null
+    filienExercice: number | null
+    filienAvancement: string | null
+    filienRejetDispo: boolean | null
+    filienRejetCA: boolean | null
+    filienRejetMarche: boolean | null
+    filienMouvement: string | null
+    filienType: string | null
+    filienLibelle: string | null
+    filienCalendrier: string | null
+    filienMonnaie: string | null
+    filienMouvementEx: string | null
+    filienPreBordereau: string | null
+    filienPoste: string | null
+    filienBordereau: string | null
+    filienObjet: string | null
+    filienChapitre: string | null
+    filienNature: string | null
+    filienFonction: string | null
+    filienCodeInterne: string | null
+    filienTypeMouvement: string | null
+    filienSens: string | null
+    filienStructure: string | null
+    filienGestionnaire: string | null
+    filienUncPj: string | null
+    adDomain: string | null
+    signataireRole: string | null
+    signataireDelegation: string | null
+    signataireNom: string | null
+    footer1: string | null
+    footer2: string | null
+    footer3: string | null
+    footerColor: string | null
+    updated_at: Date | null
+    filienUncPass: string | null
+    filienUncUser: string | null
+    filienUncDomain: string | null
+    watermark: string | null
+    dbMode: string | null
+    autoDistributeInvoices: boolean | null
+    distributeOnlyVerified: boolean | null
+  }
+
+  export type AppSettingsCountAggregateOutputType = {
+    id: number
+    financeEmail: number
+    appUrl: number
+    apmUrl: number
+    apmToken: number
+    senderName: number
+    senderEmail: number
+    filienOrga: number
+    filienBudget: number
+    filienExercice: number
+    filienAvancement: number
+    filienRejetDispo: number
+    filienRejetCA: number
+    filienRejetMarche: number
+    filienMouvement: number
+    filienType: number
+    filienLibelle: number
+    filienCalendrier: number
+    filienMonnaie: number
+    filienMouvementEx: number
+    filienPreBordereau: number
+    filienPoste: number
+    filienBordereau: number
+    filienObjet: number
+    filienChapitre: number
+    filienNature: number
+    filienFonction: number
+    filienCodeInterne: number
+    filienTypeMouvement: number
+    filienSens: number
+    filienStructure: number
+    filienGestionnaire: number
+    filienUncPj: number
+    adDomain: number
+    signataireRole: number
+    signataireDelegation: number
+    signataireNom: number
+    footer1: number
+    footer2: number
+    footer3: number
+    footerColor: number
+    updated_at: number
+    filienUncPass: number
+    filienUncUser: number
+    filienUncDomain: number
+    watermark: number
+    dbMode: number
+    autoDistributeInvoices: number
+    distributeOnlyVerified: number
+    _all: number
+  }
+
+
+  export type AppSettingsAvgAggregateInputType = {
+    id?: true
+    filienExercice?: true
+  }
+
+  export type AppSettingsSumAggregateInputType = {
+    id?: true
+    filienExercice?: true
+  }
+
+  export type AppSettingsMinAggregateInputType = {
+    id?: true
+    financeEmail?: true
+    appUrl?: true
+    apmUrl?: true
+    apmToken?: true
+    senderName?: true
+    senderEmail?: true
+    filienOrga?: true
+    filienBudget?: true
+    filienExercice?: true
+    filienAvancement?: true
+    filienRejetDispo?: true
+    filienRejetCA?: true
+    filienRejetMarche?: true
+    filienMouvement?: true
+    filienType?: true
+    filienLibelle?: true
+    filienCalendrier?: true
+    filienMonnaie?: true
+    filienMouvementEx?: true
+    filienPreBordereau?: true
+    filienPoste?: true
+    filienBordereau?: true
+    filienObjet?: true
+    filienChapitre?: true
+    filienNature?: true
+    filienFonction?: true
+    filienCodeInterne?: true
+    filienTypeMouvement?: true
+    filienSens?: true
+    filienStructure?: true
+    filienGestionnaire?: true
+    filienUncPj?: true
+    adDomain?: true
+    signataireRole?: true
+    signataireDelegation?: true
+    signataireNom?: true
+    footer1?: true
+    footer2?: true
+    footer3?: true
+    footerColor?: true
+    updated_at?: true
+    filienUncPass?: true
+    filienUncUser?: true
+    filienUncDomain?: true
+    watermark?: true
+    dbMode?: true
+    autoDistributeInvoices?: true
+    distributeOnlyVerified?: true
+  }
+
+  export type AppSettingsMaxAggregateInputType = {
+    id?: true
+    financeEmail?: true
+    appUrl?: true
+    apmUrl?: true
+    apmToken?: true
+    senderName?: true
+    senderEmail?: true
+    filienOrga?: true
+    filienBudget?: true
+    filienExercice?: true
+    filienAvancement?: true
+    filienRejetDispo?: true
+    filienRejetCA?: true
+    filienRejetMarche?: true
+    filienMouvement?: true
+    filienType?: true
+    filienLibelle?: true
+    filienCalendrier?: true
+    filienMonnaie?: true
+    filienMouvementEx?: true
+    filienPreBordereau?: true
+    filienPoste?: true
+    filienBordereau?: true
+    filienObjet?: true
+    filienChapitre?: true
+    filienNature?: true
+    filienFonction?: true
+    filienCodeInterne?: true
+    filienTypeMouvement?: true
+    filienSens?: true
+    filienStructure?: true
+    filienGestionnaire?: true
+    filienUncPj?: true
+    adDomain?: true
+    signataireRole?: true
+    signataireDelegation?: true
+    signataireNom?: true
+    footer1?: true
+    footer2?: true
+    footer3?: true
+    footerColor?: true
+    updated_at?: true
+    filienUncPass?: true
+    filienUncUser?: true
+    filienUncDomain?: true
+    watermark?: true
+    dbMode?: true
+    autoDistributeInvoices?: true
+    distributeOnlyVerified?: true
+  }
+
+  export type AppSettingsCountAggregateInputType = {
+    id?: true
+    financeEmail?: true
+    appUrl?: true
+    apmUrl?: true
+    apmToken?: true
+    senderName?: true
+    senderEmail?: true
+    filienOrga?: true
+    filienBudget?: true
+    filienExercice?: true
+    filienAvancement?: true
+    filienRejetDispo?: true
+    filienRejetCA?: true
+    filienRejetMarche?: true
+    filienMouvement?: true
+    filienType?: true
+    filienLibelle?: true
+    filienCalendrier?: true
+    filienMonnaie?: true
+    filienMouvementEx?: true
+    filienPreBordereau?: true
+    filienPoste?: true
+    filienBordereau?: true
+    filienObjet?: true
+    filienChapitre?: true
+    filienNature?: true
+    filienFonction?: true
+    filienCodeInterne?: true
+    filienTypeMouvement?: true
+    filienSens?: true
+    filienStructure?: true
+    filienGestionnaire?: true
+    filienUncPj?: true
+    adDomain?: true
+    signataireRole?: true
+    signataireDelegation?: true
+    signataireNom?: true
+    footer1?: true
+    footer2?: true
+    footer3?: true
+    footerColor?: true
+    updated_at?: true
+    filienUncPass?: true
+    filienUncUser?: true
+    filienUncDomain?: true
+    watermark?: true
+    dbMode?: true
+    autoDistributeInvoices?: true
+    distributeOnlyVerified?: true
+    _all?: true
+  }
+
+  export type AppSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppSettings to aggregate.
+     */
+    where?: AppSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AppSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AppSettings
+    **/
+    _count?: true | AppSettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AppSettingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AppSettingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AppSettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AppSettingsMaxAggregateInputType
+  }
+
+  export type GetAppSettingsAggregateType<T extends AppSettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateAppSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAppSettings[P]>
+      : GetScalarType<T[P], AggregateAppSettings[P]>
+  }
+
+
+
+
+  export type AppSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AppSettingsWhereInput
+    orderBy?: AppSettingsOrderByWithAggregationInput | AppSettingsOrderByWithAggregationInput[]
+    by: AppSettingsScalarFieldEnum[] | AppSettingsScalarFieldEnum
+    having?: AppSettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AppSettingsCountAggregateInputType | true
+    _avg?: AppSettingsAvgAggregateInputType
+    _sum?: AppSettingsSumAggregateInputType
+    _min?: AppSettingsMinAggregateInputType
+    _max?: AppSettingsMaxAggregateInputType
+  }
+
+  export type AppSettingsGroupByOutputType = {
+    id: number
+    financeEmail: string | null
+    appUrl: string | null
+    apmUrl: string | null
+    apmToken: string | null
+    senderName: string | null
+    senderEmail: string | null
+    filienOrga: string | null
+    filienBudget: string | null
+    filienExercice: number | null
+    filienAvancement: string | null
+    filienRejetDispo: boolean | null
+    filienRejetCA: boolean | null
+    filienRejetMarche: boolean | null
+    filienMouvement: string | null
+    filienType: string | null
+    filienLibelle: string | null
+    filienCalendrier: string | null
+    filienMonnaie: string | null
+    filienMouvementEx: string | null
+    filienPreBordereau: string | null
+    filienPoste: string | null
+    filienBordereau: string | null
+    filienObjet: string | null
+    filienChapitre: string | null
+    filienNature: string | null
+    filienFonction: string | null
+    filienCodeInterne: string | null
+    filienTypeMouvement: string | null
+    filienSens: string | null
+    filienStructure: string | null
+    filienGestionnaire: string | null
+    filienUncPj: string | null
+    adDomain: string | null
+    signataireRole: string | null
+    signataireDelegation: string | null
+    signataireNom: string | null
+    footer1: string | null
+    footer2: string | null
+    footer3: string | null
+    footerColor: string | null
+    updated_at: Date
+    filienUncPass: string | null
+    filienUncUser: string | null
+    filienUncDomain: string | null
+    watermark: string | null
+    dbMode: string
+    autoDistributeInvoices: boolean
+    distributeOnlyVerified: boolean
+    _count: AppSettingsCountAggregateOutputType | null
+    _avg: AppSettingsAvgAggregateOutputType | null
+    _sum: AppSettingsSumAggregateOutputType | null
+    _min: AppSettingsMinAggregateOutputType | null
+    _max: AppSettingsMaxAggregateOutputType | null
+  }
+
+  type GetAppSettingsGroupByPayload<T extends AppSettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AppSettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AppSettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AppSettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], AppSettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AppSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    financeEmail?: boolean
+    appUrl?: boolean
+    apmUrl?: boolean
+    apmToken?: boolean
+    senderName?: boolean
+    senderEmail?: boolean
+    filienOrga?: boolean
+    filienBudget?: boolean
+    filienExercice?: boolean
+    filienAvancement?: boolean
+    filienRejetDispo?: boolean
+    filienRejetCA?: boolean
+    filienRejetMarche?: boolean
+    filienMouvement?: boolean
+    filienType?: boolean
+    filienLibelle?: boolean
+    filienCalendrier?: boolean
+    filienMonnaie?: boolean
+    filienMouvementEx?: boolean
+    filienPreBordereau?: boolean
+    filienPoste?: boolean
+    filienBordereau?: boolean
+    filienObjet?: boolean
+    filienChapitre?: boolean
+    filienNature?: boolean
+    filienFonction?: boolean
+    filienCodeInterne?: boolean
+    filienTypeMouvement?: boolean
+    filienSens?: boolean
+    filienStructure?: boolean
+    filienGestionnaire?: boolean
+    filienUncPj?: boolean
+    adDomain?: boolean
+    signataireRole?: boolean
+    signataireDelegation?: boolean
+    signataireNom?: boolean
+    footer1?: boolean
+    footer2?: boolean
+    footer3?: boolean
+    footerColor?: boolean
+    updated_at?: boolean
+    filienUncPass?: boolean
+    filienUncUser?: boolean
+    filienUncDomain?: boolean
+    watermark?: boolean
+    dbMode?: boolean
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }, ExtArgs["result"]["appSettings"]>
+
+  export type AppSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    financeEmail?: boolean
+    appUrl?: boolean
+    apmUrl?: boolean
+    apmToken?: boolean
+    senderName?: boolean
+    senderEmail?: boolean
+    filienOrga?: boolean
+    filienBudget?: boolean
+    filienExercice?: boolean
+    filienAvancement?: boolean
+    filienRejetDispo?: boolean
+    filienRejetCA?: boolean
+    filienRejetMarche?: boolean
+    filienMouvement?: boolean
+    filienType?: boolean
+    filienLibelle?: boolean
+    filienCalendrier?: boolean
+    filienMonnaie?: boolean
+    filienMouvementEx?: boolean
+    filienPreBordereau?: boolean
+    filienPoste?: boolean
+    filienBordereau?: boolean
+    filienObjet?: boolean
+    filienChapitre?: boolean
+    filienNature?: boolean
+    filienFonction?: boolean
+    filienCodeInterne?: boolean
+    filienTypeMouvement?: boolean
+    filienSens?: boolean
+    filienStructure?: boolean
+    filienGestionnaire?: boolean
+    filienUncPj?: boolean
+    adDomain?: boolean
+    signataireRole?: boolean
+    signataireDelegation?: boolean
+    signataireNom?: boolean
+    footer1?: boolean
+    footer2?: boolean
+    footer3?: boolean
+    footerColor?: boolean
+    updated_at?: boolean
+    filienUncPass?: boolean
+    filienUncUser?: boolean
+    filienUncDomain?: boolean
+    watermark?: boolean
+    dbMode?: boolean
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }, ExtArgs["result"]["appSettings"]>
+
+  export type AppSettingsSelectScalar = {
+    id?: boolean
+    financeEmail?: boolean
+    appUrl?: boolean
+    apmUrl?: boolean
+    apmToken?: boolean
+    senderName?: boolean
+    senderEmail?: boolean
+    filienOrga?: boolean
+    filienBudget?: boolean
+    filienExercice?: boolean
+    filienAvancement?: boolean
+    filienRejetDispo?: boolean
+    filienRejetCA?: boolean
+    filienRejetMarche?: boolean
+    filienMouvement?: boolean
+    filienType?: boolean
+    filienLibelle?: boolean
+    filienCalendrier?: boolean
+    filienMonnaie?: boolean
+    filienMouvementEx?: boolean
+    filienPreBordereau?: boolean
+    filienPoste?: boolean
+    filienBordereau?: boolean
+    filienObjet?: boolean
+    filienChapitre?: boolean
+    filienNature?: boolean
+    filienFonction?: boolean
+    filienCodeInterne?: boolean
+    filienTypeMouvement?: boolean
+    filienSens?: boolean
+    filienStructure?: boolean
+    filienGestionnaire?: boolean
+    filienUncPj?: boolean
+    adDomain?: boolean
+    signataireRole?: boolean
+    signataireDelegation?: boolean
+    signataireNom?: boolean
+    footer1?: boolean
+    footer2?: boolean
+    footer3?: boolean
+    footerColor?: boolean
+    updated_at?: boolean
+    filienUncPass?: boolean
+    filienUncUser?: boolean
+    filienUncDomain?: boolean
+    watermark?: boolean
+    dbMode?: boolean
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }
+
+
+  export type $AppSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AppSettings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      financeEmail: string | null
+      appUrl: string | null
+      apmUrl: string | null
+      apmToken: string | null
+      senderName: string | null
+      senderEmail: string | null
+      filienOrga: string | null
+      filienBudget: string | null
+      filienExercice: number | null
+      filienAvancement: string | null
+      filienRejetDispo: boolean | null
+      filienRejetCA: boolean | null
+      filienRejetMarche: boolean | null
+      filienMouvement: string | null
+      filienType: string | null
+      filienLibelle: string | null
+      filienCalendrier: string | null
+      filienMonnaie: string | null
+      filienMouvementEx: string | null
+      filienPreBordereau: string | null
+      filienPoste: string | null
+      filienBordereau: string | null
+      filienObjet: string | null
+      filienChapitre: string | null
+      filienNature: string | null
+      filienFonction: string | null
+      filienCodeInterne: string | null
+      filienTypeMouvement: string | null
+      filienSens: string | null
+      filienStructure: string | null
+      filienGestionnaire: string | null
+      filienUncPj: string | null
+      adDomain: string | null
+      signataireRole: string | null
+      signataireDelegation: string | null
+      signataireNom: string | null
+      footer1: string | null
+      footer2: string | null
+      footer3: string | null
+      footerColor: string | null
+      updated_at: Date
+      filienUncPass: string | null
+      filienUncUser: string | null
+      filienUncDomain: string | null
+      watermark: string | null
+      dbMode: string
+      autoDistributeInvoices: boolean
+      distributeOnlyVerified: boolean
+    }, ExtArgs["result"]["appSettings"]>
+    composites: {}
+  }
+
+  type AppSettingsGetPayload<S extends boolean | null | undefined | AppSettingsDefaultArgs> = $Result.GetResult<Prisma.$AppSettingsPayload, S>
+
+  type AppSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<AppSettingsFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: AppSettingsCountAggregateInputType | true
+    }
+
+  export interface AppSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AppSettings'], meta: { name: 'AppSettings' } }
+    /**
+     * Find zero or one AppSettings that matches the filter.
+     * @param {AppSettingsFindUniqueArgs} args - Arguments to find a AppSettings
+     * @example
+     * // Get one AppSettings
+     * const appSettings = await prisma.appSettings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AppSettingsFindUniqueArgs>(args: SelectSubset<T, AppSettingsFindUniqueArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one AppSettings that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {AppSettingsFindUniqueOrThrowArgs} args - Arguments to find a AppSettings
+     * @example
+     * // Get one AppSettings
+     * const appSettings = await prisma.appSettings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AppSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, AppSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first AppSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsFindFirstArgs} args - Arguments to find a AppSettings
+     * @example
+     * // Get one AppSettings
+     * const appSettings = await prisma.appSettings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AppSettingsFindFirstArgs>(args?: SelectSubset<T, AppSettingsFindFirstArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first AppSettings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsFindFirstOrThrowArgs} args - Arguments to find a AppSettings
+     * @example
+     * // Get one AppSettings
+     * const appSettings = await prisma.appSettings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AppSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, AppSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more AppSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AppSettings
+     * const appSettings = await prisma.appSettings.findMany()
+     * 
+     * // Get first 10 AppSettings
+     * const appSettings = await prisma.appSettings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const appSettingsWithIdOnly = await prisma.appSettings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AppSettingsFindManyArgs>(args?: SelectSubset<T, AppSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a AppSettings.
+     * @param {AppSettingsCreateArgs} args - Arguments to create a AppSettings.
+     * @example
+     * // Create one AppSettings
+     * const AppSettings = await prisma.appSettings.create({
+     *   data: {
+     *     // ... data to create a AppSettings
+     *   }
+     * })
+     * 
+     */
+    create<T extends AppSettingsCreateArgs>(args: SelectSubset<T, AppSettingsCreateArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many AppSettings.
+     * @param {AppSettingsCreateManyArgs} args - Arguments to create many AppSettings.
+     * @example
+     * // Create many AppSettings
+     * const appSettings = await prisma.appSettings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AppSettingsCreateManyArgs>(args?: SelectSubset<T, AppSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AppSettings and returns the data saved in the database.
+     * @param {AppSettingsCreateManyAndReturnArgs} args - Arguments to create many AppSettings.
+     * @example
+     * // Create many AppSettings
+     * const appSettings = await prisma.appSettings.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AppSettings and only return the `id`
+     * const appSettingsWithIdOnly = await prisma.appSettings.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AppSettingsCreateManyAndReturnArgs>(args?: SelectSubset<T, AppSettingsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a AppSettings.
+     * @param {AppSettingsDeleteArgs} args - Arguments to delete one AppSettings.
+     * @example
+     * // Delete one AppSettings
+     * const AppSettings = await prisma.appSettings.delete({
+     *   where: {
+     *     // ... filter to delete one AppSettings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AppSettingsDeleteArgs>(args: SelectSubset<T, AppSettingsDeleteArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one AppSettings.
+     * @param {AppSettingsUpdateArgs} args - Arguments to update one AppSettings.
+     * @example
+     * // Update one AppSettings
+     * const appSettings = await prisma.appSettings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AppSettingsUpdateArgs>(args: SelectSubset<T, AppSettingsUpdateArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more AppSettings.
+     * @param {AppSettingsDeleteManyArgs} args - Arguments to filter AppSettings to delete.
+     * @example
+     * // Delete a few AppSettings
+     * const { count } = await prisma.appSettings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AppSettingsDeleteManyArgs>(args?: SelectSubset<T, AppSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AppSettings
+     * const appSettings = await prisma.appSettings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AppSettingsUpdateManyArgs>(args: SelectSubset<T, AppSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one AppSettings.
+     * @param {AppSettingsUpsertArgs} args - Arguments to update or create a AppSettings.
+     * @example
+     * // Update or create a AppSettings
+     * const appSettings = await prisma.appSettings.upsert({
+     *   create: {
+     *     // ... data to create a AppSettings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AppSettings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AppSettingsUpsertArgs>(args: SelectSubset<T, AppSettingsUpsertArgs<ExtArgs>>): Prisma__AppSettingsClient<$Result.GetResult<Prisma.$AppSettingsPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsCountArgs} args - Arguments to filter AppSettings to count.
+     * @example
+     * // Count the number of AppSettings
+     * const count = await prisma.appSettings.count({
+     *   where: {
+     *     // ... the filter for the AppSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends AppSettingsCountArgs>(
+      args?: Subset<T, AppSettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AppSettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AppSettingsAggregateArgs>(args: Subset<T, AppSettingsAggregateArgs>): Prisma.PrismaPromise<GetAppSettingsAggregateType<T>>
+
+    /**
+     * Group by AppSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppSettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AppSettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AppSettingsGroupByArgs['orderBy'] }
+        : { orderBy?: AppSettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AppSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAppSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AppSettings model
+   */
+  readonly fields: AppSettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AppSettings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AppSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AppSettings model
+   */ 
+  interface AppSettingsFieldRefs {
+    readonly id: FieldRef<"AppSettings", 'Int'>
+    readonly financeEmail: FieldRef<"AppSettings", 'String'>
+    readonly appUrl: FieldRef<"AppSettings", 'String'>
+    readonly apmUrl: FieldRef<"AppSettings", 'String'>
+    readonly apmToken: FieldRef<"AppSettings", 'String'>
+    readonly senderName: FieldRef<"AppSettings", 'String'>
+    readonly senderEmail: FieldRef<"AppSettings", 'String'>
+    readonly filienOrga: FieldRef<"AppSettings", 'String'>
+    readonly filienBudget: FieldRef<"AppSettings", 'String'>
+    readonly filienExercice: FieldRef<"AppSettings", 'Int'>
+    readonly filienAvancement: FieldRef<"AppSettings", 'String'>
+    readonly filienRejetDispo: FieldRef<"AppSettings", 'Boolean'>
+    readonly filienRejetCA: FieldRef<"AppSettings", 'Boolean'>
+    readonly filienRejetMarche: FieldRef<"AppSettings", 'Boolean'>
+    readonly filienMouvement: FieldRef<"AppSettings", 'String'>
+    readonly filienType: FieldRef<"AppSettings", 'String'>
+    readonly filienLibelle: FieldRef<"AppSettings", 'String'>
+    readonly filienCalendrier: FieldRef<"AppSettings", 'String'>
+    readonly filienMonnaie: FieldRef<"AppSettings", 'String'>
+    readonly filienMouvementEx: FieldRef<"AppSettings", 'String'>
+    readonly filienPreBordereau: FieldRef<"AppSettings", 'String'>
+    readonly filienPoste: FieldRef<"AppSettings", 'String'>
+    readonly filienBordereau: FieldRef<"AppSettings", 'String'>
+    readonly filienObjet: FieldRef<"AppSettings", 'String'>
+    readonly filienChapitre: FieldRef<"AppSettings", 'String'>
+    readonly filienNature: FieldRef<"AppSettings", 'String'>
+    readonly filienFonction: FieldRef<"AppSettings", 'String'>
+    readonly filienCodeInterne: FieldRef<"AppSettings", 'String'>
+    readonly filienTypeMouvement: FieldRef<"AppSettings", 'String'>
+    readonly filienSens: FieldRef<"AppSettings", 'String'>
+    readonly filienStructure: FieldRef<"AppSettings", 'String'>
+    readonly filienGestionnaire: FieldRef<"AppSettings", 'String'>
+    readonly filienUncPj: FieldRef<"AppSettings", 'String'>
+    readonly adDomain: FieldRef<"AppSettings", 'String'>
+    readonly signataireRole: FieldRef<"AppSettings", 'String'>
+    readonly signataireDelegation: FieldRef<"AppSettings", 'String'>
+    readonly signataireNom: FieldRef<"AppSettings", 'String'>
+    readonly footer1: FieldRef<"AppSettings", 'String'>
+    readonly footer2: FieldRef<"AppSettings", 'String'>
+    readonly footer3: FieldRef<"AppSettings", 'String'>
+    readonly footerColor: FieldRef<"AppSettings", 'String'>
+    readonly updated_at: FieldRef<"AppSettings", 'DateTime'>
+    readonly filienUncPass: FieldRef<"AppSettings", 'String'>
+    readonly filienUncUser: FieldRef<"AppSettings", 'String'>
+    readonly filienUncDomain: FieldRef<"AppSettings", 'String'>
+    readonly watermark: FieldRef<"AppSettings", 'String'>
+    readonly dbMode: FieldRef<"AppSettings", 'String'>
+    readonly autoDistributeInvoices: FieldRef<"AppSettings", 'Boolean'>
+    readonly distributeOnlyVerified: FieldRef<"AppSettings", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AppSettings findUnique
+   */
+  export type AppSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where: AppSettingsWhereUniqueInput
+  }
+
+  /**
+   * AppSettings findUniqueOrThrow
+   */
+  export type AppSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where: AppSettingsWhereUniqueInput
+  }
+
+  /**
+   * AppSettings findFirst
+   */
+  export type AppSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where?: AppSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppSettings.
+     */
+    cursor?: AppSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppSettings.
+     */
+    distinct?: AppSettingsScalarFieldEnum | AppSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * AppSettings findFirstOrThrow
+   */
+  export type AppSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where?: AppSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppSettings.
+     */
+    cursor?: AppSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppSettings.
+     */
+    distinct?: AppSettingsScalarFieldEnum | AppSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * AppSettings findMany
+   */
+  export type AppSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter, which AppSettings to fetch.
+     */
+    where?: AppSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppSettings to fetch.
+     */
+    orderBy?: AppSettingsOrderByWithRelationInput | AppSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AppSettings.
+     */
+    cursor?: AppSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppSettings.
+     */
+    skip?: number
+    distinct?: AppSettingsScalarFieldEnum | AppSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * AppSettings create
+   */
+  export type AppSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * The data needed to create a AppSettings.
+     */
+    data: XOR<AppSettingsCreateInput, AppSettingsUncheckedCreateInput>
+  }
+
+  /**
+   * AppSettings createMany
+   */
+  export type AppSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AppSettings.
+     */
+    data: AppSettingsCreateManyInput | AppSettingsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AppSettings createManyAndReturn
+   */
+  export type AppSettingsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many AppSettings.
+     */
+    data: AppSettingsCreateManyInput | AppSettingsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AppSettings update
+   */
+  export type AppSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * The data needed to update a AppSettings.
+     */
+    data: XOR<AppSettingsUpdateInput, AppSettingsUncheckedUpdateInput>
+    /**
+     * Choose, which AppSettings to update.
+     */
+    where: AppSettingsWhereUniqueInput
+  }
+
+  /**
+   * AppSettings updateMany
+   */
+  export type AppSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AppSettings.
+     */
+    data: XOR<AppSettingsUpdateManyMutationInput, AppSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which AppSettings to update
+     */
+    where?: AppSettingsWhereInput
+  }
+
+  /**
+   * AppSettings upsert
+   */
+  export type AppSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * The filter to search for the AppSettings to update in case it exists.
+     */
+    where: AppSettingsWhereUniqueInput
+    /**
+     * In case the AppSettings found by the `where` argument doesn't exist, create a new AppSettings with this data.
+     */
+    create: XOR<AppSettingsCreateInput, AppSettingsUncheckedCreateInput>
+    /**
+     * In case the AppSettings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AppSettingsUpdateInput, AppSettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * AppSettings delete
+   */
+  export type AppSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+    /**
+     * Filter which AppSettings to delete.
+     */
+    where: AppSettingsWhereUniqueInput
+  }
+
+  /**
+   * AppSettings deleteMany
+   */
+  export type AppSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppSettings to delete
+     */
+    where?: AppSettingsWhereInput
+  }
+
+  /**
+   * AppSettings without action
+   */
+  export type AppSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppSettings
+     */
+    select?: AppSettingsSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
   export const TransactionIsolationLevel: {
+    ReadUncommitted: 'ReadUncommitted',
+    ReadCommitted: 'ReadCommitted',
+    RepeatableRead: 'RepeatableRead',
     Serializable: 'Serializable'
   };
 
@@ -29335,7 +31872,9 @@ export namespace Prisma {
     created_at: 'created_at',
     updated_at: 'updated_at',
     natureJuridique: 'natureJuridique',
-    etatAdministratif: 'etatAdministratif'
+    etatAdministratif: 'etatAdministratif',
+    observations: 'observations',
+    photo: 'photo'
   };
 
   export type TiersScalarFieldEnum = (typeof TiersScalarFieldEnum)[keyof typeof TiersScalarFieldEnum]
@@ -29354,6 +31893,7 @@ export namespace Prisma {
     latitude: 'latitude',
     longitude: 'longitude',
     description: 'description',
+    observations: 'observations',
     photos: 'photos',
     montantCalcule: 'montantCalcule',
     facturePath: 'facturePath',
@@ -29363,10 +31903,19 @@ export namespace Prisma {
     dossierParentId: 'dossierParentId',
     isCourtMetrage: 'isCourtMetrage',
     agissantPour: 'agissantPour',
+    isAgissantPourBillable: 'isAgissantPourBillable',
     aotGabaritId: 'aotGabaritId',
     aotFinalPath: 'aotFinalPath',
     aotSigned: 'aotSigned',
-    datePaiement: 'datePaiement'
+    datePaiement: 'datePaiement',
+    dateINIT: 'dateINIT',
+    dateINST: 'dateINST',
+    datePREP: 'datePREP',
+    dateEN_COURS: 'dateEN_COURS',
+    dateVALIDE: 'dateVALIDE',
+    dateFACTURE: 'dateFACTURE',
+    dateTITRE: 'dateTITRE',
+    dateCLOS: 'dateCLOS'
   };
 
   export type OccupationScalarFieldEnum = (typeof OccupationScalarFieldEnum)[keyof typeof OccupationScalarFieldEnum]
@@ -29382,6 +31931,7 @@ export namespace Prisma {
     role: 'role',
     occupationId: 'occupationId',
     tiersId: 'tiersId',
+    commerceId: 'commerceId',
     pjPath: 'pjPath',
     created_at: 'created_at',
     updated_at: 'updated_at',
@@ -29394,6 +31944,7 @@ export namespace Prisma {
   export const NoteScalarFieldEnum: {
     id: 'id',
     occupationId: 'occupationId',
+    tiersId: 'tiersId',
     content: 'content',
     author: 'author',
     pjPath: 'pjPath',
@@ -29475,11 +32026,22 @@ export namespace Prisma {
     login: 'login',
     password: 'password',
     role: 'role',
+    isAd: 'isAd',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const FavoriteCommerceScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    tiersId: 'tiersId',
+    created_at: 'created_at'
+  };
+
+  export type FavoriteCommerceScalarFieldEnum = (typeof FavoriteCommerceScalarFieldEnum)[keyof typeof FavoriteCommerceScalarFieldEnum]
 
 
   export const MobileLogScalarFieldEnum: {
@@ -29495,54 +32057,16 @@ export namespace Prisma {
   export type MobileLogScalarFieldEnum = (typeof MobileLogScalarFieldEnum)[keyof typeof MobileLogScalarFieldEnum]
 
 
-  export const AppSettingsScalarFieldEnum: {
+  export const ContextualMessageScalarFieldEnum: {
     id: 'id',
-    financeEmail: 'financeEmail',
-    appUrl: 'appUrl',
-    apmUrl: 'apmUrl',
-    apmToken: 'apmToken',
-    senderName: 'senderName',
-    senderEmail: 'senderEmail',
-    filienOrga: 'filienOrga',
-    filienBudget: 'filienBudget',
-    filienExercice: 'filienExercice',
-    filienAvancement: 'filienAvancement',
-    filienRejetDispo: 'filienRejetDispo',
-    filienRejetCA: 'filienRejetCA',
-    filienRejetMarche: 'filienRejetMarche',
-    filienMouvement: 'filienMouvement',
-    filienType: 'filienType',
-    filienLibelle: 'filienLibelle',
-    filienCalendrier: 'filienCalendrier',
-    filienMonnaie: 'filienMonnaie',
-    filienMouvementEx: 'filienMouvementEx',
-    filienPreBordereau: 'filienPreBordereau',
-    filienPoste: 'filienPoste',
-    filienBordereau: 'filienBordereau',
-    filienObjet: 'filienObjet',
-    filienChapitre: 'filienChapitre',
-    filienNature: 'filienNature',
-    filienFonction: 'filienFonction',
-    filienCodeInterne: 'filienCodeInterne',
-    filienTypeMouvement: 'filienTypeMouvement',
-    filienSens: 'filienSens',
-    filienStructure: 'filienStructure',
-    filienGestionnaire: 'filienGestionnaire',
-    filienUncPj: 'filienUncPj',
-    signataireRole: 'signataireRole',
-    signataireDelegation: 'signataireDelegation',
-    signataireNom: 'signataireNom',
-    footer1: 'footer1',
-    footer2: 'footer2',
-    footer3: 'footer3',
-    footerColor: 'footerColor',
-    updated_at: 'updated_at',
-    filienUncPass: 'filienUncPass',
-    filienUncUser: 'filienUncUser',
-    filienUncDomain: 'filienUncDomain'
+    cle: 'cle',
+    label: 'label',
+    sujet: 'sujet',
+    valeur: 'valeur',
+    disabled: 'disabled'
   };
 
-  export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
+  export type ContextualMessageScalarFieldEnum = (typeof ContextualMessageScalarFieldEnum)[keyof typeof ContextualMessageScalarFieldEnum]
 
 
   export const LigneOccupationScalarFieldEnum: {
@@ -29558,6 +32082,7 @@ export namespace Prisma {
     montant: 'montant',
     created_at: 'created_at',
     updated_at: 'updated_at',
+    deletedAt: 'deletedAt',
     photos: 'photos',
     note: 'note'
   };
@@ -29613,6 +32138,7 @@ export namespace Prisma {
     filienSens: 'filienSens',
     filienStructure: 'filienStructure',
     filienGestionnaire: 'filienGestionnaire',
+    filienPreBordereau: 'filienPreBordereau',
     invoiceTemplateId: 'invoiceTemplateId',
     updated_at: 'updated_at'
   };
@@ -29628,6 +32154,7 @@ export namespace Prisma {
     priority: 'priority',
     status: 'status',
     versionId: 'versionId',
+    requestedBy: 'requestedBy',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -29657,17 +32184,16 @@ export namespace Prisma {
   export type VersionReleaseScalarFieldEnum = (typeof VersionReleaseScalarFieldEnum)[keyof typeof VersionReleaseScalarFieldEnum]
 
 
-  export const PostgresConfigScalarFieldEnum: {
+  export const ContactRoleConfigScalarFieldEnum: {
     id: 'id',
-    host: 'host',
-    port: 'port',
-    database: 'database',
-    schema: 'schema',
-    user: 'user',
-    password: 'password'
+    nom: 'nom',
+    isSendAot: 'isSendAot',
+    ordre: 'ordre',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
   };
 
-  export type PostgresConfigScalarFieldEnum = (typeof PostgresConfigScalarFieldEnum)[keyof typeof PostgresConfigScalarFieldEnum]
+  export type ContactRoleConfigScalarFieldEnum = (typeof ContactRoleConfigScalarFieldEnum)[keyof typeof ContactRoleConfigScalarFieldEnum]
 
 
   export const OdpConfigScalarFieldEnum: {
@@ -29734,11 +32260,67 @@ export namespace Prisma {
     tokenExpiresAt: 'tokenExpiresAt',
     rejectionComment: 'rejectionComment',
     signedAt: 'signedAt',
+    requestedByLogin: 'requestedByLogin',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
 
   export type SignatureRequestScalarFieldEnum = (typeof SignatureRequestScalarFieldEnum)[keyof typeof SignatureRequestScalarFieldEnum]
+
+
+  export const AppSettingsScalarFieldEnum: {
+    id: 'id',
+    financeEmail: 'financeEmail',
+    appUrl: 'appUrl',
+    apmUrl: 'apmUrl',
+    apmToken: 'apmToken',
+    senderName: 'senderName',
+    senderEmail: 'senderEmail',
+    filienOrga: 'filienOrga',
+    filienBudget: 'filienBudget',
+    filienExercice: 'filienExercice',
+    filienAvancement: 'filienAvancement',
+    filienRejetDispo: 'filienRejetDispo',
+    filienRejetCA: 'filienRejetCA',
+    filienRejetMarche: 'filienRejetMarche',
+    filienMouvement: 'filienMouvement',
+    filienType: 'filienType',
+    filienLibelle: 'filienLibelle',
+    filienCalendrier: 'filienCalendrier',
+    filienMonnaie: 'filienMonnaie',
+    filienMouvementEx: 'filienMouvementEx',
+    filienPreBordereau: 'filienPreBordereau',
+    filienPoste: 'filienPoste',
+    filienBordereau: 'filienBordereau',
+    filienObjet: 'filienObjet',
+    filienChapitre: 'filienChapitre',
+    filienNature: 'filienNature',
+    filienFonction: 'filienFonction',
+    filienCodeInterne: 'filienCodeInterne',
+    filienTypeMouvement: 'filienTypeMouvement',
+    filienSens: 'filienSens',
+    filienStructure: 'filienStructure',
+    filienGestionnaire: 'filienGestionnaire',
+    filienUncPj: 'filienUncPj',
+    adDomain: 'adDomain',
+    signataireRole: 'signataireRole',
+    signataireDelegation: 'signataireDelegation',
+    signataireNom: 'signataireNom',
+    footer1: 'footer1',
+    footer2: 'footer2',
+    footer3: 'footer3',
+    footerColor: 'footerColor',
+    updated_at: 'updated_at',
+    filienUncPass: 'filienUncPass',
+    filienUncUser: 'filienUncUser',
+    filienUncDomain: 'filienUncDomain',
+    watermark: 'watermark',
+    dbMode: 'dbMode',
+    autoDistributeInvoices: 'autoDistributeInvoices',
+    distributeOnlyVerified: 'distributeOnlyVerified'
+  };
+
+  export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -29747,6 +32329,14 @@ export namespace Prisma {
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const QueryMode: {
+    default: 'default',
+    insensitive: 'insensitive'
+  };
+
+  export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
   export const NullsOrder: {
@@ -29770,9 +32360,23 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'String'
    */
   export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
+    
+
+
+  /**
+   * Reference to a field of type 'String[]'
+   */
+  export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
     
 
 
@@ -29784,9 +32388,23 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+  /**
+   * Reference to a field of type 'DateTime[]'
+   */
+  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
     
 
 
@@ -29817,8 +32435,12 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
+    observations?: StringNullableFilter<"Tiers"> | string | null
+    photo?: StringNullableFilter<"Tiers"> | string | null
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
+    notes?: NoteListRelationFilter
+    favoritedBy?: FavoriteCommerceListRelationFilter
   }
 
   export type TiersOrderByWithRelationInput = {
@@ -29835,8 +32457,12 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrderInput | SortOrder
     etatAdministratif?: SortOrderInput | SortOrder
+    observations?: SortOrderInput | SortOrder
+    photo?: SortOrderInput | SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     occupations?: OccupationOrderByRelationAggregateInput
+    notes?: NoteOrderByRelationAggregateInput
+    favoritedBy?: FavoriteCommerceOrderByRelationAggregateInput
   }
 
   export type TiersWhereUniqueInput = Prisma.AtLeast<{
@@ -29856,8 +32482,12 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
+    observations?: StringNullableFilter<"Tiers"> | string | null
+    photo?: StringNullableFilter<"Tiers"> | string | null
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
+    notes?: NoteListRelationFilter
+    favoritedBy?: FavoriteCommerceListRelationFilter
   }, "id" | "siret" | "code_sedit">
 
   export type TiersOrderByWithAggregationInput = {
@@ -29874,6 +32504,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrderInput | SortOrder
     etatAdministratif?: SortOrderInput | SortOrder
+    observations?: SortOrderInput | SortOrder
+    photo?: SortOrderInput | SortOrder
     _count?: TiersCountOrderByAggregateInput
     _avg?: TiersAvgOrderByAggregateInput
     _max?: TiersMaxOrderByAggregateInput
@@ -29898,6 +32530,8 @@ export namespace Prisma {
     updated_at?: DateTimeWithAggregatesFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
+    observations?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
+    photo?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
   }
 
   export type OccupationWhereInput = {
@@ -29916,6 +32550,7 @@ export namespace Prisma {
     latitude?: FloatNullableFilter<"Occupation"> | number | null
     longitude?: FloatNullableFilter<"Occupation"> | number | null
     description?: StringNullableFilter<"Occupation"> | string | null
+    observations?: StringNullableFilter<"Occupation"> | string | null
     photos?: StringNullableFilter<"Occupation"> | string | null
     montantCalcule?: FloatFilter<"Occupation"> | number
     facturePath?: StringNullableFilter<"Occupation"> | string | null
@@ -29925,10 +32560,19 @@ export namespace Prisma {
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
     agissantPour?: StringNullableFilter<"Occupation"> | string | null
+    isAgissantPourBillable?: BoolFilter<"Occupation"> | boolean
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINIT?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINST?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    datePREP?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateEN_COURS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateVALIDE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateFACTURE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateTITRE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateCLOS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -29950,6 +32594,7 @@ export namespace Prisma {
     latitude?: SortOrderInput | SortOrder
     longitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    observations?: SortOrderInput | SortOrder
     photos?: SortOrderInput | SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrderInput | SortOrder
@@ -29959,10 +32604,19 @@ export namespace Prisma {
     dossierParentId?: SortOrderInput | SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrderInput | SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrderInput | SortOrder
     aotFinalPath?: SortOrderInput | SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrderInput | SortOrder
+    dateINIT?: SortOrderInput | SortOrder
+    dateINST?: SortOrderInput | SortOrder
+    datePREP?: SortOrderInput | SortOrder
+    dateEN_COURS?: SortOrderInput | SortOrder
+    dateVALIDE?: SortOrderInput | SortOrder
+    dateFACTURE?: SortOrderInput | SortOrder
+    dateTITRE?: SortOrderInput | SortOrder
+    dateCLOS?: SortOrderInput | SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     dispositifs?: DispositifOrderByRelationAggregateInput
     lignes?: LigneOccupationOrderByRelationAggregateInput
@@ -29987,6 +32641,7 @@ export namespace Prisma {
     latitude?: FloatNullableFilter<"Occupation"> | number | null
     longitude?: FloatNullableFilter<"Occupation"> | number | null
     description?: StringNullableFilter<"Occupation"> | string | null
+    observations?: StringNullableFilter<"Occupation"> | string | null
     photos?: StringNullableFilter<"Occupation"> | string | null
     montantCalcule?: FloatFilter<"Occupation"> | number
     facturePath?: StringNullableFilter<"Occupation"> | string | null
@@ -29996,10 +32651,19 @@ export namespace Prisma {
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
     agissantPour?: StringNullableFilter<"Occupation"> | string | null
+    isAgissantPourBillable?: BoolFilter<"Occupation"> | boolean
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINIT?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINST?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    datePREP?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateEN_COURS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateVALIDE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateFACTURE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateTITRE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateCLOS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -30021,6 +32685,7 @@ export namespace Prisma {
     latitude?: SortOrderInput | SortOrder
     longitude?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
+    observations?: SortOrderInput | SortOrder
     photos?: SortOrderInput | SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrderInput | SortOrder
@@ -30030,10 +32695,19 @@ export namespace Prisma {
     dossierParentId?: SortOrderInput | SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrderInput | SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrderInput | SortOrder
     aotFinalPath?: SortOrderInput | SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrderInput | SortOrder
+    dateINIT?: SortOrderInput | SortOrder
+    dateINST?: SortOrderInput | SortOrder
+    datePREP?: SortOrderInput | SortOrder
+    dateEN_COURS?: SortOrderInput | SortOrder
+    dateVALIDE?: SortOrderInput | SortOrder
+    dateFACTURE?: SortOrderInput | SortOrder
+    dateTITRE?: SortOrderInput | SortOrder
+    dateCLOS?: SortOrderInput | SortOrder
     _count?: OccupationCountOrderByAggregateInput
     _avg?: OccupationAvgOrderByAggregateInput
     _max?: OccupationMaxOrderByAggregateInput
@@ -30057,6 +32731,7 @@ export namespace Prisma {
     latitude?: FloatNullableWithAggregatesFilter<"Occupation"> | number | null
     longitude?: FloatNullableWithAggregatesFilter<"Occupation"> | number | null
     description?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
+    observations?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     photos?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     montantCalcule?: FloatWithAggregatesFilter<"Occupation"> | number
     facturePath?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
@@ -30066,10 +32741,19 @@ export namespace Prisma {
     dossierParentId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
     isCourtMetrage?: BoolWithAggregatesFilter<"Occupation"> | boolean
     agissantPour?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
+    isAgissantPourBillable?: BoolWithAggregatesFilter<"Occupation"> | boolean
     aotGabaritId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     aotSigned?: BoolWithAggregatesFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateINIT?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateINST?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    datePREP?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateEN_COURS?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateVALIDE?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateFACTURE?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateTITRE?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
+    dateCLOS?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
   }
 
   export type ContactWhereInput = {
@@ -30085,6 +32769,7 @@ export namespace Prisma {
     role?: StringFilter<"Contact"> | string
     occupationId?: IntNullableFilter<"Contact"> | number | null
     tiersId?: IntNullableFilter<"Contact"> | number | null
+    commerceId?: IntNullableFilter<"Contact"> | number | null
     pjPath?: StringNullableFilter<"Contact"> | string | null
     created_at?: DateTimeFilter<"Contact"> | Date | string
     updated_at?: DateTimeFilter<"Contact"> | Date | string
@@ -30103,6 +32788,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrderInput | SortOrder
     tiersId?: SortOrderInput | SortOrder
+    commerceId?: SortOrderInput | SortOrder
     pjPath?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -30124,6 +32810,7 @@ export namespace Prisma {
     role?: StringFilter<"Contact"> | string
     occupationId?: IntNullableFilter<"Contact"> | number | null
     tiersId?: IntNullableFilter<"Contact"> | number | null
+    commerceId?: IntNullableFilter<"Contact"> | number | null
     pjPath?: StringNullableFilter<"Contact"> | string | null
     created_at?: DateTimeFilter<"Contact"> | Date | string
     updated_at?: DateTimeFilter<"Contact"> | Date | string
@@ -30142,6 +32829,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrderInput | SortOrder
     tiersId?: SortOrderInput | SortOrder
+    commerceId?: SortOrderInput | SortOrder
     pjPath?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -30166,6 +32854,7 @@ export namespace Prisma {
     role?: StringWithAggregatesFilter<"Contact"> | string
     occupationId?: IntNullableWithAggregatesFilter<"Contact"> | number | null
     tiersId?: IntNullableWithAggregatesFilter<"Contact"> | number | null
+    commerceId?: IntNullableWithAggregatesFilter<"Contact"> | number | null
     pjPath?: StringNullableWithAggregatesFilter<"Contact"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"Contact"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Contact"> | Date | string
@@ -30177,7 +32866,8 @@ export namespace Prisma {
     OR?: NoteWhereInput[]
     NOT?: NoteWhereInput | NoteWhereInput[]
     id?: IntFilter<"Note"> | number
-    occupationId?: IntFilter<"Note"> | number
+    occupationId?: IntNullableFilter<"Note"> | number | null
+    tiersId?: IntNullableFilter<"Note"> | number | null
     content?: StringFilter<"Note"> | string
     author?: StringNullableFilter<"Note"> | string | null
     pjPath?: StringNullableFilter<"Note"> | string | null
@@ -30189,12 +32879,14 @@ export namespace Prisma {
     toEmail?: StringNullableFilter<"Note"> | string | null
     origin?: StringNullableFilter<"Note"> | string | null
     created_at?: DateTimeFilter<"Note"> | Date | string
-    occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
+    occupation?: XOR<OccupationNullableRelationFilter, OccupationWhereInput> | null
+    tiers?: XOR<TiersNullableRelationFilter, TiersWhereInput> | null
   }
 
   export type NoteOrderByWithRelationInput = {
     id?: SortOrder
-    occupationId?: SortOrder
+    occupationId?: SortOrderInput | SortOrder
+    tiersId?: SortOrderInput | SortOrder
     content?: SortOrder
     author?: SortOrderInput | SortOrder
     pjPath?: SortOrderInput | SortOrder
@@ -30207,6 +32899,7 @@ export namespace Prisma {
     origin?: SortOrderInput | SortOrder
     created_at?: SortOrder
     occupation?: OccupationOrderByWithRelationInput
+    tiers?: TiersOrderByWithRelationInput
   }
 
   export type NoteWhereUniqueInput = Prisma.AtLeast<{
@@ -30214,7 +32907,8 @@ export namespace Prisma {
     AND?: NoteWhereInput | NoteWhereInput[]
     OR?: NoteWhereInput[]
     NOT?: NoteWhereInput | NoteWhereInput[]
-    occupationId?: IntFilter<"Note"> | number
+    occupationId?: IntNullableFilter<"Note"> | number | null
+    tiersId?: IntNullableFilter<"Note"> | number | null
     content?: StringFilter<"Note"> | string
     author?: StringNullableFilter<"Note"> | string | null
     pjPath?: StringNullableFilter<"Note"> | string | null
@@ -30226,12 +32920,14 @@ export namespace Prisma {
     toEmail?: StringNullableFilter<"Note"> | string | null
     origin?: StringNullableFilter<"Note"> | string | null
     created_at?: DateTimeFilter<"Note"> | Date | string
-    occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
+    occupation?: XOR<OccupationNullableRelationFilter, OccupationWhereInput> | null
+    tiers?: XOR<TiersNullableRelationFilter, TiersWhereInput> | null
   }, "id">
 
   export type NoteOrderByWithAggregationInput = {
     id?: SortOrder
-    occupationId?: SortOrder
+    occupationId?: SortOrderInput | SortOrder
+    tiersId?: SortOrderInput | SortOrder
     content?: SortOrder
     author?: SortOrderInput | SortOrder
     pjPath?: SortOrderInput | SortOrder
@@ -30255,7 +32951,8 @@ export namespace Prisma {
     OR?: NoteScalarWhereWithAggregatesInput[]
     NOT?: NoteScalarWhereWithAggregatesInput | NoteScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Note"> | number
-    occupationId?: IntWithAggregatesFilter<"Note"> | number
+    occupationId?: IntNullableWithAggregatesFilter<"Note"> | number | null
+    tiersId?: IntNullableWithAggregatesFilter<"Note"> | number | null
     content?: StringWithAggregatesFilter<"Note"> | string
     author?: StringNullableWithAggregatesFilter<"Note"> | string | null
     pjPath?: StringNullableWithAggregatesFilter<"Note"> | string | null
@@ -30580,9 +33277,11 @@ export namespace Prisma {
     login?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
     role?: StringFilter<"User"> | string
+    isAd?: BoolFilter<"User"> | boolean
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     logs?: MobileLogListRelationFilter
+    favoriteCommerces?: FavoriteCommerceListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -30593,9 +33292,11 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     logs?: MobileLogOrderByRelationAggregateInput
+    favoriteCommerces?: FavoriteCommerceOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -30609,9 +33310,11 @@ export namespace Prisma {
     prenom?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
     role?: StringFilter<"User"> | string
+    isAd?: BoolFilter<"User"> | boolean
     created_at?: DateTimeFilter<"User"> | Date | string
     updated_at?: DateTimeFilter<"User"> | Date | string
     logs?: MobileLogListRelationFilter
+    favoriteCommerces?: FavoriteCommerceListRelationFilter
   }, "id" | "email" | "login">
 
   export type UserOrderByWithAggregationInput = {
@@ -30622,6 +33325,7 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -30642,8 +33346,65 @@ export namespace Prisma {
     login?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
     role?: StringWithAggregatesFilter<"User"> | string
+    isAd?: BoolWithAggregatesFilter<"User"> | boolean
     created_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  }
+
+  export type FavoriteCommerceWhereInput = {
+    AND?: FavoriteCommerceWhereInput | FavoriteCommerceWhereInput[]
+    OR?: FavoriteCommerceWhereInput[]
+    NOT?: FavoriteCommerceWhereInput | FavoriteCommerceWhereInput[]
+    id?: IntFilter<"FavoriteCommerce"> | number
+    userId?: IntFilter<"FavoriteCommerce"> | number
+    tiersId?: IntFilter<"FavoriteCommerce"> | number
+    created_at?: DateTimeFilter<"FavoriteCommerce"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    tiers?: XOR<TiersRelationFilter, TiersWhereInput>
+  }
+
+  export type FavoriteCommerceOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+    user?: UserOrderByWithRelationInput
+    tiers?: TiersOrderByWithRelationInput
+  }
+
+  export type FavoriteCommerceWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    userId_tiersId?: FavoriteCommerceUserIdTiersIdCompoundUniqueInput
+    AND?: FavoriteCommerceWhereInput | FavoriteCommerceWhereInput[]
+    OR?: FavoriteCommerceWhereInput[]
+    NOT?: FavoriteCommerceWhereInput | FavoriteCommerceWhereInput[]
+    userId?: IntFilter<"FavoriteCommerce"> | number
+    tiersId?: IntFilter<"FavoriteCommerce"> | number
+    created_at?: DateTimeFilter<"FavoriteCommerce"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    tiers?: XOR<TiersRelationFilter, TiersWhereInput>
+  }, "id" | "userId_tiersId">
+
+  export type FavoriteCommerceOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+    _count?: FavoriteCommerceCountOrderByAggregateInput
+    _avg?: FavoriteCommerceAvgOrderByAggregateInput
+    _max?: FavoriteCommerceMaxOrderByAggregateInput
+    _min?: FavoriteCommerceMinOrderByAggregateInput
+    _sum?: FavoriteCommerceSumOrderByAggregateInput
+  }
+
+  export type FavoriteCommerceScalarWhereWithAggregatesInput = {
+    AND?: FavoriteCommerceScalarWhereWithAggregatesInput | FavoriteCommerceScalarWhereWithAggregatesInput[]
+    OR?: FavoriteCommerceScalarWhereWithAggregatesInput[]
+    NOT?: FavoriteCommerceScalarWhereWithAggregatesInput | FavoriteCommerceScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"FavoriteCommerce"> | number
+    userId?: IntWithAggregatesFilter<"FavoriteCommerce"> | number
+    tiersId?: IntWithAggregatesFilter<"FavoriteCommerce"> | number
+    created_at?: DateTimeWithAggregatesFilter<"FavoriteCommerce"> | Date | string
   }
 
   export type MobileLogWhereInput = {
@@ -30713,253 +33474,63 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"MobileLog"> | Date | string
   }
 
-  export type AppSettingsWhereInput = {
-    AND?: AppSettingsWhereInput | AppSettingsWhereInput[]
-    OR?: AppSettingsWhereInput[]
-    NOT?: AppSettingsWhereInput | AppSettingsWhereInput[]
-    id?: IntFilter<"AppSettings"> | number
-    financeEmail?: StringNullableFilter<"AppSettings"> | string | null
-    appUrl?: StringNullableFilter<"AppSettings"> | string | null
-    apmUrl?: StringNullableFilter<"AppSettings"> | string | null
-    apmToken?: StringNullableFilter<"AppSettings"> | string | null
-    senderName?: StringNullableFilter<"AppSettings"> | string | null
-    senderEmail?: StringNullableFilter<"AppSettings"> | string | null
-    filienOrga?: StringNullableFilter<"AppSettings"> | string | null
-    filienBudget?: StringNullableFilter<"AppSettings"> | string | null
-    filienExercice?: IntNullableFilter<"AppSettings"> | number | null
-    filienAvancement?: StringNullableFilter<"AppSettings"> | string | null
-    filienRejetDispo?: BoolNullableFilter<"AppSettings"> | boolean | null
-    filienRejetCA?: BoolNullableFilter<"AppSettings"> | boolean | null
-    filienRejetMarche?: BoolNullableFilter<"AppSettings"> | boolean | null
-    filienMouvement?: StringNullableFilter<"AppSettings"> | string | null
-    filienType?: StringNullableFilter<"AppSettings"> | string | null
-    filienLibelle?: StringNullableFilter<"AppSettings"> | string | null
-    filienCalendrier?: StringNullableFilter<"AppSettings"> | string | null
-    filienMonnaie?: StringNullableFilter<"AppSettings"> | string | null
-    filienMouvementEx?: StringNullableFilter<"AppSettings"> | string | null
-    filienPreBordereau?: StringNullableFilter<"AppSettings"> | string | null
-    filienPoste?: StringNullableFilter<"AppSettings"> | string | null
-    filienBordereau?: StringNullableFilter<"AppSettings"> | string | null
-    filienObjet?: StringNullableFilter<"AppSettings"> | string | null
-    filienChapitre?: StringNullableFilter<"AppSettings"> | string | null
-    filienNature?: StringNullableFilter<"AppSettings"> | string | null
-    filienFonction?: StringNullableFilter<"AppSettings"> | string | null
-    filienCodeInterne?: StringNullableFilter<"AppSettings"> | string | null
-    filienTypeMouvement?: StringNullableFilter<"AppSettings"> | string | null
-    filienSens?: StringNullableFilter<"AppSettings"> | string | null
-    filienStructure?: StringNullableFilter<"AppSettings"> | string | null
-    filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
-    signataireRole?: StringNullableFilter<"AppSettings"> | string | null
-    signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
-    signataireNom?: StringNullableFilter<"AppSettings"> | string | null
-    footer1?: StringNullableFilter<"AppSettings"> | string | null
-    footer2?: StringNullableFilter<"AppSettings"> | string | null
-    footer3?: StringNullableFilter<"AppSettings"> | string | null
-    footerColor?: StringNullableFilter<"AppSettings"> | string | null
-    updated_at?: DateTimeFilter<"AppSettings"> | Date | string
-    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
+  export type ContextualMessageWhereInput = {
+    AND?: ContextualMessageWhereInput | ContextualMessageWhereInput[]
+    OR?: ContextualMessageWhereInput[]
+    NOT?: ContextualMessageWhereInput | ContextualMessageWhereInput[]
+    id?: IntFilter<"ContextualMessage"> | number
+    cle?: StringFilter<"ContextualMessage"> | string
+    label?: StringNullableFilter<"ContextualMessage"> | string | null
+    sujet?: StringNullableFilter<"ContextualMessage"> | string | null
+    valeur?: StringFilter<"ContextualMessage"> | string
+    disabled?: BoolFilter<"ContextualMessage"> | boolean
   }
 
-  export type AppSettingsOrderByWithRelationInput = {
+  export type ContextualMessageOrderByWithRelationInput = {
     id?: SortOrder
-    financeEmail?: SortOrderInput | SortOrder
-    appUrl?: SortOrderInput | SortOrder
-    apmUrl?: SortOrderInput | SortOrder
-    apmToken?: SortOrderInput | SortOrder
-    senderName?: SortOrderInput | SortOrder
-    senderEmail?: SortOrderInput | SortOrder
-    filienOrga?: SortOrderInput | SortOrder
-    filienBudget?: SortOrderInput | SortOrder
-    filienExercice?: SortOrderInput | SortOrder
-    filienAvancement?: SortOrderInput | SortOrder
-    filienRejetDispo?: SortOrderInput | SortOrder
-    filienRejetCA?: SortOrderInput | SortOrder
-    filienRejetMarche?: SortOrderInput | SortOrder
-    filienMouvement?: SortOrderInput | SortOrder
-    filienType?: SortOrderInput | SortOrder
-    filienLibelle?: SortOrderInput | SortOrder
-    filienCalendrier?: SortOrderInput | SortOrder
-    filienMonnaie?: SortOrderInput | SortOrder
-    filienMouvementEx?: SortOrderInput | SortOrder
-    filienPreBordereau?: SortOrderInput | SortOrder
-    filienPoste?: SortOrderInput | SortOrder
-    filienBordereau?: SortOrderInput | SortOrder
-    filienObjet?: SortOrderInput | SortOrder
-    filienChapitre?: SortOrderInput | SortOrder
-    filienNature?: SortOrderInput | SortOrder
-    filienFonction?: SortOrderInput | SortOrder
-    filienCodeInterne?: SortOrderInput | SortOrder
-    filienTypeMouvement?: SortOrderInput | SortOrder
-    filienSens?: SortOrderInput | SortOrder
-    filienStructure?: SortOrderInput | SortOrder
-    filienGestionnaire?: SortOrderInput | SortOrder
-    filienUncPj?: SortOrderInput | SortOrder
-    signataireRole?: SortOrderInput | SortOrder
-    signataireDelegation?: SortOrderInput | SortOrder
-    signataireNom?: SortOrderInput | SortOrder
-    footer1?: SortOrderInput | SortOrder
-    footer2?: SortOrderInput | SortOrder
-    footer3?: SortOrderInput | SortOrder
-    footerColor?: SortOrderInput | SortOrder
-    updated_at?: SortOrder
-    filienUncPass?: SortOrderInput | SortOrder
-    filienUncUser?: SortOrderInput | SortOrder
-    filienUncDomain?: SortOrderInput | SortOrder
+    cle?: SortOrder
+    label?: SortOrderInput | SortOrder
+    sujet?: SortOrderInput | SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
   }
 
-  export type AppSettingsWhereUniqueInput = Prisma.AtLeast<{
+  export type ContextualMessageWhereUniqueInput = Prisma.AtLeast<{
     id?: number
-    AND?: AppSettingsWhereInput | AppSettingsWhereInput[]
-    OR?: AppSettingsWhereInput[]
-    NOT?: AppSettingsWhereInput | AppSettingsWhereInput[]
-    financeEmail?: StringNullableFilter<"AppSettings"> | string | null
-    appUrl?: StringNullableFilter<"AppSettings"> | string | null
-    apmUrl?: StringNullableFilter<"AppSettings"> | string | null
-    apmToken?: StringNullableFilter<"AppSettings"> | string | null
-    senderName?: StringNullableFilter<"AppSettings"> | string | null
-    senderEmail?: StringNullableFilter<"AppSettings"> | string | null
-    filienOrga?: StringNullableFilter<"AppSettings"> | string | null
-    filienBudget?: StringNullableFilter<"AppSettings"> | string | null
-    filienExercice?: IntNullableFilter<"AppSettings"> | number | null
-    filienAvancement?: StringNullableFilter<"AppSettings"> | string | null
-    filienRejetDispo?: BoolNullableFilter<"AppSettings"> | boolean | null
-    filienRejetCA?: BoolNullableFilter<"AppSettings"> | boolean | null
-    filienRejetMarche?: BoolNullableFilter<"AppSettings"> | boolean | null
-    filienMouvement?: StringNullableFilter<"AppSettings"> | string | null
-    filienType?: StringNullableFilter<"AppSettings"> | string | null
-    filienLibelle?: StringNullableFilter<"AppSettings"> | string | null
-    filienCalendrier?: StringNullableFilter<"AppSettings"> | string | null
-    filienMonnaie?: StringNullableFilter<"AppSettings"> | string | null
-    filienMouvementEx?: StringNullableFilter<"AppSettings"> | string | null
-    filienPreBordereau?: StringNullableFilter<"AppSettings"> | string | null
-    filienPoste?: StringNullableFilter<"AppSettings"> | string | null
-    filienBordereau?: StringNullableFilter<"AppSettings"> | string | null
-    filienObjet?: StringNullableFilter<"AppSettings"> | string | null
-    filienChapitre?: StringNullableFilter<"AppSettings"> | string | null
-    filienNature?: StringNullableFilter<"AppSettings"> | string | null
-    filienFonction?: StringNullableFilter<"AppSettings"> | string | null
-    filienCodeInterne?: StringNullableFilter<"AppSettings"> | string | null
-    filienTypeMouvement?: StringNullableFilter<"AppSettings"> | string | null
-    filienSens?: StringNullableFilter<"AppSettings"> | string | null
-    filienStructure?: StringNullableFilter<"AppSettings"> | string | null
-    filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
-    signataireRole?: StringNullableFilter<"AppSettings"> | string | null
-    signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
-    signataireNom?: StringNullableFilter<"AppSettings"> | string | null
-    footer1?: StringNullableFilter<"AppSettings"> | string | null
-    footer2?: StringNullableFilter<"AppSettings"> | string | null
-    footer3?: StringNullableFilter<"AppSettings"> | string | null
-    footerColor?: StringNullableFilter<"AppSettings"> | string | null
-    updated_at?: DateTimeFilter<"AppSettings"> | Date | string
-    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
-    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
-  }, "id">
+    cle?: string
+    AND?: ContextualMessageWhereInput | ContextualMessageWhereInput[]
+    OR?: ContextualMessageWhereInput[]
+    NOT?: ContextualMessageWhereInput | ContextualMessageWhereInput[]
+    label?: StringNullableFilter<"ContextualMessage"> | string | null
+    sujet?: StringNullableFilter<"ContextualMessage"> | string | null
+    valeur?: StringFilter<"ContextualMessage"> | string
+    disabled?: BoolFilter<"ContextualMessage"> | boolean
+  }, "id" | "cle">
 
-  export type AppSettingsOrderByWithAggregationInput = {
+  export type ContextualMessageOrderByWithAggregationInput = {
     id?: SortOrder
-    financeEmail?: SortOrderInput | SortOrder
-    appUrl?: SortOrderInput | SortOrder
-    apmUrl?: SortOrderInput | SortOrder
-    apmToken?: SortOrderInput | SortOrder
-    senderName?: SortOrderInput | SortOrder
-    senderEmail?: SortOrderInput | SortOrder
-    filienOrga?: SortOrderInput | SortOrder
-    filienBudget?: SortOrderInput | SortOrder
-    filienExercice?: SortOrderInput | SortOrder
-    filienAvancement?: SortOrderInput | SortOrder
-    filienRejetDispo?: SortOrderInput | SortOrder
-    filienRejetCA?: SortOrderInput | SortOrder
-    filienRejetMarche?: SortOrderInput | SortOrder
-    filienMouvement?: SortOrderInput | SortOrder
-    filienType?: SortOrderInput | SortOrder
-    filienLibelle?: SortOrderInput | SortOrder
-    filienCalendrier?: SortOrderInput | SortOrder
-    filienMonnaie?: SortOrderInput | SortOrder
-    filienMouvementEx?: SortOrderInput | SortOrder
-    filienPreBordereau?: SortOrderInput | SortOrder
-    filienPoste?: SortOrderInput | SortOrder
-    filienBordereau?: SortOrderInput | SortOrder
-    filienObjet?: SortOrderInput | SortOrder
-    filienChapitre?: SortOrderInput | SortOrder
-    filienNature?: SortOrderInput | SortOrder
-    filienFonction?: SortOrderInput | SortOrder
-    filienCodeInterne?: SortOrderInput | SortOrder
-    filienTypeMouvement?: SortOrderInput | SortOrder
-    filienSens?: SortOrderInput | SortOrder
-    filienStructure?: SortOrderInput | SortOrder
-    filienGestionnaire?: SortOrderInput | SortOrder
-    filienUncPj?: SortOrderInput | SortOrder
-    signataireRole?: SortOrderInput | SortOrder
-    signataireDelegation?: SortOrderInput | SortOrder
-    signataireNom?: SortOrderInput | SortOrder
-    footer1?: SortOrderInput | SortOrder
-    footer2?: SortOrderInput | SortOrder
-    footer3?: SortOrderInput | SortOrder
-    footerColor?: SortOrderInput | SortOrder
-    updated_at?: SortOrder
-    filienUncPass?: SortOrderInput | SortOrder
-    filienUncUser?: SortOrderInput | SortOrder
-    filienUncDomain?: SortOrderInput | SortOrder
-    _count?: AppSettingsCountOrderByAggregateInput
-    _avg?: AppSettingsAvgOrderByAggregateInput
-    _max?: AppSettingsMaxOrderByAggregateInput
-    _min?: AppSettingsMinOrderByAggregateInput
-    _sum?: AppSettingsSumOrderByAggregateInput
+    cle?: SortOrder
+    label?: SortOrderInput | SortOrder
+    sujet?: SortOrderInput | SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
+    _count?: ContextualMessageCountOrderByAggregateInput
+    _avg?: ContextualMessageAvgOrderByAggregateInput
+    _max?: ContextualMessageMaxOrderByAggregateInput
+    _min?: ContextualMessageMinOrderByAggregateInput
+    _sum?: ContextualMessageSumOrderByAggregateInput
   }
 
-  export type AppSettingsScalarWhereWithAggregatesInput = {
-    AND?: AppSettingsScalarWhereWithAggregatesInput | AppSettingsScalarWhereWithAggregatesInput[]
-    OR?: AppSettingsScalarWhereWithAggregatesInput[]
-    NOT?: AppSettingsScalarWhereWithAggregatesInput | AppSettingsScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"AppSettings"> | number
-    financeEmail?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    appUrl?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    apmUrl?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    apmToken?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    senderName?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    senderEmail?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienOrga?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienBudget?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienExercice?: IntNullableWithAggregatesFilter<"AppSettings"> | number | null
-    filienAvancement?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienRejetDispo?: BoolNullableWithAggregatesFilter<"AppSettings"> | boolean | null
-    filienRejetCA?: BoolNullableWithAggregatesFilter<"AppSettings"> | boolean | null
-    filienRejetMarche?: BoolNullableWithAggregatesFilter<"AppSettings"> | boolean | null
-    filienMouvement?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienType?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienLibelle?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienCalendrier?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienMonnaie?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienMouvementEx?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienPreBordereau?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienPoste?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienBordereau?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienObjet?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienChapitre?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienNature?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienFonction?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienCodeInterne?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienTypeMouvement?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienSens?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienStructure?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienGestionnaire?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienUncPj?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    footer1?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    footer2?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    footer3?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    footerColor?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    updated_at?: DateTimeWithAggregatesFilter<"AppSettings"> | Date | string
-    filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
-    filienUncDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+  export type ContextualMessageScalarWhereWithAggregatesInput = {
+    AND?: ContextualMessageScalarWhereWithAggregatesInput | ContextualMessageScalarWhereWithAggregatesInput[]
+    OR?: ContextualMessageScalarWhereWithAggregatesInput[]
+    NOT?: ContextualMessageScalarWhereWithAggregatesInput | ContextualMessageScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ContextualMessage"> | number
+    cle?: StringWithAggregatesFilter<"ContextualMessage"> | string
+    label?: StringNullableWithAggregatesFilter<"ContextualMessage"> | string | null
+    sujet?: StringNullableWithAggregatesFilter<"ContextualMessage"> | string | null
+    valeur?: StringWithAggregatesFilter<"ContextualMessage"> | string
+    disabled?: BoolWithAggregatesFilter<"ContextualMessage"> | boolean
   }
 
   export type LigneOccupationWhereInput = {
@@ -30978,6 +33549,7 @@ export namespace Prisma {
     montant?: FloatFilter<"LigneOccupation"> | number
     created_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeFilter<"LigneOccupation"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"LigneOccupation"> | Date | string | null
     photos?: StringNullableFilter<"LigneOccupation"> | string | null
     note?: StringNullableFilter<"LigneOccupation"> | string | null
     article?: XOR<ArticleRelationFilter, ArticleWhereInput>
@@ -30997,6 +33569,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     photos?: SortOrderInput | SortOrder
     note?: SortOrderInput | SortOrder
     article?: ArticleOrderByWithRelationInput
@@ -31019,6 +33592,7 @@ export namespace Prisma {
     montant?: FloatFilter<"LigneOccupation"> | number
     created_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeFilter<"LigneOccupation"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"LigneOccupation"> | Date | string | null
     photos?: StringNullableFilter<"LigneOccupation"> | string | null
     note?: StringNullableFilter<"LigneOccupation"> | string | null
     article?: XOR<ArticleRelationFilter, ArticleWhereInput>
@@ -31038,6 +33612,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     photos?: SortOrderInput | SortOrder
     note?: SortOrderInput | SortOrder
     _count?: LigneOccupationCountOrderByAggregateInput
@@ -31063,6 +33638,7 @@ export namespace Prisma {
     montant?: FloatWithAggregatesFilter<"LigneOccupation"> | number
     created_at?: DateTimeWithAggregatesFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"LigneOccupation"> | Date | string
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"LigneOccupation"> | Date | string | null
     photos?: StringNullableWithAggregatesFilter<"LigneOccupation"> | string | null
     note?: StringNullableWithAggregatesFilter<"LigneOccupation"> | string | null
   }
@@ -31262,6 +33838,7 @@ export namespace Prisma {
     filienSens?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienStructure?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienGestionnaire?: StringNullableFilter<"TypeDossierConfig"> | string | null
+    filienPreBordereau?: StringNullableFilter<"TypeDossierConfig"> | string | null
     invoiceTemplateId?: StringNullableFilter<"TypeDossierConfig"> | string | null
     updated_at?: DateTimeFilter<"TypeDossierConfig"> | Date | string
   }
@@ -31278,6 +33855,7 @@ export namespace Prisma {
     filienSens?: SortOrderInput | SortOrder
     filienStructure?: SortOrderInput | SortOrder
     filienGestionnaire?: SortOrderInput | SortOrder
+    filienPreBordereau?: SortOrderInput | SortOrder
     invoiceTemplateId?: SortOrderInput | SortOrder
     updated_at?: SortOrder
   }
@@ -31297,6 +33875,7 @@ export namespace Prisma {
     filienSens?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienStructure?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienGestionnaire?: StringNullableFilter<"TypeDossierConfig"> | string | null
+    filienPreBordereau?: StringNullableFilter<"TypeDossierConfig"> | string | null
     invoiceTemplateId?: StringNullableFilter<"TypeDossierConfig"> | string | null
     updated_at?: DateTimeFilter<"TypeDossierConfig"> | Date | string
   }, "id" | "type">
@@ -31313,6 +33892,7 @@ export namespace Prisma {
     filienSens?: SortOrderInput | SortOrder
     filienStructure?: SortOrderInput | SortOrder
     filienGestionnaire?: SortOrderInput | SortOrder
+    filienPreBordereau?: SortOrderInput | SortOrder
     invoiceTemplateId?: SortOrderInput | SortOrder
     updated_at?: SortOrder
     _count?: TypeDossierConfigCountOrderByAggregateInput
@@ -31337,6 +33917,7 @@ export namespace Prisma {
     filienSens?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     filienStructure?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     filienGestionnaire?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
+    filienPreBordereau?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     invoiceTemplateId?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     updated_at?: DateTimeWithAggregatesFilter<"TypeDossierConfig"> | Date | string
   }
@@ -31352,6 +33933,7 @@ export namespace Prisma {
     priority?: StringFilter<"BacklogItem"> | string
     status?: StringFilter<"BacklogItem"> | string
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
+    requestedBy?: StringNullableFilter<"BacklogItem"> | string | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
     comments?: BacklogCommentListRelationFilter
@@ -31366,6 +33948,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrderInput | SortOrder
+    requestedBy?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     comments?: BacklogCommentOrderByRelationAggregateInput
@@ -31383,6 +33966,7 @@ export namespace Prisma {
     priority?: StringFilter<"BacklogItem"> | string
     status?: StringFilter<"BacklogItem"> | string
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
+    requestedBy?: StringNullableFilter<"BacklogItem"> | string | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
     comments?: BacklogCommentListRelationFilter
@@ -31397,6 +33981,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrderInput | SortOrder
+    requestedBy?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: BacklogItemCountOrderByAggregateInput
@@ -31417,6 +34002,7 @@ export namespace Prisma {
     priority?: StringWithAggregatesFilter<"BacklogItem"> | string
     status?: StringWithAggregatesFilter<"BacklogItem"> | string
     versionId?: IntNullableWithAggregatesFilter<"BacklogItem"> | number | null
+    requestedBy?: StringNullableWithAggregatesFilter<"BacklogItem"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"BacklogItem"> | Date | string
   }
@@ -31535,68 +34121,63 @@ export namespace Prisma {
     created_at?: DateTimeWithAggregatesFilter<"VersionRelease"> | Date | string
   }
 
-  export type PostgresConfigWhereInput = {
-    AND?: PostgresConfigWhereInput | PostgresConfigWhereInput[]
-    OR?: PostgresConfigWhereInput[]
-    NOT?: PostgresConfigWhereInput | PostgresConfigWhereInput[]
-    id?: IntFilter<"PostgresConfig"> | number
-    host?: StringFilter<"PostgresConfig"> | string
-    port?: IntFilter<"PostgresConfig"> | number
-    database?: StringFilter<"PostgresConfig"> | string
-    schema?: StringFilter<"PostgresConfig"> | string
-    user?: StringFilter<"PostgresConfig"> | string
-    password?: StringFilter<"PostgresConfig"> | string
+  export type ContactRoleConfigWhereInput = {
+    AND?: ContactRoleConfigWhereInput | ContactRoleConfigWhereInput[]
+    OR?: ContactRoleConfigWhereInput[]
+    NOT?: ContactRoleConfigWhereInput | ContactRoleConfigWhereInput[]
+    id?: IntFilter<"ContactRoleConfig"> | number
+    nom?: StringFilter<"ContactRoleConfig"> | string
+    isSendAot?: BoolFilter<"ContactRoleConfig"> | boolean
+    ordre?: IntFilter<"ContactRoleConfig"> | number
+    created_at?: DateTimeFilter<"ContactRoleConfig"> | Date | string
+    updated_at?: DateTimeFilter<"ContactRoleConfig"> | Date | string
   }
 
-  export type PostgresConfigOrderByWithRelationInput = {
+  export type ContactRoleConfigOrderByWithRelationInput = {
     id?: SortOrder
-    host?: SortOrder
-    port?: SortOrder
-    database?: SortOrder
-    schema?: SortOrder
-    user?: SortOrder
-    password?: SortOrder
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
-  export type PostgresConfigWhereUniqueInput = Prisma.AtLeast<{
+  export type ContactRoleConfigWhereUniqueInput = Prisma.AtLeast<{
     id?: number
-    AND?: PostgresConfigWhereInput | PostgresConfigWhereInput[]
-    OR?: PostgresConfigWhereInput[]
-    NOT?: PostgresConfigWhereInput | PostgresConfigWhereInput[]
-    host?: StringFilter<"PostgresConfig"> | string
-    port?: IntFilter<"PostgresConfig"> | number
-    database?: StringFilter<"PostgresConfig"> | string
-    schema?: StringFilter<"PostgresConfig"> | string
-    user?: StringFilter<"PostgresConfig"> | string
-    password?: StringFilter<"PostgresConfig"> | string
-  }, "id">
+    nom?: string
+    AND?: ContactRoleConfigWhereInput | ContactRoleConfigWhereInput[]
+    OR?: ContactRoleConfigWhereInput[]
+    NOT?: ContactRoleConfigWhereInput | ContactRoleConfigWhereInput[]
+    isSendAot?: BoolFilter<"ContactRoleConfig"> | boolean
+    ordre?: IntFilter<"ContactRoleConfig"> | number
+    created_at?: DateTimeFilter<"ContactRoleConfig"> | Date | string
+    updated_at?: DateTimeFilter<"ContactRoleConfig"> | Date | string
+  }, "id" | "nom">
 
-  export type PostgresConfigOrderByWithAggregationInput = {
+  export type ContactRoleConfigOrderByWithAggregationInput = {
     id?: SortOrder
-    host?: SortOrder
-    port?: SortOrder
-    database?: SortOrder
-    schema?: SortOrder
-    user?: SortOrder
-    password?: SortOrder
-    _count?: PostgresConfigCountOrderByAggregateInput
-    _avg?: PostgresConfigAvgOrderByAggregateInput
-    _max?: PostgresConfigMaxOrderByAggregateInput
-    _min?: PostgresConfigMinOrderByAggregateInput
-    _sum?: PostgresConfigSumOrderByAggregateInput
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: ContactRoleConfigCountOrderByAggregateInput
+    _avg?: ContactRoleConfigAvgOrderByAggregateInput
+    _max?: ContactRoleConfigMaxOrderByAggregateInput
+    _min?: ContactRoleConfigMinOrderByAggregateInput
+    _sum?: ContactRoleConfigSumOrderByAggregateInput
   }
 
-  export type PostgresConfigScalarWhereWithAggregatesInput = {
-    AND?: PostgresConfigScalarWhereWithAggregatesInput | PostgresConfigScalarWhereWithAggregatesInput[]
-    OR?: PostgresConfigScalarWhereWithAggregatesInput[]
-    NOT?: PostgresConfigScalarWhereWithAggregatesInput | PostgresConfigScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"PostgresConfig"> | number
-    host?: StringWithAggregatesFilter<"PostgresConfig"> | string
-    port?: IntWithAggregatesFilter<"PostgresConfig"> | number
-    database?: StringWithAggregatesFilter<"PostgresConfig"> | string
-    schema?: StringWithAggregatesFilter<"PostgresConfig"> | string
-    user?: StringWithAggregatesFilter<"PostgresConfig"> | string
-    password?: StringWithAggregatesFilter<"PostgresConfig"> | string
+  export type ContactRoleConfigScalarWhereWithAggregatesInput = {
+    AND?: ContactRoleConfigScalarWhereWithAggregatesInput | ContactRoleConfigScalarWhereWithAggregatesInput[]
+    OR?: ContactRoleConfigScalarWhereWithAggregatesInput[]
+    NOT?: ContactRoleConfigScalarWhereWithAggregatesInput | ContactRoleConfigScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ContactRoleConfig"> | number
+    nom?: StringWithAggregatesFilter<"ContactRoleConfig"> | string
+    isSendAot?: BoolWithAggregatesFilter<"ContactRoleConfig"> | boolean
+    ordre?: IntWithAggregatesFilter<"ContactRoleConfig"> | number
+    created_at?: DateTimeWithAggregatesFilter<"ContactRoleConfig"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"ContactRoleConfig"> | Date | string
   }
 
   export type OdpConfigWhereInput = {
@@ -31891,6 +34472,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFilter<"SignatureRequest"> | Date | string
     rejectionComment?: StringNullableFilter<"SignatureRequest"> | string | null
     signedAt?: DateTimeNullableFilter<"SignatureRequest"> | Date | string | null
+    requestedByLogin?: StringNullableFilter<"SignatureRequest"> | string | null
     created_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
@@ -31906,6 +34488,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrderInput | SortOrder
     signedAt?: SortOrderInput | SortOrder
+    requestedByLogin?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     occupation?: OccupationOrderByWithRelationInput
@@ -31924,6 +34507,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFilter<"SignatureRequest"> | Date | string
     rejectionComment?: StringNullableFilter<"SignatureRequest"> | string | null
     signedAt?: DateTimeNullableFilter<"SignatureRequest"> | Date | string | null
+    requestedByLogin?: StringNullableFilter<"SignatureRequest"> | string | null
     created_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
@@ -31939,6 +34523,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrderInput | SortOrder
     signedAt?: SortOrderInput | SortOrder
+    requestedByLogin?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: SignatureRequestCountOrderByAggregateInput
@@ -31960,8 +34545,283 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
     rejectionComment?: StringNullableWithAggregatesFilter<"SignatureRequest"> | string | null
     signedAt?: DateTimeNullableWithAggregatesFilter<"SignatureRequest"> | Date | string | null
+    requestedByLogin?: StringNullableWithAggregatesFilter<"SignatureRequest"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"SignatureRequest"> | Date | string
+  }
+
+  export type AppSettingsWhereInput = {
+    AND?: AppSettingsWhereInput | AppSettingsWhereInput[]
+    OR?: AppSettingsWhereInput[]
+    NOT?: AppSettingsWhereInput | AppSettingsWhereInput[]
+    id?: IntFilter<"AppSettings"> | number
+    financeEmail?: StringNullableFilter<"AppSettings"> | string | null
+    appUrl?: StringNullableFilter<"AppSettings"> | string | null
+    apmUrl?: StringNullableFilter<"AppSettings"> | string | null
+    apmToken?: StringNullableFilter<"AppSettings"> | string | null
+    senderName?: StringNullableFilter<"AppSettings"> | string | null
+    senderEmail?: StringNullableFilter<"AppSettings"> | string | null
+    filienOrga?: StringNullableFilter<"AppSettings"> | string | null
+    filienBudget?: StringNullableFilter<"AppSettings"> | string | null
+    filienExercice?: IntNullableFilter<"AppSettings"> | number | null
+    filienAvancement?: StringNullableFilter<"AppSettings"> | string | null
+    filienRejetDispo?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienRejetCA?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienRejetMarche?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienMouvement?: StringNullableFilter<"AppSettings"> | string | null
+    filienType?: StringNullableFilter<"AppSettings"> | string | null
+    filienLibelle?: StringNullableFilter<"AppSettings"> | string | null
+    filienCalendrier?: StringNullableFilter<"AppSettings"> | string | null
+    filienMonnaie?: StringNullableFilter<"AppSettings"> | string | null
+    filienMouvementEx?: StringNullableFilter<"AppSettings"> | string | null
+    filienPreBordereau?: StringNullableFilter<"AppSettings"> | string | null
+    filienPoste?: StringNullableFilter<"AppSettings"> | string | null
+    filienBordereau?: StringNullableFilter<"AppSettings"> | string | null
+    filienObjet?: StringNullableFilter<"AppSettings"> | string | null
+    filienChapitre?: StringNullableFilter<"AppSettings"> | string | null
+    filienNature?: StringNullableFilter<"AppSettings"> | string | null
+    filienFonction?: StringNullableFilter<"AppSettings"> | string | null
+    filienCodeInterne?: StringNullableFilter<"AppSettings"> | string | null
+    filienTypeMouvement?: StringNullableFilter<"AppSettings"> | string | null
+    filienSens?: StringNullableFilter<"AppSettings"> | string | null
+    filienStructure?: StringNullableFilter<"AppSettings"> | string | null
+    filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
+    adDomain?: StringNullableFilter<"AppSettings"> | string | null
+    signataireRole?: StringNullableFilter<"AppSettings"> | string | null
+    signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
+    signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    footer1?: StringNullableFilter<"AppSettings"> | string | null
+    footer2?: StringNullableFilter<"AppSettings"> | string | null
+    footer3?: StringNullableFilter<"AppSettings"> | string | null
+    footerColor?: StringNullableFilter<"AppSettings"> | string | null
+    updated_at?: DateTimeFilter<"AppSettings"> | Date | string
+    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
+    watermark?: StringNullableFilter<"AppSettings"> | string | null
+    dbMode?: StringFilter<"AppSettings"> | string
+    autoDistributeInvoices?: BoolFilter<"AppSettings"> | boolean
+    distributeOnlyVerified?: BoolFilter<"AppSettings"> | boolean
+  }
+
+  export type AppSettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    financeEmail?: SortOrderInput | SortOrder
+    appUrl?: SortOrderInput | SortOrder
+    apmUrl?: SortOrderInput | SortOrder
+    apmToken?: SortOrderInput | SortOrder
+    senderName?: SortOrderInput | SortOrder
+    senderEmail?: SortOrderInput | SortOrder
+    filienOrga?: SortOrderInput | SortOrder
+    filienBudget?: SortOrderInput | SortOrder
+    filienExercice?: SortOrderInput | SortOrder
+    filienAvancement?: SortOrderInput | SortOrder
+    filienRejetDispo?: SortOrderInput | SortOrder
+    filienRejetCA?: SortOrderInput | SortOrder
+    filienRejetMarche?: SortOrderInput | SortOrder
+    filienMouvement?: SortOrderInput | SortOrder
+    filienType?: SortOrderInput | SortOrder
+    filienLibelle?: SortOrderInput | SortOrder
+    filienCalendrier?: SortOrderInput | SortOrder
+    filienMonnaie?: SortOrderInput | SortOrder
+    filienMouvementEx?: SortOrderInput | SortOrder
+    filienPreBordereau?: SortOrderInput | SortOrder
+    filienPoste?: SortOrderInput | SortOrder
+    filienBordereau?: SortOrderInput | SortOrder
+    filienObjet?: SortOrderInput | SortOrder
+    filienChapitre?: SortOrderInput | SortOrder
+    filienNature?: SortOrderInput | SortOrder
+    filienFonction?: SortOrderInput | SortOrder
+    filienCodeInterne?: SortOrderInput | SortOrder
+    filienTypeMouvement?: SortOrderInput | SortOrder
+    filienSens?: SortOrderInput | SortOrder
+    filienStructure?: SortOrderInput | SortOrder
+    filienGestionnaire?: SortOrderInput | SortOrder
+    filienUncPj?: SortOrderInput | SortOrder
+    adDomain?: SortOrderInput | SortOrder
+    signataireRole?: SortOrderInput | SortOrder
+    signataireDelegation?: SortOrderInput | SortOrder
+    signataireNom?: SortOrderInput | SortOrder
+    footer1?: SortOrderInput | SortOrder
+    footer2?: SortOrderInput | SortOrder
+    footer3?: SortOrderInput | SortOrder
+    footerColor?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrderInput | SortOrder
+    filienUncUser?: SortOrderInput | SortOrder
+    filienUncDomain?: SortOrderInput | SortOrder
+    watermark?: SortOrderInput | SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+  }
+
+  export type AppSettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: AppSettingsWhereInput | AppSettingsWhereInput[]
+    OR?: AppSettingsWhereInput[]
+    NOT?: AppSettingsWhereInput | AppSettingsWhereInput[]
+    financeEmail?: StringNullableFilter<"AppSettings"> | string | null
+    appUrl?: StringNullableFilter<"AppSettings"> | string | null
+    apmUrl?: StringNullableFilter<"AppSettings"> | string | null
+    apmToken?: StringNullableFilter<"AppSettings"> | string | null
+    senderName?: StringNullableFilter<"AppSettings"> | string | null
+    senderEmail?: StringNullableFilter<"AppSettings"> | string | null
+    filienOrga?: StringNullableFilter<"AppSettings"> | string | null
+    filienBudget?: StringNullableFilter<"AppSettings"> | string | null
+    filienExercice?: IntNullableFilter<"AppSettings"> | number | null
+    filienAvancement?: StringNullableFilter<"AppSettings"> | string | null
+    filienRejetDispo?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienRejetCA?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienRejetMarche?: BoolNullableFilter<"AppSettings"> | boolean | null
+    filienMouvement?: StringNullableFilter<"AppSettings"> | string | null
+    filienType?: StringNullableFilter<"AppSettings"> | string | null
+    filienLibelle?: StringNullableFilter<"AppSettings"> | string | null
+    filienCalendrier?: StringNullableFilter<"AppSettings"> | string | null
+    filienMonnaie?: StringNullableFilter<"AppSettings"> | string | null
+    filienMouvementEx?: StringNullableFilter<"AppSettings"> | string | null
+    filienPreBordereau?: StringNullableFilter<"AppSettings"> | string | null
+    filienPoste?: StringNullableFilter<"AppSettings"> | string | null
+    filienBordereau?: StringNullableFilter<"AppSettings"> | string | null
+    filienObjet?: StringNullableFilter<"AppSettings"> | string | null
+    filienChapitre?: StringNullableFilter<"AppSettings"> | string | null
+    filienNature?: StringNullableFilter<"AppSettings"> | string | null
+    filienFonction?: StringNullableFilter<"AppSettings"> | string | null
+    filienCodeInterne?: StringNullableFilter<"AppSettings"> | string | null
+    filienTypeMouvement?: StringNullableFilter<"AppSettings"> | string | null
+    filienSens?: StringNullableFilter<"AppSettings"> | string | null
+    filienStructure?: StringNullableFilter<"AppSettings"> | string | null
+    filienGestionnaire?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncPj?: StringNullableFilter<"AppSettings"> | string | null
+    adDomain?: StringNullableFilter<"AppSettings"> | string | null
+    signataireRole?: StringNullableFilter<"AppSettings"> | string | null
+    signataireDelegation?: StringNullableFilter<"AppSettings"> | string | null
+    signataireNom?: StringNullableFilter<"AppSettings"> | string | null
+    footer1?: StringNullableFilter<"AppSettings"> | string | null
+    footer2?: StringNullableFilter<"AppSettings"> | string | null
+    footer3?: StringNullableFilter<"AppSettings"> | string | null
+    footerColor?: StringNullableFilter<"AppSettings"> | string | null
+    updated_at?: DateTimeFilter<"AppSettings"> | Date | string
+    filienUncPass?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableFilter<"AppSettings"> | string | null
+    watermark?: StringNullableFilter<"AppSettings"> | string | null
+    dbMode?: StringFilter<"AppSettings"> | string
+    autoDistributeInvoices?: BoolFilter<"AppSettings"> | boolean
+    distributeOnlyVerified?: BoolFilter<"AppSettings"> | boolean
+  }, "id">
+
+  export type AppSettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    financeEmail?: SortOrderInput | SortOrder
+    appUrl?: SortOrderInput | SortOrder
+    apmUrl?: SortOrderInput | SortOrder
+    apmToken?: SortOrderInput | SortOrder
+    senderName?: SortOrderInput | SortOrder
+    senderEmail?: SortOrderInput | SortOrder
+    filienOrga?: SortOrderInput | SortOrder
+    filienBudget?: SortOrderInput | SortOrder
+    filienExercice?: SortOrderInput | SortOrder
+    filienAvancement?: SortOrderInput | SortOrder
+    filienRejetDispo?: SortOrderInput | SortOrder
+    filienRejetCA?: SortOrderInput | SortOrder
+    filienRejetMarche?: SortOrderInput | SortOrder
+    filienMouvement?: SortOrderInput | SortOrder
+    filienType?: SortOrderInput | SortOrder
+    filienLibelle?: SortOrderInput | SortOrder
+    filienCalendrier?: SortOrderInput | SortOrder
+    filienMonnaie?: SortOrderInput | SortOrder
+    filienMouvementEx?: SortOrderInput | SortOrder
+    filienPreBordereau?: SortOrderInput | SortOrder
+    filienPoste?: SortOrderInput | SortOrder
+    filienBordereau?: SortOrderInput | SortOrder
+    filienObjet?: SortOrderInput | SortOrder
+    filienChapitre?: SortOrderInput | SortOrder
+    filienNature?: SortOrderInput | SortOrder
+    filienFonction?: SortOrderInput | SortOrder
+    filienCodeInterne?: SortOrderInput | SortOrder
+    filienTypeMouvement?: SortOrderInput | SortOrder
+    filienSens?: SortOrderInput | SortOrder
+    filienStructure?: SortOrderInput | SortOrder
+    filienGestionnaire?: SortOrderInput | SortOrder
+    filienUncPj?: SortOrderInput | SortOrder
+    adDomain?: SortOrderInput | SortOrder
+    signataireRole?: SortOrderInput | SortOrder
+    signataireDelegation?: SortOrderInput | SortOrder
+    signataireNom?: SortOrderInput | SortOrder
+    footer1?: SortOrderInput | SortOrder
+    footer2?: SortOrderInput | SortOrder
+    footer3?: SortOrderInput | SortOrder
+    footerColor?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrderInput | SortOrder
+    filienUncUser?: SortOrderInput | SortOrder
+    filienUncDomain?: SortOrderInput | SortOrder
+    watermark?: SortOrderInput | SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+    _count?: AppSettingsCountOrderByAggregateInput
+    _avg?: AppSettingsAvgOrderByAggregateInput
+    _max?: AppSettingsMaxOrderByAggregateInput
+    _min?: AppSettingsMinOrderByAggregateInput
+    _sum?: AppSettingsSumOrderByAggregateInput
+  }
+
+  export type AppSettingsScalarWhereWithAggregatesInput = {
+    AND?: AppSettingsScalarWhereWithAggregatesInput | AppSettingsScalarWhereWithAggregatesInput[]
+    OR?: AppSettingsScalarWhereWithAggregatesInput[]
+    NOT?: AppSettingsScalarWhereWithAggregatesInput | AppSettingsScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"AppSettings"> | number
+    financeEmail?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    appUrl?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    apmUrl?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    apmToken?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    senderName?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    senderEmail?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienOrga?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienBudget?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienExercice?: IntNullableWithAggregatesFilter<"AppSettings"> | number | null
+    filienAvancement?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienRejetDispo?: BoolNullableWithAggregatesFilter<"AppSettings"> | boolean | null
+    filienRejetCA?: BoolNullableWithAggregatesFilter<"AppSettings"> | boolean | null
+    filienRejetMarche?: BoolNullableWithAggregatesFilter<"AppSettings"> | boolean | null
+    filienMouvement?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienType?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienLibelle?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienCalendrier?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienMonnaie?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienMouvementEx?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienPreBordereau?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienPoste?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienBordereau?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienObjet?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienChapitre?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienNature?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienFonction?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienCodeInterne?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienTypeMouvement?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienSens?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienStructure?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienGestionnaire?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncPj?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    adDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signataireRole?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signataireDelegation?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    signataireNom?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footer1?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footer2?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footer3?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    footerColor?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    updated_at?: DateTimeWithAggregatesFilter<"AppSettings"> | Date | string
+    filienUncPass?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncUser?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    filienUncDomain?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    watermark?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    dbMode?: StringWithAggregatesFilter<"AppSettings"> | string
+    autoDistributeInvoices?: BoolWithAggregatesFilter<"AppSettings"> | boolean
+    distributeOnlyVerified?: BoolWithAggregatesFilter<"AppSettings"> | boolean
   }
 
   export type TiersCreateInput = {
@@ -31977,8 +34837,12 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     occupations?: OccupationCreateNestedManyWithoutTiersInput
+    notes?: NoteCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateInput = {
@@ -31995,8 +34859,12 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
+    notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUpdateInput = {
@@ -32012,8 +34880,12 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
+    notes?: NoteUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateInput = {
@@ -32030,8 +34902,12 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersCreateManyInput = {
@@ -32048,6 +34924,8 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
   }
 
   export type TiersUpdateManyMutationInput = {
@@ -32063,6 +34941,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TiersUncheckedUpdateManyInput = {
@@ -32079,6 +34959,8 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OccupationCreateInput = {
@@ -32092,6 +34974,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -32101,10 +34984,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -32126,6 +35018,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -32135,10 +35028,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -32157,6 +35059,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32166,10 +35069,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -32191,6 +35103,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32200,10 +35113,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -32224,6 +35146,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -32233,10 +35156,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
   }
 
   export type OccupationUpdateManyMutationInput = {
@@ -32250,6 +35182,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32259,10 +35192,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type OccupationUncheckedUpdateManyInput = {
@@ -32278,6 +35220,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32287,10 +35230,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ContactCreateInput = {
@@ -32300,6 +35252,7 @@ export namespace Prisma {
     telephone?: string | null
     titre?: string | null
     role?: string
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -32318,6 +35271,7 @@ export namespace Prisma {
     role?: string
     occupationId?: number | null
     tiersId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -32331,6 +35285,7 @@ export namespace Prisma {
     telephone?: NullableStringFieldUpdateOperationsInput | string | null
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32349,6 +35304,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     occupationId?: NullableIntFieldUpdateOperationsInput | number | null
     tiersId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32365,6 +35321,7 @@ export namespace Prisma {
     role?: string
     occupationId?: number | null
     tiersId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -32378,6 +35335,7 @@ export namespace Prisma {
     telephone?: NullableStringFieldUpdateOperationsInput | string | null
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32394,6 +35352,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     occupationId?: NullableIntFieldUpdateOperationsInput | number | null
     tiersId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32412,12 +35371,14 @@ export namespace Prisma {
     toEmail?: string | null
     origin?: string | null
     created_at?: Date | string
-    occupation: OccupationCreateNestedOneWithoutNotesInput
+    occupation?: OccupationCreateNestedOneWithoutNotesInput
+    tiers?: TiersCreateNestedOneWithoutNotesInput
   }
 
   export type NoteUncheckedCreateInput = {
     id?: number
-    occupationId: number
+    occupationId?: number | null
+    tiersId?: number | null
     content: string
     author?: string | null
     pjPath?: string | null
@@ -32443,12 +35404,14 @@ export namespace Prisma {
     toEmail?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    occupation?: OccupationUpdateOneRequiredWithoutNotesNestedInput
+    occupation?: OccupationUpdateOneWithoutNotesNestedInput
+    tiers?: TiersUpdateOneWithoutNotesNestedInput
   }
 
   export type NoteUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    occupationId?: IntFieldUpdateOperationsInput | number
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    tiersId?: NullableIntFieldUpdateOperationsInput | number | null
     content?: StringFieldUpdateOperationsInput | string
     author?: NullableStringFieldUpdateOperationsInput | string | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32464,7 +35427,8 @@ export namespace Prisma {
 
   export type NoteCreateManyInput = {
     id?: number
-    occupationId: number
+    occupationId?: number | null
+    tiersId?: number | null
     content: string
     author?: string | null
     pjPath?: string | null
@@ -32494,7 +35458,8 @@ export namespace Prisma {
 
   export type NoteUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    occupationId?: IntFieldUpdateOperationsInput | number
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    tiersId?: NullableIntFieldUpdateOperationsInput | number | null
     content?: StringFieldUpdateOperationsInput | string
     author?: NullableStringFieldUpdateOperationsInput | string | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32834,9 +35799,11 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
     logs?: MobileLogCreateNestedManyWithoutUserInput
+    favoriteCommerces?: FavoriteCommerceCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -32847,9 +35814,11 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
     logs?: MobileLogUncheckedCreateNestedManyWithoutUserInput
+    favoriteCommerces?: FavoriteCommerceUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -32859,9 +35828,11 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     logs?: MobileLogUpdateManyWithoutUserNestedInput
+    favoriteCommerces?: FavoriteCommerceUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -32872,9 +35843,11 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     logs?: MobileLogUncheckedUpdateManyWithoutUserNestedInput
+    favoriteCommerces?: FavoriteCommerceUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -32885,6 +35858,7 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -32896,6 +35870,7 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -32908,8 +35883,53 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceCreateInput = {
+    created_at?: Date | string
+    user: UserCreateNestedOneWithoutFavoriteCommercesInput
+    tiers: TiersCreateNestedOneWithoutFavoritedByInput
+  }
+
+  export type FavoriteCommerceUncheckedCreateInput = {
+    id?: number
+    userId: number
+    tiersId: number
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceUpdateInput = {
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutFavoriteCommercesNestedInput
+    tiers?: TiersUpdateOneRequiredWithoutFavoritedByNestedInput
+  }
+
+  export type FavoriteCommerceUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    tiersId?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceCreateManyInput = {
+    id?: number
+    userId: number
+    tiersId: number
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceUpdateManyMutationInput = {
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    tiersId?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MobileLogCreateInput = {
@@ -32978,330 +35998,64 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type AppSettingsCreateInput = {
-    financeEmail?: string | null
-    appUrl?: string | null
-    apmUrl?: string | null
-    apmToken?: string | null
-    senderName?: string | null
-    senderEmail?: string | null
-    filienOrga?: string | null
-    filienBudget?: string | null
-    filienExercice?: number | null
-    filienAvancement?: string | null
-    filienRejetDispo?: boolean | null
-    filienRejetCA?: boolean | null
-    filienRejetMarche?: boolean | null
-    filienMouvement?: string | null
-    filienType?: string | null
-    filienLibelle?: string | null
-    filienCalendrier?: string | null
-    filienMonnaie?: string | null
-    filienMouvementEx?: string | null
-    filienPreBordereau?: string | null
-    filienPoste?: string | null
-    filienBordereau?: string | null
-    filienObjet?: string | null
-    filienChapitre?: string | null
-    filienNature?: string | null
-    filienFonction?: string | null
-    filienCodeInterne?: string | null
-    filienTypeMouvement?: string | null
-    filienSens?: string | null
-    filienStructure?: string | null
-    filienGestionnaire?: string | null
-    filienUncPj?: string | null
-    signataireRole?: string | null
-    signataireDelegation?: string | null
-    signataireNom?: string | null
-    footer1?: string | null
-    footer2?: string | null
-    footer3?: string | null
-    footerColor?: string | null
-    updated_at?: Date | string
-    filienUncPass?: string | null
-    filienUncUser?: string | null
-    filienUncDomain?: string | null
+  export type ContextualMessageCreateInput = {
+    cle: string
+    label?: string | null
+    sujet?: string | null
+    valeur: string
+    disabled?: boolean
   }
 
-  export type AppSettingsUncheckedCreateInput = {
+  export type ContextualMessageUncheckedCreateInput = {
     id?: number
-    financeEmail?: string | null
-    appUrl?: string | null
-    apmUrl?: string | null
-    apmToken?: string | null
-    senderName?: string | null
-    senderEmail?: string | null
-    filienOrga?: string | null
-    filienBudget?: string | null
-    filienExercice?: number | null
-    filienAvancement?: string | null
-    filienRejetDispo?: boolean | null
-    filienRejetCA?: boolean | null
-    filienRejetMarche?: boolean | null
-    filienMouvement?: string | null
-    filienType?: string | null
-    filienLibelle?: string | null
-    filienCalendrier?: string | null
-    filienMonnaie?: string | null
-    filienMouvementEx?: string | null
-    filienPreBordereau?: string | null
-    filienPoste?: string | null
-    filienBordereau?: string | null
-    filienObjet?: string | null
-    filienChapitre?: string | null
-    filienNature?: string | null
-    filienFonction?: string | null
-    filienCodeInterne?: string | null
-    filienTypeMouvement?: string | null
-    filienSens?: string | null
-    filienStructure?: string | null
-    filienGestionnaire?: string | null
-    filienUncPj?: string | null
-    signataireRole?: string | null
-    signataireDelegation?: string | null
-    signataireNom?: string | null
-    footer1?: string | null
-    footer2?: string | null
-    footer3?: string | null
-    footerColor?: string | null
-    updated_at?: Date | string
-    filienUncPass?: string | null
-    filienUncUser?: string | null
-    filienUncDomain?: string | null
+    cle: string
+    label?: string | null
+    sujet?: string | null
+    valeur: string
+    disabled?: boolean
   }
 
-  export type AppSettingsUpdateInput = {
-    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
-    senderName?: NullableStringFieldUpdateOperationsInput | string | null
-    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
-    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
-    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
-    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienType?: NullableStringFieldUpdateOperationsInput | string | null
-    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
-    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
-    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
-    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
-    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
-    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
-    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
-    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
-    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
-    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
-    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
-    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
-    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
-    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
-    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    footer1?: NullableStringFieldUpdateOperationsInput | string | null
-    footer2?: NullableStringFieldUpdateOperationsInput | string | null
-    footer3?: NullableStringFieldUpdateOperationsInput | string | null
-    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+  export type ContextualMessageUpdateInput = {
+    cle?: StringFieldUpdateOperationsInput | string
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    sujet?: NullableStringFieldUpdateOperationsInput | string | null
+    valeur?: StringFieldUpdateOperationsInput | string
+    disabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type AppSettingsUncheckedUpdateInput = {
+  export type ContextualMessageUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
-    senderName?: NullableStringFieldUpdateOperationsInput | string | null
-    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
-    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
-    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
-    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienType?: NullableStringFieldUpdateOperationsInput | string | null
-    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
-    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
-    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
-    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
-    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
-    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
-    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
-    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
-    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
-    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
-    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
-    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
-    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
-    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
-    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    footer1?: NullableStringFieldUpdateOperationsInput | string | null
-    footer2?: NullableStringFieldUpdateOperationsInput | string | null
-    footer3?: NullableStringFieldUpdateOperationsInput | string | null
-    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    cle?: StringFieldUpdateOperationsInput | string
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    sujet?: NullableStringFieldUpdateOperationsInput | string | null
+    valeur?: StringFieldUpdateOperationsInput | string
+    disabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type AppSettingsCreateManyInput = {
+  export type ContextualMessageCreateManyInput = {
     id?: number
-    financeEmail?: string | null
-    appUrl?: string | null
-    apmUrl?: string | null
-    apmToken?: string | null
-    senderName?: string | null
-    senderEmail?: string | null
-    filienOrga?: string | null
-    filienBudget?: string | null
-    filienExercice?: number | null
-    filienAvancement?: string | null
-    filienRejetDispo?: boolean | null
-    filienRejetCA?: boolean | null
-    filienRejetMarche?: boolean | null
-    filienMouvement?: string | null
-    filienType?: string | null
-    filienLibelle?: string | null
-    filienCalendrier?: string | null
-    filienMonnaie?: string | null
-    filienMouvementEx?: string | null
-    filienPreBordereau?: string | null
-    filienPoste?: string | null
-    filienBordereau?: string | null
-    filienObjet?: string | null
-    filienChapitre?: string | null
-    filienNature?: string | null
-    filienFonction?: string | null
-    filienCodeInterne?: string | null
-    filienTypeMouvement?: string | null
-    filienSens?: string | null
-    filienStructure?: string | null
-    filienGestionnaire?: string | null
-    filienUncPj?: string | null
-    signataireRole?: string | null
-    signataireDelegation?: string | null
-    signataireNom?: string | null
-    footer1?: string | null
-    footer2?: string | null
-    footer3?: string | null
-    footerColor?: string | null
-    updated_at?: Date | string
-    filienUncPass?: string | null
-    filienUncUser?: string | null
-    filienUncDomain?: string | null
+    cle: string
+    label?: string | null
+    sujet?: string | null
+    valeur: string
+    disabled?: boolean
   }
 
-  export type AppSettingsUpdateManyMutationInput = {
-    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
-    senderName?: NullableStringFieldUpdateOperationsInput | string | null
-    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
-    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
-    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
-    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienType?: NullableStringFieldUpdateOperationsInput | string | null
-    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
-    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
-    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
-    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
-    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
-    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
-    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
-    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
-    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
-    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
-    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
-    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
-    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
-    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
-    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    footer1?: NullableStringFieldUpdateOperationsInput | string | null
-    footer2?: NullableStringFieldUpdateOperationsInput | string | null
-    footer3?: NullableStringFieldUpdateOperationsInput | string | null
-    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+  export type ContextualMessageUpdateManyMutationInput = {
+    cle?: StringFieldUpdateOperationsInput | string
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    sujet?: NullableStringFieldUpdateOperationsInput | string | null
+    valeur?: StringFieldUpdateOperationsInput | string
+    disabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
-  export type AppSettingsUncheckedUpdateManyInput = {
+  export type ContextualMessageUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
-    senderName?: NullableStringFieldUpdateOperationsInput | string | null
-    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
-    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
-    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
-    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienType?: NullableStringFieldUpdateOperationsInput | string | null
-    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
-    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
-    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
-    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
-    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
-    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
-    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
-    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
-    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
-    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
-    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
-    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
-    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
-    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
-    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
-    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
-    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
-    footer1?: NullableStringFieldUpdateOperationsInput | string | null
-    footer2?: NullableStringFieldUpdateOperationsInput | string | null
-    footer3?: NullableStringFieldUpdateOperationsInput | string | null
-    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
-    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    cle?: StringFieldUpdateOperationsInput | string
+    label?: NullableStringFieldUpdateOperationsInput | string | null
+    sujet?: NullableStringFieldUpdateOperationsInput | string | null
+    valeur?: StringFieldUpdateOperationsInput | string
+    disabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type LigneOccupationCreateInput = {
@@ -33314,6 +36068,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
     article: ArticleCreateNestedOneWithoutLignesInput
@@ -33333,6 +36088,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -33347,6 +36103,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
     article?: ArticleUpdateOneRequiredWithoutLignesNestedInput
@@ -33366,6 +36123,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -33383,6 +36141,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -33397,6 +36156,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -33414,6 +36174,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -33608,6 +36369,7 @@ export namespace Prisma {
     filienSens?: string | null
     filienStructure?: string | null
     filienGestionnaire?: string | null
+    filienPreBordereau?: string | null
     invoiceTemplateId?: string | null
     updated_at?: Date | string
   }
@@ -33624,6 +36386,7 @@ export namespace Prisma {
     filienSens?: string | null
     filienStructure?: string | null
     filienGestionnaire?: string | null
+    filienPreBordereau?: string | null
     invoiceTemplateId?: string | null
     updated_at?: Date | string
   }
@@ -33639,6 +36402,7 @@ export namespace Prisma {
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33655,6 +36419,7 @@ export namespace Prisma {
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33671,6 +36436,7 @@ export namespace Prisma {
     filienSens?: string | null
     filienStructure?: string | null
     filienGestionnaire?: string | null
+    filienPreBordereau?: string | null
     invoiceTemplateId?: string | null
     updated_at?: Date | string
   }
@@ -33686,6 +36452,7 @@ export namespace Prisma {
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33702,6 +36469,7 @@ export namespace Prisma {
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
     filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
     filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceTemplateId?: NullableStringFieldUpdateOperationsInput | string | null
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33712,6 +36480,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentCreateNestedManyWithoutBacklogItemInput
@@ -33726,6 +36495,7 @@ export namespace Prisma {
     priority?: string
     status?: string
     versionId?: number | null
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentUncheckedCreateNestedManyWithoutBacklogItemInput
@@ -33737,6 +36507,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUpdateManyWithoutBacklogItemNestedInput
@@ -33751,6 +36522,7 @@ export namespace Prisma {
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     versionId?: NullableIntFieldUpdateOperationsInput | number | null
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUncheckedUpdateManyWithoutBacklogItemNestedInput
@@ -33764,6 +36536,7 @@ export namespace Prisma {
     priority?: string
     status?: string
     versionId?: number | null
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -33774,6 +36547,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33786,6 +36560,7 @@ export namespace Prisma {
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     versionId?: NullableIntFieldUpdateOperationsInput | number | null
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33899,71 +36674,64 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PostgresConfigCreateInput = {
-    host: string
-    port?: number
-    database: string
-    schema?: string
-    user: string
-    password: string
+  export type ContactRoleConfigCreateInput = {
+    nom: string
+    isSendAot?: boolean
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
-  export type PostgresConfigUncheckedCreateInput = {
+  export type ContactRoleConfigUncheckedCreateInput = {
     id?: number
-    host: string
-    port?: number
-    database: string
-    schema?: string
-    user: string
-    password: string
+    nom: string
+    isSendAot?: boolean
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
-  export type PostgresConfigUpdateInput = {
-    host?: StringFieldUpdateOperationsInput | string
-    port?: IntFieldUpdateOperationsInput | number
-    database?: StringFieldUpdateOperationsInput | string
-    schema?: StringFieldUpdateOperationsInput | string
-    user?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+  export type ContactRoleConfigUpdateInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    isSendAot?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PostgresConfigUncheckedUpdateInput = {
+  export type ContactRoleConfigUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    host?: StringFieldUpdateOperationsInput | string
-    port?: IntFieldUpdateOperationsInput | number
-    database?: StringFieldUpdateOperationsInput | string
-    schema?: StringFieldUpdateOperationsInput | string
-    user?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    nom?: StringFieldUpdateOperationsInput | string
+    isSendAot?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PostgresConfigCreateManyInput = {
+  export type ContactRoleConfigCreateManyInput = {
     id?: number
-    host: string
-    port?: number
-    database: string
-    schema?: string
-    user: string
-    password: string
+    nom: string
+    isSendAot?: boolean
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
-  export type PostgresConfigUpdateManyMutationInput = {
-    host?: StringFieldUpdateOperationsInput | string
-    port?: IntFieldUpdateOperationsInput | number
-    database?: StringFieldUpdateOperationsInput | string
-    schema?: StringFieldUpdateOperationsInput | string
-    user?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+  export type ContactRoleConfigUpdateManyMutationInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    isSendAot?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PostgresConfigUncheckedUpdateManyInput = {
+  export type ContactRoleConfigUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    host?: StringFieldUpdateOperationsInput | string
-    port?: IntFieldUpdateOperationsInput | number
-    database?: StringFieldUpdateOperationsInput | string
-    schema?: StringFieldUpdateOperationsInput | string
-    user?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    nom?: StringFieldUpdateOperationsInput | string
+    isSendAot?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OdpConfigCreateInput = {
@@ -34271,6 +37039,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     occupation: OccupationCreateNestedOneWithoutSignatureRequestsInput
@@ -34286,6 +37055,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -34296,6 +37066,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     occupation?: OccupationUpdateOneRequiredWithoutSignatureRequestsNestedInput
@@ -34311,6 +37082,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34324,6 +37096,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -34334,6 +37107,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -34347,14 +37121,376 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AppSettingsCreateInput = {
+    financeEmail?: string | null
+    appUrl?: string | null
+    apmUrl?: string | null
+    apmToken?: string | null
+    senderName?: string | null
+    senderEmail?: string | null
+    filienOrga?: string | null
+    filienBudget?: string | null
+    filienExercice?: number | null
+    filienAvancement?: string | null
+    filienRejetDispo?: boolean | null
+    filienRejetCA?: boolean | null
+    filienRejetMarche?: boolean | null
+    filienMouvement?: string | null
+    filienType?: string | null
+    filienLibelle?: string | null
+    filienCalendrier?: string | null
+    filienMonnaie?: string | null
+    filienMouvementEx?: string | null
+    filienPreBordereau?: string | null
+    filienPoste?: string | null
+    filienBordereau?: string | null
+    filienObjet?: string | null
+    filienChapitre?: string | null
+    filienNature?: string | null
+    filienFonction?: string | null
+    filienCodeInterne?: string | null
+    filienTypeMouvement?: string | null
+    filienSens?: string | null
+    filienStructure?: string | null
+    filienGestionnaire?: string | null
+    filienUncPj?: string | null
+    adDomain?: string | null
+    signataireRole?: string | null
+    signataireDelegation?: string | null
+    signataireNom?: string | null
+    footer1?: string | null
+    footer2?: string | null
+    footer3?: string | null
+    footerColor?: string | null
+    updated_at?: Date | string
+    filienUncPass?: string | null
+    filienUncUser?: string | null
+    filienUncDomain?: string | null
+    watermark?: string | null
+    dbMode?: string
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }
+
+  export type AppSettingsUncheckedCreateInput = {
+    id?: number
+    financeEmail?: string | null
+    appUrl?: string | null
+    apmUrl?: string | null
+    apmToken?: string | null
+    senderName?: string | null
+    senderEmail?: string | null
+    filienOrga?: string | null
+    filienBudget?: string | null
+    filienExercice?: number | null
+    filienAvancement?: string | null
+    filienRejetDispo?: boolean | null
+    filienRejetCA?: boolean | null
+    filienRejetMarche?: boolean | null
+    filienMouvement?: string | null
+    filienType?: string | null
+    filienLibelle?: string | null
+    filienCalendrier?: string | null
+    filienMonnaie?: string | null
+    filienMouvementEx?: string | null
+    filienPreBordereau?: string | null
+    filienPoste?: string | null
+    filienBordereau?: string | null
+    filienObjet?: string | null
+    filienChapitre?: string | null
+    filienNature?: string | null
+    filienFonction?: string | null
+    filienCodeInterne?: string | null
+    filienTypeMouvement?: string | null
+    filienSens?: string | null
+    filienStructure?: string | null
+    filienGestionnaire?: string | null
+    filienUncPj?: string | null
+    adDomain?: string | null
+    signataireRole?: string | null
+    signataireDelegation?: string | null
+    signataireNom?: string | null
+    footer1?: string | null
+    footer2?: string | null
+    footer3?: string | null
+    footerColor?: string | null
+    updated_at?: Date | string
+    filienUncPass?: string | null
+    filienUncUser?: string | null
+    filienUncDomain?: string | null
+    watermark?: string | null
+    dbMode?: string
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }
+
+  export type AppSettingsUpdateInput = {
+    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
+    senderName?: NullableStringFieldUpdateOperationsInput | string | null
+    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
+    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
+    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienType?: NullableStringFieldUpdateOperationsInput | string | null
+    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
+    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
+    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
+    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
+    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
+    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
+    dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type AppSettingsUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
+    senderName?: NullableStringFieldUpdateOperationsInput | string | null
+    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
+    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
+    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienType?: NullableStringFieldUpdateOperationsInput | string | null
+    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
+    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
+    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
+    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
+    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
+    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
+    dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type AppSettingsCreateManyInput = {
+    id?: number
+    financeEmail?: string | null
+    appUrl?: string | null
+    apmUrl?: string | null
+    apmToken?: string | null
+    senderName?: string | null
+    senderEmail?: string | null
+    filienOrga?: string | null
+    filienBudget?: string | null
+    filienExercice?: number | null
+    filienAvancement?: string | null
+    filienRejetDispo?: boolean | null
+    filienRejetCA?: boolean | null
+    filienRejetMarche?: boolean | null
+    filienMouvement?: string | null
+    filienType?: string | null
+    filienLibelle?: string | null
+    filienCalendrier?: string | null
+    filienMonnaie?: string | null
+    filienMouvementEx?: string | null
+    filienPreBordereau?: string | null
+    filienPoste?: string | null
+    filienBordereau?: string | null
+    filienObjet?: string | null
+    filienChapitre?: string | null
+    filienNature?: string | null
+    filienFonction?: string | null
+    filienCodeInterne?: string | null
+    filienTypeMouvement?: string | null
+    filienSens?: string | null
+    filienStructure?: string | null
+    filienGestionnaire?: string | null
+    filienUncPj?: string | null
+    adDomain?: string | null
+    signataireRole?: string | null
+    signataireDelegation?: string | null
+    signataireNom?: string | null
+    footer1?: string | null
+    footer2?: string | null
+    footer3?: string | null
+    footerColor?: string | null
+    updated_at?: Date | string
+    filienUncPass?: string | null
+    filienUncUser?: string | null
+    filienUncDomain?: string | null
+    watermark?: string | null
+    dbMode?: string
+    autoDistributeInvoices?: boolean
+    distributeOnlyVerified?: boolean
+  }
+
+  export type AppSettingsUpdateManyMutationInput = {
+    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
+    senderName?: NullableStringFieldUpdateOperationsInput | string | null
+    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
+    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
+    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienType?: NullableStringFieldUpdateOperationsInput | string | null
+    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
+    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
+    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
+    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
+    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
+    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
+    dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type AppSettingsUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    financeEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    appUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apmToken?: NullableStringFieldUpdateOperationsInput | string | null
+    senderName?: NullableStringFieldUpdateOperationsInput | string | null
+    senderEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    filienOrga?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBudget?: NullableStringFieldUpdateOperationsInput | string | null
+    filienExercice?: NullableIntFieldUpdateOperationsInput | number | null
+    filienAvancement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienRejetDispo?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetCA?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienRejetMarche?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    filienMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienType?: NullableStringFieldUpdateOperationsInput | string | null
+    filienLibelle?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCalendrier?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMonnaie?: NullableStringFieldUpdateOperationsInput | string | null
+    filienMouvementEx?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPreBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienPoste?: NullableStringFieldUpdateOperationsInput | string | null
+    filienBordereau?: NullableStringFieldUpdateOperationsInput | string | null
+    filienObjet?: NullableStringFieldUpdateOperationsInput | string | null
+    filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
+    filienNature?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
+    filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
+    filienSens?: NullableStringFieldUpdateOperationsInput | string | null
+    filienStructure?: NullableStringFieldUpdateOperationsInput | string | null
+    filienGestionnaire?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncPj?: NullableStringFieldUpdateOperationsInput | string | null
+    adDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireRole?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireDelegation?: NullableStringFieldUpdateOperationsInput | string | null
+    signataireNom?: NullableStringFieldUpdateOperationsInput | string | null
+    footer1?: NullableStringFieldUpdateOperationsInput | string | null
+    footer2?: NullableStringFieldUpdateOperationsInput | string | null
+    footer3?: NullableStringFieldUpdateOperationsInput | string | null
+    footerColor?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    filienUncPass?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncUser?: NullableStringFieldUpdateOperationsInput | string | null
+    filienUncDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    watermark?: NullableStringFieldUpdateOperationsInput | string | null
+    dbMode?: StringFieldUpdateOperationsInput | string
+    autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
+    distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -34364,8 +37500,8 @@ export namespace Prisma {
 
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -34373,13 +37509,14 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -34387,13 +37524,14 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type FloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -34403,8 +37541,8 @@ export namespace Prisma {
 
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -34424,6 +37562,18 @@ export namespace Prisma {
     none?: OccupationWhereInput
   }
 
+  export type NoteListRelationFilter = {
+    every?: NoteWhereInput
+    some?: NoteWhereInput
+    none?: NoteWhereInput
+  }
+
+  export type FavoriteCommerceListRelationFilter = {
+    every?: FavoriteCommerceWhereInput
+    some?: FavoriteCommerceWhereInput
+    none?: FavoriteCommerceWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -34434,6 +37584,14 @@ export namespace Prisma {
   }
 
   export type OccupationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NoteOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FavoriteCommerceOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -34451,6 +37609,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrder
     etatAdministratif?: SortOrder
+    observations?: SortOrder
+    photo?: SortOrder
   }
 
   export type TiersAvgOrderByAggregateInput = {
@@ -34473,6 +37633,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrder
     etatAdministratif?: SortOrder
+    observations?: SortOrder
+    photo?: SortOrder
   }
 
   export type TiersMinOrderByAggregateInput = {
@@ -34489,6 +37651,8 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrder
     etatAdministratif?: SortOrder
+    observations?: SortOrder
+    photo?: SortOrder
   }
 
   export type TiersSumOrderByAggregateInput = {
@@ -34499,8 +37663,8 @@ export namespace Prisma {
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -34515,8 +37679,8 @@ export namespace Prisma {
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -34524,6 +37688,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
@@ -34532,8 +37697,8 @@ export namespace Prisma {
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -34541,6 +37706,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
@@ -34549,8 +37715,8 @@ export namespace Prisma {
 
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -34565,8 +37731,8 @@ export namespace Prisma {
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -34579,8 +37745,8 @@ export namespace Prisma {
 
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -34590,8 +37756,8 @@ export namespace Prisma {
 
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -34601,8 +37767,8 @@ export namespace Prisma {
 
   export type FloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -34627,12 +37793,6 @@ export namespace Prisma {
     none?: LigneOccupationWhereInput
   }
 
-  export type NoteListRelationFilter = {
-    every?: NoteWhereInput
-    some?: NoteWhereInput
-    none?: NoteWhereInput
-  }
-
   export type SignatureRequestListRelationFilter = {
     every?: SignatureRequestWhereInput
     some?: SignatureRequestWhereInput
@@ -34649,10 +37809,6 @@ export namespace Prisma {
   }
 
   export type LigneOccupationOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type NoteOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -34673,6 +37829,7 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     description?: SortOrder
+    observations?: SortOrder
     photos?: SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrder
@@ -34682,10 +37839,19 @@ export namespace Prisma {
     dossierParentId?: SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrder
+    dateINIT?: SortOrder
+    dateINST?: SortOrder
+    datePREP?: SortOrder
+    dateEN_COURS?: SortOrder
+    dateVALIDE?: SortOrder
+    dateFACTURE?: SortOrder
+    dateTITRE?: SortOrder
+    dateCLOS?: SortOrder
   }
 
   export type OccupationAvgOrderByAggregateInput = {
@@ -34712,6 +37878,7 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     description?: SortOrder
+    observations?: SortOrder
     photos?: SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrder
@@ -34721,10 +37888,19 @@ export namespace Prisma {
     dossierParentId?: SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrder
+    dateINIT?: SortOrder
+    dateINST?: SortOrder
+    datePREP?: SortOrder
+    dateEN_COURS?: SortOrder
+    dateVALIDE?: SortOrder
+    dateFACTURE?: SortOrder
+    dateTITRE?: SortOrder
+    dateCLOS?: SortOrder
   }
 
   export type OccupationMinOrderByAggregateInput = {
@@ -34740,6 +37916,7 @@ export namespace Prisma {
     latitude?: SortOrder
     longitude?: SortOrder
     description?: SortOrder
+    observations?: SortOrder
     photos?: SortOrder
     montantCalcule?: SortOrder
     facturePath?: SortOrder
@@ -34749,10 +37926,19 @@ export namespace Prisma {
     dossierParentId?: SortOrder
     isCourtMetrage?: SortOrder
     agissantPour?: SortOrder
+    isAgissantPourBillable?: SortOrder
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
     datePaiement?: SortOrder
+    dateINIT?: SortOrder
+    dateINST?: SortOrder
+    datePREP?: SortOrder
+    dateEN_COURS?: SortOrder
+    dateVALIDE?: SortOrder
+    dateFACTURE?: SortOrder
+    dateTITRE?: SortOrder
+    dateCLOS?: SortOrder
   }
 
   export type OccupationSumOrderByAggregateInput = {
@@ -34768,8 +37954,8 @@ export namespace Prisma {
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -34782,8 +37968,8 @@ export namespace Prisma {
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -34798,8 +37984,8 @@ export namespace Prisma {
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -34840,6 +38026,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+    commerceId?: SortOrder
     pjPath?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -34850,6 +38037,7 @@ export namespace Prisma {
     id?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+    commerceId?: SortOrder
   }
 
   export type ContactMaxOrderByAggregateInput = {
@@ -34862,6 +38050,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+    commerceId?: SortOrder
     pjPath?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -34878,6 +38067,7 @@ export namespace Prisma {
     role?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+    commerceId?: SortOrder
     pjPath?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -34888,16 +38078,13 @@ export namespace Prisma {
     id?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
-  }
-
-  export type OccupationRelationFilter = {
-    is?: OccupationWhereInput
-    isNot?: OccupationWhereInput
+    commerceId?: SortOrder
   }
 
   export type NoteCountOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
     content?: SortOrder
     author?: SortOrder
     pjPath?: SortOrder
@@ -34914,11 +38101,13 @@ export namespace Prisma {
   export type NoteAvgOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
   }
 
   export type NoteMaxOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
     content?: SortOrder
     author?: SortOrder
     pjPath?: SortOrder
@@ -34935,6 +38124,7 @@ export namespace Prisma {
   export type NoteMinOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
     content?: SortOrder
     author?: SortOrder
     pjPath?: SortOrder
@@ -34951,6 +38141,7 @@ export namespace Prisma {
   export type NoteSumOrderByAggregateInput = {
     id?: SortOrder
     occupationId?: SortOrder
+    tiersId?: SortOrder
   }
 
   export type O365MessageCountOrderByAggregateInput = {
@@ -35172,6 +38363,7 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35188,6 +38380,7 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35200,12 +38393,56 @@ export namespace Prisma {
     login?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    isAd?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type FavoriteCommerceUserIdTiersIdCompoundUniqueInput = {
+    userId: number
+    tiersId: number
+  }
+
+  export type FavoriteCommerceCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type FavoriteCommerceAvgOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+  }
+
+  export type FavoriteCommerceMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type FavoriteCommerceMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type FavoriteCommerceSumOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tiersId?: SortOrder
   }
 
   export type UserNullableRelationFilter = {
@@ -35253,173 +38490,49 @@ export namespace Prisma {
     userId?: SortOrder
   }
 
-  export type BoolNullableFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
-  }
-
-  export type AppSettingsCountOrderByAggregateInput = {
+  export type ContextualMessageCountOrderByAggregateInput = {
     id?: SortOrder
-    financeEmail?: SortOrder
-    appUrl?: SortOrder
-    apmUrl?: SortOrder
-    apmToken?: SortOrder
-    senderName?: SortOrder
-    senderEmail?: SortOrder
-    filienOrga?: SortOrder
-    filienBudget?: SortOrder
-    filienExercice?: SortOrder
-    filienAvancement?: SortOrder
-    filienRejetDispo?: SortOrder
-    filienRejetCA?: SortOrder
-    filienRejetMarche?: SortOrder
-    filienMouvement?: SortOrder
-    filienType?: SortOrder
-    filienLibelle?: SortOrder
-    filienCalendrier?: SortOrder
-    filienMonnaie?: SortOrder
-    filienMouvementEx?: SortOrder
-    filienPreBordereau?: SortOrder
-    filienPoste?: SortOrder
-    filienBordereau?: SortOrder
-    filienObjet?: SortOrder
-    filienChapitre?: SortOrder
-    filienNature?: SortOrder
-    filienFonction?: SortOrder
-    filienCodeInterne?: SortOrder
-    filienTypeMouvement?: SortOrder
-    filienSens?: SortOrder
-    filienStructure?: SortOrder
-    filienGestionnaire?: SortOrder
-    filienUncPj?: SortOrder
-    signataireRole?: SortOrder
-    signataireDelegation?: SortOrder
-    signataireNom?: SortOrder
-    footer1?: SortOrder
-    footer2?: SortOrder
-    footer3?: SortOrder
-    footerColor?: SortOrder
-    updated_at?: SortOrder
-    filienUncPass?: SortOrder
-    filienUncUser?: SortOrder
-    filienUncDomain?: SortOrder
+    cle?: SortOrder
+    label?: SortOrder
+    sujet?: SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
   }
 
-  export type AppSettingsAvgOrderByAggregateInput = {
+  export type ContextualMessageAvgOrderByAggregateInput = {
     id?: SortOrder
-    filienExercice?: SortOrder
   }
 
-  export type AppSettingsMaxOrderByAggregateInput = {
+  export type ContextualMessageMaxOrderByAggregateInput = {
     id?: SortOrder
-    financeEmail?: SortOrder
-    appUrl?: SortOrder
-    apmUrl?: SortOrder
-    apmToken?: SortOrder
-    senderName?: SortOrder
-    senderEmail?: SortOrder
-    filienOrga?: SortOrder
-    filienBudget?: SortOrder
-    filienExercice?: SortOrder
-    filienAvancement?: SortOrder
-    filienRejetDispo?: SortOrder
-    filienRejetCA?: SortOrder
-    filienRejetMarche?: SortOrder
-    filienMouvement?: SortOrder
-    filienType?: SortOrder
-    filienLibelle?: SortOrder
-    filienCalendrier?: SortOrder
-    filienMonnaie?: SortOrder
-    filienMouvementEx?: SortOrder
-    filienPreBordereau?: SortOrder
-    filienPoste?: SortOrder
-    filienBordereau?: SortOrder
-    filienObjet?: SortOrder
-    filienChapitre?: SortOrder
-    filienNature?: SortOrder
-    filienFonction?: SortOrder
-    filienCodeInterne?: SortOrder
-    filienTypeMouvement?: SortOrder
-    filienSens?: SortOrder
-    filienStructure?: SortOrder
-    filienGestionnaire?: SortOrder
-    filienUncPj?: SortOrder
-    signataireRole?: SortOrder
-    signataireDelegation?: SortOrder
-    signataireNom?: SortOrder
-    footer1?: SortOrder
-    footer2?: SortOrder
-    footer3?: SortOrder
-    footerColor?: SortOrder
-    updated_at?: SortOrder
-    filienUncPass?: SortOrder
-    filienUncUser?: SortOrder
-    filienUncDomain?: SortOrder
+    cle?: SortOrder
+    label?: SortOrder
+    sujet?: SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
   }
 
-  export type AppSettingsMinOrderByAggregateInput = {
+  export type ContextualMessageMinOrderByAggregateInput = {
     id?: SortOrder
-    financeEmail?: SortOrder
-    appUrl?: SortOrder
-    apmUrl?: SortOrder
-    apmToken?: SortOrder
-    senderName?: SortOrder
-    senderEmail?: SortOrder
-    filienOrga?: SortOrder
-    filienBudget?: SortOrder
-    filienExercice?: SortOrder
-    filienAvancement?: SortOrder
-    filienRejetDispo?: SortOrder
-    filienRejetCA?: SortOrder
-    filienRejetMarche?: SortOrder
-    filienMouvement?: SortOrder
-    filienType?: SortOrder
-    filienLibelle?: SortOrder
-    filienCalendrier?: SortOrder
-    filienMonnaie?: SortOrder
-    filienMouvementEx?: SortOrder
-    filienPreBordereau?: SortOrder
-    filienPoste?: SortOrder
-    filienBordereau?: SortOrder
-    filienObjet?: SortOrder
-    filienChapitre?: SortOrder
-    filienNature?: SortOrder
-    filienFonction?: SortOrder
-    filienCodeInterne?: SortOrder
-    filienTypeMouvement?: SortOrder
-    filienSens?: SortOrder
-    filienStructure?: SortOrder
-    filienGestionnaire?: SortOrder
-    filienUncPj?: SortOrder
-    signataireRole?: SortOrder
-    signataireDelegation?: SortOrder
-    signataireNom?: SortOrder
-    footer1?: SortOrder
-    footer2?: SortOrder
-    footer3?: SortOrder
-    footerColor?: SortOrder
-    updated_at?: SortOrder
-    filienUncPass?: SortOrder
-    filienUncUser?: SortOrder
-    filienUncDomain?: SortOrder
+    cle?: SortOrder
+    label?: SortOrder
+    sujet?: SortOrder
+    valeur?: SortOrder
+    disabled?: SortOrder
   }
 
-  export type AppSettingsSumOrderByAggregateInput = {
+  export type ContextualMessageSumOrderByAggregateInput = {
     id?: SortOrder
-    filienExercice?: SortOrder
-  }
-
-  export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedBoolNullableFilter<$PrismaModel>
-    _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
   export type ArticleRelationFilter = {
     is?: ArticleWhereInput
     isNot?: ArticleWhereInput
+  }
+
+  export type OccupationRelationFilter = {
+    is?: OccupationWhereInput
+    isNot?: OccupationWhereInput
   }
 
   export type LigneOccupationCountOrderByAggregateInput = {
@@ -35435,6 +38548,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrder
     photos?: SortOrder
     note?: SortOrder
   }
@@ -35461,6 +38575,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrder
     photos?: SortOrder
     note?: SortOrder
   }
@@ -35478,6 +38593,7 @@ export namespace Prisma {
     montant?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+    deletedAt?: SortOrder
     photos?: SortOrder
     note?: SortOrder
   }
@@ -35612,6 +38728,7 @@ export namespace Prisma {
     filienSens?: SortOrder
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
+    filienPreBordereau?: SortOrder
     invoiceTemplateId?: SortOrder
     updated_at?: SortOrder
   }
@@ -35632,6 +38749,7 @@ export namespace Prisma {
     filienSens?: SortOrder
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
+    filienPreBordereau?: SortOrder
     invoiceTemplateId?: SortOrder
     updated_at?: SortOrder
   }
@@ -35648,6 +38766,7 @@ export namespace Prisma {
     filienSens?: SortOrder
     filienStructure?: SortOrder
     filienGestionnaire?: SortOrder
+    filienPreBordereau?: SortOrder
     invoiceTemplateId?: SortOrder
     updated_at?: SortOrder
   }
@@ -35679,6 +38798,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrder
+    requestedBy?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35696,6 +38816,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrder
+    requestedBy?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35708,6 +38829,7 @@ export namespace Prisma {
     priority?: SortOrder
     status?: SortOrder
     versionId?: SortOrder
+    requestedBy?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -35798,44 +38920,41 @@ export namespace Prisma {
     id?: SortOrder
   }
 
-  export type PostgresConfigCountOrderByAggregateInput = {
+  export type ContactRoleConfigCountOrderByAggregateInput = {
     id?: SortOrder
-    host?: SortOrder
-    port?: SortOrder
-    database?: SortOrder
-    schema?: SortOrder
-    user?: SortOrder
-    password?: SortOrder
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
-  export type PostgresConfigAvgOrderByAggregateInput = {
+  export type ContactRoleConfigAvgOrderByAggregateInput = {
     id?: SortOrder
-    port?: SortOrder
+    ordre?: SortOrder
   }
 
-  export type PostgresConfigMaxOrderByAggregateInput = {
+  export type ContactRoleConfigMaxOrderByAggregateInput = {
     id?: SortOrder
-    host?: SortOrder
-    port?: SortOrder
-    database?: SortOrder
-    schema?: SortOrder
-    user?: SortOrder
-    password?: SortOrder
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
-  export type PostgresConfigMinOrderByAggregateInput = {
+  export type ContactRoleConfigMinOrderByAggregateInput = {
     id?: SortOrder
-    host?: SortOrder
-    port?: SortOrder
-    database?: SortOrder
-    schema?: SortOrder
-    user?: SortOrder
-    password?: SortOrder
+    nom?: SortOrder
+    isSendAot?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
-  export type PostgresConfigSumOrderByAggregateInput = {
+  export type ContactRoleConfigSumOrderByAggregateInput = {
     id?: SortOrder
-    port?: SortOrder
+    ordre?: SortOrder
   }
 
   export type OdpConfigCountOrderByAggregateInput = {
@@ -36034,6 +39153,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrder
     signedAt?: SortOrder
+    requestedByLogin?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -36053,6 +39173,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrder
     signedAt?: SortOrder
+    requestedByLogin?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -36066,6 +39187,7 @@ export namespace Prisma {
     tokenExpiresAt?: SortOrder
     rejectionComment?: SortOrder
     signedAt?: SortOrder
+    requestedByLogin?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -36074,6 +39196,185 @@ export namespace Prisma {
     id?: SortOrder
     occupationId?: SortOrder
     signatoriesId?: SortOrder
+  }
+
+  export type BoolNullableFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+  }
+
+  export type AppSettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    financeEmail?: SortOrder
+    appUrl?: SortOrder
+    apmUrl?: SortOrder
+    apmToken?: SortOrder
+    senderName?: SortOrder
+    senderEmail?: SortOrder
+    filienOrga?: SortOrder
+    filienBudget?: SortOrder
+    filienExercice?: SortOrder
+    filienAvancement?: SortOrder
+    filienRejetDispo?: SortOrder
+    filienRejetCA?: SortOrder
+    filienRejetMarche?: SortOrder
+    filienMouvement?: SortOrder
+    filienType?: SortOrder
+    filienLibelle?: SortOrder
+    filienCalendrier?: SortOrder
+    filienMonnaie?: SortOrder
+    filienMouvementEx?: SortOrder
+    filienPreBordereau?: SortOrder
+    filienPoste?: SortOrder
+    filienBordereau?: SortOrder
+    filienObjet?: SortOrder
+    filienChapitre?: SortOrder
+    filienNature?: SortOrder
+    filienFonction?: SortOrder
+    filienCodeInterne?: SortOrder
+    filienTypeMouvement?: SortOrder
+    filienSens?: SortOrder
+    filienStructure?: SortOrder
+    filienGestionnaire?: SortOrder
+    filienUncPj?: SortOrder
+    adDomain?: SortOrder
+    signataireRole?: SortOrder
+    signataireDelegation?: SortOrder
+    signataireNom?: SortOrder
+    footer1?: SortOrder
+    footer2?: SortOrder
+    footer3?: SortOrder
+    footerColor?: SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncDomain?: SortOrder
+    watermark?: SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+  }
+
+  export type AppSettingsAvgOrderByAggregateInput = {
+    id?: SortOrder
+    filienExercice?: SortOrder
+  }
+
+  export type AppSettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    financeEmail?: SortOrder
+    appUrl?: SortOrder
+    apmUrl?: SortOrder
+    apmToken?: SortOrder
+    senderName?: SortOrder
+    senderEmail?: SortOrder
+    filienOrga?: SortOrder
+    filienBudget?: SortOrder
+    filienExercice?: SortOrder
+    filienAvancement?: SortOrder
+    filienRejetDispo?: SortOrder
+    filienRejetCA?: SortOrder
+    filienRejetMarche?: SortOrder
+    filienMouvement?: SortOrder
+    filienType?: SortOrder
+    filienLibelle?: SortOrder
+    filienCalendrier?: SortOrder
+    filienMonnaie?: SortOrder
+    filienMouvementEx?: SortOrder
+    filienPreBordereau?: SortOrder
+    filienPoste?: SortOrder
+    filienBordereau?: SortOrder
+    filienObjet?: SortOrder
+    filienChapitre?: SortOrder
+    filienNature?: SortOrder
+    filienFonction?: SortOrder
+    filienCodeInterne?: SortOrder
+    filienTypeMouvement?: SortOrder
+    filienSens?: SortOrder
+    filienStructure?: SortOrder
+    filienGestionnaire?: SortOrder
+    filienUncPj?: SortOrder
+    adDomain?: SortOrder
+    signataireRole?: SortOrder
+    signataireDelegation?: SortOrder
+    signataireNom?: SortOrder
+    footer1?: SortOrder
+    footer2?: SortOrder
+    footer3?: SortOrder
+    footerColor?: SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncDomain?: SortOrder
+    watermark?: SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+  }
+
+  export type AppSettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    financeEmail?: SortOrder
+    appUrl?: SortOrder
+    apmUrl?: SortOrder
+    apmToken?: SortOrder
+    senderName?: SortOrder
+    senderEmail?: SortOrder
+    filienOrga?: SortOrder
+    filienBudget?: SortOrder
+    filienExercice?: SortOrder
+    filienAvancement?: SortOrder
+    filienRejetDispo?: SortOrder
+    filienRejetCA?: SortOrder
+    filienRejetMarche?: SortOrder
+    filienMouvement?: SortOrder
+    filienType?: SortOrder
+    filienLibelle?: SortOrder
+    filienCalendrier?: SortOrder
+    filienMonnaie?: SortOrder
+    filienMouvementEx?: SortOrder
+    filienPreBordereau?: SortOrder
+    filienPoste?: SortOrder
+    filienBordereau?: SortOrder
+    filienObjet?: SortOrder
+    filienChapitre?: SortOrder
+    filienNature?: SortOrder
+    filienFonction?: SortOrder
+    filienCodeInterne?: SortOrder
+    filienTypeMouvement?: SortOrder
+    filienSens?: SortOrder
+    filienStructure?: SortOrder
+    filienGestionnaire?: SortOrder
+    filienUncPj?: SortOrder
+    adDomain?: SortOrder
+    signataireRole?: SortOrder
+    signataireDelegation?: SortOrder
+    signataireNom?: SortOrder
+    footer1?: SortOrder
+    footer2?: SortOrder
+    footer3?: SortOrder
+    footerColor?: SortOrder
+    updated_at?: SortOrder
+    filienUncPass?: SortOrder
+    filienUncUser?: SortOrder
+    filienUncDomain?: SortOrder
+    watermark?: SortOrder
+    dbMode?: SortOrder
+    autoDistributeInvoices?: SortOrder
+    distributeOnlyVerified?: SortOrder
+  }
+
+  export type AppSettingsSumOrderByAggregateInput = {
+    id?: SortOrder
+    filienExercice?: SortOrder
+  }
+
+  export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
+    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedBoolNullableFilter<$PrismaModel>
+    _max?: NestedBoolNullableFilter<$PrismaModel>
   }
 
   export type ContactCreateNestedManyWithoutTiersInput = {
@@ -36090,6 +39391,20 @@ export namespace Prisma {
     connect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
   }
 
+  export type NoteCreateNestedManyWithoutTiersInput = {
+    create?: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput> | NoteCreateWithoutTiersInput[] | NoteUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: NoteCreateOrConnectWithoutTiersInput | NoteCreateOrConnectWithoutTiersInput[]
+    createMany?: NoteCreateManyTiersInputEnvelope
+    connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+  }
+
+  export type FavoriteCommerceCreateNestedManyWithoutTiersInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput> | FavoriteCommerceCreateWithoutTiersInput[] | FavoriteCommerceUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutTiersInput | FavoriteCommerceCreateOrConnectWithoutTiersInput[]
+    createMany?: FavoriteCommerceCreateManyTiersInputEnvelope
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+  }
+
   export type ContactUncheckedCreateNestedManyWithoutTiersInput = {
     create?: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput> | ContactCreateWithoutTiersInput[] | ContactUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutTiersInput | ContactCreateOrConnectWithoutTiersInput[]
@@ -36102,6 +39417,20 @@ export namespace Prisma {
     connectOrCreate?: OccupationCreateOrConnectWithoutTiersInput | OccupationCreateOrConnectWithoutTiersInput[]
     createMany?: OccupationCreateManyTiersInputEnvelope
     connect?: OccupationWhereUniqueInput | OccupationWhereUniqueInput[]
+  }
+
+  export type NoteUncheckedCreateNestedManyWithoutTiersInput = {
+    create?: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput> | NoteCreateWithoutTiersInput[] | NoteUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: NoteCreateOrConnectWithoutTiersInput | NoteCreateOrConnectWithoutTiersInput[]
+    createMany?: NoteCreateManyTiersInputEnvelope
+    connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+  }
+
+  export type FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput> | FavoriteCommerceCreateWithoutTiersInput[] | FavoriteCommerceUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutTiersInput | FavoriteCommerceCreateOrConnectWithoutTiersInput[]
+    createMany?: FavoriteCommerceCreateManyTiersInputEnvelope
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -36152,6 +39481,34 @@ export namespace Prisma {
     deleteMany?: OccupationScalarWhereInput | OccupationScalarWhereInput[]
   }
 
+  export type NoteUpdateManyWithoutTiersNestedInput = {
+    create?: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput> | NoteCreateWithoutTiersInput[] | NoteUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: NoteCreateOrConnectWithoutTiersInput | NoteCreateOrConnectWithoutTiersInput[]
+    upsert?: NoteUpsertWithWhereUniqueWithoutTiersInput | NoteUpsertWithWhereUniqueWithoutTiersInput[]
+    createMany?: NoteCreateManyTiersInputEnvelope
+    set?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    disconnect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    delete?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    update?: NoteUpdateWithWhereUniqueWithoutTiersInput | NoteUpdateWithWhereUniqueWithoutTiersInput[]
+    updateMany?: NoteUpdateManyWithWhereWithoutTiersInput | NoteUpdateManyWithWhereWithoutTiersInput[]
+    deleteMany?: NoteScalarWhereInput | NoteScalarWhereInput[]
+  }
+
+  export type FavoriteCommerceUpdateManyWithoutTiersNestedInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput> | FavoriteCommerceCreateWithoutTiersInput[] | FavoriteCommerceUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutTiersInput | FavoriteCommerceCreateOrConnectWithoutTiersInput[]
+    upsert?: FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput | FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput[]
+    createMany?: FavoriteCommerceCreateManyTiersInputEnvelope
+    set?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    disconnect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    delete?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    update?: FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput | FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput[]
+    updateMany?: FavoriteCommerceUpdateManyWithWhereWithoutTiersInput | FavoriteCommerceUpdateManyWithWhereWithoutTiersInput[]
+    deleteMany?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -36186,6 +39543,34 @@ export namespace Prisma {
     update?: OccupationUpdateWithWhereUniqueWithoutTiersInput | OccupationUpdateWithWhereUniqueWithoutTiersInput[]
     updateMany?: OccupationUpdateManyWithWhereWithoutTiersInput | OccupationUpdateManyWithWhereWithoutTiersInput[]
     deleteMany?: OccupationScalarWhereInput | OccupationScalarWhereInput[]
+  }
+
+  export type NoteUncheckedUpdateManyWithoutTiersNestedInput = {
+    create?: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput> | NoteCreateWithoutTiersInput[] | NoteUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: NoteCreateOrConnectWithoutTiersInput | NoteCreateOrConnectWithoutTiersInput[]
+    upsert?: NoteUpsertWithWhereUniqueWithoutTiersInput | NoteUpsertWithWhereUniqueWithoutTiersInput[]
+    createMany?: NoteCreateManyTiersInputEnvelope
+    set?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    disconnect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    delete?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    connect?: NoteWhereUniqueInput | NoteWhereUniqueInput[]
+    update?: NoteUpdateWithWhereUniqueWithoutTiersInput | NoteUpdateWithWhereUniqueWithoutTiersInput[]
+    updateMany?: NoteUpdateManyWithWhereWithoutTiersInput | NoteUpdateManyWithWhereWithoutTiersInput[]
+    deleteMany?: NoteScalarWhereInput | NoteScalarWhereInput[]
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput> | FavoriteCommerceCreateWithoutTiersInput[] | FavoriteCommerceUncheckedCreateWithoutTiersInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutTiersInput | FavoriteCommerceCreateOrConnectWithoutTiersInput[]
+    upsert?: FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput | FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput[]
+    createMany?: FavoriteCommerceCreateManyTiersInputEnvelope
+    set?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    disconnect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    delete?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    update?: FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput | FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput[]
+    updateMany?: FavoriteCommerceUpdateManyWithWhereWithoutTiersInput | FavoriteCommerceUpdateManyWithWhereWithoutTiersInput[]
+    deleteMany?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
   }
 
   export type ContactCreateNestedManyWithoutOccupationInput = {
@@ -36474,12 +39859,30 @@ export namespace Prisma {
     connect?: OccupationWhereUniqueInput
   }
 
-  export type OccupationUpdateOneRequiredWithoutNotesNestedInput = {
+  export type TiersCreateNestedOneWithoutNotesInput = {
+    create?: XOR<TiersCreateWithoutNotesInput, TiersUncheckedCreateWithoutNotesInput>
+    connectOrCreate?: TiersCreateOrConnectWithoutNotesInput
+    connect?: TiersWhereUniqueInput
+  }
+
+  export type OccupationUpdateOneWithoutNotesNestedInput = {
     create?: XOR<OccupationCreateWithoutNotesInput, OccupationUncheckedCreateWithoutNotesInput>
     connectOrCreate?: OccupationCreateOrConnectWithoutNotesInput
     upsert?: OccupationUpsertWithoutNotesInput
+    disconnect?: OccupationWhereInput | boolean
+    delete?: OccupationWhereInput | boolean
     connect?: OccupationWhereUniqueInput
     update?: XOR<XOR<OccupationUpdateToOneWithWhereWithoutNotesInput, OccupationUpdateWithoutNotesInput>, OccupationUncheckedUpdateWithoutNotesInput>
+  }
+
+  export type TiersUpdateOneWithoutNotesNestedInput = {
+    create?: XOR<TiersCreateWithoutNotesInput, TiersUncheckedCreateWithoutNotesInput>
+    connectOrCreate?: TiersCreateOrConnectWithoutNotesInput
+    upsert?: TiersUpsertWithoutNotesInput
+    disconnect?: TiersWhereInput | boolean
+    delete?: TiersWhereInput | boolean
+    connect?: TiersWhereUniqueInput
+    update?: XOR<XOR<TiersUpdateToOneWithWhereWithoutNotesInput, TiersUpdateWithoutNotesInput>, TiersUncheckedUpdateWithoutNotesInput>
   }
 
   export type ArticleCreateNestedManyWithoutCategorieInput = {
@@ -36705,11 +40108,25 @@ export namespace Prisma {
     connect?: MobileLogWhereUniqueInput | MobileLogWhereUniqueInput[]
   }
 
+  export type FavoriteCommerceCreateNestedManyWithoutUserInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput> | FavoriteCommerceCreateWithoutUserInput[] | FavoriteCommerceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutUserInput | FavoriteCommerceCreateOrConnectWithoutUserInput[]
+    createMany?: FavoriteCommerceCreateManyUserInputEnvelope
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+  }
+
   export type MobileLogUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<MobileLogCreateWithoutUserInput, MobileLogUncheckedCreateWithoutUserInput> | MobileLogCreateWithoutUserInput[] | MobileLogUncheckedCreateWithoutUserInput[]
     connectOrCreate?: MobileLogCreateOrConnectWithoutUserInput | MobileLogCreateOrConnectWithoutUserInput[]
     createMany?: MobileLogCreateManyUserInputEnvelope
     connect?: MobileLogWhereUniqueInput | MobileLogWhereUniqueInput[]
+  }
+
+  export type FavoriteCommerceUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput> | FavoriteCommerceCreateWithoutUserInput[] | FavoriteCommerceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutUserInput | FavoriteCommerceCreateOrConnectWithoutUserInput[]
+    createMany?: FavoriteCommerceCreateManyUserInputEnvelope
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
   }
 
   export type MobileLogUpdateManyWithoutUserNestedInput = {
@@ -36726,6 +40143,20 @@ export namespace Prisma {
     deleteMany?: MobileLogScalarWhereInput | MobileLogScalarWhereInput[]
   }
 
+  export type FavoriteCommerceUpdateManyWithoutUserNestedInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput> | FavoriteCommerceCreateWithoutUserInput[] | FavoriteCommerceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutUserInput | FavoriteCommerceCreateOrConnectWithoutUserInput[]
+    upsert?: FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput | FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: FavoriteCommerceCreateManyUserInputEnvelope
+    set?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    disconnect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    delete?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    update?: FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput | FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: FavoriteCommerceUpdateManyWithWhereWithoutUserInput | FavoriteCommerceUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+  }
+
   export type MobileLogUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<MobileLogCreateWithoutUserInput, MobileLogUncheckedCreateWithoutUserInput> | MobileLogCreateWithoutUserInput[] | MobileLogUncheckedCreateWithoutUserInput[]
     connectOrCreate?: MobileLogCreateOrConnectWithoutUserInput | MobileLogCreateOrConnectWithoutUserInput[]
@@ -36738,6 +40169,48 @@ export namespace Prisma {
     update?: MobileLogUpdateWithWhereUniqueWithoutUserInput | MobileLogUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: MobileLogUpdateManyWithWhereWithoutUserInput | MobileLogUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: MobileLogScalarWhereInput | MobileLogScalarWhereInput[]
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput> | FavoriteCommerceCreateWithoutUserInput[] | FavoriteCommerceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FavoriteCommerceCreateOrConnectWithoutUserInput | FavoriteCommerceCreateOrConnectWithoutUserInput[]
+    upsert?: FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput | FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: FavoriteCommerceCreateManyUserInputEnvelope
+    set?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    disconnect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    delete?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    connect?: FavoriteCommerceWhereUniqueInput | FavoriteCommerceWhereUniqueInput[]
+    update?: FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput | FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: FavoriteCommerceUpdateManyWithWhereWithoutUserInput | FavoriteCommerceUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutFavoriteCommercesInput = {
+    create?: XOR<UserCreateWithoutFavoriteCommercesInput, UserUncheckedCreateWithoutFavoriteCommercesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFavoriteCommercesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TiersCreateNestedOneWithoutFavoritedByInput = {
+    create?: XOR<TiersCreateWithoutFavoritedByInput, TiersUncheckedCreateWithoutFavoritedByInput>
+    connectOrCreate?: TiersCreateOrConnectWithoutFavoritedByInput
+    connect?: TiersWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutFavoriteCommercesNestedInput = {
+    create?: XOR<UserCreateWithoutFavoriteCommercesInput, UserUncheckedCreateWithoutFavoriteCommercesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFavoriteCommercesInput
+    upsert?: UserUpsertWithoutFavoriteCommercesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFavoriteCommercesInput, UserUpdateWithoutFavoriteCommercesInput>, UserUncheckedUpdateWithoutFavoriteCommercesInput>
+  }
+
+  export type TiersUpdateOneRequiredWithoutFavoritedByNestedInput = {
+    create?: XOR<TiersCreateWithoutFavoritedByInput, TiersUncheckedCreateWithoutFavoritedByInput>
+    connectOrCreate?: TiersCreateOrConnectWithoutFavoritedByInput
+    upsert?: TiersUpsertWithoutFavoritedByInput
+    connect?: TiersWhereUniqueInput
+    update?: XOR<XOR<TiersUpdateToOneWithWhereWithoutFavoritedByInput, TiersUpdateWithoutFavoritedByInput>, TiersUncheckedUpdateWithoutFavoritedByInput>
   }
 
   export type UserCreateNestedOneWithoutLogsInput = {
@@ -36754,10 +40227,6 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutLogsInput, UserUpdateWithoutLogsInput>, UserUncheckedUpdateWithoutLogsInput>
-  }
-
-  export type NullableBoolFieldUpdateOperationsInput = {
-    set?: boolean | null
   }
 
   export type ArticleCreateNestedOneWithoutLignesInput = {
@@ -37042,10 +40511,14 @@ export namespace Prisma {
     update?: XOR<XOR<SignatoryUpdateToOneWithWhereWithoutSignatureRequestsInput, SignatoryUpdateWithoutSignatureRequestsInput>, SignatoryUncheckedUpdateWithoutSignatureRequestsInput>
   }
 
+  export type NullableBoolFieldUpdateOperationsInput = {
+    set?: boolean | null
+  }
+
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -37055,8 +40528,8 @@ export namespace Prisma {
 
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -37069,8 +40542,8 @@ export namespace Prisma {
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -37083,8 +40556,8 @@ export namespace Prisma {
 
   export type NestedFloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -37094,8 +40567,8 @@ export namespace Prisma {
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -37105,8 +40578,8 @@ export namespace Prisma {
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -37121,8 +40594,8 @@ export namespace Prisma {
 
   export type NestedFloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -37132,8 +40605,8 @@ export namespace Prisma {
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -37149,8 +40622,8 @@ export namespace Prisma {
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -37166,8 +40639,8 @@ export namespace Prisma {
 
   export type NestedIntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -37177,8 +40650,8 @@ export namespace Prisma {
 
   export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -37193,8 +40666,8 @@ export namespace Prisma {
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -37207,8 +40680,8 @@ export namespace Prisma {
 
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -37223,8 +40696,8 @@ export namespace Prisma {
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -37237,8 +40710,8 @@ export namespace Prisma {
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -37253,8 +40726,8 @@ export namespace Prisma {
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -37295,6 +40768,7 @@ export namespace Prisma {
     telephone?: string | null
     titre?: string | null
     role?: string
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -37311,6 +40785,7 @@ export namespace Prisma {
     titre?: string | null
     role?: string
     occupationId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -37324,6 +40799,7 @@ export namespace Prisma {
 
   export type ContactCreateManyTiersInputEnvelope = {
     data: ContactCreateManyTiersInput | ContactCreateManyTiersInput[]
+    skipDuplicates?: boolean
   }
 
   export type OccupationCreateWithoutTiersInput = {
@@ -37337,6 +40813,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -37346,10 +40823,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -37369,6 +40855,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -37378,10 +40865,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -37396,6 +40892,69 @@ export namespace Prisma {
 
   export type OccupationCreateManyTiersInputEnvelope = {
     data: OccupationCreateManyTiersInput | OccupationCreateManyTiersInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type NoteCreateWithoutTiersInput = {
+    content: string
+    author?: string | null
+    pjPath?: string | null
+    pjName?: string | null
+    pjThumb?: string | null
+    isEmail?: boolean
+    externalId?: string | null
+    fromEmail?: string | null
+    toEmail?: string | null
+    origin?: string | null
+    created_at?: Date | string
+    occupation?: OccupationCreateNestedOneWithoutNotesInput
+  }
+
+  export type NoteUncheckedCreateWithoutTiersInput = {
+    id?: number
+    occupationId?: number | null
+    content: string
+    author?: string | null
+    pjPath?: string | null
+    pjName?: string | null
+    pjThumb?: string | null
+    isEmail?: boolean
+    externalId?: string | null
+    fromEmail?: string | null
+    toEmail?: string | null
+    origin?: string | null
+    created_at?: Date | string
+  }
+
+  export type NoteCreateOrConnectWithoutTiersInput = {
+    where: NoteWhereUniqueInput
+    create: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput>
+  }
+
+  export type NoteCreateManyTiersInputEnvelope = {
+    data: NoteCreateManyTiersInput | NoteCreateManyTiersInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FavoriteCommerceCreateWithoutTiersInput = {
+    created_at?: Date | string
+    user: UserCreateNestedOneWithoutFavoriteCommercesInput
+  }
+
+  export type FavoriteCommerceUncheckedCreateWithoutTiersInput = {
+    id?: number
+    userId: number
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceCreateOrConnectWithoutTiersInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    create: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput>
+  }
+
+  export type FavoriteCommerceCreateManyTiersInputEnvelope = {
+    data: FavoriteCommerceCreateManyTiersInput | FavoriteCommerceCreateManyTiersInput[]
+    skipDuplicates?: boolean
   }
 
   export type ContactUpsertWithWhereUniqueWithoutTiersInput = {
@@ -37427,6 +40986,7 @@ export namespace Prisma {
     role?: StringFilter<"Contact"> | string
     occupationId?: IntNullableFilter<"Contact"> | number | null
     tiersId?: IntNullableFilter<"Contact"> | number | null
+    commerceId?: IntNullableFilter<"Contact"> | number | null
     pjPath?: StringNullableFilter<"Contact"> | string | null
     created_at?: DateTimeFilter<"Contact"> | Date | string
     updated_at?: DateTimeFilter<"Contact"> | Date | string
@@ -37465,6 +41025,7 @@ export namespace Prisma {
     latitude?: FloatNullableFilter<"Occupation"> | number | null
     longitude?: FloatNullableFilter<"Occupation"> | number | null
     description?: StringNullableFilter<"Occupation"> | string | null
+    observations?: StringNullableFilter<"Occupation"> | string | null
     photos?: StringNullableFilter<"Occupation"> | string | null
     montantCalcule?: FloatFilter<"Occupation"> | number
     facturePath?: StringNullableFilter<"Occupation"> | string | null
@@ -37474,10 +41035,81 @@ export namespace Prisma {
     dossierParentId?: IntNullableFilter<"Occupation"> | number | null
     isCourtMetrage?: BoolFilter<"Occupation"> | boolean
     agissantPour?: StringNullableFilter<"Occupation"> | string | null
+    isAgissantPourBillable?: BoolFilter<"Occupation"> | boolean
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINIT?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateINST?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    datePREP?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateEN_COURS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateVALIDE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateFACTURE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateTITRE?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+    dateCLOS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
+  }
+
+  export type NoteUpsertWithWhereUniqueWithoutTiersInput = {
+    where: NoteWhereUniqueInput
+    update: XOR<NoteUpdateWithoutTiersInput, NoteUncheckedUpdateWithoutTiersInput>
+    create: XOR<NoteCreateWithoutTiersInput, NoteUncheckedCreateWithoutTiersInput>
+  }
+
+  export type NoteUpdateWithWhereUniqueWithoutTiersInput = {
+    where: NoteWhereUniqueInput
+    data: XOR<NoteUpdateWithoutTiersInput, NoteUncheckedUpdateWithoutTiersInput>
+  }
+
+  export type NoteUpdateManyWithWhereWithoutTiersInput = {
+    where: NoteScalarWhereInput
+    data: XOR<NoteUpdateManyMutationInput, NoteUncheckedUpdateManyWithoutTiersInput>
+  }
+
+  export type NoteScalarWhereInput = {
+    AND?: NoteScalarWhereInput | NoteScalarWhereInput[]
+    OR?: NoteScalarWhereInput[]
+    NOT?: NoteScalarWhereInput | NoteScalarWhereInput[]
+    id?: IntFilter<"Note"> | number
+    occupationId?: IntNullableFilter<"Note"> | number | null
+    tiersId?: IntNullableFilter<"Note"> | number | null
+    content?: StringFilter<"Note"> | string
+    author?: StringNullableFilter<"Note"> | string | null
+    pjPath?: StringNullableFilter<"Note"> | string | null
+    pjName?: StringNullableFilter<"Note"> | string | null
+    pjThumb?: StringNullableFilter<"Note"> | string | null
+    isEmail?: BoolFilter<"Note"> | boolean
+    externalId?: StringNullableFilter<"Note"> | string | null
+    fromEmail?: StringNullableFilter<"Note"> | string | null
+    toEmail?: StringNullableFilter<"Note"> | string | null
+    origin?: StringNullableFilter<"Note"> | string | null
+    created_at?: DateTimeFilter<"Note"> | Date | string
+  }
+
+  export type FavoriteCommerceUpsertWithWhereUniqueWithoutTiersInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    update: XOR<FavoriteCommerceUpdateWithoutTiersInput, FavoriteCommerceUncheckedUpdateWithoutTiersInput>
+    create: XOR<FavoriteCommerceCreateWithoutTiersInput, FavoriteCommerceUncheckedCreateWithoutTiersInput>
+  }
+
+  export type FavoriteCommerceUpdateWithWhereUniqueWithoutTiersInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    data: XOR<FavoriteCommerceUpdateWithoutTiersInput, FavoriteCommerceUncheckedUpdateWithoutTiersInput>
+  }
+
+  export type FavoriteCommerceUpdateManyWithWhereWithoutTiersInput = {
+    where: FavoriteCommerceScalarWhereInput
+    data: XOR<FavoriteCommerceUpdateManyMutationInput, FavoriteCommerceUncheckedUpdateManyWithoutTiersInput>
+  }
+
+  export type FavoriteCommerceScalarWhereInput = {
+    AND?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+    OR?: FavoriteCommerceScalarWhereInput[]
+    NOT?: FavoriteCommerceScalarWhereInput | FavoriteCommerceScalarWhereInput[]
+    id?: IntFilter<"FavoriteCommerce"> | number
+    userId?: IntFilter<"FavoriteCommerce"> | number
+    tiersId?: IntFilter<"FavoriteCommerce"> | number
+    created_at?: DateTimeFilter<"FavoriteCommerce"> | Date | string
   }
 
   export type ContactCreateWithoutOccupationInput = {
@@ -37487,6 +41119,7 @@ export namespace Prisma {
     telephone?: string | null
     titre?: string | null
     role?: string
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -37503,6 +41136,7 @@ export namespace Prisma {
     titre?: string | null
     role?: string
     tiersId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -37516,6 +41150,7 @@ export namespace Prisma {
 
   export type ContactCreateManyOccupationInputEnvelope = {
     data: ContactCreateManyOccupationInput | ContactCreateManyOccupationInput[]
+    skipDuplicates?: boolean
   }
 
   export type DispositifCreateWithoutOccupationInput = {
@@ -37540,6 +41175,7 @@ export namespace Prisma {
 
   export type DispositifCreateManyOccupationInputEnvelope = {
     data: DispositifCreateManyOccupationInput | DispositifCreateManyOccupationInput[]
+    skipDuplicates?: boolean
   }
 
   export type LigneOccupationCreateWithoutOccupationInput = {
@@ -37552,6 +41188,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
     article: ArticleCreateNestedOneWithoutLignesInput
@@ -37569,6 +41206,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -37580,6 +41218,7 @@ export namespace Prisma {
 
   export type LigneOccupationCreateManyOccupationInputEnvelope = {
     data: LigneOccupationCreateManyOccupationInput | LigneOccupationCreateManyOccupationInput[]
+    skipDuplicates?: boolean
   }
 
   export type NoteCreateWithoutOccupationInput = {
@@ -37594,10 +41233,12 @@ export namespace Prisma {
     toEmail?: string | null
     origin?: string | null
     created_at?: Date | string
+    tiers?: TiersCreateNestedOneWithoutNotesInput
   }
 
   export type NoteUncheckedCreateWithoutOccupationInput = {
     id?: number
+    tiersId?: number | null
     content: string
     author?: string | null
     pjPath?: string | null
@@ -37618,6 +41259,7 @@ export namespace Prisma {
 
   export type NoteCreateManyOccupationInputEnvelope = {
     data: NoteCreateManyOccupationInput | NoteCreateManyOccupationInput[]
+    skipDuplicates?: boolean
   }
 
   export type SignatureRequestCreateWithoutOccupationInput = {
@@ -37626,6 +41268,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     signatory: SignatoryCreateNestedOneWithoutSignatureRequestsInput
@@ -37639,6 +41282,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -37650,6 +41294,7 @@ export namespace Prisma {
 
   export type SignatureRequestCreateManyOccupationInputEnvelope = {
     data: SignatureRequestCreateManyOccupationInput | SignatureRequestCreateManyOccupationInput[]
+    skipDuplicates?: boolean
   }
 
   export type TiersCreateWithoutOccupationsInput = {
@@ -37665,7 +41310,11 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
+    notes?: NoteCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateWithoutOccupationsInput = {
@@ -37682,7 +41331,11 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
+    notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersCreateOrConnectWithoutOccupationsInput = {
@@ -37766,6 +41419,7 @@ export namespace Prisma {
     montant?: FloatFilter<"LigneOccupation"> | number
     created_at?: DateTimeFilter<"LigneOccupation"> | Date | string
     updated_at?: DateTimeFilter<"LigneOccupation"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"LigneOccupation"> | Date | string | null
     photos?: StringNullableFilter<"LigneOccupation"> | string | null
     note?: StringNullableFilter<"LigneOccupation"> | string | null
   }
@@ -37784,25 +41438,6 @@ export namespace Prisma {
   export type NoteUpdateManyWithWhereWithoutOccupationInput = {
     where: NoteScalarWhereInput
     data: XOR<NoteUpdateManyMutationInput, NoteUncheckedUpdateManyWithoutOccupationInput>
-  }
-
-  export type NoteScalarWhereInput = {
-    AND?: NoteScalarWhereInput | NoteScalarWhereInput[]
-    OR?: NoteScalarWhereInput[]
-    NOT?: NoteScalarWhereInput | NoteScalarWhereInput[]
-    id?: IntFilter<"Note"> | number
-    occupationId?: IntFilter<"Note"> | number
-    content?: StringFilter<"Note"> | string
-    author?: StringNullableFilter<"Note"> | string | null
-    pjPath?: StringNullableFilter<"Note"> | string | null
-    pjName?: StringNullableFilter<"Note"> | string | null
-    pjThumb?: StringNullableFilter<"Note"> | string | null
-    isEmail?: BoolFilter<"Note"> | boolean
-    externalId?: StringNullableFilter<"Note"> | string | null
-    fromEmail?: StringNullableFilter<"Note"> | string | null
-    toEmail?: StringNullableFilter<"Note"> | string | null
-    origin?: StringNullableFilter<"Note"> | string | null
-    created_at?: DateTimeFilter<"Note"> | Date | string
   }
 
   export type SignatureRequestUpsertWithWhereUniqueWithoutOccupationInput = {
@@ -37833,6 +41468,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFilter<"SignatureRequest"> | Date | string
     rejectionComment?: StringNullableFilter<"SignatureRequest"> | string | null
     signedAt?: DateTimeNullableFilter<"SignatureRequest"> | Date | string | null
+    requestedByLogin?: StringNullableFilter<"SignatureRequest"> | string | null
     created_at?: DateTimeFilter<"SignatureRequest"> | Date | string
     updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
   }
@@ -37861,7 +41497,11 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
+    notes?: NoteUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateWithoutOccupationsInput = {
@@ -37878,7 +41518,11 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersCreateWithoutContactsInput = {
@@ -37894,7 +41538,11 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     occupations?: OccupationCreateNestedManyWithoutTiersInput
+    notes?: NoteCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
   }
 
   export type TiersUncheckedCreateWithoutContactsInput = {
@@ -37911,7 +41559,11 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
+    notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
   }
 
   export type TiersCreateOrConnectWithoutContactsInput = {
@@ -37930,6 +41582,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -37939,10 +41592,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -37963,6 +41625,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -37972,10 +41635,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -38011,7 +41683,11 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
+    notes?: NoteUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
   }
 
   export type TiersUncheckedUpdateWithoutContactsInput = {
@@ -38028,7 +41704,11 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type OccupationUpsertWithoutContactsInput = {
@@ -38053,6 +41733,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38062,10 +41743,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -38086,6 +41776,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38095,10 +41786,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -38116,6 +41816,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -38125,10 +41826,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -38149,6 +41859,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -38158,10 +41869,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -38171,6 +41891,52 @@ export namespace Prisma {
   export type OccupationCreateOrConnectWithoutNotesInput = {
     where: OccupationWhereUniqueInput
     create: XOR<OccupationCreateWithoutNotesInput, OccupationUncheckedCreateWithoutNotesInput>
+  }
+
+  export type TiersCreateWithoutNotesInput = {
+    nom: string
+    siret?: string | null
+    email?: string | null
+    adresse?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    code_sedit?: string | null
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    natureJuridique?: string | null
+    etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
+    contacts?: ContactCreateNestedManyWithoutTiersInput
+    occupations?: OccupationCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
+  }
+
+  export type TiersUncheckedCreateWithoutNotesInput = {
+    id?: number
+    nom: string
+    siret?: string | null
+    email?: string | null
+    adresse?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    code_sedit?: string | null
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    natureJuridique?: string | null
+    etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
+    contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
+    occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
+    favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
+  }
+
+  export type TiersCreateOrConnectWithoutNotesInput = {
+    where: TiersWhereUniqueInput
+    create: XOR<TiersCreateWithoutNotesInput, TiersUncheckedCreateWithoutNotesInput>
   }
 
   export type OccupationUpsertWithoutNotesInput = {
@@ -38195,6 +41961,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38204,10 +41971,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -38228,6 +42004,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38237,14 +42014,75 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
+  }
+
+  export type TiersUpsertWithoutNotesInput = {
+    update: XOR<TiersUpdateWithoutNotesInput, TiersUncheckedUpdateWithoutNotesInput>
+    create: XOR<TiersCreateWithoutNotesInput, TiersUncheckedCreateWithoutNotesInput>
+    where?: TiersWhereInput
+  }
+
+  export type TiersUpdateToOneWithWhereWithoutNotesInput = {
+    where?: TiersWhereInput
+    data: XOR<TiersUpdateWithoutNotesInput, TiersUncheckedUpdateWithoutNotesInput>
+  }
+
+  export type TiersUpdateWithoutNotesInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    siret?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    code_sedit?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
+    etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
+    contacts?: ContactUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
+  }
+
+  export type TiersUncheckedUpdateWithoutNotesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    siret?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    code_sedit?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
+    etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
+    contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
+    favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
   }
 
   export type ArticleCreateWithoutCategorieInput = {
@@ -38295,6 +42133,7 @@ export namespace Prisma {
 
   export type ArticleCreateManyCategorieInputEnvelope = {
     data: ArticleCreateManyCategorieInput | ArticleCreateManyCategorieInput[]
+    skipDuplicates?: boolean
   }
 
   export type CategorieCreateWithoutSubsInput = {
@@ -38343,6 +42182,7 @@ export namespace Prisma {
 
   export type CategorieCreateManyParentInputEnvelope = {
     data: CategorieCreateManyParentInput | CategorieCreateManyParentInput[]
+    skipDuplicates?: boolean
   }
 
   export type ArticleUpsertWithWhereUniqueWithoutCategorieInput = {
@@ -38488,6 +42328,7 @@ export namespace Prisma {
 
   export type ArticleCreateManyModeTaxationInputEnvelope = {
     data: ArticleCreateManyModeTaxationInput | ArticleCreateManyModeTaxationInput[]
+    skipDuplicates?: boolean
   }
 
   export type ArticleUpsertWithWhereUniqueWithoutModeTaxationInput = {
@@ -38552,6 +42393,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
     occupation: OccupationCreateNestedOneWithoutLignesInput
@@ -38569,6 +42411,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -38580,6 +42423,7 @@ export namespace Prisma {
 
   export type LigneOccupationCreateManyArticleInputEnvelope = {
     data: LigneOccupationCreateManyArticleInput | LigneOccupationCreateManyArticleInput[]
+    skipDuplicates?: boolean
   }
 
   export type ModeTaxationUpsertWithoutArticlesInput = {
@@ -38670,6 +42514,28 @@ export namespace Prisma {
 
   export type MobileLogCreateManyUserInputEnvelope = {
     data: MobileLogCreateManyUserInput | MobileLogCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FavoriteCommerceCreateWithoutUserInput = {
+    created_at?: Date | string
+    tiers: TiersCreateNestedOneWithoutFavoritedByInput
+  }
+
+  export type FavoriteCommerceUncheckedCreateWithoutUserInput = {
+    id?: number
+    tiersId: number
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceCreateOrConnectWithoutUserInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    create: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput>
+  }
+
+  export type FavoriteCommerceCreateManyUserInputEnvelope = {
+    data: FavoriteCommerceCreateManyUserInput | FavoriteCommerceCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type MobileLogUpsertWithWhereUniqueWithoutUserInput = {
@@ -38701,6 +42567,190 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"MobileLog"> | Date | string
   }
 
+  export type FavoriteCommerceUpsertWithWhereUniqueWithoutUserInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    update: XOR<FavoriteCommerceUpdateWithoutUserInput, FavoriteCommerceUncheckedUpdateWithoutUserInput>
+    create: XOR<FavoriteCommerceCreateWithoutUserInput, FavoriteCommerceUncheckedCreateWithoutUserInput>
+  }
+
+  export type FavoriteCommerceUpdateWithWhereUniqueWithoutUserInput = {
+    where: FavoriteCommerceWhereUniqueInput
+    data: XOR<FavoriteCommerceUpdateWithoutUserInput, FavoriteCommerceUncheckedUpdateWithoutUserInput>
+  }
+
+  export type FavoriteCommerceUpdateManyWithWhereWithoutUserInput = {
+    where: FavoriteCommerceScalarWhereInput
+    data: XOR<FavoriteCommerceUpdateManyMutationInput, FavoriteCommerceUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type UserCreateWithoutFavoriteCommercesInput = {
+    nom: string
+    prenom: string
+    email: string
+    login: string
+    password: string
+    role: string
+    isAd?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    logs?: MobileLogCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFavoriteCommercesInput = {
+    id?: number
+    nom: string
+    prenom: string
+    email: string
+    login: string
+    password: string
+    role: string
+    isAd?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    logs?: MobileLogUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFavoriteCommercesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFavoriteCommercesInput, UserUncheckedCreateWithoutFavoriteCommercesInput>
+  }
+
+  export type TiersCreateWithoutFavoritedByInput = {
+    nom: string
+    siret?: string | null
+    email?: string | null
+    adresse?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    code_sedit?: string | null
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    natureJuridique?: string | null
+    etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
+    contacts?: ContactCreateNestedManyWithoutTiersInput
+    occupations?: OccupationCreateNestedManyWithoutTiersInput
+    notes?: NoteCreateNestedManyWithoutTiersInput
+  }
+
+  export type TiersUncheckedCreateWithoutFavoritedByInput = {
+    id?: number
+    nom: string
+    siret?: string | null
+    email?: string | null
+    adresse?: string | null
+    latitude?: number | null
+    longitude?: number | null
+    code_sedit?: string | null
+    statut?: string
+    created_at?: Date | string
+    updated_at?: Date | string
+    natureJuridique?: string | null
+    etatAdministratif?: string | null
+    observations?: string | null
+    photo?: string | null
+    contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
+    occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
+    notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
+  }
+
+  export type TiersCreateOrConnectWithoutFavoritedByInput = {
+    where: TiersWhereUniqueInput
+    create: XOR<TiersCreateWithoutFavoritedByInput, TiersUncheckedCreateWithoutFavoritedByInput>
+  }
+
+  export type UserUpsertWithoutFavoriteCommercesInput = {
+    update: XOR<UserUpdateWithoutFavoriteCommercesInput, UserUncheckedUpdateWithoutFavoriteCommercesInput>
+    create: XOR<UserCreateWithoutFavoriteCommercesInput, UserUncheckedCreateWithoutFavoriteCommercesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFavoriteCommercesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFavoriteCommercesInput, UserUncheckedUpdateWithoutFavoriteCommercesInput>
+  }
+
+  export type UserUpdateWithoutFavoriteCommercesInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    prenom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    login?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    logs?: MobileLogUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFavoriteCommercesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    prenom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    login?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    logs?: MobileLogUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type TiersUpsertWithoutFavoritedByInput = {
+    update: XOR<TiersUpdateWithoutFavoritedByInput, TiersUncheckedUpdateWithoutFavoritedByInput>
+    create: XOR<TiersCreateWithoutFavoritedByInput, TiersUncheckedCreateWithoutFavoritedByInput>
+    where?: TiersWhereInput
+  }
+
+  export type TiersUpdateToOneWithWhereWithoutFavoritedByInput = {
+    where?: TiersWhereInput
+    data: XOR<TiersUpdateWithoutFavoritedByInput, TiersUncheckedUpdateWithoutFavoritedByInput>
+  }
+
+  export type TiersUpdateWithoutFavoritedByInput = {
+    nom?: StringFieldUpdateOperationsInput | string
+    siret?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    code_sedit?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
+    etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
+    contacts?: ContactUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUpdateManyWithoutTiersNestedInput
+    notes?: NoteUpdateManyWithoutTiersNestedInput
+  }
+
+  export type TiersUncheckedUpdateWithoutFavoritedByInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: StringFieldUpdateOperationsInput | string
+    siret?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    adresse?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    code_sedit?: NullableStringFieldUpdateOperationsInput | string | null
+    statut?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
+    etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photo?: NullableStringFieldUpdateOperationsInput | string | null
+    contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
+    occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
+  }
+
   export type UserCreateWithoutLogsInput = {
     nom: string
     prenom: string
@@ -38708,8 +42758,10 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
+    favoriteCommerces?: FavoriteCommerceCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutLogsInput = {
@@ -38720,8 +42772,10 @@ export namespace Prisma {
     login: string
     password: string
     role: string
+    isAd?: boolean
     created_at?: Date | string
     updated_at?: Date | string
+    favoriteCommerces?: FavoriteCommerceUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutLogsInput = {
@@ -38747,8 +42801,10 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    favoriteCommerces?: FavoriteCommerceUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLogsInput = {
@@ -38759,8 +42815,10 @@ export namespace Prisma {
     login?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
+    isAd?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    favoriteCommerces?: FavoriteCommerceUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ArticleCreateWithoutLignesInput = {
@@ -38820,6 +42878,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -38829,10 +42888,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -38853,6 +42921,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -38862,10 +42931,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -38951,6 +43029,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38960,10 +43039,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -38984,6 +43072,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38993,10 +43082,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -39014,6 +43112,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39023,10 +43122,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -39047,6 +43155,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39056,10 +43165,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -39093,6 +43211,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39102,10 +43221,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -39126,6 +43254,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39135,10 +43264,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -39165,6 +43303,7 @@ export namespace Prisma {
 
   export type BacklogCommentCreateManyBacklogItemInputEnvelope = {
     data: BacklogCommentCreateManyBacklogItemInput | BacklogCommentCreateManyBacklogItemInput[]
+    skipDuplicates?: boolean
   }
 
   export type VersionReleaseCreateWithoutBacklogItemsInput = {
@@ -39246,6 +43385,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     version?: VersionReleaseCreateNestedOneWithoutBacklogItemsInput
@@ -39259,6 +43399,7 @@ export namespace Prisma {
     priority?: string
     status?: string
     versionId?: number | null
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -39285,6 +43426,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     version?: VersionReleaseUpdateOneWithoutBacklogItemsNestedInput
@@ -39298,6 +43440,7 @@ export namespace Prisma {
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     versionId?: NullableIntFieldUpdateOperationsInput | number | null
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39308,6 +43451,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentCreateNestedManyWithoutBacklogItemInput
@@ -39320,6 +43464,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     comments?: BacklogCommentUncheckedCreateNestedManyWithoutBacklogItemInput
@@ -39332,6 +43477,7 @@ export namespace Prisma {
 
   export type BacklogItemCreateManyVersionInputEnvelope = {
     data: BacklogItemCreateManyVersionInput | BacklogItemCreateManyVersionInput[]
+    skipDuplicates?: boolean
   }
 
   export type BacklogItemUpsertWithWhereUniqueWithoutVersionInput = {
@@ -39361,6 +43507,7 @@ export namespace Prisma {
     priority?: StringFilter<"BacklogItem"> | string
     status?: StringFilter<"BacklogItem"> | string
     versionId?: IntNullableFilter<"BacklogItem"> | number | null
+    requestedBy?: StringNullableFilter<"BacklogItem"> | string | null
     created_at?: DateTimeFilter<"BacklogItem"> | Date | string
     updated_at?: DateTimeFilter<"BacklogItem"> | Date | string
   }
@@ -39389,6 +43536,7 @@ export namespace Prisma {
 
   export type BillingRunInvoiceCreateManyRunInputEnvelope = {
     data: BillingRunInvoiceCreateManyRunInput | BillingRunInvoiceCreateManyRunInput[]
+    skipDuplicates?: boolean
   }
 
   export type BillingRunInvoiceUpsertWithWhereUniqueWithoutRunInput = {
@@ -39486,6 +43634,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     occupation: OccupationCreateNestedOneWithoutSignatureRequestsInput
@@ -39499,6 +43648,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -39510,6 +43660,7 @@ export namespace Prisma {
 
   export type SignatureRequestCreateManySignatoryInputEnvelope = {
     data: SignatureRequestCreateManySignatoryInput | SignatureRequestCreateManySignatoryInput[]
+    skipDuplicates?: boolean
   }
 
   export type SignatureRequestUpsertWithWhereUniqueWithoutSignatoryInput = {
@@ -39539,6 +43690,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39548,10 +43700,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -39572,6 +43733,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39581,10 +43743,19 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -39652,6 +43823,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39661,10 +43833,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -39685,6 +43866,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39694,10 +43876,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -39753,6 +43944,7 @@ export namespace Prisma {
     titre?: string | null
     role?: string
     occupationId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -39771,6 +43963,7 @@ export namespace Prisma {
     latitude?: number | null
     longitude?: number | null
     description?: string | null
+    observations?: string | null
     photos?: string | null
     montantCalcule?: number
     facturePath?: string | null
@@ -39780,10 +43973,41 @@ export namespace Prisma {
     dossierParentId?: number | null
     isCourtMetrage?: boolean
     agissantPour?: string | null
+    isAgissantPourBillable?: boolean
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
     datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
+  }
+
+  export type NoteCreateManyTiersInput = {
+    id?: number
+    occupationId?: number | null
+    content: string
+    author?: string | null
+    pjPath?: string | null
+    pjName?: string | null
+    pjThumb?: string | null
+    isEmail?: boolean
+    externalId?: string | null
+    fromEmail?: string | null
+    toEmail?: string | null
+    origin?: string | null
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceCreateManyTiersInput = {
+    id?: number
+    userId: number
+    created_at?: Date | string
   }
 
   export type ContactUpdateWithoutTiersInput = {
@@ -39793,6 +44017,7 @@ export namespace Prisma {
     telephone?: NullableStringFieldUpdateOperationsInput | string | null
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39809,6 +44034,7 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39824,6 +44050,7 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39841,6 +44068,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39850,10 +44078,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -39873,6 +44110,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39882,10 +44120,19 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -39905,6 +44152,7 @@ export namespace Prisma {
     latitude?: NullableFloatFieldUpdateOperationsInput | number | null
     longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     montantCalcule?: FloatFieldUpdateOperationsInput | number
     facturePath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -39914,10 +44162,83 @@ export namespace Prisma {
     dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
     isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
     agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type NoteUpdateWithoutTiersInput = {
+    content?: StringFieldUpdateOperationsInput | string
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    pjPath?: NullableStringFieldUpdateOperationsInput | string | null
+    pjName?: NullableStringFieldUpdateOperationsInput | string | null
+    pjThumb?: NullableStringFieldUpdateOperationsInput | string | null
+    isEmail?: BoolFieldUpdateOperationsInput | boolean
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    fromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    toEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    occupation?: OccupationUpdateOneWithoutNotesNestedInput
+  }
+
+  export type NoteUncheckedUpdateWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    content?: StringFieldUpdateOperationsInput | string
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    pjPath?: NullableStringFieldUpdateOperationsInput | string | null
+    pjName?: NullableStringFieldUpdateOperationsInput | string | null
+    pjThumb?: NullableStringFieldUpdateOperationsInput | string | null
+    isEmail?: BoolFieldUpdateOperationsInput | boolean
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    fromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    toEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NoteUncheckedUpdateManyWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    content?: StringFieldUpdateOperationsInput | string
+    author?: NullableStringFieldUpdateOperationsInput | string | null
+    pjPath?: NullableStringFieldUpdateOperationsInput | string | null
+    pjName?: NullableStringFieldUpdateOperationsInput | string | null
+    pjThumb?: NullableStringFieldUpdateOperationsInput | string | null
+    isEmail?: BoolFieldUpdateOperationsInput | boolean
+    externalId?: NullableStringFieldUpdateOperationsInput | string | null
+    fromEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    toEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUpdateWithoutTiersInput = {
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutFavoriteCommercesNestedInput
+  }
+
+  export type FavoriteCommerceUncheckedUpdateWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyWithoutTiersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ContactCreateManyOccupationInput = {
@@ -39929,6 +44250,7 @@ export namespace Prisma {
     titre?: string | null
     role?: string
     tiersId?: number | null
+    commerceId?: number | null
     pjPath?: string | null
     created_at?: Date | string
     updated_at?: Date | string
@@ -39955,12 +44277,14 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
 
   export type NoteCreateManyOccupationInput = {
     id?: number
+    tiersId?: number | null
     content: string
     author?: string | null
     pjPath?: string | null
@@ -39982,6 +44306,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -39993,6 +44318,7 @@ export namespace Prisma {
     telephone?: NullableStringFieldUpdateOperationsInput | string | null
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40009,6 +44335,7 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     tiersId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40024,6 +44351,7 @@ export namespace Prisma {
     titre?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     tiersId?: NullableIntFieldUpdateOperationsInput | number | null
+    commerceId?: NullableIntFieldUpdateOperationsInput | number | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40063,6 +44391,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
     article?: ArticleUpdateOneRequiredWithoutLignesNestedInput
@@ -40080,6 +44409,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -40096,6 +44426,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -40112,10 +44443,12 @@ export namespace Prisma {
     toEmail?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tiers?: TiersUpdateOneWithoutNotesNestedInput
   }
 
   export type NoteUncheckedUpdateWithoutOccupationInput = {
     id?: IntFieldUpdateOperationsInput | number
+    tiersId?: NullableIntFieldUpdateOperationsInput | number | null
     content?: StringFieldUpdateOperationsInput | string
     author?: NullableStringFieldUpdateOperationsInput | string | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40131,6 +44464,7 @@ export namespace Prisma {
 
   export type NoteUncheckedUpdateManyWithoutOccupationInput = {
     id?: IntFieldUpdateOperationsInput | number
+    tiersId?: NullableIntFieldUpdateOperationsInput | number | null
     content?: StringFieldUpdateOperationsInput | string
     author?: NullableStringFieldUpdateOperationsInput | string | null
     pjPath?: NullableStringFieldUpdateOperationsInput | string | null
@@ -40150,6 +44484,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     signatory?: SignatoryUpdateOneRequiredWithoutSignatureRequestsNestedInput
@@ -40163,6 +44498,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40175,6 +44511,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40384,6 +44721,7 @@ export namespace Prisma {
     montant?: number
     created_at?: Date | string
     updated_at?: Date | string
+    deletedAt?: Date | string | null
     photos?: string | null
     note?: string | null
   }
@@ -40398,6 +44736,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
     occupation?: OccupationUpdateOneRequiredWithoutLignesNestedInput
@@ -40415,6 +44754,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -40431,6 +44771,7 @@ export namespace Prisma {
     montant?: FloatFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     photos?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -40441,6 +44782,12 @@ export namespace Prisma {
     userAgent?: string | null
     deviceInfo?: string | null
     ip?: string | null
+    created_at?: Date | string
+  }
+
+  export type FavoriteCommerceCreateManyUserInput = {
+    id?: number
+    tiersId: number
     created_at?: Date | string
   }
 
@@ -40467,6 +44814,23 @@ export namespace Prisma {
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     deviceInfo?: NullableStringFieldUpdateOperationsInput | string | null
     ip?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUpdateWithoutUserInput = {
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    tiers?: TiersUpdateOneRequiredWithoutFavoritedByNestedInput
+  }
+
+  export type FavoriteCommerceUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tiersId?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FavoriteCommerceUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tiersId?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -40504,6 +44868,7 @@ export namespace Prisma {
     type?: string
     priority?: string
     status?: string
+    requestedBy?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -40514,6 +44879,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUpdateManyWithoutBacklogItemNestedInput
@@ -40526,6 +44892,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: BacklogCommentUncheckedUpdateManyWithoutBacklogItemNestedInput
@@ -40538,6 +44905,7 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     priority?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
+    requestedBy?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40585,6 +44953,7 @@ export namespace Prisma {
     tokenExpiresAt: Date | string
     rejectionComment?: string | null
     signedAt?: Date | string | null
+    requestedByLogin?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -40595,6 +44964,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     occupation?: OccupationUpdateOneRequiredWithoutSignatureRequestsNestedInput
@@ -40608,6 +44978,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40620,6 +44991,7 @@ export namespace Prisma {
     tokenExpiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40706,13 +45078,17 @@ export namespace Prisma {
      */
     export type UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use FavoriteCommerceDefaultArgs instead
+     */
+    export type FavoriteCommerceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = FavoriteCommerceDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use MobileLogDefaultArgs instead
      */
     export type MobileLogArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MobileLogDefaultArgs<ExtArgs>
     /**
-     * @deprecated Use AppSettingsDefaultArgs instead
+     * @deprecated Use ContextualMessageDefaultArgs instead
      */
-    export type AppSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AppSettingsDefaultArgs<ExtArgs>
+    export type ContextualMessageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ContextualMessageDefaultArgs<ExtArgs>
     /**
      * @deprecated Use LigneOccupationDefaultArgs instead
      */
@@ -40746,9 +45122,9 @@ export namespace Prisma {
      */
     export type VersionReleaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = VersionReleaseDefaultArgs<ExtArgs>
     /**
-     * @deprecated Use PostgresConfigDefaultArgs instead
+     * @deprecated Use ContactRoleConfigDefaultArgs instead
      */
-    export type PostgresConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PostgresConfigDefaultArgs<ExtArgs>
+    export type ContactRoleConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ContactRoleConfigDefaultArgs<ExtArgs>
     /**
      * @deprecated Use OdpConfigDefaultArgs instead
      */
@@ -40769,6 +45145,10 @@ export namespace Prisma {
      * @deprecated Use SignatureRequestDefaultArgs instead
      */
     export type SignatureRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SignatureRequestDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use AppSettingsDefaultArgs instead
+     */
+    export type AppSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AppSettingsDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

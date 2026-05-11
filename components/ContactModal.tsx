@@ -39,7 +39,7 @@ export default function ContactModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[150] bg-slate-900/40 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in duration-300">
       <div className="w-full max-w-md bg-white rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         <div className="p-10 space-y-8">
           <div className="flex items-center justify-between">
@@ -59,7 +59,7 @@ export default function ContactModal({
 
           <form onSubmit={onAddContact} className="space-y-6">
             <div className="flex justify-center">
-              {newContact.pjPath ? (
+              {newContact?.pjPath ? (
                 <div className="relative w-40 aspect-[1.6/1] rounded-2xl overflow-hidden border-2 border-slate-100 shadow-md">
                   <img src={newContact.pjPath} className="w-full h-full object-contain bg-slate-50" alt="Business Card" />
                   <button 

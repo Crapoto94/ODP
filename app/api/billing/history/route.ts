@@ -1,10 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { unlink, readdir, readFile } from 'fs/promises';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const idFilter = searchParams.get('id');
   try {
     // 1. Fetch from Database
     const dbRuns = await (prisma as any).billingRun.findMany({
@@ -23,8 +25,12 @@ export async function GET() {
     const legacyHistory: any[] = [];
     
     if (existsSync(facturesDir)) {
-      const files = await readdir(facturesDir);
-      const filienFiles = files.filter((f: string) => f.startsWith('FACT-') && f.endsWith('.filien'));
+      const items = await readdir(facturesDir, { withFileTypes: true });
+      const filienFiles = items
+        .filter(item => !item.isDirectory() && item.name.startsWith('FACT-') && item.name.endsWith('.filien'))
+        .map(item => item.name);
+      
+      const subDirs = items.filter(item => item.isDirectory()).map(item => item.name);
       
       // Filter out files that already exist in DB to avoid duplicates
       const dbIds = new Set(dbRuns.map((r: any) => r.id));
@@ -59,7 +65,17 @@ export async function GET() {
                   const p = raw.split('ODP');
                   numero = `${p[0]}-ODP-${p[1]}`;
                 }
-                invoices.push({ numero, tiers: '...', total: 0, pdfPath: `/Factures/${numero}.pdf` });
+                let pdfPath = `/Factures/${numero}.pdf`;
+                // Try to find it in subfolders if not in root
+                if (!existsSync(join(facturesDir, `${numero}.pdf`))) {
+                  for (const sd of subDirs) {
+                    if (existsSync(join(facturesDir, sd, `${numero}.pdf`))) {
+                      pdfPath = `/Factures/${sd}/${numero}.pdf`;
+                      break;
+                    }
+                  }
+                }
+                invoices.push({ numero, tiers: '...', total: 0, pdfPath });
               } else if (line.startsWith('/66/')) {
                 total += parseFloat(line.replace('/66/', '').replace(',', '.') || '0');
               } else if (line.startsWith('/PARAM/')) {
@@ -97,6 +113,12 @@ export async function GET() {
       return b.id.localeCompare(a.id);
     });
 
+    // 4. Filter by ID if requested
+    if (idFilter) {
+      const filtered = combined.filter(run => run.id === idFilter);
+      return NextResponse.json(filtered);
+    }
+
     return NextResponse.json(combined);
   } catch (error: any) {
     console.error('[HISTORY ERROR]', error);
@@ -104,10 +126,10 @@ export async function GET() {
   }
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE(req: NextRequest) {
   try {
-    const url = new URL(req.url);
-    const id = url.searchParams.get('id');
+    const searchParams = req.nextUrl.searchParams;
+    const id = searchParams.get('id');
     
     if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
 

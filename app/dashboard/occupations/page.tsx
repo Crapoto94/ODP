@@ -41,8 +41,10 @@ import { fr } from 'date-fns/locale';
 import LigneArticleModal from '@/components/LigneArticleModal';
 import FilienGenerationModal from '@/components/FilienGenerationModal';
 import OdpDocsBanner from '@/components/OdpDocsBanner';
+import ContactModal from '@/components/ContactModal';
 import { getStatusConfig, getAvailableStatuses } from '@/lib/status-utils';
 import { useLockedYear } from './hooks/useLockedYear';
+import { isMixedOccupation, getOccupationTypes } from '@/lib/mixed-occupation-utils';
 
 interface Occupation {
   id: number;
@@ -72,6 +74,7 @@ interface Tiers {
   latitude?: number | null;
   longitude?: number | null;
   statut?: string;
+  contacts?: Array<{ role: string }>;
 }
 
 // Local STATUS_MAP removed in favor of dynamic mapping from @/lib/status-utils
@@ -84,6 +87,7 @@ const TYPE_MAP: Record<string, { label: string; icon: any; color: string; bg: st
 };
 
 function OccupationsPageContent() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [occupations, setOccupations] = useState<Occupation[]>([]);
   const [tiers, setTiers] = useState<Tiers[]>([]);
   const [loading, setLoading] = useState(true);
@@ -101,6 +105,8 @@ function OccupationsPageContent() {
   const [tiersFilter, setTiersFilter] = useState<string | null>(null);
   const [tiersSearchQuery, setTiersSearchQuery] = useState('');
   const [isTiersDropdownOpen, setIsTiersDropdownOpen] = useState(false);
+  const [agissantPourSearchQuery, setAgissantPourSearchQuery] = useState('');
+  const [isAgissantPourDropdownOpen, setIsAgissantPourDropdownOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   
@@ -110,6 +116,17 @@ function OccupationsPageContent() {
   const [editingLigne, setEditingLigne] = useState<any>(null);
   const [isFilienModalOpen, setIsFilienModalOpen] = useState(false);
   const [odpConfig, setOdpConfig] = useState<any>(null);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [contactModalFor, setContactModalFor] = useState<'demandeur' | 'agissantPour' | null>(null);
+  const [newContact, setNewContact] = useState<any>({ prenom: '', nom: '', email: '', telephone: '', titre: '', role: 'CONTACT_PRINCIPAL', pjPath: '' });
+  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
+
+  // État pour la modal d'avertissement du tiers
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+  const [warningMessage, setWarningMessage] = useState('');
+  const [warningTierName, setWarningTierName] = useState('');
+  const [warningOccupationId, setWarningOccupationId] = useState<number | null>(null);
+  const [warningAction, setWarningAction] = useState<() => void>(() => {});
 
   const router = useRouter();
 
@@ -117,7 +134,7 @@ function OccupationsPageContent() {
     id: null as number | null,
     nom: '',
     tiersId: '',
-    type: 'COMMERCE',
+    type: 'CHANTIER',
     anneeTaxation: new Date().getFullYear().toString(),
     dateDebut: '',
     dateFin: '',
@@ -127,7 +144,9 @@ function OccupationsPageContent() {
     description: '',
     statut: 'EN_ATTENTE',
     isCourtMetrage: false,
-    agissantPour: ''
+    agissantPour: '',
+    agissantPourId: '', // ID du tiers "Agissant pour le compte de"
+    isAgissantPourBillable: false
   });
 
   const isEditing = !!formData.id;
@@ -178,6 +197,7 @@ function OccupationsPageContent() {
 
   useEffect(() => {
     console.log('[Occupations] 🚀 Component mounted, loading data...');
+    axios.get('/api/auth/me').then(res => setCurrentUser(res.data)).catch(() => {});
     fetchTiers();
     fetchOccupations();
   }, []);
@@ -206,6 +226,14 @@ function OccupationsPageContent() {
       if (found) handleEdit(found);
     }
   }, [searchParams, occupations]);
+
+  useEffect(() => {
+    const type = searchParams.get('type');
+    if (type && (type === 'COMMERCE' || type === 'TLPE')) {
+      resetForm(type);
+      setIsModalOpen(true);
+    }
+  }, [searchParams]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -265,11 +293,13 @@ function OccupationsPageContent() {
         }
       }
 
-      const payload = { 
-        ...formData, 
+      const payload = {
+        ...formData,
         latitude: finalLat,
         longitude: finalLng,
-        photos: uploadedPhotos.join(',') 
+        photos: uploadedPhotos.join(','),
+        // Send only the ID for agissantPour, not the name
+        agissantPour: formData.agissantPourId || ''
       };
       if (isEditing) {
         await axios.patch(`/api/occupations/${formData.id}`, payload);
@@ -287,6 +317,10 @@ function OccupationsPageContent() {
   };
 
   const handleDelete = async (id: number, nom: string) => {
+    if (currentUser?.role !== 'ADMIN') {
+      alert('Seul un administrateur peut supprimer un dossier');
+      return;
+    }
     if (!confirm(`Supprimer le dossier "${nom || id}" ?`)) return;
     try {
       await axios.delete(`/api/occupations/${id}`);
@@ -296,7 +330,56 @@ function OccupationsPageContent() {
     }
   };
 
+  const handleAddContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactModalFor) return;
+
+    setIsSubmittingContact(true);
+    try {
+      const tiersIdStr = contactModalFor === 'demandeur' ? formData.tiersId : formData.agissantPourId;
+      const tiersId = Number(tiersIdStr);
+
+      if (!tiersIdStr || isNaN(tiersId)) {
+        alert('Entité non sélectionnée');
+        return;
+      }
+
+      await axios.post(`/api/tiers/${tiersId}/contacts`, {
+        nom: newContact.nom,
+        prenom: newContact.prenom,
+        email: newContact.email,
+        telephone: newContact.telephone,
+        titre: newContact.titre,
+        role: 'Contact principal'
+      });
+
+      setIsContactModalOpen(false);
+      setNewContact({ prenom: '', nom: '', email: '', telephone: '', titre: '', role: 'CONTACT_PRINCIPAL', pjPath: '' });
+      setContactModalFor(null);
+      await fetchTiers();
+      alert('Contact créé avec succès');
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Erreur lors de la création du contact');
+    } finally {
+      setIsSubmittingContact(false);
+    }
+  };
+
+  const handlePhotoContact = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Photo upload not implemented for simple contact creation
+  };
+
+  const openContactModal = (type: 'demandeur' | 'agissantPour') => {
+    setContactModalFor(type);
+    setNewContact({ prenom: '', nom: '', email: '', telephone: '', titre: '', role: 'CONTACT_PRINCIPAL', pjPath: '' });
+    setIsContactModalOpen(true);
+  };
+
   const handleEdit = (occ: Occupation) => {
+    // Parse agissantPour as ID if it exists (stored as string ID)
+    const agissantPourId = occ.agissantPour || '';
+    const agissantPourTiers = agissantPourId ? tiers.find(t => t.id === Number(agissantPourId)) : null;
+
     setFormData({
       id: occ.id,
       nom: occ.nom || '',
@@ -306,36 +389,41 @@ function OccupationsPageContent() {
       dateDebut: occ.dateDebut ? format(new Date(occ.dateDebut), 'yyyy-MM-dd') : '',
       dateFin: occ.dateFin ? format(new Date(occ.dateFin), 'yyyy-MM-dd') : '',
       adresse: occ.adresse,
-      latitude: '', 
+      latitude: '',
       longitude: '',
       description: occ.description || '',
       statut: occ.statut,
       isCourtMetrage: !!occ.isCourtMetrage,
-      agissantPour: occ.agissantPour || ''
+      agissantPour: agissantPourTiers?.nom || '',
+      agissantPourId: agissantPourId,
+      isAgissantPourBillable: (occ as any).isAgissantPourBillable || false
     });
     setAddressQuery(occ.adresse);
     setUploadedPhotos(occ.photos ? occ.photos.split(',') : []);
     setIsModalOpen(true);
   };
 
-  const resetForm = () => {
+  const resetForm = (defaultType = 'CHANTIER') => {
     setFormData({
-      id: null, 
+      id: null,
       nom: '',
       tiersId: '',
-      type: 'COMMERCE',
+      type: defaultType,
       anneeTaxation: lockedYear || (yearFilter !== 'ALL' ? yearFilter : new Date().getFullYear().toString()),
       dateDebut: '',
       dateFin: '',
-      adresse: '', 
-      latitude: '', 
-      longitude: '', 
-      description: '', 
+      adresse: '',
+      latitude: '',
+      longitude: '',
+      description: '',
       statut: 'EN_ATTENTE',
       isCourtMetrage: false,
-      agissantPour: ''
+      agissantPour: '',
+      agissantPourId: '',
+      isAgissantPourBillable: false
     });
     setAddressQuery('');
+    setAgissantPourSearchQuery('');
     setUploadedPhotos([]);
   };
 
@@ -372,8 +460,65 @@ function OccupationsPageContent() {
     } catch (err) { alert('Erreur lors de la mise à jour du statut'); }
   };
 
-  const downloadFacture = (id: number) => {
-    window.location.href = `/api/facture-pdf/${id}`;
+  const downloadFacture = async (id: number) => {
+    try {
+      let tiersId: number | null = null;
+
+      // Try to find occupation in local state first
+      const occupation = occupations.find(o => o.id === id);
+      if (occupation && (occupation as any).tiers?.id) {
+        tiersId = (occupation as any).tiers.id;
+      } else {
+        // If not found locally, fetch from API
+        try {
+          const occRes = await axios.get(`/api/occupations/${id}`);
+          const occ = occRes.data;
+          if (occ && (occ as any).tiers?.id) {
+            tiersId = (occ as any).tiers.id;
+          }
+        } catch (err) {
+          console.error('Could not fetch occupation data:', err);
+        }
+      }
+
+      // If still no tiersId, proceed without verification
+      if (!tiersId) {
+        window.location.href = `/api/facture-pdf/${id}`;
+        return;
+      }
+
+      // Verify the tiers status
+      try {
+        await axios.post(`/api/admin/verify-tiers/${tiersId}`);
+        const tiersRes = await axios.get(`/api/tiers/${tiersId}`);
+        const tier = tiersRes.data;
+
+        if (tier && (tier.etatAdministratif === 'Fermée' || tier.etatAdministratif === 'Cessée')) {
+          setWarningTierName(tier.nom);
+          setWarningMessage(`Le redevable est fermé ou cessé d'activité. Voulez-vous continuer la génération de facture ?`);
+          setWarningOccupationId(id);
+          setWarningAction(() => () => {
+            window.location.href = `/api/facture-pdf/${id}`;
+          });
+          setIsWarningModalOpen(true);
+          return;
+        }
+      } catch (err) {
+        setWarningTierName('État du redevable');
+        setWarningMessage('Impossible de vérifier l\'état du redevable. Voulez-vous continuer la génération de facture ?');
+        setWarningOccupationId(id);
+        setWarningAction(() => () => {
+          window.location.href = `/api/facture-pdf/${id}`;
+        });
+        setIsWarningModalOpen(true);
+        return;
+      }
+
+      window.location.href = `/api/facture-pdf/${id}`;
+    } catch (err) {
+      console.error('Error in downloadFacture:', err);
+      window.location.href = `/api/facture-pdf/${id}`;
+    }
   };
 
   const handleUnlock = async (id: number) => {
@@ -429,11 +574,14 @@ function OccupationsPageContent() {
   };
 
   const filtered = occupations.filter(o => {
-    const matchesSearch = (o.tiers?.nom || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+    // Only show CHANTIER and TOURNAGE types
+    if (o.type !== 'CHANTIER' && o.type !== 'TOURNAGE') return false;
+
+    const matchesSearch = (o.tiers?.nom || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                           o.adresse.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'ALL' || o.type === typeFilter;
     const matchesStatus = statusFilter === 'ALL' || o.statut === statusFilter;
-    const dossierAnnee = (o.type === 'COMMERCE' || o.type === 'TLPE') ? o.anneeTaxation : (o.dateDebut ? new Date(o.dateDebut).getFullYear() : null);
+    const dossierAnnee = o.dateDebut ? new Date(o.dateDebut).getFullYear() : null;
     const matchesYear = yearFilter === 'ALL' || (dossierAnnee && dossierAnnee.toString() === yearFilter.toString());
     const matchesTiers = !tiersFilter || o.tiersId.toString() === tiersFilter;
     return matchesSearch && matchesType && matchesStatus && matchesYear && matchesTiers;
@@ -445,20 +593,25 @@ function OccupationsPageContent() {
   )).sort((a, b) => (b as number) - (a as number));
 
   const totalsByType = occupations.reduce((acc, o) => {
-    if (!acc[o.type]) {
-      acc[o.type] = { total: 0, enCours: 0, aFacturer: 0, facture: 0 };
-    }
+    // Only count CHANTIER and TOURNAGE types
+    if (o.type !== 'CHANTIER' && o.type !== 'TOURNAGE') return acc;
+
+    const type = o.type;
     const amount = o.montantCalcule || 0;
-    acc[o.type].total += amount;
-    
-    if (['EN_COURS', 'EN_ATTENTE', 'TERMINE'].includes(o.statut)) {
-      acc[o.type].enCours += amount;
-    } else if (o.statut === 'VERIFIE') {
-      acc[o.type].aFacturer += amount;
-    } else if (['FACTURE', 'PAYE', 'INVOICED'].includes(o.statut)) {
-      acc[o.type].facture += amount;
+
+    if (!acc[type]) {
+      acc[type] = { total: 0, enCours: 0, aFacturer: 0, facture: 0 };
     }
-    
+    acc[type].total += amount;
+
+    if (['EN_COURS', 'EN_ATTENTE', 'TERMINE'].includes(o.statut)) {
+      acc[type].enCours += amount;
+    } else if (o.statut === 'VERIFIE') {
+      acc[type].aFacturer += amount;
+    } else if (['FACTURE', 'PAYE', 'INVOICED'].includes(o.statut)) {
+      acc[type].facture += amount;
+    }
+
     return acc;
   }, {} as Record<string, { total: number; enCours: number; aFacturer: number; facture: number }>);
 
@@ -485,14 +638,14 @@ function OccupationsPageContent() {
               >
                 <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
               </button>
-              <button 
+              <button
                 onClick={() => { resetForm(); setIsModalOpen(true); }}
                 className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95"
               >
                 <Plus size={18} />
                 Nouveau Dossier
               </button>
-              <button 
+              <button
                 onClick={() => setIsFilienModalOpen(true)}
                 className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95"
               >
@@ -503,12 +656,10 @@ function OccupationsPageContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
         {[
-          { type: 'COMMERCE', label: 'Commerces', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
           { type: 'CHANTIER', label: 'Chantiers', icon: MapPin, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           { type: 'TOURNAGE', label: 'Tournages', icon: Info, color: 'text-amber-600', bg: 'bg-amber-50' },
-          { type: 'TLPE', label: 'T.L.P.E.', icon: Euro, color: 'text-purple-600', bg: 'bg-purple-50' },
         ].map((cat) => (
           <button
             key={cat.type}
@@ -711,9 +862,23 @@ function OccupationsPageContent() {
                          {(occ.montantCalcule || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € <span className="text-[9px] text-slate-400">TTC</span>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black">
-                        <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest ${TYPE_MAP[occ.type]?.bg || 'bg-slate-50'} ${TYPE_MAP[occ.type]?.color || 'text-slate-600'} ${TYPE_MAP[occ.type]?.bg.replace('bg-', 'border-') || 'border-slate-100'}`}>
-                          {TYPE_MAP[occ.type]?.label || occ.type}
-                        </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest ${TYPE_MAP[occ.type]?.bg || 'bg-slate-50'} ${TYPE_MAP[occ.type]?.color || 'text-slate-600'} ${TYPE_MAP[occ.type]?.bg.replace('bg-', 'border-') || 'border-slate-100'}`}>
+                            {TYPE_MAP[occ.type]?.label || occ.type}
+                          </span>
+                          {isMixedOccupation(occ) && (
+                            <>
+                              <span className="text-slate-300 text-[10px]">+</span>
+                              <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest text-[10px] ${
+                                occ.type === 'TLPE'
+                                  ? 'bg-blue-50 text-blue-600 border-blue-100'
+                                  : 'bg-purple-50 text-purple-600 border-purple-100'
+                              }`}>
+                                {occ.type === 'TLPE' ? 'Commerce' : 'TLPE'}
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black text-slate-400">
                          <div className="flex items-center gap-2">
@@ -742,7 +907,9 @@ function OccupationsPageContent() {
                           {['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => downloadFacture(occ.id)} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Télécharger Facture"><FileText size={18} /></button>}
                           {['FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => handleUnlock(occ.id)} className="p-2.5 text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Déverrouiller Dossier"><Unlock size={18} /></button>}
                           <button onClick={() => handleEdit(occ)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Modifier"><Pencil size={18} /></button>
-                          <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer"><Trash2 size={18} /></button>
+                          {currentUser?.role === 'ADMIN' && (
+                            <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer"><Trash2 size={18} /></button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -862,38 +1029,35 @@ function OccupationsPageContent() {
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Type d'occupation</label>
-                    <select 
+                    <select
                       disabled={isEditing}
-                      required 
-                      className={`w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none transition-all font-bold appearance-none ${isEditing ? 'cursor-not-allowed opacity-60' : 'cursor-pointer focus:border-blue-500'}`} 
-                      value={formData.type} 
+                      required
+                      className={`w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none transition-all font-bold appearance-none ${isEditing ? 'cursor-not-allowed opacity-60' : 'cursor-pointer focus:border-blue-500'}`}
+                      value={formData.type}
                       onChange={e => {
-                        const newType = e.target.value;
-                        const selectedTier = tiers.find(t => t.id === Number(formData.tiersId));
-                        const newNom = (newType === 'COMMERCE' && selectedTier) ? selectedTier.nom : formData.nom;
-                        setFormData({...formData, type: newType, nom: newNom});
+                        setFormData({...formData, type: e.target.value});
                       }}
                     >
-                      <option value="COMMERCE">Terrasse / Commerce</option>
                       <option value="CHANTIER">Echafaudage / Chantier</option>
                       <option value="TOURNAGE">Tournage / Événement</option>
-                      <option value="TLPE">T.L.P.E. Dossier</option>
+                      <option value="TLPE">T.L.P.E.</option>
+                      <option value="COMMERCE">Commerce</option>
                     </select>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Libellé du Dossier</label>
                     <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" placeholder="Ex: Terrasse été 2024..." value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
                   </div>
-                  <div className="space-y-2 relative">
+                  <div className="space-y-3 relative">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">
                        Demandeur (Tiers)
                        {fetchingTiers && <Loader2 size={12} className="animate-spin text-blue-500" />}
                     </label>
-                    
+
                     {!formData.tiersId ? (
                       <div className="relative">
                         <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                        <input 
+                        <input
                           type="text"
                           placeholder="Chercher par nom ou code SEDIT..."
                           className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all font-bold"
@@ -904,19 +1068,19 @@ function OccupationsPageContent() {
                           }}
                           onFocus={() => setIsTiersDropdownOpen(true)}
                         />
-                        
+
                         {isTiersDropdownOpen && (tiersSearchQuery.length > 0 || tiers.length > 0) && (
                           <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[150] overflow-hidden divide-y divide-slate-50 max-h-60 overflow-y-auto">
                             {tiers
-                              .filter(t => 
-                                t.nom.toLowerCase().includes(tiersSearchQuery.toLowerCase()) || 
+                              .filter(t =>
+                                t.nom.toLowerCase().includes(tiersSearchQuery.toLowerCase()) ||
                                 (t as any).code_sedit?.includes(tiersSearchQuery)
                               )
                               .slice(0, 15)
                               .map(t => (
-                                <button 
-                                  key={t.id} 
-                                  type="button" 
+                                <button
+                                  key={t.id}
+                                  type="button"
                                   className="w-full px-6 py-4 text-left hover:bg-blue-50 transition-colors flex items-center justify-between group"
                                   onClick={() => {
                                     handleTierChange(t.id.toString());
@@ -936,7 +1100,7 @@ function OccupationsPageContent() {
                                      </div>
                                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
                                         {(t as any).code_sedit || 'SANS CODE SEDIT'}
-                                        {t.statut === 'PROVISOIRE' && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
+                                        {t.statut === 'PROVISOIRE' && !(t as any).code_sedit && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
                                      </p>
                                   </div>
                                   <ChevronRight size={14} className="text-slate-300" />
@@ -949,53 +1113,232 @@ function OccupationsPageContent() {
                         )}
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-2xl p-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-                            <Users size={18} />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <p className="font-black text-blue-900 uppercase text-xs">
-                                {tiers.find(t => t.id === Number(formData.tiersId))?.nom}
-                              </p>
-                              {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.etatAdministratif === 'Cessée' && (
-                                <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
-                                  <AlertTriangle size={10} />
-                                  Fermé
-                                </div>
-                              )}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-2xl p-4">
+                          <div className="flex items-center gap-4">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (formData.isAgissantPourBillable) {
+                                  setFormData({...formData, isAgissantPourBillable: false});
+                                }
+                              }}
+                              className={`flex items-center justify-center w-8 h-8 rounded-full shadow-lg transition-all cursor-pointer flex-shrink-0 ${
+                                !formData.isAgissantPourBillable
+                                  ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30'
+                                  : 'bg-slate-300 hover:bg-slate-400 text-white'
+                              }`}
+                              title="Entité facturée"
+                            >
+                              <Euro size={16} className="font-black" />
+                            </button>
+                            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                              <Users size={18} />
                             </div>
-                            <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest">
-                              ID #{formData.tiersId} — {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.code_sedit || 'SANS CODE'}
-                            </p>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <p className="font-black text-blue-900 uppercase text-xs">
+                                  {tiers.find(t => t.id === Number(formData.tiersId))?.nom}
+                                </p>
+                                {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.etatAdministratif === 'Cessée' && (
+                                  <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
+                                    <AlertTriangle size={10} />
+                                    Fermé
+                                  </div>
+                                )}
+                              </div>
+                              {(() => {
+                                const tier = tiers.find(t => t.id === Number(formData.tiersId));
+                                const contactPrincipal = (tier as any)?.contacts?.find((c: any) => c.role === 'Contact principal');
+                                return contactPrincipal ? (
+                                  <p className="text-[9px] font-bold text-blue-600 mb-1">
+                                    {contactPrincipal.prenom} {contactPrincipal.nom}
+                                  </p>
+                                ) : null;
+                              })()}
+                              <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest">
+                                ID #{formData.tiersId} — {(tiers.find(t => t.id === Number(formData.tiersId)) as any)?.code_sedit || 'SANS CODE'}
+                              </p>
+                            </div>
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData({...formData, tiersId: ''});
+                              setTiersSearchQuery('');
+                            }}
+                            className="p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-all border border-blue-100"
+                          >
+                            <X size={18} />
+                          </button>
                         </div>
-                        <button 
-                          type="button"
-                          onClick={() => {
-                            setFormData({...formData, tiersId: ''});
-                            setTiersSearchQuery('');
-                          }}
-                          className="p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-all border border-blue-100"
-                        >
-                          <X size={18} />
-                        </button>
+
+                        {!formData.isAgissantPourBillable && !(tiers.find(t => t.id === Number(formData.tiersId))?.contacts?.some((c: any) => c.role === 'Contact principal')) && (
+                          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
+                            <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                              <p className="text-xs font-black text-amber-900 uppercase tracking-tight mb-1">Contact principal requis</p>
+                              <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-3">Il faut créer un contact principal pour cette entité avant de la facturer</p>
+                              <button
+                                type="button"
+                                onClick={() => openContactModal('demandeur')}
+                                className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
+                              >
+                                <Plus size={14} />
+                                Ajouter un contact
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3 relative">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
                       Agissant pour le compte de (Optionnel)
                     </label>
-                    <input 
-                      type="text" 
-                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" 
-                      placeholder="Ex: Entreprise Vinci..." 
-                      value={formData.agissantPour || ''} 
-                      onChange={e => setFormData({...formData, agissantPour: e.target.value})} 
-                    />
+
+                    {!formData.agissantPourId ? (
+                      <div className="relative">
+                        <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                        <input
+                          type="text"
+                          placeholder="Chercher un tiers par nom ou code SEDIT..."
+                          className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all font-bold"
+                          value={agissantPourSearchQuery}
+                          onChange={(e) => {
+                            setAgissantPourSearchQuery(e.target.value);
+                            setIsAgissantPourDropdownOpen(true);
+                          }}
+                          onFocus={() => setIsAgissantPourDropdownOpen(true)}
+                        />
+
+                        {isAgissantPourDropdownOpen && (agissantPourSearchQuery.length > 0 || tiers.length > 0) && (
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[150] overflow-hidden divide-y divide-slate-50 max-h-60 overflow-y-auto">
+                            {tiers
+                              .filter(t =>
+                                t.nom.toLowerCase().includes(agissantPourSearchQuery.toLowerCase()) ||
+                                (t as any).code_sedit?.includes(agissantPourSearchQuery)
+                              )
+                              .slice(0, 15)
+                              .map(t => (
+                                <button
+                                  key={t.id}
+                                  type="button"
+                                  className="w-full px-6 py-4 text-left hover:bg-emerald-50 transition-colors flex items-center justify-between group"
+                                  onClick={() => {
+                                    setFormData({...formData, agissantPourId: t.id.toString(), agissantPour: t.nom});
+                                    setAgissantPourSearchQuery('');
+                                    setIsAgissantPourDropdownOpen(false);
+                                  }}
+                                >
+                                  <div className="flex-1">
+                                     <div className="flex items-center gap-2 mb-1">
+                                       <p className="font-bold text-slate-900 group-hover:text-emerald-600 uppercase text-xs">{t.nom}</p>
+                                       {(t as any).etatAdministratif === 'Cessée' && (
+                                         <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest border border-rose-200">
+                                           <AlertTriangle size={8} />
+                                           Fermé
+                                         </div>
+                                       )}
+                                     </div>
+                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                        {(t as any).code_sedit || 'SANS CODE SEDIT'}
+                                        {t.statut === 'PROVISOIRE' && !(t as any).code_sedit && <span className="ml-2 text-rose-400">(PROVISOIRE)</span>}
+                                     </p>
+                                  </div>
+                                  <ChevronRight size={14} className="text-slate-300" />
+                                </button>
+                              ))}
+                            {agissantPourSearchQuery.length > 0 && tiers.filter(t => t.nom.toLowerCase().includes(agissantPourSearchQuery.toLowerCase()) || (t as any).code_sedit?.includes(agissantPourSearchQuery)).length === 0 && (
+                              <div className="p-8 text-center text-[10px] font-black text-slate-400 uppercase italic tracking-widest">Aucun tiers trouvé</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                          <div className="flex items-center gap-4">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (formData.isAgissantPourBillable) {
+                                  setFormData({...formData, isAgissantPourBillable: false});
+                                } else {
+                                  setFormData({...formData, isAgissantPourBillable: true});
+                                }
+                              }}
+                              className={`flex items-center justify-center w-8 h-8 rounded-full shadow-lg transition-all cursor-pointer flex-shrink-0 ${
+                                formData.isAgissantPourBillable
+                                  ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/30'
+                                  : 'bg-slate-300 hover:bg-slate-400 text-white'
+                              }`}
+                              title="Entité facturée"
+                            >
+                              <Euro size={16} className="font-black" />
+                            </button>
+                            <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                              <Users size={18} />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <p className="font-black text-emerald-900 uppercase text-xs">
+                                  {tiers.find(t => t.id === Number(formData.agissantPourId))?.nom}
+                                </p>
+                                {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.etatAdministratif === 'Cessée' && (
+                                  <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200">
+                                    <AlertTriangle size={10} />
+                                    Fermé
+                                  </div>
+                                )}
+                              </div>
+                              {(() => {
+                                const tier = tiers.find(t => t.id === Number(formData.agissantPourId));
+                                const contactPrincipal = (tier as any)?.contacts?.find((c: any) => c.role === 'Contact principal');
+                                return contactPrincipal ? (
+                                  <p className="text-[9px] font-bold text-emerald-600 mb-1">
+                                    {contactPrincipal.prenom} {contactPrincipal.nom}
+                                  </p>
+                                ) : null;
+                              })()}
+                              <p className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">
+                                ID #{formData.agissantPourId} — {(tiers.find(t => t.id === Number(formData.agissantPourId)) as any)?.code_sedit || 'SANS CODE'}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData({...formData, agissantPourId: '', agissantPour: '', isAgissantPourBillable: false});
+                              setAgissantPourSearchQuery('');
+                            }}
+                            className="p-2 bg-white hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-xl transition-all border border-emerald-100"
+                          >
+                            <X size={18} />
+                          </button>
+                        </div>
+
+                        {formData.isAgissantPourBillable && !(tiers.find(t => t.id === Number(formData.agissantPourId))?.contacts?.some((c: any) => c.role === 'Contact principal')) && (
+                          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
+                            <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                              <p className="text-xs font-black text-amber-900 uppercase tracking-tight mb-1">Contact principal requis</p>
+                              <p className="text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-3">Il faut créer un contact principal pour cette entité avant de la facturer</p>
+                              <button
+                                type="button"
+                                onClick={() => openContactModal('agissantPour')}
+                                className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
+                              >
+                                <Plus size={14} />
+                                Ajouter un contact
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -1142,11 +1485,64 @@ function OccupationsPageContent() {
       )}
 
       {isFilienModalOpen && (
-        <FilienGenerationModal 
+        <FilienGenerationModal
           isOpen={isFilienModalOpen}
           onClose={() => setIsFilienModalOpen(false)}
           occupations={occupations}
         />
+      )}
+
+      {isContactModalOpen && contactModalFor && (
+        <ContactModal
+          isOpen={isContactModalOpen}
+          onClose={() => {
+            setIsContactModalOpen(false);
+            setContactModalFor(null);
+          }}
+          onAddContact={handleAddContact}
+          newContact={newContact}
+          setNewContact={setNewContact}
+          isSubmittingContact={isSubmittingContact}
+          onPhotoContact={handlePhotoContact}
+        />
+      )}
+
+      {isWarningModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-in fade-in scale-in duration-300">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle className="text-amber-600" size={24} />
+              <h2 className="text-lg font-black text-slate-900">Avertissement</h2>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-sm text-slate-700 mb-2">
+                <span className="font-bold text-amber-600">{warningTierName}</span>
+              </p>
+              <p className="text-sm text-slate-600">
+                {warningMessage}
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsWarningModalOpen(false)}
+                className="flex-1 px-4 py-3 text-slate-700 border border-slate-200 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => {
+                  setIsWarningModalOpen(false);
+                  warningAction();
+                }}
+                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors"
+              >
+                Continuer
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

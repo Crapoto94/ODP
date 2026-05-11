@@ -22,7 +22,7 @@ export default function DocxUploader({ onGabaritCreated }: { onGabaritCreated?: 
     setLoading(true);
     try {
       const res = await axios.get('/api/gabarits?type=DOCX');
-      setDocxGabarits(res.data.gabarits || []);
+      setDocxGabarits(Array.isArray(res.data) ? res.data : res.data.gabarits || []);
     } catch (err) {
       console.error('[DocxUploader] Error loading gabarits:', err);
     } finally {

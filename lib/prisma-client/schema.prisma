@@ -5,59 +5,82 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Tiers {
-  id                Int          @id @default(autoincrement())
+  id                Int                @id @default(autoincrement())
   nom               String
-  siret             String?      @unique
+  siret             String?            @unique
   email             String?
   adresse           String?
   latitude          Float?
   longitude         Float?
-  code_sedit        String?      @unique
-  statut            String       @default("PROVISOIRE")
-  created_at        DateTime     @default(now())
-  updated_at        DateTime     @updatedAt
+  code_sedit        String?            @unique
+  statut            String             @default("PROVISOIRE")
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
   natureJuridique   String?
   etatAdministratif String?
+  observations      String?
+  photo             String?
   contacts          Contact[]
   occupations       Occupation[]
+  notes             Note[]
+  favoritedBy       FavoriteCommerce[]
+
+  @@index([nom])
+  @@index([code_sedit])
 }
 
 model Occupation {
-  id                Int                @id @default(autoincrement())
-  nom               String?
-  tiersId           Int
-  type              String
-  statut            String
-  dateDebut         DateTime?
-  dateFin           DateTime?
-  anneeTaxation     Int?
-  adresse           String
-  latitude          Float?
-  longitude         Float?
-  description       String?
-  photos            String?
-  montantCalcule    Float              @default(0)
-  facturePath       String?
-  created_at        DateTime           @default(now())
-  updated_at        DateTime           @updatedAt
-  numeroFacture     String?
-  dossierParentId   Int?
-  isCourtMetrage    Boolean            @default(false)
-  agissantPour      String?
-  aotGabaritId      Int?
-  aotFinalPath      String?
-  datePaiement      DateTime?
-  contacts          Contact[]
-  dispositifs       Dispositif[]
-  lignes            LigneOccupation[]
-  notes             Note[]
-  signatureRequests SignatureRequest[]
-  tiers             Tiers              @relation(fields: [tiersId], references: [id])
+  id                     Int                @id @default(autoincrement())
+  nom                    String?
+  tiersId                Int
+  type                   String
+  statut                 String
+  dateDebut              DateTime?
+  dateFin                DateTime?
+  anneeTaxation          Int?
+  adresse                String
+  latitude               Float?
+  longitude              Float?
+  description            String?
+  observations           String?
+  photos                 String?
+  montantCalcule         Float              @default(0)
+  facturePath            String?
+  created_at             DateTime           @default(now())
+  updated_at             DateTime           @updatedAt
+  numeroFacture          String?
+  dossierParentId        Int?
+  isCourtMetrage         Boolean            @default(false)
+  agissantPour           String?
+  isAgissantPourBillable Boolean            @default(false)
+  aotGabaritId           Int?
+  aotFinalPath           String?
+  aotSigned              Boolean            @default(false)
+  datePaiement           DateTime?
+  dateINIT               DateTime?
+  dateINST               DateTime?
+  datePREP               DateTime?
+  dateEN_COURS           DateTime?
+  dateVALIDE             DateTime?
+  dateFACTURE            DateTime?
+  dateTITRE              DateTime?
+  dateCLOS               DateTime?
+  contacts               Contact[]
+  dispositifs            Dispositif[]
+  lignes                 LigneOccupation[]
+  notes                  Note[]
+  signatureRequests      SignatureRequest[]
+  tiers                  Tiers              @relation(fields: [tiersId], references: [id])
+
+  @@index([tiersId])
+  @@index([statut])
+  @@index([anneeTaxation])
+  @@index([type])
 }
 
 model Contact {
@@ -70,29 +93,38 @@ model Contact {
   role         String      @default("CONTACT_DIRECT")
   occupationId Int?
   tiersId      Int?
+  commerceId   Int?
   pjPath       String?
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
   entreprise   String?
   tiers        Tiers?      @relation(fields: [tiersId], references: [id], onDelete: Cascade)
   occupation   Occupation? @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+
+  @@index([tiersId])
+  @@index([occupationId])
 }
 
 model Note {
-  id           Int        @id @default(autoincrement())
-  occupationId Int
+  id           Int         @id @default(autoincrement())
+  occupationId Int?
+  tiersId      Int?
   content      String
   author       String?
   pjPath       String?
   pjName       String?
   pjThumb      String?
-  isEmail      Boolean    @default(false)
+  isEmail      Boolean     @default(false)
   externalId   String?
   fromEmail    String?
   toEmail      String?
-  origin       String?    @default("desktop")
-  created_at   DateTime   @default(now())
-  occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  origin       String?     @default("desktop")
+  created_at   DateTime    @default(now())
+  occupation   Occupation? @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+  tiers        Tiers?      @relation(fields: [tiersId], references: [id], onDelete: Cascade)
+
+  @@index([occupationId])
+  @@index([tiersId])
 }
 
 model O365Message {
@@ -145,19 +177,37 @@ model Article {
   modeTaxation   ModeTaxation?     @relation(fields: [modeTaxationId], references: [id])
   categorie      Categorie?        @relation(fields: [categorieId], references: [id])
   lignes         LigneOccupation[]
+
+  @@index([annee])
+  @@index([numero])
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  nom        String
-  prenom     String
-  email      String      @unique
-  login      String      @unique
-  password   String
-  role       String
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
-  logs       MobileLog[]
+  id                Int                @id @default(autoincrement())
+  nom               String
+  prenom            String
+  email             String             @unique
+  login             String             @unique
+  password          String
+  role              String
+  isAd              Boolean            @default(false)
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  logs              MobileLog[]
+  favoriteCommerces FavoriteCommerce[]
+
+  @@index([login])
+}
+
+model FavoriteCommerce {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  tiersId    Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tiers      Tiers    @relation(fields: [tiersId], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+
+  @@unique([userId, tiersId])
 }
 
 model MobileLog {
@@ -169,49 +219,17 @@ model MobileLog {
   ip         String?
   created_at DateTime @default(now())
   user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
-model AppSettings {
-  id                   Int      @id @default(autoincrement())
-  financeEmail         String?
-  appUrl               String?
-  apmUrl               String?
-  apmToken             String?
-  senderName           String?  @default("Domaine Public")
-  senderEmail          String?  @default("dsihub@fbc.fr")
-  filienOrga           String?  @default("01")
-  filienBudget         String?  @default("BA")
-  filienExercice       Int?
-  filienAvancement     String?  @default("5")
-  filienRejetDispo     Boolean? @default(true)
-  filienRejetCA        Boolean? @default(false)
-  filienRejetMarche    Boolean? @default(false)
-  filienMouvement      String?  @default("1")
-  filienType           String?  @default("R")
-  filienLibelle        String?
-  filienCalendrier     String?  @default("01")
-  filienMonnaie        String?  @default("E")
-  filienMouvementEx    String?  @default("N")
-  filienPreBordereau   String?  @default("1235")
-  filienPoste          String?  @default("0001")
-  filienBordereau      String?  @default("0001")
-  filienObjet          String?
-  filienChapitre       String?  @default("")
-  filienNature         String?  @default("")
-  filienFonction       String?  @default("")
-  filienCodeInterne    String?  @default("")
-  filienTypeMouvement  String?  @default("")
-  filienSens           String?  @default("")
-  filienStructure      String?  @default("")
-  filienGestionnaire   String?  @default("")
-  filienUncPj          String?  @default("")
-  signataireRole       String?  @default("Le Maire d'Ivry-sur-Seine,")
-  signataireDelegation String?  @default("et par délégation,")
-  signataireNom        String?  @default("Dominique Montet - Directrice Générale Adjointe")
-  updated_at           DateTime @updatedAt
-  filienUncPass        String?  @default("")
-  filienUncUser        String?  @default("")
-  filienUncDomain      String?  @default("WORKGROUP")
+model ContextualMessage {
+  id       Int     @id @default(autoincrement())
+  cle      String  @unique
+  label    String?
+  sujet    String?
+  valeur   String
+  disabled Boolean @default(false)
 }
 
 model LigneOccupation {
@@ -227,10 +245,14 @@ model LigneOccupation {
   montant            Float      @default(0)
   created_at         DateTime   @default(now())
   updated_at         DateTime   @updatedAt
+  deletedAt          DateTime?
   photos             String?
   note               String?
   article            Article    @relation(fields: [articleId], references: [id])
   occupation         Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+
+  @@index([occupationId])
+  @@index([articleId])
 }
 
 model Dispositif {
@@ -241,6 +263,8 @@ model Dispositif {
   created_at   DateTime   @default(now())
   updated_at   DateTime   @updatedAt
   occupation   Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+
+  @@index([occupationId])
 }
 
 model Gabarit {
@@ -273,6 +297,7 @@ model TypeDossierConfig {
   filienSens          String?  @default("")
   filienStructure     String?  @default("")
   filienGestionnaire  String?  @default("")
+  filienPreBordereau  String?  @default("")
   invoiceTemplateId   String?
   updated_at          DateTime @updatedAt
 }
@@ -285,10 +310,14 @@ model BacklogItem {
   priority    String           @default("MEDIUM")
   status      String           @default("OPEN")
   versionId   Int?
+  requestedBy String?
   created_at  DateTime         @default(now())
   updated_at  DateTime         @updatedAt
   comments    BacklogComment[]
   version     VersionRelease?  @relation(fields: [versionId], references: [id])
+
+  @@index([status])
+  @@index([versionId])
 }
 
 model BacklogComment {
@@ -298,6 +327,8 @@ model BacklogComment {
   author        String?
   created_at    DateTime    @default(now())
   backlogItem   BacklogItem @relation(fields: [backlogItemId], references: [id], onDelete: Cascade)
+
+  @@index([backlogItemId])
 }
 
 model VersionRelease {
@@ -309,14 +340,13 @@ model VersionRelease {
   backlogItems  BacklogItem[]
 }
 
-model PostgresConfig {
-  id       Int    @id @default(autoincrement())
-  host     String
-  port     Int    @default(5432)
-  database String
-  schema   String @default("public")
-  user     String
-  password String
+model ContactRoleConfig {
+  id         Int      @id @default(autoincrement())
+  nom        String   @unique
+  isSendAot  Boolean  @default(false)
+  ordre      Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model OdpConfig {
@@ -347,6 +377,9 @@ model BillingRunInvoice {
   total        Float
   pdfPath      String
   run          BillingRun @relation(fields: [billingRunId], references: [id], onDelete: Cascade)
+
+  @@index([billingRunId])
+  @@index([dossierId])
 }
 
 model Signatory {
@@ -374,8 +407,12 @@ model SignatureRequest {
   tokenExpiresAt   DateTime
   rejectionComment String?
   signedAt         DateTime?
+  requestedByLogin String?
   created_at       DateTime   @default(now())
   updated_at       DateTime   @updatedAt
   occupation       Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
   signatory        Signatory  @relation(fields: [signatoriesId], references: [id])
+
+  @@index([occupationId])
+  @@index([signatoriesId])
 }

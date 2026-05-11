@@ -147,18 +147,19 @@ export default function TiersPage() {
   };
 
   const handleSeditCreationRequest = async (t: Tiers) => {
-    if (!confirm(`Envoyer une demande de création SEDIT pour "${t.nom}" ?`)) return;
+    const code = prompt(`Saisir le code SEDIT pour "${t.nom}" :`, t.code_sedit || '');
+    if (code === null) return;
+    
     setSubmitting(true);
     try {
-      await axios.post('/api/tiers', { 
+      await axios.put('/api/tiers', { 
         ...t, 
         id: t.id,
-        isSeditRequest: true 
+        code_sedit: code
       });
-      alert("Demande envoyée avec succès aux Finances.");
       fetchTiers();
     } catch (err: any) {
-      alert("Erreur lors de l'envoi de la demande.");
+      alert(err.response?.data?.error || "Erreur lors de la mise à jour du code SEDIT.");
     } finally {
       setSubmitting(false);
     }
@@ -236,7 +237,8 @@ export default function TiersPage() {
     for (const t of tiersToVerify) {
       setCurrentVerifying(t.nom);
       try {
-        await axios.post(`/api/admin/verify-tiers/${t.id}`);
+        // Set a shorter timeout for individual requests to avoid long hangs
+        await axios.post(`/api/admin/verify-tiers/${t.id}`, {}, { timeout: 15000 });
       } catch (err) {
         console.error(`Error verifying ${t.nom}:`, err);
       }
@@ -244,9 +246,12 @@ export default function TiersPage() {
       count++;
       setVerifyProgress(Math.round((count / tiersToVerify.length) * 100));
       
-      // Delay to respect API limits
-      if (count % 10 === 0) {
-        await new Promise(resolve => setTimeout(resolve, 300));
+      // Small delay between every request to avoid burst peaks
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Larger delay every 5 requests to be safe with public API
+      if (count % 5 === 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
 
@@ -537,31 +542,29 @@ export default function TiersPage() {
                         <span className="text-xs font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">{t.code_sedit || 'À DÉFINIR'}</span>
                      </td>
                     <td className="px-5 py-3 rounded-r-xl border-y border-r border-slate-100 bg-white group-hover:border-blue-200">
-                        <div className="flex items-center justify-end gap-1 text-right">
-                         {!t.code_sedit && (
-                           <button 
-                             onClick={() => handleSeditCreationRequest(t)}
-                             className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-3 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all active:scale-95"
-                             title="Demander création SEDIT"
-                           >
-                             <SearchCode size={14} />
-                             Sedit
-                           </button>
-                         )}
-                          <Link 
-                            href={`/dashboard/tiers/${t.id}`}
-                            className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                            title="Détail & Contacts"
-                          >
-                            <ExternalLink size={20} />
-                          </Link>
-                          <button 
-                            onClick={() => handleStreetView(t)}
-                            className="p-2.5 text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
-                            title="Street View"
-                          >
-                            <Camera size={20} />
-                          </button>
+                      <div className="flex items-center justify-end gap-1 text-right">
+                        <button 
+                          onClick={() => handleSeditCreationRequest(t)}
+                          className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-900 px-3 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all active:scale-95 border border-slate-200"
+                          title="Saisir Code SEDIT"
+                        >
+                          <SearchCode size={14} className="text-blue-600" />
+                          Sedit
+                        </button>
+                        <Link 
+                          href={`/dashboard/tiers/${t.id}`}
+                          className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                          title="Détail & Contacts"
+                        >
+                          <ExternalLink size={20} />
+                        </Link>
+                        <button 
+                          onClick={() => handleStreetView(t)}
+                          className="p-2.5 text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                          title="Street View"
+                        >
+                          <Camera size={20} />
+                        </button>
                         <button 
                           onClick={() => handleEdit(t)}
                           className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"

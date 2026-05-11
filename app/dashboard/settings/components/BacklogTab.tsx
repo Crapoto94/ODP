@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Trash2, 
-  CheckCircle2, 
-  AlertCircle, 
-  Loader2, 
-  Clock, 
+import {
+  Plus,
+  Trash2,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Clock,
   Activity,
   ArrowUpCircle,
   Bug,
@@ -19,7 +19,8 @@ import {
   Zap,
   Save,
   Unlink,
-  History
+  History,
+  Edit2
 } from 'lucide-react';
 import axios from 'axios';
 import ReleaseHistory from './backlog/ReleaseHistory';
@@ -39,6 +40,7 @@ interface BacklogItem {
   priority: string;
   status: string;
   versionId?: number | null;
+  requestedBy?: string;
   created_at: string;
   comments?: BacklogComment[];
 }
@@ -51,14 +53,23 @@ export default function BacklogTab() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newVersionModal, setNewVersionModal] = useState(false);
   const [newVersion, setNewVersion] = useState({ number: "0.2.0", notes: "" });
-  
+  const [userRole, setUserRole] = useState('');
+
   const [selectedItem, setSelectedItem] = useState<BacklogItem | null>(null);
   const [newComment, setNewComment] = useState("");
   const [rejectionModal, setRejectionModal] = useState<BacklogItem | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showHistory, setShowHistory] = useState(false);
+  const [editModal, setEditModal] = useState<BacklogItem | null>(null);
 
   const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    type: 'FEATURE',
+    priority: 'MEDIUM'
+  });
+
+  const [editFormData, setEditFormData] = useState({
     title: '',
     description: '',
     type: 'FEATURE',
@@ -73,6 +84,8 @@ export default function BacklogTab() {
         axios.get('/api/releases')
       ]);
 
+      const backlogData = Array.isArray(backlogRes.data) ? backlogRes.data : (backlogRes.data.items || []);
+
       // Define priority weights
       const weights: Record<string, number> = {
         'URGENT': 4,
@@ -82,7 +95,7 @@ export default function BacklogTab() {
       };
 
       // Sort items by priority desc, then by date desc
-      const sortedItems = backlogRes.data.sort((a: any, b: any) => {
+      const sortedItems = backlogData.sort((a: any, b: any) => {
         const weightA = weights[a.priority] || 0;
         const weightB = weights[b.priority] || 0;
         if (weightA !== weightB) return weightB - weightA;
@@ -90,9 +103,11 @@ export default function BacklogTab() {
       });
 
       setItems(sortedItems);
-      setReleases(releasesRes.data);
+      setReleases(releasesRes.data || []);
     } catch (e) {
       console.error(e);
+      setItems([]);
+      setReleases([]);
     } finally {
       setLoading(false);
     }
@@ -100,6 +115,15 @@ export default function BacklogTab() {
 
   useEffect(() => {
     fetchBacklog();
+    const fetchUserRole = async () => {
+      try {
+        const res = await axios.get('/api/auth/me');
+        setUserRole(res.data?.role || '');
+      } catch (e) {
+        console.error('Error fetching user role:', e);
+      }
+    };
+    fetchUserRole();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -148,6 +172,30 @@ export default function BacklogTab() {
       fetchBacklog();
     } catch (e) {
       alert("Erreur lors de la suppression");
+    }
+  };
+
+  const handleEditClick = (item: BacklogItem) => {
+    setEditFormData({
+      title: item.title,
+      description: item.description,
+      type: item.type,
+      priority: item.priority
+    });
+    setEditModal(item);
+  };
+
+  const handleEditSubmit = async () => {
+    if (!editModal) return;
+    setSaving(true);
+    try {
+      await axios.patch(`/api/backlog/${editModal.id}`, editFormData);
+      setEditModal(null);
+      fetchBacklog();
+    } catch (e: any) {
+      alert(e.response?.data?.error || "Erreur lors de la modification");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -332,6 +380,20 @@ export default function BacklogTab() {
                            <span className={`text-sm font-black ${item.status === 'DONE' ? 'line-through text-slate-400' : item.status === 'REJECTED' ? 'text-slate-300' : 'text-slate-900'}`}>{item.title}</span>
                         </div>
                         {item.description && <p className="text-[10px] font-medium text-slate-400 mt-1">{item.description}</p>}
+                        {item.comments && item.comments.length > 0 && (
+                          <div className="mt-2 space-y-1">
+                            {item.comments.slice(0, 2).map(comment => (
+                              <div key={comment.id} className="text-[9px] bg-slate-50 p-2 rounded border border-slate-100">
+                                <span className="font-bold text-slate-600">{comment.author}: </span>
+                                <span className="text-slate-500">{comment.content}</span>
+                              </div>
+                            ))}
+                            {item.comments.length > 2 && (
+                              <p className="text-[8px] text-slate-400 italic">+{item.comments.length - 2} autre(s) annotation(s)</p>
+                            )}
+                          </div>
+                        )}
+                        {item.requestedBy && <p className="text-[8px] font-bold text-blue-600 mt-1">Demandeur: {item.requestedBy}</p>}
                       </div>
                     </td>
                     <td className="px-8 py-5 text-center">
@@ -369,7 +431,7 @@ export default function BacklogTab() {
                     <td className="px-8 py-5 text-right">
                       <div className="flex justify-end gap-2 text-slate-400">
                         {item.versionId && (
-                          <button 
+                          <button
                             onClick={async () => {
                               if(confirm("Détacher cet élément de sa version ?")) {
                                 try {
@@ -384,7 +446,16 @@ export default function BacklogTab() {
                             <Unlink size={16} />
                           </button>
                         )}
-                        <button 
+                        {userRole === 'ADMIN' && (
+                          <button
+                            onClick={() => handleEditClick(item)}
+                            className="p-2 text-slate-300 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                            title="Modifier (Admin)"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                        )}
+                        <button
                           onClick={() => setSelectedItem(selectedItem?.id === item.id ? null : item)}
                           className={`p-2 rounded-lg transition-all ${selectedItem?.id === item.id ? 'bg-blue-50 text-blue-600' : 'text-slate-300 hover:text-blue-600'}`}
                         >
@@ -539,6 +610,81 @@ export default function BacklogTab() {
           </div>
         </div>
       )}
+
+      {editModal && (
+        <div className="fixed inset-0 z-[160] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setEditModal(null)}></div>
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 p-8 space-y-6">
+            <div>
+              <h3 className="text-xl font-black text-slate-900 tracking-tight">Modifier la Demande</h3>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Éditer les détails de la demande</p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Titre</label>
+                <input
+                  className="w-full bg-white border border-slate-200 rounded-xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
+                  value={editFormData.title}
+                  onChange={e => setEditFormData({...editFormData, title: e.target.value})}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Type</label>
+                  <select
+                    className="w-full bg-white border border-slate-200 rounded-xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
+                    value={editFormData.type}
+                    onChange={e => setEditFormData({...editFormData, type: e.target.value})}
+                  >
+                    <option value="FEATURE">Fonctionnalité</option>
+                    <option value="BUG">Bug / Correction</option>
+                    <option value="IMPROVEMENT">Amélioration</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Priorité</label>
+                  <select
+                    className="w-full bg-white border border-slate-200 rounded-xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
+                    value={editFormData.priority}
+                    onChange={e => setEditFormData({...editFormData, priority: e.target.value})}
+                  >
+                    <option value="LOW">Basse</option>
+                    <option value="MEDIUM">Moyenne</option>
+                    <option value="HIGH">Haute</option>
+                    <option value="URGENT">Urgent</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Description</label>
+                <textarea
+                  className="w-full bg-white border border-slate-200 rounded-xl p-4 outline-none focus:border-blue-500 transition-all font-bold text-sm min-h-24"
+                  value={editFormData.description}
+                  onChange={e => setEditFormData({...editFormData, description: e.target.value})}
+                  placeholder="Détails supplémentaires..."
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={handleEditSubmit}
+                disabled={saving}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-xl font-black shadow-xl shadow-blue-500/20 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
+              >
+                {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                Enregistrer les modifications
+              </button>
+              <button onClick={() => setEditModal(null)} className="w-full py-4 text-slate-400 font-bold uppercase tracking-widest text-[10px]">Annuler</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ReleaseHistory releases={releases} onRefresh={fetchBacklog} />
     </div>
   );

@@ -12,6 +12,7 @@ export const STANDARD_STATUS_MAP: Record<string, StatusConfig> = {
     'VERIFIE': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
     'FACTURE': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
     'INVOICED': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    'TITRE': { label: 'Titré', color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
     'PAYE': { label: 'Payé', color: 'text-emerald-700', bg: 'bg-emerald-100', border: 'border-emerald-200' },
     'PAYÉ': { label: 'Payé', color: 'text-emerald-700', bg: 'bg-emerald-100', border: 'border-emerald-200' },
 };
@@ -28,6 +29,7 @@ export const CHANTIER_STATUS_MAP: Record<string, StatusConfig> = {
     'VALIDE': { label: 'Validé', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
     'VERIFIE': { label: 'Validé', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
     'FACTURE': { label: 'Facturé', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-100' },
+    'TITRE': { label: 'Titré', color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
     'CLOS': { label: 'Clos', color: 'text-emerald-700', bg: 'bg-emerald-100', border: 'border-emerald-200' },
     'PAYE': { label: 'Clos', color: 'text-emerald-700', bg: 'bg-emerald-100', border: 'border-emerald-200' },
 };
@@ -54,6 +56,7 @@ export function getAvailableStatuses(type: string | undefined): Record<string, S
             'EN_COURS': CHANTIER_STATUS_MAP['EN_COURS'],
             'VALIDE': CHANTIER_STATUS_MAP['VALIDE'],
             'FACTURE': CHANTIER_STATUS_MAP['FACTURE'],
+            'TITRE': CHANTIER_STATUS_MAP['TITRE'],
             'CLOS': CHANTIER_STATUS_MAP['CLOS'],
         };
     }
@@ -63,6 +66,7 @@ export function getAvailableStatuses(type: string | undefined): Record<string, S
         'TERMINE': STANDARD_STATUS_MAP['TERMINE'],
         'VERIFIE': STANDARD_STATUS_MAP['VERIFIE'],
         'FACTURE': STANDARD_STATUS_MAP['FACTURE'],
+        'TITRE': STANDARD_STATUS_MAP['TITRE'],
         'PAYE': STANDARD_STATUS_MAP['PAYE'],
     };
 }

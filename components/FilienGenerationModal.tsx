@@ -11,8 +11,10 @@ import {
   Filter,
   CheckSquare,
   Square,
-  Download
+  Download,
+  AlertTriangle
 } from 'lucide-react';
+import OdpDocsModal from './OdpDocsModal';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -26,6 +28,9 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [generating, setGenerating] = useState(false);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [docsModalOpen, setDocsModalOpen] = useState(false);
 
   // Eligible dossiers: Status 'VERIFIED' or 'COMPLETED' by default, 
   // but let's allow all 'VALIDE' or 'VERIFIED' ones.
@@ -77,9 +82,32 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
       link.remove();
       
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error generating Filien file:', err);
-      alert('Erreur lors de la génération du fichier Filien');
+      
+      let errorText = 'Erreur lors de la génération du fichier Filien';
+      
+      // If response is a blob (due to responseType: 'blob'), we need to read it as text to get the JSON error
+      if (err.response?.data instanceof Blob) {
+        const blob = err.response.data;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const json = JSON.parse(reader.result as string);
+            const finalMsg = json.error || errorText;
+            setErrorMessage(finalMsg);
+            setErrorModalOpen(true);
+          } catch (e) {
+            setErrorMessage(errorText);
+            setErrorModalOpen(true);
+          }
+        };
+        reader.readAsText(blob);
+      } else {
+        const finalMsg = err.response?.data?.error || err.message || errorText;
+        setErrorMessage(finalMsg);
+        setErrorModalOpen(true);
+      }
     } finally {
       setGenerating(false);
     }
@@ -184,6 +212,60 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
           </button>
         </div>
       </div>
+
+      {/* Error Modal */}
+      {errorModalOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setErrorModalOpen(false)}></div>
+          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-300 border border-slate-100">
+            <div className="p-10 text-center space-y-6">
+              <div className="w-24 h-24 bg-rose-50 rounded-3xl flex items-center justify-center text-rose-500 mx-auto rotate-12">
+                <AlertTriangle size={48} />
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Configuration Incomplète</h3>
+                <p className="text-sm font-bold text-slate-500 leading-relaxed">
+                  {errorMessage}
+                </p>
+              </div>
+
+              <div className="bg-amber-50 rounded-2xl p-6 text-left border border-amber-100">
+                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Action requise</p>
+                <p className="text-xs font-bold text-amber-800 leading-relaxed">
+                  Veuillez configurer la délibération et les tarifs pour l'année concernée dans le référentiel.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => setErrorModalOpen(false)}
+                  className="px-6 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95"
+                >
+                  Fermer
+                </button>
+                <button
+                  onClick={() => {
+                    setErrorModalOpen(false);
+                    setDocsModalOpen(true);
+                  }}
+                  className="px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+                >
+                  Configurer les Docs
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {docsModalOpen && (
+        <OdpDocsModal 
+          isOpen={docsModalOpen}
+          onClose={() => setDocsModalOpen(false)}
+          onSuccess={() => setDocsModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

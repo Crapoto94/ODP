@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
-import { getPostgresClient } from '@/lib/postgresClient';
+import { prisma } from '@/lib/prisma';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const pgPrisma = await getPostgresClient();
     const { id: idStr } = await params;
     const id = parseInt(idStr);
 
     // 1. Check if version has items
-    const version = await pgPrisma.versionRelease.findUnique({
+    const version = await prisma.versionRelease.findUnique({
       where: { id },
       include: { _count: { select: { backlogItems: true } } }
     });
@@ -24,7 +23,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     }
 
     // 2. Delete version
-    await pgPrisma.versionRelease.delete({ where: { id } });
+    await prisma.versionRelease.delete({ where: { id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {

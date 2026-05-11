@@ -100,9 +100,9 @@ export default function SigMap({ occupations = [], tiers = [] }: { occupations: 
     const allItems: MarkerData[] = [
       ...occupations.map(o => ({
         id: `occ-${o.id}`,
-        latitude: o.latitude,
-        longitude: o.longitude,
-        adresse: o.adresse,
+        latitude: o.latitude ?? o.tiers?.latitude,
+        longitude: o.longitude ?? o.tiers?.longitude,
+        adresse: o.adresse || o.tiers?.adresse || 'Adresse inconnue',
         nom: o.tiers?.nom || o.nom || 'Sans Nom',
         type: o.type,
         statut: o.statut,

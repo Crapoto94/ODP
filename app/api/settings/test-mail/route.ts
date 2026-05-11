@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendApmMail } from '@/lib/apm';
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
-    const settings = await prisma.appSettings.findFirst();
+    const { to } = await req.json();
+    const settings = await (prisma as any).appSettings.findFirst();
     if (!settings || !settings.financeEmail) {
       return NextResponse.json({ error: 'Email des finances non configuré' }, { status: 400 });
     }

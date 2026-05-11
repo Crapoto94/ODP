@@ -1,13 +1,31 @@
 import { NextResponse } from 'next/server';
-import { getPostgresClient } from '@/lib/postgresClient';
+import { prisma } from '@/lib/prisma';
+import { cookies } from 'next/headers';
+import { decrypt } from '@/lib/auth';
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const pgPrisma = await getPostgresClient();
     const { id: idStr } = await params;
     const id = parseInt(idStr);
     const body = await req.json();
-    const item = await pgPrisma.backlogItem.update({
+
+    let userRole = '';
+    try {
+      const cookieStore = await cookies();
+      const sessionToken = cookieStore.get('session')?.value;
+      if (sessionToken) {
+        const session = await decrypt(sessionToken);
+        userRole = session?.role || '';
+      }
+    } catch (e) {
+      console.error('[PATCH /api/backlog/[id]] Error decrypting session:', e);
+    }
+
+    if (userRole !== 'ADMIN') {
+      return NextResponse.json({ error: 'Only admins can modify backlog items' }, { status: 403 });
+    }
+
+    const item = await prisma.backlogItem.update({
       where: { id },
       data: body
     });
@@ -20,10 +38,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const pgPrisma = await getPostgresClient();
     const { id: idStr } = await params;
     const id = parseInt(idStr);
-    await pgPrisma.backlogItem.delete({ where: { id } });
+    await prisma.backlogItem.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[DELETE /api/backlog/[id]]', error);
