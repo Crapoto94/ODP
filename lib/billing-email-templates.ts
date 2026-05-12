@@ -107,12 +107,15 @@ export function generateBillingNotificationEmail(context: BillingNotificationCon
       </div>
 
       ${folderPath ? `
-      <div class="field">
-        <div class="field-label">📁 Dossier avec les données</div>
-        <div class="field-value">
-          <a href="${folderPath}" style="color: #667eea; text-decoration: none; font-weight: 500;">
-            ${folderPath}
+      <div class="field" style="border-left: 4px solid #f59e0b; background: #fffbeb;">
+        <div class="field-label" style="color: #f59e0b;">📁 Dossier avec les données</div>
+        <div class="field-value" style="margin-top: 10px;">
+          <a href="${folderPath}" style="display: inline-block; background: #fbbf24; color: #78350f; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; border: 1px solid #f59e0b;">
+            🗂️ Ouvrir le dossier NAS
           </a>
+          <div style="margin-top: 8px; font-size: 12px; color: #92400e; word-break: break-all;">
+            <code style="background: white; padding: 4px 8px; border-radius: 3px; border: 1px solid #fed7aa;">${folderPath}</code>
+          </div>
         </div>
       </div>
       ` : ''}
