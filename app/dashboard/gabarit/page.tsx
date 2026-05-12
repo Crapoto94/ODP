@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { Loader2, Maximize, FileText, Layers, HelpCircle } from 'lucide-react';
+import { Loader2, Maximize, FileText, Layers, HelpCircle, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { useGabaritLogic } from './hooks/useGabaritLogic';
 import EditorToolbar from './components/EditorToolbar';
@@ -10,11 +10,12 @@ import EditorSidebar from './components/EditorSidebar';
 import EditorCanvas from './components/EditorCanvas';
 import PropertiesPanel from './components/PropertiesPanel';
 import DocxUploader from './components/DocxUploader';
+import ComptabilityTab from './components/ComptabilityTab';
 
 export default function GabaritPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = useState<'pdf' | 'docx'>('pdf');
+  const [activeTab, setActiveTab] = useState<'pdf' | 'docx' | 'comptabilite'>('pdf');
 
   const {
     elements, setElements,
@@ -83,10 +84,10 @@ export default function GabaritPage() {
     <div className="space-y-6 animate-in fade-in duration-500 flex flex-col h-[calc(100vh-140px)]">
       {/* Tabs Navigation */}
       <div className="flex items-center justify-between px-6 border-b border-slate-200">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 overflow-x-auto">
           <button
             onClick={() => setActiveTab('pdf')}
-            className={`flex items-center gap-2 px-6 py-4 font-black text-[10px] uppercase tracking-widest border-b-2 transition-all ${
+            className={`flex items-center gap-2 px-6 py-4 font-black text-[10px] uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'pdf'
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -97,7 +98,7 @@ export default function GabaritPage() {
           </button>
           <button
             onClick={() => setActiveTab('docx')}
-            className={`flex items-center gap-2 px-6 py-4 font-black text-[10px] uppercase tracking-widest border-b-2 transition-all ${
+            className={`flex items-center gap-2 px-6 py-4 font-black text-[10px] uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'docx'
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-slate-500 hover:text-slate-900'
@@ -105,6 +106,17 @@ export default function GabaritPage() {
           >
             <FileText size={14} />
             Templates DOCX (AOT)
+          </button>
+          <button
+            onClick={() => setActiveTab('comptabilite')}
+            className={`flex items-center gap-2 px-6 py-4 font-black text-[10px] uppercase tracking-widest border-b-2 transition-all whitespace-nowrap ${
+              activeTab === 'comptabilite'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <BarChart3 size={14} />
+            Comptabilité
           </button>
         </div>
         <Link
@@ -117,7 +129,11 @@ export default function GabaritPage() {
         </Link>
       </div>
 
-      {activeTab === 'pdf' ? (
+      {activeTab === 'comptabilite' ? (
+        <div className="flex-1 overflow-auto">
+          <ComptabilityTab />
+        </div>
+      ) : activeTab === 'pdf' ? (
         <>
           <EditorToolbar
             gabaritId={gabaritId}
