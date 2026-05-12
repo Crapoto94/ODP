@@ -29,7 +29,7 @@ export async function POST(
 
     // Fetch roles marked as isSendAot, plus default roles
     const roleRows = await (prisma as any).$queryRaw`
-      SELECT nom FROM ContactRoleConfig WHERE isSendAot = 1
+      SELECT nom FROM "ContactRoleConfig" WHERE "isSendAot" = true
     `;
     const sendAotRoles = new Set((roleRows as any[]).map((r: any) => r.nom.toLowerCase()));
     // Always include CONTACT_DIRECT as a valid role for AOT sending
@@ -67,7 +67,7 @@ export async function POST(
       content_type: isPdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     };
 
-    const settingsRows = await (prisma as any).$queryRaw`SELECT appUrl FROM AppSettings WHERE id = 1`;
+    const settingsRows = await (prisma as any).$queryRaw`SELECT "appUrl" FROM "AppSettings" WHERE id = 1`;
     const tiersNom = occ.nom || occ.tiers?.nom || `Dossier #${occupationId}`;
     const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -97,7 +97,7 @@ export async function POST(
       const year = occ.anneeTaxation || new Date().getFullYear();
       const noteContent = `📄 AOT envoyé en pièce jointe à : ${sent.join(', ')} (${year})`;
       await (prisma as any).$executeRawUnsafe(
-        `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO "Note" ("occupationId", "content", "author", "isEmail", "origin", "created_at") VALUES ($1, $2, $3, $4, $5, $6)`,
         occupationId,
         noteContent,
         author,
