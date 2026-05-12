@@ -76,15 +76,16 @@ export async function PATCH(
         if (occ.statut !== statut) {
           const year = occ.anneeTaxation || new Date().getFullYear();
           const noteContent = `📊 Passage de statut : ${occ.statut} → ${statut} (${year})`;
-          await (prisma as any).$executeRawUnsafe(
-            `INSERT INTO Note (occupationId, content, author, isEmail, origin, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-            occ.id,
-            noteContent,
-            author,
-            false,
-            'desktop',
-            now
-          );
+          await (prisma as any).note.create({
+            data: {
+              occupationId: occ.id,
+              content: noteContent,
+              author,
+              isEmail: false,
+              origin: 'desktop',
+              created_at: now
+            }
+          });
         }
       }
     }
