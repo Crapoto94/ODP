@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
           missingDocuments.push({ year, documents: docs });
         }
       }
-    } else {
+    } else if (type === 'TLPE') {
       // TLPE: délibération
       const tlpeConfig = await (prisma as any).tlpeConfig.findUnique({
         where: { annee: currentYear }
@@ -90,6 +90,14 @@ export async function POST(req: NextRequest) {
 
       if (!tlpeConfig?.deliberationPath) {
         missingDocuments.push({ year: currentYear, documents: ['Délibération'] });
+      }
+    } else if (type === 'COMMERCE') {
+      // COMMERCE: check délibération for each taxation year
+      for (const year of yearsNeeded) {
+        const config = configMap.get(year) as any;
+        if (!config?.deliberationPath) {
+          missingDocuments.push({ year, documents: ['Délibération'] });
+        }
       }
     }
 
