@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  Euro, 
-  FileText, 
-  CheckCircle2, 
-  ChevronRight, 
-  ChevronLeft, 
-  Loader2, 
-  Package, 
+import {
+  Euro,
+  FileText,
+  CheckCircle2,
+  ChevronRight,
+  ChevronLeft,
+  Loader2,
+  Package,
   Download,
   FileBadge,
   AlertCircle,
@@ -24,6 +24,7 @@ import {
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import FilienTab from '../settings/components/FilienTab';
+import InvoiceValidationPanel from './components/InvoiceValidationPanel';
 
 export default function FacturationPage() {
   const [view, setView] = useState<'new' | 'history' | 'config'>('new');
@@ -48,10 +49,13 @@ export default function FacturationPage() {
   const [warningMessage, setWarningMessage] = useState('');
   const [warningDossiers, setWarningDossiers] = useState<any[]>([]);
   const [warningAction, setWarningAction] = useState<() => void>(() => {});
-  
+
   // État pour la modal d'erreur de configuration Filien
   const [isFilienErrorModalOpen, setIsFilienErrorModalOpen] = useState(false);
   const [filienErrorMessage, setFilienErrorMessage] = useState('');
+
+  // État pour la validation des factures
+  const [validatingInvoiceId, setValidatingInvoiceId] = useState<number | null>(null);
 
   // Steps handling
   const nextStep = () => setStep(s => s + 1);
@@ -367,18 +371,26 @@ export default function FacturationPage() {
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Détail des factures ({run.invoices?.length || 0})</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                           {run.invoices?.map((inv: any) => (
-                            <a href={inv.pdfPath || inv.pdf} target="_blank" key={inv.numero} className="flex items-center justify-between p-3 border border-slate-100 rounded-2xl hover:border-blue-300 hover:shadow-md transition-all group">
-                              <div>
-                                <p className="text-xs font-black text-slate-900 group-hover:text-blue-600 transition-colors">{inv.numero}</p>
-                                <p className="text-[10px] font-bold text-slate-400 truncate max-w-[140px] uppercase">{inv.tiers}</p>
-                              </div>
-                              <div className="text-right flex flex-col items-end">
-                                <span className="text-xs font-bold text-slate-600 mb-1">{inv.total.toLocaleString('fr-FR')} €</span>
-                                <div className="w-6 h-6 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-600">
-                                  <FileText size={12}/>
+                            <div key={inv.numero} className="flex flex-col gap-2">
+                              <a href={inv.pdfPath || inv.pdf} target="_blank" className="flex items-center justify-between p-3 border border-slate-100 rounded-2xl hover:border-blue-300 hover:shadow-md transition-all group">
+                                <div>
+                                  <p className="text-xs font-black text-slate-900 group-hover:text-blue-600 transition-colors">{inv.numero}</p>
+                                  <p className="text-[10px] font-bold text-slate-400 truncate max-w-[140px] uppercase">{inv.tiers}</p>
                                 </div>
-                              </div>
-                            </a>
+                                <div className="text-right flex flex-col items-end">
+                                  <span className="text-xs font-bold text-slate-600 mb-1">{inv.total.toLocaleString('fr-FR')} €</span>
+                                  <div className="w-6 h-6 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center group-hover:bg-blue-50 group-hover:text-blue-600">
+                                    <FileText size={12}/>
+                                  </div>
+                                </div>
+                              </a>
+                              <button
+                                onClick={() => setValidatingInvoiceId(inv.dossierId)}
+                                className="text-xs font-bold px-2 py-1 rounded-lg border border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all"
+                              >
+                                🔍 Valider
+                              </button>
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -666,12 +678,19 @@ export default function FacturationPage() {
                   </div>
                   <div className="max-h-[200px] overflow-y-auto">
                     {result.invoices.map((inv: any) => (
-                      <div key={inv.numero} className="flex items-center justify-between px-6 py-3 border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                        <div className="text-left">
+                      <div key={inv.numero} className="flex items-center justify-between px-6 py-3 border-b border-slate-50 hover:bg-slate-50 transition-colors gap-3">
+                        <div className="text-left flex-1">
                           <p className="text-xs font-black text-slate-900">{inv.numero}</p>
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{inv.tiers}</p>
                         </div>
-                        <a href={inv.path} target="_blank" className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
+                        <button
+                          onClick={() => setValidatingInvoiceId(inv.id)}
+                          className="p-1.5 text-[10px] font-bold px-2 rounded border border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all whitespace-nowrap"
+                          title="Valider la conformité"
+                        >
+                          🔍
+                        </button>
+                        <a href={inv.path} target="_blank" className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all shrink-0">
                           <FileText size={16} />
                         </a>
                       </div>
@@ -775,7 +794,7 @@ export default function FacturationPage() {
               <div className="w-20 h-20 bg-rose-50 text-rose-600 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
                 <AlertTriangle size={40} />
               </div>
-              
+
               <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">Configuration Incomplète</h2>
               <p className="text-slate-500 font-bold mb-8">
                 L'export Filien ne peut pas être généré car des documents réglementaires obligatoires sont manquants.
@@ -799,6 +818,13 @@ export default function FacturationPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {validatingInvoiceId !== null && (
+        <InvoiceValidationPanel
+          occupationId={validatingInvoiceId}
+          onClose={() => setValidatingInvoiceId(null)}
+        />
       )}
     </div>
   );
