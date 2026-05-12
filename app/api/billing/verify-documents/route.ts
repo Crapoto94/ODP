@@ -39,6 +39,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Aucun dossier trouvé' }, { status: 400 });
     }
 
+    // Ensure all dossiers have required fields
+    dossiers = dossiers.filter((d: any) => {
+      if (!d.id) {
+        console.warn('[VERIFY-DOCUMENTS] Dossier without id found, filtering out:', d);
+        return false;
+      }
+      return true;
+    });
+
+    if (dossiers.length === 0) {
+      return NextResponse.json({ error: 'Aucun dossier valide trouvé' }, { status: 400 });
+    }
+
     // Determine all taxation years needed
     const yearsNeeded = Array.from(new Set(
       dossiers.map(d => {
