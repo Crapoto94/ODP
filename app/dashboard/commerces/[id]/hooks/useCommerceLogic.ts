@@ -349,19 +349,20 @@ export function useCommerceLogic(paramId: string) {
   };
 
   // Facture Handlers
-  const handleDownloadFacture = async () => {
+  const handleDownloadFacture = async (year?: number) => {
+    const anneeToUse = year || selectedYear;
     setIsGeneratingFacture(true);
     try {
-      const res = await axios.get(`/api/commerces/${paramId}/facture-pdf?annee=${selectedYear}`, { responseType: 'blob' });
+      const res = await axios.get(`/api/commerces/${paramId}/facture-pdf?annee=${anneeToUse}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `Facture-Commerce-${paramId}-${selectedYear}.pdf`);
+      link.setAttribute('download', `Facture-Commerce-${paramId}-${anneeToUse}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      if (selectedYear) fetchOccupations(selectedYear); // Rafraîchir pour mettre à jour le statut
+      if (anneeToUse) fetchOccupations(anneeToUse); // Rafraîchir pour mettre à jour le statut
     } catch (err: any) {
       console.error(err);
       if (err.response?.data instanceof Blob) {

@@ -4,7 +4,7 @@ import { Euro, Loader2, Download } from 'lucide-react';
 interface Props {
   totalAmount: number;
   generatingPdf: boolean;
-  onDownloadFacture: () => void;
+  onDownloadFacture: (year?: number) => void;
   taxationYear?: number | string | null;
 }
 
@@ -37,7 +37,7 @@ export default function OccupationFinancialCard({
 
           <div className="flex flex-col gap-2">
             <button
-              onClick={onDownloadFacture}
+              onClick={() => onDownloadFacture(taxationYear ? parseInt(taxationYear.toString()) : undefined)}
               disabled={generatingPdf}
               className="w-full bg-white text-slate-950 hover:bg-blue-50 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
             >
