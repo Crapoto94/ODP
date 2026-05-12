@@ -89,7 +89,7 @@ async function exportViaSmb(params: any, publicPath: string) {
     let source = res.path ? (res.path.startsWith('/') ? join(publicPath, res.path) : res.path) : join(facturesDir, pdfName);
     if (existsSync(source)) await smbWriteFile(join(targetSubDir, pdfName), await readFile(source));
 
-    const occ = dossiers?.find((d: any) => d.id === res.id);
+    const occ = res?.id ? dossiers?.find((d: any) => d.id === res.id) : null;
     console.log(`[EXPORT] Dossier ${res.id} (${occ?.nom}):`, { aotFinalPath: occ?.aotFinalPath, dateDebut: occ?.dateDebut, anneeTaxation: occ?.anneeTaxation });
 
     if (occ?.aotFinalPath) {
@@ -168,7 +168,7 @@ async function exportViaLocalFs(params: any, publicPath: string) {
     let source = res.path ? (res.path.startsWith('/') ? join(publicPath, res.path) : res.path) : join(facturesDir, pdfName);
     if (existsSync(source)) await writeFile(join(targetDir, pdfName), await readFile(source));
 
-    const occ = dossiers?.find((d: any) => d.id === res.id);
+    const occ = res?.id ? dossiers?.find((d: any) => d.id === res.id) : null;
     if (occ?.aotFinalPath) {
       const aotSrc = occ.aotFinalPath.startsWith('/') ? join(publicPath, occ.aotFinalPath) : occ.aotFinalPath;
       const aotYear = occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear());

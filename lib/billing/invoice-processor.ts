@@ -109,10 +109,10 @@ export async function processDossier(params: {
   }
 
   return {
-    id: occ.isCommerceGroup ? occ.occupationsIncluded[0].id : occ.id,
+    id: occ.isCommerceGroup ? (occ.occupationsIncluded?.[0]?.id || occ.id) : occ.id,
     numero: invoiceNumber,
     path: `/Factures/${runName}/${filename}`,
-    tiers: occ.tiers.nom,
+    tiers: occ.tiers?.nom || 'Inconnu',
     total,
     lignes: lineResults,
     pdfBuffer

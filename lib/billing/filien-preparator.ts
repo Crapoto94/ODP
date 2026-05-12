@@ -55,7 +55,9 @@ export function getFullFilienContent(
   const movements = prepareFilienMovements(results, dossiers, appSettings, tlpeConfig, odpConfigs, year, runName);
 
   movements.forEach((mov, idx) => {
-    const occ = dossiers.find(d => d.id === results[idx].id);
+    const result = results[idx];
+    if (!result?.id) return; // Skip if result has no id
+    const occ = dossiers.find(d => d.id === result.id);
     const tc = typeConfigMap[occ?.type] || {};
     
     if (tc.filienObjet) mov.objet = tc.filienObjet;
@@ -93,7 +95,7 @@ export function prepareFilienMovements(
   const startNum = parseInt(numStr) || 1;
   const padding = numStr.length;
 
-  return results.map((r, idx) => {
+  return results.filter((r: any) => r?.id).map((r, idx) => {
     const occ = dossiers.find((d: any) => d.id === r.id);
     const isOdp = occ?.type === 'CHANTIER' || occ?.type === 'TOURNAGE';
     const movYear = occ?.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ?.anneeTaxation || year);
