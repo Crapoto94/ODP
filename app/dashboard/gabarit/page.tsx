@@ -131,7 +131,7 @@ export default function GabaritPage() {
 
       {activeTab === 'comptabilite' ? (
         <div className="flex-1 overflow-auto">
-          <ComptabilityTab />
+          <ComptabilityTab elements={elements} />
         </div>
       ) : activeTab === 'pdf' ? (
         <>
