@@ -166,8 +166,8 @@ export default function FacturationPage() {
       }
 
       setDossiers(data);
-      // Only auto-select non-closed dossiers
-      setSelectedIds(data.filter((d: any) => !d.isClosed).map((d: any) => d.id));
+      // Select all dossiers (closure status will be verified via INSEE API during billing)
+      setSelectedIds(data.map((d: any) => d.id));
     } catch (err: any) {
       console.error(err);
       setFilienErrorMessage(err.response?.data?.error || err.message || "Erreur lors de la récupération des dossiers");
@@ -181,11 +181,22 @@ export default function FacturationPage() {
     .filter(d => selectedIds.includes(d.id))
     .reduce((sum, d) => sum + (d.montantCalcule || d.lignes?.reduce((s: number, l: any) => s + l.montant, 0) || 0), 0);
 
-  const verifyTiersBeforeBilling = (dossierId: number): boolean => {
-    const dossier = dossiers.find(d => d.id === dossierId);
-    if (!dossier) return true;
-    // Use the isClosed flag already computed during grouping
-    return !dossier.isClosed;
+  const verifyTiersBeforeBilling = async (dossierId: number): Promise<boolean> => {
+    try {
+      const dossier = dossiers.find(d => d.id === dossierId);
+      if (!dossier) return true;
+      const tiersId = dossier.isCommerceGroup ? dossier.id : (dossier.tiers?.id);
+      if (!tiersId) return true;
+      const res = await axios.post(`/api/admin/verify-tiers?id=${tiersId}`);
+      const status = res.data.status;
+
+      if (status === 'Fermée' || status === 'Cessée') {
+        return false;
+      }
+      return true;
+    } catch (err) {
+      return true; // If verification fails, allow billing to proceed
+    }
   };
 
   const handleStartBilling = async () => {
@@ -216,7 +227,7 @@ export default function FacturationPage() {
 
       // Verify all tiers before generating invoices
       for (const dossier of selectedDossiers) {
-        const isValid = verifyTiersBeforeBilling(dossier.id);
+        const isValid = await verifyTiersBeforeBilling(dossier.id);
         if (!isValid) {
           problematicDossiers.push(dossier);
         }
