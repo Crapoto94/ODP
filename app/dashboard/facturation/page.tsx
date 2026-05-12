@@ -202,9 +202,24 @@ export default function FacturationPage() {
   const handleStartBilling = async () => {
     setProcessing(true);
     try {
+      // Validate selectedIds
+      if (!selectedIds || selectedIds.length === 0) {
+        alert('Veuillez sélectionner au moins un dossier');
+        setProcessing(false);
+        return;
+      }
+
+      // Filter out any invalid ids
+      const validIds = selectedIds.filter((id: any) => id && id > 0);
+      if (validIds.length === 0) {
+        alert('Aucun dossier valide sélectionné');
+        setProcessing(false);
+        return;
+      }
+
       // 1. Verify required documents before billing
       const verifyRes = await axios.post('/api/billing/verify-documents', {
-        ids: selectedIds,
+        ids: validIds,
         type: type
       });
 
@@ -222,7 +237,7 @@ export default function FacturationPage() {
         return;
       }
 
-      const selectedDossiers = dossiers.filter(d => selectedIds.includes(d.id));
+      const selectedDossiers = dossiers.filter(d => validIds.includes(d.id));
       const problematicDossiers = [];
 
       // Verify all tiers before generating invoices
@@ -239,7 +254,7 @@ export default function FacturationPage() {
         setWarningAction(() => async () => {
           try {
             const res = await axios.post('/api/billing/process', {
-              ids: selectedIds,
+              ids: validIds,
               type: type
             });
             setResult(res.data);
@@ -259,7 +274,7 @@ export default function FacturationPage() {
       }
 
       const res = await axios.post('/api/billing/process', {
-        ids: selectedIds,
+        ids: validIds,
         type: type
       });
       setResult(res.data);
