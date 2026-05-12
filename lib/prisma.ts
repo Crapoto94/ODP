@@ -91,8 +91,9 @@ export const prisma = new Proxy({} as PrismaClient, {
       try {
         const config = getLocalConfig();
         if (config && config.postgres) {
-          const { user, password, host, port, database, schema } = config.postgres;
-          const targetSchema = schema || 'ODP';
+          const { user, password, host, port, database, schema, schemaDev, mode } = config.postgres;
+          const currentMode = mode || 'PROD';
+          const targetSchema = (currentMode === 'DEV' && schemaDev) ? schemaDev : (schema || 'ODP');
           fallbackUrl = `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:${port}/${database}?schema=${targetSchema}`;
         }
       } catch (e) {
