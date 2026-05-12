@@ -13,7 +13,9 @@ import {
   AlertCircle,
   Table,
   Zap,
-  Code
+  Code,
+  RefreshCw,
+  Trash2
 } from 'lucide-react';
 import TabHeader from './TabHeader';
 
@@ -30,6 +32,7 @@ export default function PostgresTab() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   const [tables, setTables] = useState<string[]>([]);
   const [showTables, setShowTables] = useState(false);
@@ -83,6 +86,31 @@ export default function PostgresTab() {
     }
   };
 
+  const handleSyncDev = async () => {
+    if (!window.confirm(`⚠️  ATTENTION: Ceci va SUPPRIMER le schéma "${config.schemaDev}" et le remplacer par une copie du schéma "${config.schema}" (PROD).\n\nToutes les données actuelles dans "${config.schemaDev}" seront perdues.\n\nContinuer ?`)) {
+      return;
+    }
+
+    setSyncing(true);
+    setMessage(null);
+
+    try {
+      const res = await axios.post('/api/settings/postgres/sync-dev', { config });
+      if (res.data.success) {
+        setMessage({
+          type: 'success',
+          text: `✅ Synchronisation réussie: ${res.data.tablesCount} tables et ${res.data.sequencesCount} séquences copiées`
+        });
+      } else {
+        setMessage({ type: 'error', text: res.data.error || 'La synchronisation a échoué' });
+      }
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.response?.data?.error || 'Erreur lors de la synchronisation' });
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center gap-4 animate-in fade-in duration-500">
@@ -101,7 +129,8 @@ export default function PostgresTab() {
         accentColor="blue"
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Formulaire de Configuration */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden">
           <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
@@ -285,6 +314,58 @@ export default function PostgresTab() {
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Aucune table détectée</p>
                   <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Configurez et testez la connexion pour lister les tables</p>
                 </div>
+              </div>
+            )}
+          </div>
+        </div>
+        </div>
+
+        {/* Synchronisation et Maintenance */}
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden">
+          <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-amber-50/30">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center shadow-lg shadow-amber-500/20">
+                <RefreshCw size={16} />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Synchronisation DEV</h3>
+                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Remplacer DEV par une copie de PROD</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 space-y-6">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
+              <AlertCircle className="text-amber-600 flex-shrink-0" size={18} />
+              <div className="text-[9px] text-amber-700 font-bold leading-relaxed">
+                <p className="mb-2">⚠️  <strong>ATTENTION:</strong> Cette opération va supprimer définitivement le schéma DEV et le remplacer par une copie du schéma PROD.</p>
+                <p><strong>Effet:</strong> Toutes les données actuelles dans le schéma DEV seront perdues.</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleSyncDev}
+              disabled={syncing || loading}
+              className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-amber-400 text-white py-4 rounded-xl font-black shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
+            >
+              {syncing ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Synchronisation en cours...
+                </>
+              ) : (
+                <>
+                  <RefreshCw size={16} />
+                  Synchroniser DEV depuis PROD
+                </>
+              )}
+            </button>
+
+            {message && (
+              <div className={`p-4 rounded-xl flex items-center gap-3 animate-in zoom-in-95 duration-300 ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+                <span className="font-bold text-[10px] uppercase tracking-widest">{message.text}</span>
               </div>
             )}
           </div>
