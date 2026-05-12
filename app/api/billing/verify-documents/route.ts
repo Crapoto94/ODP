@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     } else {
       dossiers = await (prisma as any).occupation.findMany({
         where: { id: { in: ids }, type: type, statut: { in: ['VERIFIE', 'VALIDE', 'VALIDÉ'] } },
-        select: { id: true, type: true, anneeTaxation: true }
+        select: { id: true, type: true, anneeTaxation: true, dateDebut: true }
       });
     }
 
@@ -41,7 +41,15 @@ export async function POST(req: NextRequest) {
 
     // Determine all taxation years needed
     const yearsNeeded = Array.from(new Set(
-      dossiers.map(d => d.anneeTaxation || currentYear)
+      dossiers.map(d => {
+        // For CHANTIER/TOURNAGE, use dateDebut year if anneeTaxation is not set or seems wrong
+        if ((type === 'CHANTIER' || type === 'TOURNAGE') && (!d.anneeTaxation || d.anneeTaxation > currentYear)) {
+          if (d.dateDebut) {
+            return new Date(d.dateDebut).getFullYear();
+          }
+        }
+        return d.anneeTaxation || currentYear;
+      })
     )).sort();
 
     // Fetch ODP configs for those years
