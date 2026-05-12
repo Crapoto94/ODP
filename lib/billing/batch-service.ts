@@ -15,17 +15,31 @@ export async function generateRecapPdf(params: {
   timestampStr: string;
 }): Promise<{ filename: string; path: string }> {
   const { results, type, grandTotal, now, facturesDir, timestampStr } = params;
+
+  // Validate results
+  const validResults = results.filter((r) => {
+    if (!r || !r.numero || !r.tiers || typeof r.total !== 'number' || !Array.isArray(r.lignes)) {
+      console.warn('[RECAP PDF] Skipping invalid result:', { id: r?.id, numero: r?.numero, tiers: r?.tiers });
+      return false;
+    }
+    return true;
+  });
+
+  if (validResults.length === 0) {
+    throw new Error('No valid results to generate recap PDF');
+  }
+
   const recapDoc = new jsPDF();
   recapDoc.setFontSize(18);
   recapDoc.text(`Recapitulatif de Facturation - ${type}`, 20, 20);
   recapDoc.setFontSize(10);
   recapDoc.text(`Date: ${format(now, 'dd/MM/yyyy HH:mm')}`, 20, 30);
-  recapDoc.text(`Nombre de dossiers: ${results.length}`, 20, 35);
+  recapDoc.text(`Nombre de dossiers: ${validResults.length}`, 20, 35);
   recapDoc.text(`Montant Total: ${grandTotal.toFixed(2)} €`, 20, 40);
 
   let y = 55;
   recapDoc.line(20, y - 5, 190, y - 5);
-  results.forEach((r) => {
+  validResults.forEach((r) => {
     if (y > 270) { recapDoc.addPage(); y = 20; }
     recapDoc.setFont('helvetica', 'bold');
     recapDoc.text(`${r.numero} - ${r.tiers}`, 20, y);
@@ -33,8 +47,10 @@ export async function generateRecapPdf(params: {
     recapDoc.text(`${r.total.toFixed(2)} €`, 170, y, { align: 'right' });
     y += 5;
     r.lignes.forEach((l: any) => {
-      recapDoc.text(`  - ${l.article.designation}: ${l.calculatedTotal.toFixed(2)} €`, 25, y);
-      y += 5;
+      if (l?.article?.designation) {
+        recapDoc.text(`  - ${l.article.designation}: ${l.calculatedTotal.toFixed(2)} €`, 25, y);
+        y += 5;
+      }
     });
     y += 5;
   });

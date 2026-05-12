@@ -46,47 +46,67 @@ export async function POST(req: NextRequest) {
     const results: ProcessedInvoice[] = [];
     let grandTotal = 0;
 
+    // Flatten COMMERCE groups back to individual occupations for services that need to look them up by id
+    const flatDossiers = dossiers.flatMap((d: any) =>
+      d.isCommerceGroup && d.occupationsIncluded ? d.occupationsIncluded : [d]
+    );
+
     // 2. Process each dossier
     for (const occ of dossiers) {
       const invoiceNumber = `${year}-ODP-${nextIndex++}`;
 
-      const processed = await processDossier({
-        occ,
-        invoiceNumber,
-        tlpeConfig,
-        year,
-        facturesDir,
-        runName,
-        agentName
-      });
-
-      // 3. Automated Distribution (New Feature)
-      if (appSettings.autoDistributeInvoices) {
-        // Condition: if distributeOnlyVerified is true, we already filtered dossiers by status in fetchDossiers
-        // but double check here if needed.
-        console.log(`[AUTO-DISTRIBUTE] Sending invoice ${invoiceNumber} for dossier ${processed.id}`);
-        
-        // We need the buffer for distribution. Since processor already saved it, we could read it or 
-        // the processor could return it. For now, let's regenerate or optimize later.
-        // Optimization: Passing buffer from processor is better. (I'll update processor later if needed)
-        const { buffer } = await generateInvoicePdfBuffer(occ.isCommerceGroup ? null : occ.id, {
+      try {
+        const processed = await processDossier({
+          occ,
           invoiceNumber,
           tlpeConfig,
-          occupationIds: occ.isCommerceGroup ? occ.occupationsIncluded.map((o: any) => o.id) : undefined,
-          annee: occ.anneeTaxation || year,
-          forceRed: true
-        });
-
-        await distributeInvoiceBatch({
-          occupationId: processed.id,
-          invoiceNumber: processed.numero,
-          pdfBuffer: buffer,
+          year,
+          facturesDir,
+          runName,
           agentName
         });
-      }
 
-      grandTotal += processed.total;
-      results.push(processed);
+        if (!processed || !processed.id) {
+          console.error('[BILLING PROCESS] processDossier returned invalid result:', { processed, occ: { id: occ.id, type: occ.type } });
+          throw new Error(`processDossier returned invalid result for dossier ${occ.id}`);
+        }
+
+        // 3. Automated Distribution (New Feature)
+        if (appSettings.autoDistributeInvoices) {
+          console.log(`[AUTO-DISTRIBUTE] Sending invoice ${invoiceNumber} for dossier ${processed.id}`);
+
+          const { buffer } = await generateInvoicePdfBuffer(occ.isCommerceGroup ? null : occ.id, {
+            invoiceNumber,
+            tlpeConfig,
+            occupationIds: occ.isCommerceGroup ? occ.occupationsIncluded.map((o: any) => o.id) : undefined,
+            annee: occ.anneeTaxation || year,
+            forceRed: true
+          });
+
+          await distributeInvoiceBatch({
+            occupationId: processed.id,
+            invoiceNumber: processed.numero,
+            pdfBuffer: buffer,
+            agentName
+          });
+        }
+
+        grandTotal += processed.total;
+        results.push(processed);
+      } catch (dossierErr: any) {
+        console.error(`[BILLING PROCESS] Error processing dossier ${occ.id}:`, dossierErr.message);
+        throw dossierErr;
+      }
+    }
+
+    // Validate results before batch operations
+    if (results.length === 0) {
+      throw new Error('No invoices were successfully generated');
+    }
+
+    const invalidResults = results.filter((r) => !r || !r.id || !r.numero);
+    if (invalidResults.length > 0) {
+      console.warn(`[BILLING PROCESS] ${invalidResults.length} invalid results found before batch operations`);
     }
 
     // 4. Batch level operations
@@ -98,7 +118,7 @@ export async function POST(req: NextRequest) {
     const odpConfigMap = odpConfigs.reduce((acc: any, cfg: any) => ({ ...acc, [cfg.annee]: cfg }), {});
 
     const filienPath = await processFilienExport({
-      results, dossiers, appSettings, odpConfigMap, year, runName, timestampStr, facturesDir,
+      results, dossiers: flatDossiers, appSettings, odpConfigMap, year, runName, timestampStr, facturesDir,
       recapFilename: recap.filename, recapPath: recap.path
     });
 
@@ -107,7 +127,7 @@ export async function POST(req: NextRequest) {
     await recordBillingRun(billingRunId, type, now, results, grandTotal, agentName, recap.filename, runName, timestampStr);
 
     // 6. Notification
-    await sendFinanceNotification({ appSettings, session, billingRunId, resultsCount: results.length, dossiers, agentName, runName, filienPath });
+    await sendFinanceNotification({ appSettings, session, billingRunId, resultsCount: results.length, dossiers: flatDossiers, agentName, runName, filienPath });
 
     return NextResponse.json({
       success: true,
@@ -133,6 +153,11 @@ async function fetchDossiers(ids: number[], type: string) {
     });
     const grouped = new Map();
     occupations.forEach((occ: any) => {
+      if (!occ.tiersId || !occ.tiers) {
+        console.warn('[FETCH DOSSIERS] COMMERCE occupation without tiersId or tiers:', occ.id);
+        return; // Skip invalid occupations
+      }
+
       if (!grouped.has(occ.tiersId)) {
         grouped.set(occ.tiersId, {
           id: occ.tiersId,
@@ -141,14 +166,18 @@ async function fetchDossiers(ids: number[], type: string) {
           tiers: occ.tiers,
           anneeTaxation: occ.anneeTaxation,
           occupationsIncluded: [occ],
-          lignes: [...occ.lignes]
+          lignes: [...(occ.lignes || [])]
         });
       } else {
         grouped.get(occ.tiersId).occupationsIncluded.push(occ);
-        grouped.get(occ.tiersId).lignes.push(...occ.lignes);
+        grouped.get(occ.tiersId).lignes.push(...(occ.lignes || []));
       }
     });
-    return Array.from(grouped.values());
+    const result = Array.from(grouped.values());
+    if (result.length === 0) {
+      throw new Error('Aucun dossier COMMERCE valide trouvé après groupement');
+    }
+    return result;
   } else {
     const occupations = await (prisma as any).occupation.findMany({
       where: { id: { in: ids } },
