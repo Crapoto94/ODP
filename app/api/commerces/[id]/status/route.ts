@@ -36,7 +36,7 @@ export async function PATCH(
         type: 'COMMERCE',
         ...(annee ? { anneeTaxation: parseInt(annee) } : {})
       },
-      select: { id: true, statut: true }
+      select: { id: true, statut: true, anneeTaxation: true }
     });
 
     const statusDateMap: Record<string, string> = {
