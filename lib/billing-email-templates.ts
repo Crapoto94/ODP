@@ -60,6 +60,8 @@ export function generateBillingNotificationEmail(context: BillingNotificationCon
     .field-value { margin-top: 5px; font-size: 16px; }
     .cta-button { display: inline-block; background: #667eea; color: white; padding: 15px 40px; border-radius: 6px; text-decoration: none; font-weight: bold; margin: 20px 0; font-size: 16px; }
     .cta-button:hover { background: #764ba2; }
+    .nas-button { display: inline-block; background: #fbbf24; color: #78350f; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; border: 1px solid #f59e0b; }
+    .nas-button:hover { background: #f59e0b; }
     .footer { color: #666; font-size: 12px; text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; }
     .info-box { background: #f0f4ff; border: 1px solid #e0e7ff; padding: 15px; border-radius: 6px; margin: 20px 0; }
     .info-box ul { margin: 0; padding-left: 20px; }
@@ -109,11 +111,11 @@ export function generateBillingNotificationEmail(context: BillingNotificationCon
       ${folderPath ? `
       <div class="field" style="border-left: 4px solid #f59e0b; background: #fffbeb;">
         <div class="field-label" style="color: #f59e0b;">📁 Dossier avec les données</div>
-        <div class="field-value" style="margin-top: 10px;">
-          <a href="${folderPath}" style="display: inline-block; background: #fbbf24; color: #78350f; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; border: 1px solid #f59e0b;">
+        <div class="field-value" style="margin-top: 10px; text-align: center;">
+          <a href="${folderPath}" class="nas-button">
             🗂️ Ouvrir le dossier NAS
           </a>
-          <div style="margin-top: 8px; font-size: 12px; color: #92400e; word-break: break-all;">
+          <div style="margin-top: 12px; font-size: 12px; color: #92400e; word-break: break-all;">
             <code style="background: white; padding: 4px 8px; border-radius: 3px; border: 1px solid #fed7aa;">${folderPath}</code>
           </div>
         </div>
