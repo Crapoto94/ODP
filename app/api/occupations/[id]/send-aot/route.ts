@@ -97,13 +97,12 @@ export async function POST(
       const year = occ.anneeTaxation || new Date().getFullYear();
       const noteContent = `📄 AOT envoyé en pièce jointe à : ${sent.join(', ')} (${year})`;
       await (prisma as any).$executeRawUnsafe(
-        `INSERT INTO "Note" ("occupationId", "content", "author", "isEmail", "origin", "created_at") VALUES ($1, $2, $3, $4, $5, $6)`,
+        `INSERT INTO "Note" ("occupationId", "content", "author", "isEmail", "origin", "created_at") VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)`,
         occupationId,
         noteContent,
         author,
         false,
-        'desktop',
-        new Date().toISOString()
+        'desktop'
       );
     }
 
