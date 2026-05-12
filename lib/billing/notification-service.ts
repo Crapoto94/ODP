@@ -62,8 +62,8 @@ export async function sendFinanceNotification(params: {
   const attachments: MailAttachment[] = [];
   if (filienPath) {
     try {
-      const fileContent = readFileSync(filienPath, 'utf-8');
-      const base64Content = Buffer.from(fileContent).toString('base64');
+      const fileBuffer = readFileSync(filienPath); // Read as binary buffer
+      const base64Content = fileBuffer.toString('base64');
       attachments.push({
         filename: `FACT-${billingRunId}.filien.txt`,
         content: base64Content,
