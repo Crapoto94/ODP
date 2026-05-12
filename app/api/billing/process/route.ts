@@ -150,10 +150,16 @@ async function fetchDossiers(ids: number[], type: string) {
     });
     return Array.from(grouped.values());
   } else {
-    return (prisma as any).occupation.findMany({
+    const occupations = await (prisma as any).occupation.findMany({
       where: { id: { in: ids } },
       include: { tiers: true, lignes: { include: { article: { include: { modeTaxation: true } } } } }
     });
+    // Ensure all occupations have isCommerceGroup and occupationsIncluded properties
+    return occupations.map((occ: any) => ({
+      ...occ,
+      isCommerceGroup: false,
+      occupationsIncluded: [occ]
+    }));
   }
 }
 
