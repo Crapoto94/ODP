@@ -645,13 +645,16 @@ function OccupationsPageContent() {
                 <Plus size={18} />
                 Nouveau Dossier
               </button>
-              <button
-                onClick={() => setIsFilienModalOpen(true)}
-                className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95"
-              >
-                <FileText size={18} />
-                GENERER FILIEN
-              </button>
+              {currentUser?.role === 'ADMIN' && (
+                <button
+                  onClick={() => setIsFilienModalOpen(true)}
+                  className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95 relative"
+                >
+                  <FileText size={18} />
+                  GENERER FILIEN
+                  <span className="ml-2 px-2 py-0.5 bg-slate-700 rounded-full text-xs font-bold">ADM</span>
+                </button>
+              )}
            </div>
         </div>
       </div>
