@@ -97,12 +97,14 @@ export async function generateInvoicePdfBuffer(
 
   // Get the billing tiers: use "Agissant pour" if defined, otherwise use "Demandeur"
   let tierFacturable = occ.tiers;
+  let tierAgissantPour = null;
   if (occ.agissantPour) {
     const tierAgissantPourId = parseInt(occ.agissantPour);
     if (!isNaN(tierAgissantPourId)) {
-      tierFacturable = await prisma.tiers.findUnique({
+      tierAgissantPour = await prisma.tiers.findUnique({
         where: { id: tierAgissantPourId }
-      }) || occ.tiers;
+      });
+      tierFacturable = tierAgissantPour || occ.tiers;
     }
   }
 
@@ -184,17 +186,6 @@ export async function generateInvoicePdfBuffer(
           const pu = l.article?.montant || 0;
           return sum + (pu * (l.quantite1 || 0));
       }, 0) || 0;
-
-      // Get agissantPour tier if defined
-      let tierAgissantPour = null;
-      if (occ.agissantPour) {
-        const tierAgissantPourId = parseInt(occ.agissantPour);
-        if (!isNaN(tierAgissantPourId)) {
-          tierAgissantPour = await prisma.tiers.findUnique({
-            where: { id: tierAgissantPourId }
-          });
-        }
-      }
 
       const replacements: Record<string, string> = {
         'Détail de facture': `Détail de facture (${taxYear})`,
