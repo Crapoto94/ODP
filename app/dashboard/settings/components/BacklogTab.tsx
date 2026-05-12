@@ -267,15 +267,30 @@ export default function BacklogTab() {
           >
             <History size={14} /> {showHistory ? "Masquer Réalisés" : "Voir Réalisés"}
           </button>
-          <button 
+          <button
             onClick={async () => {
               try {
-                const vRes = await axios.get('/api/version');
-                const current = vRes.data.version || '0.1.0';
-                const parts = current.split('.').map(Number);
-                parts[2] = (parts[2] || 0) + 1;
-                setNewVersion({ ...newVersion, number: parts.join('.') });
-              } catch (e) {}
+                // Try to get next version from releases list first
+                const latestRelease = releases && releases.length > 0 ? releases[0] : null;
+                let nextVersion = '0.1.0';
+
+                if (latestRelease && latestRelease.versionNumber) {
+                  const parts = latestRelease.versionNumber.split('.').map(Number);
+                  parts[2] = (parts[2] || 0) + 1;
+                  nextVersion = parts.join('.');
+                } else {
+                  // Fallback to /api/version
+                  const vRes = await axios.get('/api/version');
+                  const current = vRes.data.version || '0.1.0';
+                  const parts = current.split('.').map(Number);
+                  parts[2] = (parts[2] || 0) + 1;
+                  nextVersion = parts.join('.');
+                }
+
+                setNewVersion({ number: nextVersion, notes: '' });
+              } catch (e) {
+                console.error('Error calculating next version:', e);
+              }
               setNewVersionModal(true);
             }}
             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20 transition-all active:scale-95"

@@ -20,9 +20,11 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { versionNumber, notes, backlogItemIds } = body;
+    console.log('[POST /api/releases] Creating release:', { versionNumber, backlogItemIds });
 
     // 1. Transaction to create release and update items
     const release = await prismaShared.$transaction(async (tx) => {
+      console.log('[POST /api/releases] Inside transaction, creating version release...');
       const newRelease = await tx.versionRelease.create({
         data: {
           versionNumber,
@@ -53,8 +55,9 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(release);
-  } catch (error) {
-    console.error('[POST /api/releases]', error);
-    return NextResponse.json({ error: 'Failed to create release' }, { status: 500 });
+  } catch (error: any) {
+    console.error('[POST /api/releases] Error:', error.message || error);
+    console.error('[POST /api/releases] Full error:', JSON.stringify(error, null, 2));
+    return NextResponse.json({ error: error.message || 'Failed to create release' }, { status: 500 });
   }
 }
