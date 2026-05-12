@@ -224,5 +224,6 @@ async function recordBillingRun(id: string, type: string, date: Date, results: P
   } catch (err: any) {
     console.error('[DB RUN RECORD ERROR]', err.message);
     console.error('[DB RUN RECORD ERROR FULL]', err);
+    throw err; // Re-throw to notify caller
   }
 }
