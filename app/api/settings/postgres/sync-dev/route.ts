@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Client } from 'pg';
-
 
 export async function POST(req: NextRequest) {
   const { config } = await req.json();
@@ -9,25 +7,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Configuration manquante' }, { status: 400 });
   }
 
-  let prodClient: Client | null = null;
-  let devClient: Client | null = null;
-
   try {
-    // Créer les deux clients
-    prodClient = new Client({
-      host: config.host,
-      port: config.port,
-      database: config.database,
-      user: config.user,
-      password: config.password
+    const connectionString = `postgresql://${encodeURIComponent(config.user)}:${encodeURIComponent(config.password)}@${config.host}:${config.port}/${config.database}`;
+
+    // Dynamic import to avoid bundling issues
+    const { Client } = await import('pg');
+
+    const prodClient = new Client({
+      connectionString: connectionString,
+      statement_timeout: 30000,
     });
 
-    devClient = new Client({
-      host: config.host,
-      port: config.port,
-      database: config.database,
-      user: config.user,
-      password: config.password
+    const devClient = new Client({
+      connectionString: connectionString,
+      statement_timeout: 30000,
     });
 
     await prodClient.connect();
@@ -60,15 +53,6 @@ export async function POST(req: NextRequest) {
       console.log(`[SYNC-DEV] Copying table: ${table}...`);
 
       try {
-        // Get the CREATE TABLE statement from PROD
-        const createTableResult = await prodClient.query(`
-          SELECT
-            'CREATE TABLE' as cmd,
-            obj_description(('${config.schema}.${table}'::regclass)::oid,'pg_class') as comment
-          FROM information_schema.tables
-          WHERE table_schema = $1 AND table_name = $2
-        `, [config.schema, table]);
-
         // Create table in DEV by copying structure
         const columnsResult = await prodClient.query(`
           SELECT column_name, data_type, is_nullable, column_default
@@ -177,6 +161,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    await prodClient.end();
+    await devClient.end();
+
     console.log('[SYNC-DEV] ✅ Synchronization complete!');
 
     return NextResponse.json({
@@ -191,20 +178,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       error: error.message || 'Erreur lors de la synchronisation'
     }, { status: 500 });
-  } finally {
-    if (prodClient) {
-      try {
-        await prodClient.end();
-      } catch (err) {
-        console.warn('[SYNC-DEV] Error closing PROD client:', err);
-      }
-    }
-    if (devClient) {
-      try {
-        await devClient.end();
-      } catch (err) {
-        console.warn('[SYNC-DEV] Error closing DEV client:', err);
-      }
-    }
   }
 }
