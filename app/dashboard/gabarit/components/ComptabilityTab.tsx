@@ -1,21 +1,63 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertCircle, CheckCircle2, AlertTriangle, RefreshCw, Loader2 } from 'lucide-react';
+import axios from 'axios';
 import { validateInvoiceElements, ValidationError } from '@/lib/invoice-validator';
 
-interface ComptabilityTabProps {
-  elements: any[];
+interface Gabarit {
+  id: number;
+  nom: string;
+  isDefault: boolean;
 }
 
-export default function ComptabilityTab({ elements }: ComptabilityTabProps) {
+export default function ComptabilityTab({ elements: editorElements }: { elements: any[] }) {
+  const [gabarits, setGabarits] = useState<Gabarit[]>([]);
+  const [selectedGabaritId, setSelectedGabaritId] = useState<number | null>(null);
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [validating, setValidating] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleValidate = () => {
+  useEffect(() => {
+    fetchGabarits();
+  }, []);
+
+  const fetchGabarits = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/api/gabarits');
+      setGabarits(res.data || []);
+      // Select default gabarit or first one
+      const defaultGabarit = (res.data || []).find((g: any) => g.isDefault);
+      setSelectedGabaritId(defaultGabarit?.id || (res.data?.[0]?.id || null));
+    } catch (err) {
+      console.error('Error fetching gabarits:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleValidate = async () => {
+    if (!selectedGabaritId && editorElements.length === 0) return;
+
     setValidating(true);
     try {
-      const validationErrors = validateInvoiceElements(elements);
+      let elementsToValidate = editorElements;
+
+      // If a gabarit is selected, fetch its elements instead
+      if (selectedGabaritId && selectedGabaritId > 0) {
+        try {
+          const res = await axios.get(`/api/gabarits/${selectedGabaritId}`);
+          const gabarit = res.data;
+          const { elements } = JSON.parse(gabarit.contenu);
+          elementsToValidate = elements;
+        } catch (err) {
+          console.error('Error fetching gabarit:', err);
+          return;
+        }
+      }
+
+      const validationErrors = validateInvoiceElements(elementsToValidate);
       setErrors(validationErrors);
     } catch (err) {
       console.error('Validation error:', err);
@@ -25,10 +67,10 @@ export default function ComptabilityTab({ elements }: ComptabilityTabProps) {
   };
 
   useEffect(() => {
-    if (elements.length > 0) {
+    if ((selectedGabaritId || editorElements.length > 0) && !loading && gabarits.length >= 0) {
       handleValidate();
     }
-  }, [elements]);
+  }, [selectedGabaritId, gabarits]);
 
   const errorCount = errors.filter(e => e.severity === 'error').length;
   const warningCount = errors.filter(e => e.severity === 'warning').length;
@@ -49,21 +91,59 @@ export default function ComptabilityTab({ elements }: ComptabilityTabProps) {
     'format': '📄 Format'
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-blue-600" size={40} />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 px-6 py-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Validation du Gabarit</h2>
           <p className="text-slate-500 font-bold mt-1">Vérifiez la conformité selon le Cahier des Charges ASAP-ORMC</p>
         </div>
-        <button
-          onClick={handleValidate}
-          disabled={validating || elements.length === 0}
-          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-700 disabled:opacity-50 transition-all"
-        >
-          <RefreshCw size={16} className={validating ? 'animate-spin' : ''} />
-          {validating ? 'Validation...' : 'Revalider'}
-        </button>
+
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
+          <div className="flex-1">
+            <label className="block text-xs font-black text-slate-600 uppercase tracking-widest mb-2">
+              Sélectionner un gabarit à tester
+            </label>
+            <select
+              value={selectedGabaritId || ''}
+              onChange={(e) => setSelectedGabaritId(parseInt(e.target.value) || null)}
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl font-bold text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="">-- Valider le gabarit actuel --</option>
+              {gabarits.map(gabarit => (
+                <option key={gabarit.id} value={gabarit.id}>
+                  {gabarit.nom} {gabarit.isDefault ? '(Par défaut)' : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            onClick={handleValidate}
+            disabled={validating}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-700 disabled:opacity-50 transition-all whitespace-nowrap"
+          >
+            {validating ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Validation...
+              </>
+            ) : (
+              <>
+                <RefreshCw size={16} />
+                Revalider
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className={`p-6 rounded-2xl border-2 ${
@@ -160,7 +240,7 @@ export default function ComptabilityTab({ elements }: ComptabilityTabProps) {
             </div>
           ))}
         </div>
-      ) : elements.length > 0 ? (
+      ) : editorElements.length > 0 ? (
         <div className="p-8 bg-emerald-50 border-2 border-emerald-200 rounded-2xl text-center">
           <CheckCircle2 className="text-emerald-600 mx-auto mb-4" size={40} />
           <p className="text-emerald-900 font-bold">Aucun défaut détecté !</p>
