@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       dossiers = Array.from(grouped.values());
     } else {
       dossiers = await (prisma as any).occupation.findMany({
-        where: { id: { in: ids }, type: type, statut: 'VERIFIE' },
+        where: { id: { in: ids }, type: type, statut: { in: ['VERIFIE', 'VALIDE', 'VALIDÉ'] } },
         select: { id: true, type: true, anneeTaxation: true }
       });
     }
