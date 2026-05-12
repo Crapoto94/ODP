@@ -116,7 +116,7 @@ export default function GabaritPage() {
             }`}
           >
             <BarChart3 size={14} />
-            Comptabilité
+            DGFIP
           </button>
         </div>
         <Link
