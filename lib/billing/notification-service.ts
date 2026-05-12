@@ -43,7 +43,7 @@ export async function sendFinanceNotification(params: {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   const validationLink = `${appUrl}/dashboard/facturation/sedit-validation?token=${encodeURIComponent(validationToken)}`;
 
-  const folderPath = runName ? `file://nas-syno05/editions$/SMPROD/ODP/${runName}` : undefined;
+  const folderPath = runName ? `file:////nas-syno05/editions$/SMPROD/ODP/${runName}` : undefined;
 
   const notificationEmail = generateBillingNotificationEmail({
     financeEmail: appSettings.financeEmail,
