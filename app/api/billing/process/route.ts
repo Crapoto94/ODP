@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     await recordBillingRun(billingRunId, type, now, results, grandTotal, agentName, recap.filename, runName, timestampStr);
 
     // 6. Notification
-    await sendFinanceNotification({ appSettings, session, billingRunId, resultsCount: results.length, dossiers, agentName, runName });
+    await sendFinanceNotification({ appSettings, session, billingRunId, resultsCount: results.length, dossiers, agentName, runName, filienPath });
 
     return NextResponse.json({
       success: true,

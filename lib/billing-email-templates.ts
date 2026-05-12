@@ -108,7 +108,7 @@ export function generateBillingNotificationEmail(context: BillingNotificationCon
         <div class="field-value">${timestamp}</div>
       </div>
 
-      ${folderPath ? '<div class="field" style="border-left: 4px solid #f59e0b; background: #fffbeb;"><div class="field-label" style="color: #f59e0b;">📁 Dossier avec les données</div><div class="field-value" style="margin-top: 10px; text-align: center;"><a href="' + folderPath + '" class="nas-button">🗂️ Ouvrir le dossier NAS</a><div style="margin-top: 12px; font-size: 12px; color: #92400e; word-break: break-all;"><code style="background: white; padding: 4px 8px; border-radius: 3px; border: 1px solid #fed7aa;">' + folderPath + '</code></div></div></div>' : ''}
+      ${folderPath ? '<div class="field" style="border-left: 4px solid #f59e0b; background: #fffbeb;"><div class="field-label" style="color: #f59e0b;">📁 Dossier avec les données</div><div class="field-value" style="margin-top: 8px; word-break: break-all; font-size: 13px; color: #b45309;"><strong>' + folderPath + '</strong></div></div>' : ''}
 
       <p style="text-align: center;">
         <a href="${validationLink}" class="cta-button">Valider l'intégration dans SEDIT</a>

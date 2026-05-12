@@ -1,0 +1,47 @@
+/##/PARAM/30/00/2026/5/N/N/N
+/01/ODP00001
+/02/R
+/03/GVO093
+/04/ODP - Chantier - 2024
+/05/02
+/06/E
+/10/N
+/11/800
+/12/C
+/13/00051
+/20/ODP - Chantier - 2024
+/21/Chantier : OCCILEV_rueMONMOUSSEAU_2et16j
+/26/Délibération
+/261/Deliberation_2024.pdf
+/262/01
+/263/\\nas-syno05\editions$\SMPROD\ODP\2026-05-12-1616\Deliberation_2024.pdf
+/27/Tarifs
+/271/Tarifs_ODP_2024.pdf
+/272/01
+/273/\\nas-syno05\editions$\SMPROD\ODP\2026-05-12-1616\Tarifs_ODP_2024.pdf
+/28/AOT
+/281/AOT_OCCILEV_rueMONMOUSSEAU_2et16juin2024_2024.pdf
+/282/01
+/283/\\nas-syno05\editions$\SMPROD\ODP\2026-05-12-1616\AOT_OCCILEV_rueMONMOUSSEAU_2et16juin2024_2024.pdf
+/29/Détails de facture
+/291/2026-ODP-1.pdf
+/292/01
+/293/\\nas-syno05\editions$\SMPROD\ODP\2026-05-12-1616\2026-ODP-1.pdf
+/294/011
+/44/N
+/**/
+/500/P
+/501/001
+/502/Droits de voirie Chantier 2024 - Voir détail joint
+/503/01012024
+/504/31122024
+/505/1,00
+/506/583,20
+/509/583,20
+/--/
+/51/01
+/541/70        70321     845                 RR
+/542/GEST_30   BN5                 
+/57/Voir détail de facture
+/66/583,20
+/##/

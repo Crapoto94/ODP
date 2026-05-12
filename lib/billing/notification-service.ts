@@ -1,8 +1,9 @@
 import { prisma } from '@/lib/prisma';
-import { sendApmMail } from '@/lib/apm';
+import { sendApmMail, MailAttachment } from '@/lib/apm';
 import { generateBillingNotificationEmail } from '@/lib/billing-email-templates';
 import { generateSeditValidationToken } from '@/lib/sedit-validation-token';
 import { format } from 'date-fns';
+import { readFileSync } from 'fs';
 
 export async function sendFinanceNotification(params: {
   appSettings: any;
@@ -12,8 +13,9 @@ export async function sendFinanceNotification(params: {
   dossiers: any[];
   agentName: string;
   runName?: string;
+  filienPath?: string;
 }) {
-  const { appSettings, session, billingRunId, resultsCount, dossiers, agentName, runName } = params;
+  const { appSettings, session, billingRunId, resultsCount, dossiers, agentName, runName, filienPath } = params;
 
   if (!appSettings?.financeEmail) return;
 
@@ -56,10 +58,28 @@ export async function sendFinanceNotification(params: {
     folderPath,
   });
 
+  // Prepare FILIEN attachment if available
+  const attachments: MailAttachment[] = [];
+  if (filienPath) {
+    try {
+      const fileContent = readFileSync(filienPath, 'utf-8');
+      const base64Content = Buffer.from(fileContent).toString('base64');
+      attachments.push({
+        filename: `FACT-${billingRunId}.filien.txt`,
+        content: base64Content,
+        content_type: 'text/plain'
+      });
+      console.log(`[NOTIFICATION] FILIEN attached: ${filienPath}`);
+    } catch (err: any) {
+      console.warn(`[NOTIFICATION] Could not attach FILIEN file: ${err.message}`);
+    }
+  }
+
   await sendApmMail(
     appSettings.financeEmail,
     `[ODP] Nouveau train de facturation prêt - ${billingRunId}`,
     notificationEmail,
-    'ODP Console'
+    'ODP Console',
+    attachments.length > 0 ? attachments : undefined
   );
 }
