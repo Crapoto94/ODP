@@ -11,8 +11,9 @@ export async function sendFinanceNotification(params: {
   resultsCount: number;
   dossiers: any[];
   agentName: string;
+  runName?: string;
 }) {
-  const { appSettings, session, billingRunId, resultsCount, dossiers, agentName } = params;
+  const { appSettings, session, billingRunId, resultsCount, dossiers, agentName, runName } = params;
 
   if (!appSettings?.financeEmail) return;
 
@@ -42,6 +43,8 @@ export async function sendFinanceNotification(params: {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   const validationLink = `${appUrl}/dashboard/facturation/sedit-validation?token=${encodeURIComponent(validationToken)}`;
 
+  const folderPath = runName ? `file://nas-syno05/editions$/SMPROD/ODP/${runName}` : undefined;
+
   const notificationEmail = generateBillingNotificationEmail({
     financeEmail: appSettings.financeEmail,
     billingRunId,
@@ -50,6 +53,7 @@ export async function sendFinanceNotification(params: {
     agentName,
     timestamp: format(new Date(), 'dd/MM/yyyy HH:mm'),
     validationLink,
+    folderPath,
   });
 
   await sendApmMail(

@@ -11,6 +11,7 @@ export interface BillingNotificationContext {
   timestamp: string;
   validationLink: string;
   appName?: string;
+  folderPath?: string; // Path to NAS folder with invoices
 }
 
 export interface SeditIntegrationConfirmationContext {
@@ -34,6 +35,7 @@ export function generateBillingNotificationEmail(context: BillingNotificationCon
     agentName,
     timestamp,
     validationLink,
+    folderPath,
     appName = 'ODP Console',
   } = context;
 
@@ -103,6 +105,17 @@ export function generateBillingNotificationEmail(context: BillingNotificationCon
         <div class="field-label">Date de génération</div>
         <div class="field-value">${timestamp}</div>
       </div>
+
+      ${folderPath ? `
+      <div class="field">
+        <div class="field-label">📁 Dossier avec les données</div>
+        <div class="field-value">
+          <a href="${folderPath}" style="color: #667eea; text-decoration: none; font-weight: 500;">
+            ${folderPath}
+          </a>
+        </div>
+      </div>
+      ` : ''}
 
       <p style="text-align: center;">
         <a href="${validationLink}" class="cta-button">Valider l'intégration dans SEDIT</a>
