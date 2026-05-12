@@ -67,10 +67,10 @@ export default function ComptabilityTab({ elements: editorElements }: { elements
   };
 
   useEffect(() => {
-    if ((selectedGabaritId || editorElements.length > 0) && !loading && gabarits.length >= 0) {
+    if (!loading && gabarits.length > 0 && (selectedGabaritId || editorElements.length > 0)) {
       handleValidate();
     }
-  }, [selectedGabaritId, gabarits]);
+  }, [selectedGabaritId, editorElements, loading, gabarits.length]);
 
   const errorCount = errors.filter(e => e.severity === 'error').length;
   const warningCount = errors.filter(e => e.severity === 'warning').length;
