@@ -185,6 +185,17 @@ export async function generateInvoicePdfBuffer(
           return sum + (pu * (l.quantite1 || 0));
       }, 0) || 0;
 
+      // Get agissantPour tier if defined
+      let tierAgissantPour = null;
+      if (occ.agissantPour) {
+        const tierAgissantPourId = parseInt(occ.agissantPour);
+        if (!isNaN(tierAgissantPourId)) {
+          tierAgissantPour = await prisma.tiers.findUnique({
+            where: { id: tierAgissantPourId }
+          });
+        }
+      }
+
       const replacements: Record<string, string> = {
         'Détail de facture': `Détail de facture (${taxYear})`,
         '{id}': occ.id.toString(),
@@ -204,7 +215,9 @@ export async function generateInvoicePdfBuffer(
         '{v541.chapitre}': (settings as any)?.filienChapitre || '',
         '{v541.nature}': (settings as any)?.filienNature || '',
         '{v541.fonction}': (settings as any)?.filienFonction || '',
-        '{v541.typeMvmt}': (settings as any)?.filienTypeMouvement || ''
+        '{v541.typeMvmt}': (settings as any)?.filienTypeMouvement || '',
+        '{demandeurComplet}': occ.tiers?.nom || '',
+        '{agissantPourTier.nom}': tierAgissantPour?.nom || ''
       };
 
       if (ligne && ligne.article) {
