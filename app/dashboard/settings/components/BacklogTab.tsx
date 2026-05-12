@@ -220,9 +220,11 @@ export default function BacklogTab() {
         backlogItemIds: pendingDoneItems.map(i => i.id)
       });
       setNewVersionModal(false);
-      window.location.reload(); 
-    } catch (e) {
-      alert("Erreur lors de la création de la release");
+      window.location.reload();
+    } catch (e: any) {
+      console.error('[Release Creation Error]', e);
+      const errorMsg = e.response?.data?.error || e.message || "Erreur inconnue";
+      alert(`Erreur lors de la création de la release:\n${errorMsg}`);
     } finally {
       setSaving(false);
     }
