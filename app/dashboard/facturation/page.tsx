@@ -127,16 +127,11 @@ export default function FacturationPage() {
     setLoading(true);
     try {
       let data: any[] = [];
-      if (type === 'COMMERCE') {
-        // Fetch all commerce occupations and filter client-side to be precise
-        const res = await axios.get(`/api/occupations?type=${type}`);
-        data = (res.data || []).filter((occ: any) => 
-          ['VERIFIE', 'VALIDE', 'VALIDÉ'].includes(occ.statut)
-        );
-      } else {
-        const res = await axios.get(`/api/occupations?status=VERIFIE&type=${type}`);
-        data = res.data;
-      }
+      // Fetch all occupations and filter client-side for all types to be consistent
+      const res = await axios.get(`/api/occupations?type=${type}`);
+      data = (res.data || []).filter((occ: any) =>
+        ['VERIFIE', 'VALIDE', 'VALIDÉ'].includes(occ.statut)
+      );
 
       if (type === 'COMMERCE') {
         const grouped = new Map();
