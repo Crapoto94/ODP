@@ -121,17 +121,25 @@ export default function AotVariablesPage() {
 
       {/* Tiers section */}
       <VariableSection
-        title="👥 Informations du Tiers et Demandeur"
-        description="Variables relatives au demandeur/bénéficiaire"
+        title="👥 Tiers Demandeur"
+        description="Variables relatives au demandeur/bénéficiaire de l'occupation"
         variables={[
-          { name: '{tiers.nom}', description: 'Nom ou raison sociale du tiers' },
-          { name: '{tiers.siret}', description: 'Numéro SIRET du tiers' },
-          { name: '{tiers.email}', description: 'Email du tiers' },
-          { name: '{tiers.adresse}', description: 'Adresse du tiers' },
+          { name: '{tiers.nom}', description: 'Nom ou raison sociale du tiers demandeur' },
+          { name: '{tiers.siret}', description: 'Numéro SIRET du tiers demandeur' },
+          { name: '{tiers.email}', description: 'Email du tiers demandeur' },
+          { name: '{tiers.adresse}', description: 'Adresse du tiers demandeur' },
           {
             name: '{demandeurComplet}',
-            description: 'Nom et prénom complet du demandeur/contact (ex: "Jean Dupont")',
+            description: 'Nom du tiers demandeur (équivalent à {tiers.nom})',
           },
+        ]}
+      />
+
+      {/* Contact section */}
+      <VariableSection
+        title="💼 Contact Principal"
+        description="Variables relatives au contact principal du dossier"
+        variables={[
           { name: '{contact.nom}', description: 'Nom du contact principal' },
           { name: '{contact.prenom}', description: 'Prénom du contact principal' },
           { name: '{contact.email}', description: 'Email du contact principal' },
@@ -139,8 +147,20 @@ export default function AotVariablesPage() {
           { name: '{contact.role}', description: 'Rôle du contact principal' },
           { name: '{contact.titre}', description: 'Titre/fonction du contact principal' },
           { name: '{contact.entreprise}', description: 'Entreprise du contact principal' },
-          { name: '{agissantPourTier.nom}', description: 'Nom du tiers agissant pour le compte de (si applicable)' },
-          { name: '{agissantPourTier.adresse}', description: 'Adresse du tiers agissant pour le compte de (si applicable)' },
+        ]}
+      />
+
+      {/* Tiers agissant pour et facturable */}
+      <VariableSection
+        title="🤝 Tiers Agissant Pour et Facturable"
+        description="Variables pour le représentant et le tiers qui reçoit la facture"
+        variables={[
+          { name: '{agissantPourTier.nom}', description: 'Nom du tiers agissant pour le compte du demandeur (si applicable)' },
+          { name: '{agissantPourTier.adresse}', description: 'Adresse du tiers agissant pour (si applicable)' },
+          { name: '{tierFacturable.nom}', description: 'Nom du tiers qui reçoit la facture (demandeur ou agissant pour selon configuration)' },
+          { name: '{tierFacturable.adresse}', description: 'Adresse de facturation' },
+          { name: '{tierFacturable.siret}', description: 'SIRET du tiers facturé' },
+          { name: '{tierFacturable.email}', description: 'Email du tiers facturé' },
         ]}
       />
 

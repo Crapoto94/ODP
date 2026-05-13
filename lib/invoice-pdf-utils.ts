@@ -95,7 +95,7 @@ export async function generateInvoicePdfBuffer(
 
   const settings = await (prisma as any).appSettings.findFirst();
 
-  // Get the billing tiers: use "Agissant pour" if defined, otherwise use "Demandeur"
+  // Get the billing tiers: use "Agissant pour" if isAgissantPourBillable is true, otherwise use "Demandeur"
   let tierFacturable = occ.tiers;
   let tierAgissantPour = null;
   if (occ.agissantPour) {
@@ -104,7 +104,10 @@ export async function generateInvoicePdfBuffer(
       tierAgissantPour = await prisma.tiers.findUnique({
         where: { id: tierAgissantPourId }
       });
-      tierFacturable = tierAgissantPour || occ.tiers;
+      // Only use agissantPour as billable tiers if isAgissantPourBillable is true
+      if ((occ as any).isAgissantPourBillable && tierAgissantPour) {
+        tierFacturable = tierAgissantPour;
+      }
     }
   }
 
@@ -160,10 +163,48 @@ export async function generateInvoicePdfBuffer(
     });
   }
 
+  const processConditionals = (xml: string, variables: Record<string, string>): string => {
+    let result = xml;
+    const ifRegex = /\{IF\s+(\w+(?:\.\w+)*)\|/g;
+    const matches: Array<{ index: number; length: number; variableKey: string; conditionalText: string }> = [];
+
+    let match;
+    while ((match = ifRegex.exec(xml)) !== null) {
+      const startIndex = match.index;
+      const variableKey = match[1];
+      const textStartIndex = match.index + match[0].length;
+
+      let braceCount = 1;
+      let endIndex = textStartIndex;
+      while (endIndex < xml.length && braceCount > 0) {
+        if (xml[endIndex] === '{') braceCount++;
+        if (xml[endIndex] === '}') braceCount--;
+        endIndex++;
+      }
+
+      const conditionalText = xml.substring(textStartIndex, endIndex - 1);
+      matches.push({
+        index: startIndex,
+        length: endIndex - startIndex,
+        variableKey,
+        conditionalText,
+      });
+    }
+
+    for (let i = matches.length - 1; i >= 0; i--) {
+      const m = matches[i];
+      const variableValue = variables[`{${m.variableKey}}`];
+      const replacement = variableValue && variableValue.trim() !== '' ? m.conditionalText : '';
+      result = result.substring(0, m.index) + replacement + result.substring(m.index + m.length);
+    }
+
+    return result;
+  };
+
   const replaceVars = (val: string, ligne?: any) => {
       if (!val) return val;
       let result = val;
-      
+
       const threshold = tlpeConfig?.exoneration ?? 12;
       const totalEnseigneSurface = (occ.lignes || []).reduce((sum: number, l: any) => {
           let mt: any = {};
@@ -191,9 +232,9 @@ export async function generateInvoicePdfBuffer(
         'Détail de facture': `Détail de facture (${taxYear})`,
         '{id}': occ.id.toString(),
         '{nom}': occ.nom || '',
-        '{tiers.nom}': tierFacturable?.nom || '',
-        '{tiers.adresse}': (tierFacturable?.adresse || '').replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
-        '{adresse}': (occ.adresse && occ.adresse !== 'À renseigner' ? occ.adresse : (tierFacturable?.adresse || '')).replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
+        '{tiers.nom}': occ.tiers?.nom || '',
+        '{tiers.adresse}': (occ.tiers?.adresse || '').replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
+        '{adresse}': (occ.adresse && occ.adresse !== 'À renseigner' ? occ.adresse : (occ.tiers?.adresse || '')).replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
         '{dateDebut}': occ.dateDebut ? format(new Date(occ.dateDebut), 'dd/MM/yyyy') : '',
         '{dateFin}': occ.dateFin ? format(new Date(occ.dateFin), 'dd/MM/yyyy') : '',
         '{numeroFacture}': currentInvoiceNumber || watermark,
@@ -208,7 +249,12 @@ export async function generateInvoicePdfBuffer(
         '{v541.fonction}': (settings as any)?.filienFonction || '',
         '{v541.typeMvmt}': (settings as any)?.filienTypeMouvement || '',
         '{demandeurComplet}': occ.tiers?.nom || '',
-        '{agissantPourTier.nom}': tierAgissantPour?.nom || ''
+        '{agissantPourTier.nom}': tierAgissantPour?.nom || '',
+        '{agissantPourTier.adresse}': (tierAgissantPour?.adresse || '').replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
+        '{tierFacturable.nom}': tierFacturable?.nom || '',
+        '{tierFacturable.adresse}': (tierFacturable?.adresse || '').replace(/^(.*?)(\d{5}\s+.*)$/, '$1\n$2'),
+        '{tierFacturable.siret}': (tierFacturable as any)?.siret || '',
+        '{tierFacturable.email}': (tierFacturable as any)?.email || ''
       };
 
       if (ligne && ligne.article) {
@@ -270,6 +316,10 @@ export async function generateInvoicePdfBuffer(
         replacements['{article.full_description}'] = `${ligne.article.designation}\n${dateStr}\n${details}`;
       }
 
+      // Process conditionals first (e.g., {IF agissantPourTier.nom|text})
+      result = processConditionals(result, replacements);
+
+      // Then replace variables
       Object.entries(replacements).sort((a,b) => b[0].length - a[0].length).forEach(([k, v]) => {
         result = result.split(k).join(v);
       });
