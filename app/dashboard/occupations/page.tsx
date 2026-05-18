@@ -330,6 +330,13 @@ function OccupationsPageContent() {
       setIsModalOpen(false);
       resetForm();
       fetchOccupations();
+
+      // If editing from the detail page (?edit=ID), redirect to the detail page to see updates
+      const editId = searchParams.get('edit');
+      if (editId && isEditing) {
+        // Navigate to the detail page
+        router.push(`/dashboard/occupations/${formData.id}`);
+      }
     } catch (err: any) {
       alert(err.response?.data?.error || 'Erreur lors de l\'enregistrement du dossier');
     } finally {
@@ -494,7 +501,7 @@ function OccupationsPageContent() {
   const handleArchive = async (id: number, nom: string) => {
     if (!confirm(`Archiver le dossier "${nom || id}" ?`)) return;
     try {
-      await axios.patch(`/api/occupations/${id}/archive`);
+      await axios.patch(`/api/occupations/${id}`, { isArchived: true });
       fetchOccupations();
     } catch (err: any) {
       alert(err.response?.data?.error || 'Erreur lors de l\'archivage');
@@ -603,8 +610,7 @@ function OccupationsPageContent() {
       if (nextStatus === 'VALIDE' && (occ as any)?.isExempt) {
         // Show confirmation message and archive
         alert('Ce dossier est exonéré. Il sera directement archivé.');
-        await axios.patch(`/api/occupations/${id}`, { statut: nextStatus });
-        await axios.patch(`/api/occupations/${id}/archive`);
+        await axios.patch(`/api/occupations/${id}`, { statut: nextStatus, isArchived: true });
       } else {
         await axios.patch(`/api/occupations/${id}`, { statut: nextStatus });
       }
@@ -659,7 +665,13 @@ function OccupationsPageContent() {
     if (o.type !== 'CHANTIER' && o.type !== 'TOURNAGE') return acc;
 
     const type = o.type;
-    const amount = o.montantCalcule || 0;
+    let amount = (o as any).isExempt ? 0 : (o.montantCalcule || 0);
+    // Apply surcharge if occupation is not authorized (100% surcharge)
+    // Note: montantCalcule already includes court métrage discount, so don't apply it again
+    if ((o as any).isNotAuthorized) {
+      // Add surcharge if occupation is not authorized (100% surcharge)
+      amount = amount * 2;
+    }
 
     if (!acc[type]) {
       acc[type] = { total: 0, enCours: 0, aFacturer: 0, facture: 0 };
@@ -668,7 +680,7 @@ function OccupationsPageContent() {
 
     if (['EN_COURS', 'EN_ATTENTE', 'TERMINE'].includes(o.statut)) {
       acc[type].enCours += amount;
-    } else if (o.statut === 'VERIFIE') {
+    } else if (o.statut === 'VERIFIE' && !(o as any).isExempt) {
       acc[type].aFacturer += amount;
     } else if (['FACTURE', 'PAYE', 'INVOICED'].includes(o.statut)) {
       acc[type].facture += amount;
@@ -887,18 +899,18 @@ function OccupationsPageContent() {
               Aucun dossier trouvé
             </div>
           ) : (
-            <table className="w-full border-separate border-spacing-y-2">
+            <table className="w-full border-separate border-spacing-y-1">
               <thead>
-                <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
-                  <th className="px-6 pb-4">Nom Dossier</th>
-                  <th className="px-6 pb-4">Demandeur</th>
-                  <th className="px-6 pb-4">Période</th>
-                  <th className="px-6 pb-4">Compteurs</th>
-                  <th className="px-6 pb-4">Montant</th>
-                  <th className="px-6 pb-4">Type</th>
-                  <th className="px-6 pb-4">PJ</th>
-                  <th className="px-6 pb-4">Statut</th>
-                  <th className="px-6 pb-4 text-right">Actions</th>
+                <tr className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-left">
+                  <th className="px-3 py-2">Nom Dossier</th>
+                  <th className="px-3 py-2">Demandeur</th>
+                  <th className="px-3 py-2">Période</th>
+                  <th className="px-3 py-2">Compteurs</th>
+                  <th className="px-3 py-2">Montant</th>
+                  <th className="px-3 py-2">Type</th>
+                  <th className="px-3 py-2">PJ</th>
+                  <th className="px-3 py-2">Statut</th>
+                  <th className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -909,50 +921,50 @@ function OccupationsPageContent() {
                   return (
                     <React.Fragment key={occ.id}>
                       <tr className="group transition-all hover:bg-slate-50/50" style={{ borderLeftColor: borderColor, borderLeftWidth: alertConfig.status !== 'none' ? '6px' : '0px', backgroundColor: bgColor }}>
-                      <td className="px-6 py-5 rounded-l-xl border-y border-l border-slate-100 bg-white group-hover:border-blue-200">
-                        <div className="flex items-center gap-4">
-                          <button onClick={() => toggleRow(occ.id)} className="p-1 hover:bg-slate-100 rounded-lg text-slate-400">
-                            {expandedRows.includes(occ.id) ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      <td className="px-3 py-3 rounded-l-xl border-y border-l border-slate-100 bg-white group-hover:border-blue-200">
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => toggleRow(occ.id)} className="p-0.5 hover:bg-slate-100 rounded text-slate-400">
+                            {expandedRows.includes(occ.id) ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                           </button>
                           <div className="cursor-pointer group/title" onClick={() => handleShowDetail(occ.id)}>
-                            <p className="font-black text-slate-900 leading-tight mb-1 group-hover/title:text-blue-600 transition-colors uppercase flex items-center gap-2">
+                            <p className="font-black text-slate-900 text-[11px] leading-tight mb-1 group-hover/title:text-blue-600 transition-colors uppercase flex items-center gap-1">
                                {occ.nom || `Dossier #${occ.id}`}
                                {alertConfig.status !== 'none' && (
-                                 <span className={`flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest whitespace-nowrap ${alertConfig.status === 'overdue' ? 'bg-rose-200 text-rose-700' : 'bg-amber-200 text-amber-700'}`}>
-                                   <AlertTriangle size={10} />
+                                 <span className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-widest whitespace-nowrap ${alertConfig.status === 'overdue' ? 'bg-rose-200 text-rose-700' : 'bg-amber-200 text-amber-700'}`}>
+                                   <AlertTriangle size={9} />
                                    {alertConfig.status === 'overdue' ? 'Alerte' : 'Alerte'}
                                  </span>
                                )}
                                {(occ as any).isExempt && (
-                                 <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest whitespace-nowrap bg-emerald-200 text-emerald-700" title="Exonéré de facturation">
-                                   <DollarSign size={10} style={{ textDecoration: 'line-through' }} />
+                                 <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-widest whitespace-nowrap bg-emerald-200 text-emerald-700" title="Exonéré de facturation">
+                                   <DollarSign size={9} style={{ textDecoration: 'line-through' }} />
                                  </span>
                                )}
                                {(occ as any).isNotAuthorized && (
-                                 <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest whitespace-nowrap bg-red-200 text-red-700" title="Non autorisé - Majoration 100%">
-                                   <AlertCircle size={10} />
+                                 <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-widest whitespace-nowrap bg-red-200 text-red-700" title="Non autorisé - Majoration 100%">
+                                   <AlertCircle size={9} />
                                  </span>
                                )}
-                               <ExternalLink size={14} className="opacity-0 group-hover/title:opacity-100 transition-opacity" />
+                               <ExternalLink size={11} className="opacity-0 group-hover/title:opacity-100 transition-opacity" />
                             </p>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase truncate max-w-[200px]">{occ.adresse}</p>
+                            <p className="text-[8px] font-bold text-slate-400 uppercase truncate max-w-[120px]">{occ.adresse}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 font-bold text-blue-600 uppercase text-[11px]">
+                      <td className="px-3 py-3 border-y border-slate-100 bg-white group-hover:border-blue-200 font-bold text-blue-600 uppercase text-[10px]">
                          <div className="flex items-center gap-2">
-                           <span>{occ.tiers?.nom || 'Inconnu'}</span>
+                           <span className="truncate">{occ.tiers?.nom || 'Inconnu'}</span>
                            {occ.tiers?.etatAdministratif === 'Cessée' && (
-                             <div className="flex items-center gap-1 bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-rose-200 whitespace-nowrap">
-                               <AlertTriangle size={10} />
+                             <div className="flex items-center gap-0.5 bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-widest border border-rose-200 whitespace-nowrap">
+                               <AlertTriangle size={9} />
                                Fermé
                              </div>
                            )}
                          </div>
                       </td>
-                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200">
-                        <p className="text-xs font-black text-slate-400 uppercase flex items-center gap-1">
-                          <Clock size={12} /> 
+                      <td className="px-3 py-3 border-y border-slate-100 bg-white group-hover:border-blue-200">
+                        <p className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-1">
+                          <Clock size={12} />
                           {(occ.type === 'COMMERCE' || occ.type === 'TLPE') ? (occ.anneeTaxation || '-') : (
                             <>
                               {occ.dateDebut ? format(new Date(occ.dateDebut), 'dd MMM', { locale: fr }) : '-'} - {occ.dateFin ? format(new Date(occ.dateFin), 'dd MMM yyyy', { locale: fr }) : '-'}
@@ -960,77 +972,86 @@ function OccupationsPageContent() {
                           )}
                         </p>
                       </td>
-                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black text-slate-600">
-                         <div className="flex flex-col gap-1">
-                           <div className="flex items-center gap-2">
-                             <Package size={14} className="text-slate-300" /> {occ.lignes?.length || 0}
+                      <td className="px-3 py-3 border-y border-slate-100 bg-white group-hover:border-blue-200 text-[10px] font-black text-slate-600">
+                         <div className="flex flex-col gap-0.5">
+                           <div className="flex items-center gap-1">
+                             <Package size={12} className="text-slate-300" /> {(occ.lignes?.filter((l: any) => !l.deletedAt) || []).length}
                            </div>
-                           <div className="flex items-center gap-2">
-                             <MessageSquare size={14} className={occ._count?.notes ? "text-blue-400" : "text-slate-200"} />
+                           <div className="flex items-center gap-1">
+                             <MessageSquare size={12} className={occ._count?.notes ? "text-blue-400" : "text-slate-200"} />
                              <span className={occ._count?.notes ? "text-blue-600" : "text-slate-300"}>{occ._count?.notes || 0}</span>
                            </div>
                          </div>
                       </td>
-                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 font-bold text-blue-600 uppercase text-[11px]">
-                         {(occ.montantCalcule || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} € <span className="text-[9px] text-slate-400">TTC</span>
+                      <td className="px-3 py-3 border-y border-slate-100 bg-white group-hover:border-blue-200 font-bold text-blue-600 uppercase text-[10px]">
+                         {((() => {
+                           let amount = (occ as any).isExempt ? 0 : (occ.montantCalcule || 0);
+                           // Apply surcharge if occupation is not authorized (100% surcharge)
+                           // Note: montantCalcule already includes court métrage discount, so don't apply it again
+                           if ((occ as any).isNotAuthorized) {
+                             // Add surcharge if occupation is not authorized (100% surcharge)
+                             amount = amount * 2;
+                           }
+                           return amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                         })())} € <span className="text-[8px] text-slate-400">TTC</span>
                       </td>
-                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest ${TYPE_MAP[occ.type]?.bg || 'bg-slate-50'} ${TYPE_MAP[occ.type]?.color || 'text-slate-600'} ${TYPE_MAP[occ.type]?.bg.replace('bg-', 'border-') || 'border-slate-100'}`}>
+                      <td className="px-3 py-3 border-y border-slate-100 bg-white group-hover:border-blue-200 text-[10px] font-black">
+                        <div className="flex items-center gap-1 flex-wrap">
+                          <span className={`px-2 py-1 rounded text-[9px] border uppercase tracking-widest ${TYPE_MAP[occ.type]?.bg || 'bg-slate-50'} ${TYPE_MAP[occ.type]?.color || 'text-slate-600'} ${TYPE_MAP[occ.type]?.bg.replace('bg-', 'border-') || 'border-slate-100'}`}>
                             {TYPE_MAP[occ.type]?.label || occ.type}
                           </span>
                           {isMixedOccupation(occ) && (
                             <>
-                              <span className="text-slate-300 text-[10px]">+</span>
-                              <span className={`px-3 py-1.5 rounded-lg border uppercase tracking-widest text-[10px] ${
+                              <span className="text-slate-300 text-[8px]">+</span>
+                              <span className={`px-2 py-0.5 rounded text-[8px] border uppercase tracking-widest ${
                                 occ.type === 'TLPE'
                                   ? 'bg-blue-50 text-blue-600 border-blue-100'
                                   : 'bg-purple-50 text-purple-600 border-purple-100'
                               }`}>
-                                {occ.type === 'TLPE' ? 'Commerce' : 'TLPE'}
+                                {occ.type === 'TLPE' ? 'Com' : 'TLP'}
                               </span>
                             </>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-xs font-black text-slate-400">
-                         <div className="flex items-center gap-2">
-                           <ImageIcon size={14} className={occ.photos ? "text-blue-500" : "text-slate-200"} />
+                      <td className="px-3 py-3 border-y border-slate-100 bg-white group-hover:border-blue-200 text-[10px] font-black text-slate-400">
+                         <div className="flex items-center gap-1">
+                           <ImageIcon size={12} className={occ.photos ? "text-blue-500" : "text-slate-200"} />
                            <span>{occ.photos ? occ.photos.split(',').filter(Boolean).length : 0}</span>
                          </div>
                       </td>
-                      <td className="px-6 py-5 border-y border-slate-100 bg-white group-hover:border-blue-200 text-[10px] font-black uppercase">
-                         <div className="flex items-center gap-2">
-                           <div className={`w-2.5 h-2.5 rounded-full ${getStatusConfig(occ.type, occ.statut).color.replace('text', 'bg') || 'bg-slate-300'} shadow-sm`}></div>
-                           <span className={getStatusConfig(occ.type, occ.statut).color || 'text-slate-400'}>
+                      <td className="px-3 py-3 border-y border-slate-100 bg-white group-hover:border-blue-200 text-[9px] font-black uppercase">
+                         <div className="flex items-center gap-1">
+                           <div className={`w-2 h-2 rounded-full ${getStatusConfig(occ.type, occ.statut).color.replace('text', 'bg') || 'bg-slate-300'} shadow-sm`}></div>
+                           <span className={`${getStatusConfig(occ.type, occ.statut).color || 'text-slate-400'} truncate text-[8px]`}>
                              {getStatusConfig(occ.type, occ.statut).label || occ.statut}
                            </span>
                          </div>
                          {(occ as any).facturePath && (
-                           <a href={(occ as any).facturePath} target="_blank" className="flex items-center gap-1.5 mt-2 text-[8px] text-blue-500 hover:underline">
-                             <FileText size={10} /> Facture associée
+                           <a href={(occ as any).facturePath} target="_blank" className="flex items-center gap-1 mt-1 text-[7px] text-blue-500 hover:underline">
+                             <FileText size={9} /> Facture
                            </a>
                          )}
                       </td>
-                      <td className="px-6 py-5 rounded-r-xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
-                        <div className="flex items-center justify-end gap-1">
+                      <td className="px-3 py-3 rounded-r-xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
+                        <div className="flex items-center justify-end gap-0.5">
                           {view === 'ACTIVE' && !occ.isArchived && (
                             <>
-                              <button onClick={() => { setSelectedOccForLigne(occ); setEditingLigne(null); setIsLigneModalOpen(true); }} className="p-2.5 text-blue-500 hover:bg-blue-50 rounded-xl transition-all" title="Ajouter Article"><Package size={18} /></button>
-                              {['EN_ATTENTE', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleApprove(occ.id)} className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approuver"><CheckCircle2 size={18} /></button>}
-                              {['INIT', 'INST', 'PREP', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleNextStep(occ.id, occ.statut)} className="p-2.5 text-purple-600 hover:bg-purple-50 rounded-xl transition-all" title="Étape suivante"><ArrowRight size={18} /></button>}
-                              {['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => downloadFacture(occ.id)} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Télécharger Facture"><FileText size={18} /></button>}
-                              {['FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => handleUnlock(occ.id)} className="p-2.5 text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Déverrouiller Dossier"><Unlock size={18} /></button>}
-                              <button onClick={() => handleEdit(occ)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Modifier"><Pencil size={18} /></button>
-                              <button onClick={() => handleArchive(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all" title="Archiver"><Archive size={18} /></button>
+                              <button onClick={() => { setSelectedOccForLigne(occ); setEditingLigne(null); setIsLigneModalOpen(true); }} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Ajouter Article"><Package size={14} /></button>
+                              {['EN_ATTENTE', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleApprove(occ.id)} className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all" title="Approuver"><CheckCircle2 size={14} /></button>}
+                              {['EN_ATTENTE', 'INIT', 'INST', 'PREP', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleNextStep(occ.id, occ.statut)} className="p-1.5 text-purple-600 hover:bg-purple-50 rounded-lg transition-all" title="Étape suivante"><ArrowRight size={14} /></button>}
+                              {['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => downloadFacture(occ.id)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Télécharger Facture"><FileText size={14} /></button>}
+                              {['FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => handleUnlock(occ.id)} className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Déverrouiller Dossier"><Unlock size={14} /></button>}
+                              <button onClick={() => handleEdit(occ)} className="p-1.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Modifier"><Pencil size={14} /></button>
+                              <button onClick={() => handleArchive(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-1.5 text-slate-300 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all" title="Archiver"><Archive size={14} /></button>
                               {currentUser?.role === 'ADMIN' && (
-                                <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer"><Trash2 size={18} /></button>
+                                <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Supprimer"><Trash2 size={14} /></button>
                               )}
                             </>
                           )}
                           {view === 'ARCHIVE' && (
                             <>
-                              <button onClick={() => handleUnarchive(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Restaurer"><Archive size={18} /></button>
+                              <button onClick={() => handleUnarchive(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all" title="Restaurer"><Archive size={14} /></button>
                             </>
                           )}
                         </div>

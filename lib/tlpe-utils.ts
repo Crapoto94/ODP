@@ -39,8 +39,8 @@ export async function updateOccupationTotal(occupationId: number) {
       where: { id: occupationId },
       include: {
         lignes: {
-          include: { 
-            article: { include: { modeTaxation: true } } 
+          include: {
+            article: { include: { modeTaxation: true } }
           }
         }
       }

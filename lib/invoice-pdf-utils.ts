@@ -95,6 +95,70 @@ export async function generateInvoicePdfBuffer(
 
   const settings = await (prisma as any).appSettings.findFirst();
 
+  // Add surcharge line if occupation is not authorized (non autorisé)
+  if (occ.isNotAuthorized) {
+    const totalBase = (occ.lignes || [])
+      .filter((l: any) => !l.deletedAt)
+      .reduce((sum: number, l: any) => sum + (l.montant || 0), 0);
+
+    if (totalBase > 0) {
+      const surcharge = {
+        id: 999999, // Dummy ID for template rendering
+        occupationId: occ.id,
+        articleId: 0,
+        article: {
+          id: 0,
+          designation: 'Majoration dossier non autorisé',
+          montant: totalBase,
+          modeTaxation: null
+        },
+        quantite1: 1,
+        quantite2: 1,
+        montant: totalBase,
+        dateDebut: occ.dateDebut,
+        dateFin: occ.dateFin,
+        dateDebutConstatee: occ.dateDebut,
+        dateFinConstatee: occ.dateFin,
+        photos: '',
+        note: 'Majoration appliquée car le dossier n\'a pas l\'autorisation requise',
+        deletedAt: null
+      };
+      occ.lignes.push(surcharge);
+    }
+  }
+
+  // Add minoration line if occupation is court métrage TOURNAGE
+  if (occ.type === 'TOURNAGE' && (occ as any).isCourtMetrage) {
+    const totalBase = (occ.lignes || [])
+      .filter((l: any) => !l.deletedAt)
+      .reduce((sum: number, l: any) => sum + (l.montant || 0), 0);
+
+    if (totalBase > 0) {
+      const minoration = {
+        id: 999998, // Dummy ID for template rendering
+        occupationId: occ.id,
+        articleId: 0,
+        article: {
+          id: 0,
+          designation: 'Minoration court métrage',
+          montant: totalBase * 0.5,
+          modeTaxation: null
+        },
+        quantite1: 1,
+        quantite2: 1,
+        montant: -(totalBase * 0.5),
+        dateDebut: occ.dateDebut,
+        dateFin: occ.dateFin,
+        dateDebutConstatee: occ.dateDebut,
+        dateFinConstatee: occ.dateFin,
+        photos: '',
+        note: 'Minoration de 50% appliquée pour tournage court métrage',
+        deletedAt: null
+      };
+      occ.lignes.push(minoration);
+    }
+  }
+
   // Get the billing tiers: use "Agissant pour" if isAgissantPourBillable is true, otherwise use "Demandeur"
   let tierFacturable = occ.tiers;
   let tierAgissantPour = null;
@@ -216,8 +280,8 @@ export async function generateInvoicePdfBuffer(
       }, 0) || 0;
       const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
-      const totalSum = (occ.lignes || [])
-        .filter((l: any) => !l.deletedAt)
+      let totalSum = (occ.lignes || [])
+        .filter((l: any) => !l.deletedAt && l.id !== 999998 && l.id !== 999999)
         .reduce((sum: number, l: any) => {
           let mt: any = {};
           try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
@@ -228,9 +292,14 @@ export async function generateInvoicePdfBuffer(
               const { ratio: prorata } = calculateMonthlyProrata(d1, d2);
               return sum + ((l.montant || 0) * (l.quantite1 || 0) * prorata);
           }
-          const pu = l.article?.montant || 0;
-          return sum + (pu * (l.quantite1 || 0));
+          // Use l.montant which is already calculated with quantite1 * quantite2 in the database
+          return sum + (l.montant || 0);
       }, 0) || 0;
+
+      // Apply court métrage discount for TOURNAGE type (only if not already applied to individual articles)
+      if (occ.type === 'TOURNAGE' && (occ as any).isCourtMetrage) {
+        totalSum = totalSum * 0.5;
+      }
 
       const replacements: Record<string, string> = {
         'Détail de facture': `Détail de facture (${taxYear})`,
@@ -287,20 +356,17 @@ export async function generateInvoicePdfBuffer(
         replacements['{article.note}'] = ligne.note || '';
 
         const modeNom = (ligne.article.modeTaxation?.nom || 'unité').toLowerCase();
-        const modeParts = (ligne.article.modeTaxation?.nom || 'unité').split('/');
+        const modeParts = (ligne.article.modeTaxation?.nom || 'unité').split('/').filter(Boolean).map((p: string) => p.trim());
 
-        let unit = modeParts[1] || modeParts[0] || '';
-        let timeUnit = modeParts[2] || (modeNom.includes('jour') ? 'jours' : 'mois');
-
-        // Si l'unité extraite est en fait l'unité de temps (ex: Benne/jour)
-        if (modeParts.length === 2 && (unit.toLowerCase().includes('jour') || unit.toLowerCase().includes('mois'))) {
-          unit = 'unité';
-        }
+        const u1 = modeParts[0] || 'unités';
+        const u2 = modeParts[1] || '';
 
         // Pour TLPE, afficher uniquement la surface en m²
         let qteFull = occ.type === 'TLPE'
           ? `${ligne.quantite1 || 0} m²`
-          : `${ligne.quantite1 || 0} ${unit}`;
+          : (occ.type === 'CHANTIER' || occ.type === 'TOURNAGE')
+            ? `${ligne.quantite1 || 0} ${u1}${u2 ? ` × ${ligne.quantite2 || 0} ${u2}` : ''}`
+            : `${ligne.quantite1 || 0} ${u1}`;
 
         replacements['{article.quantite}'] = isDegrèvement ? '' : qteFull;
         replacements['{article.dates}'] = isDegrèvement ? '' : dateStr;
@@ -326,8 +392,11 @@ export async function generateInvoicePdfBuffer(
           replacements['{article.totalHT}'] = `${lineVal.toFixed(2)} €`;
           replacements['{article.full_description}'] = `${ligne.article.designation}\n${dateStr}\n${details}`;
         } else {
-          lineVal = pu * (ligne.quantite1 || 0);
-          details = `${ligne.quantite1} ${unit} à ${pu.toFixed(2)}€`;
+          // Use ligne.montant which is already calculated with quantite1 * quantite2
+          lineVal = ligne.montant || 0;
+          details = u2
+            ? `${ligne.quantite1} ${u1} × ${ligne.quantite2 || 0} ${u2} à ${pu.toFixed(2)}€`
+            : `${ligne.quantite1} ${u1} à ${pu.toFixed(2)}€`;
           replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
           replacements['{article.totalHT}'] = `${lineVal.toFixed(2)} €`;
           replacements['{article.full_description}'] = `${ligne.article.designation}\n${dateStr}\n${details}`;
