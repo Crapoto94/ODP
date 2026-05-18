@@ -177,29 +177,14 @@ export async function POST(req: Request) {
         photos,
         montantCalcule: 0,
         agissantPour,
-        isAgissantPourBillable: !!isAgissantPourBillable
+        isAgissantPourBillable: !!isAgissantPourBillable,
+        isCourtMetrage: isCourtMetrage ? !!isCourtMetrage : false,
+        isExempt: isExempt ? !!isExempt : false,
+        isNotAuthorized: isNotAuthorized ? !!isNotAuthorized : false
       }
     });
 
     console.log('[POST Occupations] Created occupation:', occupation.id);
-
-    if (isCourtMetrage !== undefined || isExempt !== undefined || isNotAuthorized !== undefined) {
-      if (isCourtMetrage !== undefined) {
-        await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isCourtMetrage" = ${!!isCourtMetrage} WHERE id = ${occupation.id}`;
-      }
-      if (isExempt !== undefined) {
-        await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isExempt" = ${!!isExempt} WHERE id = ${occupation.id}`;
-      }
-      if (isNotAuthorized !== undefined) {
-        await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isNotAuthorized" = ${!!isNotAuthorized} WHERE id = ${occupation.id}`;
-      }
-
-      // Refetch to get updated boolean flags
-      const updated = await (prisma as any).occupation.findUnique({
-        where: { id: occupation.id }
-      });
-      return NextResponse.json(updated);
-    }
 
     return NextResponse.json(occupation);
   } catch (error: any) {
