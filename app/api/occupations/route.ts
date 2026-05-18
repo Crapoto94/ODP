@@ -183,13 +183,14 @@ export async function POST(req: Request) {
 
     console.log('[POST Occupations] Created occupation:', occupation.id);
 
-    if (isCourtMetrage !== undefined || isExempt !== undefined || isNotAuthorized !== undefined) {
-      const updates = [];
-      if (isCourtMetrage !== undefined) updates.push(`"isCourtMetrage" = ${!!isCourtMetrage}`);
-      if (isExempt !== undefined) updates.push(`"isExempt" = ${!!isExempt}`);
-      if (isNotAuthorized !== undefined) updates.push(`"isNotAuthorized" = ${!!isNotAuthorized}`);
-
-      await (prisma as any).$executeRaw`UPDATE "Occupation" SET ${updates.join(', ')} WHERE id = ${occupation.id}`;
+    if (isCourtMetrage !== undefined) {
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isCourtMetrage" = ${!!isCourtMetrage} WHERE id = ${occupation.id}`;
+    }
+    if (isExempt !== undefined) {
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isExempt" = ${!!isExempt} WHERE id = ${occupation.id}`;
+    }
+    if (isNotAuthorized !== undefined) {
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isNotAuthorized" = ${!!isNotAuthorized} WHERE id = ${occupation.id}`;
     }
 
     return NextResponse.json(occupation);

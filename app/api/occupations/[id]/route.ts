@@ -106,13 +106,14 @@ export async function PATCH(
       data: updateData
     });
 
-    if (isCourtMetrage !== undefined || isExempt !== undefined || isNotAuthorized !== undefined) {
-      const updates = [];
-      if (isCourtMetrage !== undefined) updates.push(`"isCourtMetrage" = ${!!isCourtMetrage}`);
-      if (isExempt !== undefined) updates.push(`"isExempt" = ${!!isExempt}`);
-      if (isNotAuthorized !== undefined) updates.push(`"isNotAuthorized" = ${!!isNotAuthorized}`);
-
-      await (prisma as any).$executeRaw`UPDATE "Occupation" SET ${updates.join(', ')} WHERE id = ${occupationId}`;
+    if (isCourtMetrage !== undefined) {
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isCourtMetrage" = ${!!isCourtMetrage} WHERE id = ${occupationId}`;
+    }
+    if (isExempt !== undefined) {
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isExempt" = ${!!isExempt} WHERE id = ${occupationId}`;
+    }
+    if (isNotAuthorized !== undefined) {
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isNotAuthorized" = ${!!isNotAuthorized} WHERE id = ${occupationId}`;
     }
 
     return NextResponse.json(occupation);
