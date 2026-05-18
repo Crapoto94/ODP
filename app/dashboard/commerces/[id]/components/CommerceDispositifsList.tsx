@@ -2,6 +2,7 @@ import React from 'react';
 import { Pencil, Trash2, RefreshCw, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import axios from 'axios';
 import CommerceDispositivesManager from '@/components/CommerceDispositivesManager';
+import CommerceDegrevementManager from '@/components/CommerceDegrevementManager';
 
 interface Props {
   selectedYear: number | null;
@@ -90,15 +91,26 @@ export default function CommerceDispositifsList({
               Reconduire vers {selectedYear + 1}
             </button>
           )}
-          {!isFactured && selectedYear && (
-            <CommerceDispositivesManager
-              tiersId={tiersId}
-              selectedYear={selectedYear}
-              onDispositivesAdded={() => {
-                fetchCommerceDetails();
-                if (selectedYear) fetchOccupations(selectedYear);
-              }}
-            />
+          {!isFactured && selectedYear && occupations.length > 0 && (
+            <>
+              <CommerceDispositivesManager
+                tiersId={tiersId}
+                selectedYear={selectedYear}
+                onDispositivesAdded={() => {
+                  fetchCommerceDetails();
+                  if (selectedYear) fetchOccupations(selectedYear);
+                }}
+              />
+              <CommerceDegrevementManager
+                tiersId={tiersId}
+                selectedYear={selectedYear}
+                occupationId={occupations[0]?.id || 0}
+                onDegrevementAdded={() => {
+                  fetchCommerceDetails();
+                  if (selectedYear) fetchOccupations(selectedYear);
+                }}
+              />
+            </>
           )}
         </div>
       </div>
@@ -110,63 +122,98 @@ export default function CommerceDispositifsList({
             {occupations.flatMap((occ: any) =>
               (occ.lignes || []).filter((ligne: any) => !ligne.deletedAt).map((ligne: any) => {
                 const isFactured = ['FACTURE', 'FACTURÉ', 'TITRE', 'TITRÉ', 'CLOS', 'PAYE', 'PAYÉ'].includes(occ.statut);
+                const isDegrèvement = ligne.article?.designation === 'DEGRÈVEMENT' || ligne.montant < 0;
                 return (
                   <div
                     key={ligne.id}
-                    className={`bg-white rounded-lg border border-slate-200 p-4 flex items-center justify-between transition-opacity ${isFactured ? 'opacity-50 grayscale-[0.5]' : ''}`}
+                    className={`rounded-lg border p-4 flex items-center justify-between transition-opacity ${
+                      isDegrèvement
+                        ? 'bg-emerald-50 border-emerald-200'
+                        : 'bg-white border-slate-200'
+                    } ${isFactured ? 'opacity-50 grayscale-[0.5]' : ''}`}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <p className="font-bold text-slate-900">{ligne.article?.designation}</p>
+                        {isDegrèvement ? (
+                          <div className="flex items-center gap-2">
+                            <span className="px-3 py-1 bg-emerald-200 text-emerald-700 rounded-full text-sm font-black">
+                              DÉGRÈVEMENT
+                            </span>
+                            <p className="font-bold text-emerald-900">{ligne.note}</p>
+                          </div>
+                        ) : (
+                          <p className="font-bold text-slate-900">{ligne.article?.designation}</p>
+                        )}
                         {isFactured && (
                           <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[8px] font-black uppercase tracking-tighter">Facturé</span>
                         )}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 pt-4 border-t border-slate-50">
-                        <div className="flex gap-4">
-                          {ligne.photos && (
-                            <div className="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 flex-shrink-0 group relative">
-                              <img 
-                                src={ligne.photos.split(',').filter(Boolean).pop()} 
-                                alt="Dispositif" 
-                                className="w-full h-full object-cover transition-transform group-hover:scale-110 cursor-pointer"
-                                onClick={() => window.open(ligne.photos.split(',').filter(Boolean).pop(), '_blank')}
-                              />
-                            </div>
-                          )}
-                          <div className="space-y-3 flex-1">
+                      {isDegrèvement ? (
+                        <div className="mt-4 pt-4 border-t border-emerald-100">
+                          <div className="space-y-2">
                             <div>
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Calcul du montant</span>
-                              <p className="text-sm font-black text-slate-900 flex flex-wrap items-center gap-1 sm:gap-2">
-                                <span className="px-2 py-1 bg-slate-100 rounded-lg text-slate-600">{ligne.quantite1} m²</span>
-                                <span className="text-slate-300">à</span>
-                                <span className="px-2 py-1 bg-blue-50 rounded-lg text-blue-600">{(ligne.article?.montant || 0).toLocaleString('fr-FR')}€</span>
-                                <span className="text-slate-300">=</span>
-                                <span className="text-blue-700 font-extrabold">{(ligne.quantite1 * (ligne.article?.montant || 0)).toLocaleString('fr-FR')}€</span>
+                              <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-1">Montant déduit</span>
+                              <p className="text-lg font-black text-emerald-700">
+                                -{Math.abs(ligne.montant).toLocaleString('fr-FR', { minimumFractionDigits: 2 })}€
                               </p>
                             </div>
-                            <div>
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Période d'occupation</span>
-                              <p className="text-xs font-bold text-slate-700 flex items-center gap-2">
-                                {ligne.dateDebut ? new Date(ligne.dateDebut).toLocaleDateString('fr-FR') : '-'}
-                                <span className="text-slate-300">→</span>
-                                {ligne.dateFin ? new Date(ligne.dateFin).toLocaleDateString('fr-FR') : '-'}
-                              </p>
-                            </div>
+                            {ligne.note && (
+                              <div className="mt-2">
+                                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-1">Description</span>
+                                <p className="text-xs font-medium text-emerald-800 leading-relaxed">
+                                  {ligne.note}
+                                </p>
+                              </div>
+                            )}
                           </div>
                         </div>
-
-                        <div>
-                          {ligne.note && (
-                            <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 w-full h-full">
-                              <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest block mb-1">Commentaire</span>
-                              <p className="text-xs font-medium text-amber-800 leading-relaxed italic">
-                                "{ligne.note}"
-                              </p>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 pt-4 border-t border-slate-50">
+                          <div className="flex gap-4">
+                            {ligne.photos && (
+                              <div className="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 flex-shrink-0 group relative">
+                                <img
+                                  src={ligne.photos.split(',').filter(Boolean).pop()}
+                                  alt="Dispositif"
+                                  className="w-full h-full object-cover transition-transform group-hover:scale-110 cursor-pointer"
+                                  onClick={() => window.open(ligne.photos.split(',').filter(Boolean).pop(), '_blank')}
+                                />
+                              </div>
+                            )}
+                            <div className="space-y-3 flex-1">
+                              <div>
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Calcul du montant</span>
+                                <p className="text-sm font-black text-slate-900 flex flex-wrap items-center gap-1 sm:gap-2">
+                                  <span className="px-2 py-1 bg-slate-100 rounded-lg text-slate-600">{ligne.quantite1} m²</span>
+                                  <span className="text-slate-300">à</span>
+                                  <span className="px-2 py-1 bg-blue-50 rounded-lg text-blue-600">{(ligne.article?.montant || 0).toLocaleString('fr-FR')}€</span>
+                                  <span className="text-slate-300">=</span>
+                                  <span className="text-blue-700 font-extrabold">{(ligne.quantite1 * (ligne.article?.montant || 0)).toLocaleString('fr-FR')}€</span>
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Période d'occupation</span>
+                                <p className="text-xs font-bold text-slate-700 flex items-center gap-2">
+                                  {ligne.dateDebut ? new Date(ligne.dateDebut).toLocaleDateString('fr-FR') : '-'}
+                                  <span className="text-slate-300">→</span>
+                                  {ligne.dateFin ? new Date(ligne.dateFin).toLocaleDateString('fr-FR') : '-'}
+                                </p>
+                              </div>
                             </div>
-                          )}
+                          </div>
+
+                          <div>
+                            {ligne.note && (
+                              <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 w-full h-full">
+                                <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest block mb-1">Commentaire</span>
+                                <p className="text-xs font-medium text-amber-800 leading-relaxed italic">
+                                  "{ligne.note}"
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                     {!isFactured && (
                       <div className="flex gap-2">

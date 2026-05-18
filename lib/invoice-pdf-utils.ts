@@ -206,7 +206,9 @@ export async function generateInvoicePdfBuffer(
       let result = val;
 
       const threshold = tlpeConfig?.exoneration ?? 12;
-      const totalEnseigneSurface = (occ.lignes || []).reduce((sum: number, l: any) => {
+      const totalEnseigneSurface = (occ.lignes || [])
+        .filter((l: any) => !l.deletedAt)
+        .reduce((sum: number, l: any) => {
           let mt: any = {};
           try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
           if (mt.tlpeType === 'ENSEIGNE') return sum + (l.quantite1 || 0);
@@ -214,7 +216,9 @@ export async function generateInvoicePdfBuffer(
       }, 0) || 0;
       const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
-      const totalSum = (occ.lignes || []).reduce((sum: number, l: any) => {
+      const totalSum = (occ.lignes || [])
+        .filter((l: any) => !l.deletedAt)
+        .reduce((sum: number, l: any) => {
           let mt: any = {};
           try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
           if (occ.type === 'TLPE') {
@@ -329,7 +333,7 @@ export async function generateInvoicePdfBuffer(
   for (const el of (elements as any[])) {
       const style = el.style || {};
       const isRepeated = typeof el.value === 'string' && el.value.includes('{article.');
-      const instances = (isRepeated && occ.lignes) ? occ.lignes : [null];
+      const instances = (isRepeated && occ.lignes) ? occ.lignes.filter((l: any) => !l.deletedAt) : [null];
       for (let i = 0; i < instances.length; i++) {
           const y = el.y + (i * (el.verticalPitch || (isRepeated ? 25 : 30)));
           if (el.type === 'RECT' && !style.noBackground && style.backgroundColor && style.backgroundColor !== 'transparent') {

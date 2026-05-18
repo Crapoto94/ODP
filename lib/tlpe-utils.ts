@@ -50,7 +50,9 @@ export async function updateOccupationTotal(occupationId: number) {
 
     // Pour les dossiers RODP classiques, le calcul reste simple (somme des lignes)
     if (occupation.type !== 'TLPE') {
-      let total = occupation.lignes.reduce((sum: number, l: any) => sum + (l.montant || 0), 0);
+      let total = occupation.lignes
+        .filter((l: any) => !l.deletedAt)
+        .reduce((sum: number, l: any) => sum + (l.montant || 0), 0);
       
       // Abattement Court Métrage 50%
       if (occupation.type === 'TOURNAGE' && occupation.isCourtMetrage) {

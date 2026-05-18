@@ -439,7 +439,7 @@ export function useCommerceLogic(paramId: string) {
     let total = 0;
     occupations.forEach((occ: any) => {
       (occ.lignes || []).filter((ligne: any) => !ligne.deletedAt).forEach((ligne: any) => {
-        total += ligne.quantite1 * (ligne.article?.montant || 0);
+        total += ligne.montant || 0;
       });
     });
     return total;
@@ -447,7 +447,7 @@ export function useCommerceLogic(paramId: string) {
 
   const getStepperState = () => {
     const totalAmount = occupations.reduce((sum: number, occ: any) => {
-      const occAmount = (occ.lignes || []).filter((l: any) => !l.deletedAt).reduce((s: number, l: any) => s + (l.quantite1 * (l.article?.montant || 0)), 0);
+      const occAmount = (occ.lignes || []).filter((l: any) => !l.deletedAt).reduce((s: number, l: any) => s + (l.montant || 0), 0);
       return sum + occAmount;
     }, 0);
 
