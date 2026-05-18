@@ -106,14 +106,22 @@ export async function PATCH(
       data: updateData
     });
 
-    if (isCourtMetrage !== undefined) {
-      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isCourtMetrage" = ${!!isCourtMetrage} WHERE id = ${occupationId}`;
-    }
-    if (isExempt !== undefined) {
-      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isExempt" = ${!!isExempt} WHERE id = ${occupationId}`;
-    }
-    if (isNotAuthorized !== undefined) {
-      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isNotAuthorized" = ${!!isNotAuthorized} WHERE id = ${occupationId}`;
+    if (isCourtMetrage !== undefined || isExempt !== undefined || isNotAuthorized !== undefined) {
+      if (isCourtMetrage !== undefined) {
+        await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isCourtMetrage" = ${!!isCourtMetrage} WHERE id = ${occupationId}`;
+      }
+      if (isExempt !== undefined) {
+        await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isExempt" = ${!!isExempt} WHERE id = ${occupationId}`;
+      }
+      if (isNotAuthorized !== undefined) {
+        await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isNotAuthorized" = ${!!isNotAuthorized} WHERE id = ${occupationId}`;
+      }
+
+      // Refetch to get updated boolean flags
+      const updated = await (prisma as any).occupation.findUnique({
+        where: { id: occupationId }
+      });
+      return NextResponse.json(updated);
     }
 
     return NextResponse.json(occupation);
