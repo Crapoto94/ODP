@@ -34,7 +34,8 @@ import {
   Unlock,
   Lock,
   LockOpen,
-  AlertTriangle
+  AlertTriangle,
+  Archive
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -43,6 +44,7 @@ import FilienGenerationModal from '@/components/FilienGenerationModal';
 import OdpDocsBanner from '@/components/OdpDocsBanner';
 import ContactModal from '@/components/ContactModal';
 import { getStatusConfig, getAvailableStatuses } from '@/lib/status-utils';
+import { isAlertActive, getAlertConfig } from '@/lib/alert-utils';
 import { useLockedYear } from './hooks/useLockedYear';
 import { isMixedOccupation, getOccupationTypes } from '@/lib/mixed-occupation-utils';
 
@@ -55,6 +57,7 @@ interface Occupation {
   statut: string;
   dateDebut: string | null;
   dateFin: string | null;
+  dateAlerte?: string | null;
   anneeTaxation: number | null;
   adresse: string;
   description: string | null;
@@ -101,6 +104,8 @@ function OccupationsPageContent() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [yearFilter, setYearFilter] = useState('ALL'); // Default to ALL years to show all dossiers
+  const [alertFilter, setAlertFilter] = useState(false);
+  const [view, setView] = useState<'ACTIVE' | 'ARCHIVE'>('ACTIVE');
   const { lockedYear, setLockedYear, isHydrated } = useLockedYear(); // Year locked for the session (persists across pages)
   const [tiersFilter, setTiersFilter] = useState<string | null>(null);
   const [tiersSearchQuery, setTiersSearchQuery] = useState('');
@@ -138,6 +143,7 @@ function OccupationsPageContent() {
     anneeTaxation: new Date().getFullYear().toString(),
     dateDebut: '',
     dateFin: '',
+    dateAlerte: '',
     adresse: '',
     latitude: '',
     longitude: '',
@@ -167,7 +173,7 @@ function OccupationsPageContent() {
     setLoading(true);
     try {
       console.log('[Occupations] 🔄 Fetching from /api/occupations...');
-      const res = await axios.get('/api/occupations');
+      const res = await axios.get(`/api/occupations?view=${view}`);
       console.log('[Occupations] ✅ Success! Received data:', res.data);
       console.log('[Occupations] ✅ Count:', Array.isArray(res.data) ? res.data.length : 'Not an array');
 
@@ -202,6 +208,10 @@ function OccupationsPageContent() {
     fetchOccupations();
   }, []);
 
+  useEffect(() => {
+    fetchOccupations();
+  }, [view]);
+
   // When locked year changes, update yearFilter to match
   useEffect(() => {
     if (isHydrated && lockedYear && lockedYear !== 'ALL') {
@@ -229,7 +239,7 @@ function OccupationsPageContent() {
 
   useEffect(() => {
     const type = searchParams.get('type');
-    if (type && (type === 'COMMERCE' || type === 'TLPE')) {
+    if (type && (type === 'COMMERCE' || type === 'TLPE' || type === 'CHANTIER' || type === 'TOURNAGE')) {
       resetForm(type);
       setIsModalOpen(true);
     }
@@ -376,6 +386,10 @@ function OccupationsPageContent() {
   };
 
   const handleEdit = (occ: Occupation) => {
+    if ((occ as any).isArchived) {
+      alert('Ce dossier est archivé et ne peut pas être modifié');
+      return;
+    }
     // Parse agissantPour as ID if it exists (stored as string ID)
     const agissantPourId = occ.agissantPour || '';
     const agissantPourTiers = agissantPourId ? tiers.find(t => t.id === Number(agissantPourId)) : null;
@@ -388,6 +402,7 @@ function OccupationsPageContent() {
       anneeTaxation: occ.anneeTaxation ? occ.anneeTaxation.toString() : new Date().getFullYear().toString(),
       dateDebut: occ.dateDebut ? format(new Date(occ.dateDebut), 'yyyy-MM-dd') : '',
       dateFin: occ.dateFin ? format(new Date(occ.dateFin), 'yyyy-MM-dd') : '',
+      dateAlerte: (occ as any).dateAlerte ? format(new Date((occ as any).dateAlerte), 'yyyy-MM-dd') : '',
       adresse: occ.adresse,
       latitude: '',
       longitude: '',
@@ -412,6 +427,7 @@ function OccupationsPageContent() {
       anneeTaxation: lockedYear || (yearFilter !== 'ALL' ? yearFilter : new Date().getFullYear().toString()),
       dateDebut: '',
       dateFin: '',
+      dateAlerte: '',
       adresse: '',
       latitude: '',
       longitude: '',
@@ -458,6 +474,26 @@ function OccupationsPageContent() {
       await axios.patch(`/api/occupations/${id}`, { statut: 'VERIFIE' });
       fetchOccupations();
     } catch (err) { alert('Erreur lors de la mise à jour du statut'); }
+  };
+
+  const handleArchive = async (id: number, nom: string) => {
+    if (!confirm(`Archiver le dossier "${nom || id}" ?`)) return;
+    try {
+      await axios.patch(`/api/occupations/${id}/archive`);
+      fetchOccupations();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Erreur lors de l\'archivage');
+    }
+  };
+
+  const handleUnarchive = async (id: number, nom: string) => {
+    if (!confirm(`Restaurer le dossier "${nom || id}" ?`)) return;
+    try {
+      await axios.patch(`/api/occupations/${id}/unarchive`);
+      fetchOccupations();
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Erreur lors de la restauration');
+    }
   };
 
   const downloadFacture = async (id: number) => {
@@ -584,7 +620,8 @@ function OccupationsPageContent() {
     const dossierAnnee = o.dateDebut ? new Date(o.dateDebut).getFullYear() : null;
     const matchesYear = yearFilter === 'ALL' || (dossierAnnee && dossierAnnee.toString() === yearFilter.toString());
     const matchesTiers = !tiersFilter || o.tiersId.toString() === tiersFilter;
-    return matchesSearch && matchesType && matchesStatus && matchesYear && matchesTiers;
+    const matchesAlert = !alertFilter || isAlertActive(o.dateAlerte);
+    return matchesSearch && matchesType && matchesStatus && matchesYear && matchesTiers && matchesAlert;
   });
 
   const availableYears = Array.from(new Set(
@@ -621,6 +658,20 @@ function OccupationsPageContent() {
         <div>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight">Dossiers</h2>
           <p className="text-slate-500 font-medium tracking-wide">Gestion des autorisations d'occupation du domaine public</p>
+          <div className="flex gap-6 mt-4">
+            <button
+              onClick={() => setView('ACTIVE')}
+              className={`text-sm font-black uppercase tracking-widest ${view === 'ACTIVE' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Actifs ({view === 'ACTIVE' ? occupations.filter(o => (o.type === 'CHANTIER' || o.type === 'TOURNAGE')).length : '...'})
+            </button>
+            <button
+              onClick={() => setView('ARCHIVE')}
+              className={`text-sm font-black uppercase tracking-widest ${view === 'ARCHIVE' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Archivés ({view === 'ARCHIVE' ? occupations.filter(o => (o.type === 'CHANTIER' || o.type === 'TOURNAGE')).length : '...'})
+            </button>
+          </div>
         </div>
         <div className="flex items-center gap-6">
            {yearFilter && yearFilter !== 'ALL' && (
@@ -773,7 +824,7 @@ function OccupationsPageContent() {
                 {lockedYear ? <Lock size={16} /> : <LockOpen size={16} />}
               </button>
             </div>
-            <select 
+            <select
               className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-500 outline-none focus:border-blue-500 transition-all"
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
@@ -783,6 +834,20 @@ function OccupationsPageContent() {
                 <option key={key} value={key}>{val.label}</option>
               ))}
             </select>
+            <button
+              onClick={() => setAlertFilter(!alertFilter)}
+              className={`px-4 py-2.5 rounded-xl border font-black text-xs uppercase tracking-widest transition-all ${
+                alertFilter
+                  ? 'bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100'
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+              title={alertFilter ? 'Afficher tous les dossiers' : 'Afficher seulement les dossiers en alerte'}
+            >
+              <span className="flex items-center gap-2">
+                <AlertTriangle size={14} />
+                Alertes
+              </span>
+            </button>
           </div>
         </div>
 
@@ -812,9 +877,13 @@ function OccupationsPageContent() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((occ) => (
-                  <React.Fragment key={occ.id}>
-                    <tr className="group transition-all hover:bg-slate-50/50">
+                {filtered.map((occ) => {
+                  const alertConfig = getAlertConfig(occ.dateAlerte);
+                  const borderColor = alertConfig.status === 'overdue' ? '#dc2626' : alertConfig.status === 'upcoming' ? '#f59e0b' : 'transparent';
+                  const bgColor = alertConfig.status === 'overdue' ? '#fef2f2' : alertConfig.status === 'upcoming' ? '#fffbeb' : 'transparent';
+                  return (
+                    <React.Fragment key={occ.id}>
+                      <tr className="group transition-all hover:bg-slate-50/50" style={{ borderLeftColor: borderColor, borderLeftWidth: alertConfig.status !== 'none' ? '6px' : '0px', backgroundColor: bgColor }}>
                       <td className="px-6 py-5 rounded-l-xl border-y border-l border-slate-100 bg-white group-hover:border-blue-200">
                         <div className="flex items-center gap-4">
                           <button onClick={() => toggleRow(occ.id)} className="p-1 hover:bg-slate-100 rounded-lg text-slate-400">
@@ -823,6 +892,12 @@ function OccupationsPageContent() {
                           <div className="cursor-pointer group/title" onClick={() => handleShowDetail(occ.id)}>
                             <p className="font-black text-slate-900 leading-tight mb-1 group-hover/title:text-blue-600 transition-colors uppercase flex items-center gap-2">
                                {occ.nom || `Dossier #${occ.id}`}
+                               {alertConfig.status !== 'none' && (
+                                 <span className={`flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest whitespace-nowrap ${alertConfig.status === 'overdue' ? 'bg-rose-200 text-rose-700' : 'bg-amber-200 text-amber-700'}`}>
+                                   <AlertTriangle size={10} />
+                                   {alertConfig.status === 'overdue' ? 'Alerte' : 'Alerte'}
+                                 </span>
+                               )}
                                <ExternalLink size={14} className="opacity-0 group-hover/title:opacity-100 transition-opacity" />
                             </p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase truncate max-w-[200px]">{occ.adresse}</p>
@@ -904,19 +979,29 @@ function OccupationsPageContent() {
                       </td>
                       <td className="px-6 py-5 rounded-r-xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
                         <div className="flex items-center justify-end gap-1">
-                          <button onClick={() => { setSelectedOccForLigne(occ); setEditingLigne(null); setIsLigneModalOpen(true); }} className="p-2.5 text-blue-500 hover:bg-blue-50 rounded-xl transition-all" title="Ajouter Article"><Package size={18} /></button>
-                          {['EN_ATTENTE', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleApprove(occ.id)} className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approuver"><CheckCircle2 size={18} /></button>}
-                          {['INIT', 'INST', 'PREP', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleNextStep(occ.id, occ.statut)} className="p-2.5 text-purple-600 hover:bg-purple-50 rounded-xl transition-all" title="Étape suivante"><ArrowRight size={18} /></button>}
-                          {['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => downloadFacture(occ.id)} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Télécharger Facture"><FileText size={18} /></button>}
-                          {['FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => handleUnlock(occ.id)} className="p-2.5 text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Déverrouiller Dossier"><Unlock size={18} /></button>}
-                          <button onClick={() => handleEdit(occ)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Modifier"><Pencil size={18} /></button>
-                          {currentUser?.role === 'ADMIN' && (
-                            <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer"><Trash2 size={18} /></button>
+                          {view === 'ACTIVE' && !occ.isArchived && (
+                            <>
+                              <button onClick={() => { setSelectedOccForLigne(occ); setEditingLigne(null); setIsLigneModalOpen(true); }} className="p-2.5 text-blue-500 hover:bg-blue-50 rounded-xl transition-all" title="Ajouter Article"><Package size={18} /></button>
+                              {['EN_ATTENTE', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleApprove(occ.id)} className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Approuver"><CheckCircle2 size={18} /></button>}
+                              {['INIT', 'INST', 'PREP', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleNextStep(occ.id, occ.statut)} className="p-2.5 text-purple-600 hover:bg-purple-50 rounded-xl transition-all" title="Étape suivante"><ArrowRight size={18} /></button>}
+                              {['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => downloadFacture(occ.id)} className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Télécharger Facture"><FileText size={18} /></button>}
+                              {['FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => handleUnlock(occ.id)} className="p-2.5 text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Déverrouiller Dossier"><Unlock size={18} /></button>}
+                              <button onClick={() => handleEdit(occ)} className="p-2.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Modifier"><Pencil size={18} /></button>
+                              <button onClick={() => handleArchive(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all" title="Archiver"><Archive size={18} /></button>
+                              {currentUser?.role === 'ADMIN' && (
+                                <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Supprimer"><Trash2 size={18} /></button>
+                              )}
+                            </>
+                          )}
+                          {view === 'ARCHIVE' && (
+                            <>
+                              <button onClick={() => handleUnarchive(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Restaurer"><Archive size={18} /></button>
+                            </>
                           )}
                         </div>
                       </td>
-                    </tr>
-                    {expandedRows.includes(occ.id) && (
+                      </tr>
+                      {expandedRows.includes(occ.id) && (
                       <tr>
                         <td colSpan={8} className="px-8 py-4 bg-slate-50/20">
                           <div className="space-y-4 border-l-2 border-slate-100 pl-6 my-2">
@@ -1006,9 +1091,11 @@ function OccupationsPageContent() {
                           </div>
                         </td>
                       </tr>
-                    )}
-                  </React.Fragment>
-                ))}
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+
               </tbody>
             </table>
           )}
@@ -1381,14 +1468,20 @@ function OccupationsPageContent() {
                       </select>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date Début</label>
-                        <input type="date" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" value={formData.dateDebut} onChange={e => setFormData({...formData, dateDebut: e.target.value})} />
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date Début</label>
+                          <input type="date" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" value={formData.dateDebut} onChange={e => setFormData({...formData, dateDebut: e.target.value})} />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date Fin</label>
+                          <input type="date" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" value={formData.dateFin} onChange={e => setFormData({...formData, dateFin: e.target.value})} />
+                        </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date Fin</label>
-                        <input type="date" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" value={formData.dateFin} onChange={e => setFormData({...formData, dateFin: e.target.value})} />
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date d'Alerte (optionnel)</label>
+                        <input type="date" className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" value={formData.dateAlerte} onChange={e => setFormData({...formData, dateAlerte: e.target.value})} />
                       </div>
                     </div>
                   )}
