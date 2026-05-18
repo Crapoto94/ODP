@@ -587,6 +587,7 @@ function OccupationsPageContent() {
   const handleNextStep = async (id: number, currentStatut: string) => {
     // Définir les étapes suivantes selon le type et le statut
     const nextStatusMap: Record<string, string> = {
+      'EN_ATTENTE': 'INIT',
       'INIT': 'INST',
       'INST': 'PREP',
       'PREP': 'EN_COURS',
