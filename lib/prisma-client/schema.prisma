@@ -70,6 +70,8 @@ model Occupation {
   dateFACTURE            DateTime?
   dateTITRE              DateTime?
   dateCLOS               DateTime?
+  dateAlerte             DateTime?
+  isArchived             Boolean            @default(false)
   contacts               Contact[]
   dispositifs            Dispositif[]
   lignes                 LigneOccupation[]
@@ -81,6 +83,7 @@ model Occupation {
   @@index([statut])
   @@index([anneeTaxation])
   @@index([type])
+  @@index([isArchived])
 }
 
 model Contact {

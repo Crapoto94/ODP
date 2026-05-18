@@ -520,10 +520,10 @@ export default function CommercesPage() {
                       </div>
                     )}
 
-                    {(commerce as any).lastYearTotal > 0 && (
+                    {(commerce as any).lastYear && (
                       <div className="text-right px-4 border-l border-slate-100">
                         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Dernier dossier</p>
-                        <p className="text-sm font-black text-blue-600">
+                        <p className={`text-sm font-black ${(commerce as any).lastYearTotal >= 0 ? 'text-blue-600' : 'text-slate-500'}`}>
                           {(commerce as any).lastYearTotal.toLocaleString('fr-FR')}€
                         </p>
                         <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase tracking-tighter">

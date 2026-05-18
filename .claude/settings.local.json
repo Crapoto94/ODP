@@ -34,7 +34,27 @@
       "Bash(xargs grep *)",
       "Bash(node test-parse-address.js)",
       "Bash(git diff *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(grep -E \"\\\\.ts$|\\\\.tsx$\")",
+      "Bash(git reset *)",
+      "mcp__Claude_in_Chrome__switch_browser",
+      "Bash(mkdir -p \"C:/dev/ODP/app/api/occupations/\\\\[id\\\\]\")",
+      "Bash(npx tsc *)",
+      "Bash(curl -s http://localhost:3000/dashboard/occupations)",
+      "Bash(awk '{print $6, $7, $8}')",
+      "Bash(export DATABASE_URL=\"postgresql://domaine_public:DomainPublic123@localhost:5432/domaine_public_db\")",
+      "Bash(export DATABASE_URL=\"postgresql://postgres:ivrypassword@10.103.130.106:5432/ivry_admin\")",
+      "Bash(export DB_SCHEMAS=\"ODP\")",
+      "Bash(cat)",
+      "Read(//tmp/**)",
+      "Bash(export PGPASSWORD='ivrypassword')",
+      "Bash(psql -h 10.103.130.106 -U postgres -d ivry_admin -f /tmp/add_dateAlerte.sql)",
+      "Bash(node migration-add-dateAlerte.js)",
+      "Bash(curl -s \"http://localhost:3000/api/occupations?take=5000\")",
+      "Bash(cat > *)",
+      "Bash(curl -s http://localhost:3000/api/occupations/514)",
+      "Bash(curl -s \"http://localhost:3000/api/occupations?view=ACTIVE\")",
+      "Bash(curl -s http://localhost:3000/api/occupations/531)"
     ]
   }
 }

@@ -10,6 +10,7 @@ interface Props {
   onSave: () => void;
   occupationId: number;
   initialData?: any;
+  maxMontant?: number;
 }
 
 export default function DegrevementModal({
@@ -17,7 +18,8 @@ export default function DegrevementModal({
   onClose,
   onSave,
   occupationId,
-  initialData
+  initialData,
+  maxMontant = 0
 }: Props) {
   const [description, setDescription] = useState('');
   const [montant, setMontant] = useState('');
@@ -42,6 +44,10 @@ export default function DegrevementModal({
     }
     if (!montant || parseFloat(montant) <= 0) {
       setError('Le montant doit être supérieur à 0');
+      return;
+    }
+    if (maxMontant > 0 && parseFloat(montant) > maxMontant) {
+      setError(`Le montant du dégrèvement ne peut pas dépasser ${maxMontant.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}€ (montant total de la facture)`);
       return;
     }
 

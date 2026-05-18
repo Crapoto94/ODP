@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Plus } from 'lucide-react';
 import DegrevementModal from '@/components/DegrevementModal';
 
@@ -19,13 +19,14 @@ export default function CommerceDegrevementManager({
 }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
-  };
+  }, []);
 
-  const handleModalSave = () => {
+  const handleModalSave = useCallback(() => {
+    console.log('[CommerceDegrevementManager] handleModalSave called, triggering callback');
     onDegrevementAdded?.();
-  };
+  }, [onDegrevementAdded]);
 
   return (
     <>

@@ -58,7 +58,7 @@ export async function processDossier(params: {
   const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
   const lineResults: any[] = [];
-  const total = (occ.lignes || []).reduce((sum: number, l: any) => {
+  let subtotal = (occ.lignes || []).reduce((sum: number, l: any) => {
     let mt: any = {};
     try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch (e) {}
     let lineVal = (l.montant || 0);
@@ -82,6 +82,22 @@ export async function processDossier(params: {
     lineResults.push({ ...l, calculatedTotal: lineVal });
     return sum + lineVal;
   }, 0) || 0;
+
+  // Add majoration for non-authorized occupations
+  let total = subtotal;
+  if ((occ as any).isNotAuthorized && subtotal > 0) {
+    lineResults.push({
+      id: -1, // Dummy ID for majoration line
+      article: {
+        designation: 'Majoration - pas d\'autorisation'
+      },
+      montant: subtotal,
+      calculatedTotal: subtotal,
+      quantite1: 1,
+      isMajoration: true
+    });
+    total = subtotal + subtotal; // Double the amount
+  }
 
   // 3. Update DB
   const updateData = {

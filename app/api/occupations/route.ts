@@ -12,6 +12,7 @@ export async function GET(req: Request) {
     const anneeTaxation = searchParams.get('anneeTaxation');
     const tiersId = searchParams.get('tiersId');
     const excludeArchived = searchParams.get('excludeArchived') === 'true';
+    const view = searchParams.get('view') || 'ACTIVE';
 
     const where: any = {};
 
@@ -28,18 +29,19 @@ export async function GET(req: Request) {
 
     if (minStatus && statusHierarchy[minStatus]) {
       where.statut = { in: statusHierarchy[minStatus] };
-    } else if (status) {
+    } else if (status && status !== 'ACTIVE' && status !== 'ARCHIVE') {
       where.statut = status;
     }
 
     if (type) where.type = type;
     if (anneeTaxation) where.anneeTaxation = parseInt(anneeTaxation);
     if (tiersId) where.tiersId = parseInt(tiersId);
-    
-    if (excludeArchived) {
-      where.tiers = {
-        statut: { not: 'ARCHIVE' }
-      };
+
+    // Handle archive view filtering
+    if (view === 'ARCHIVE') {
+      where.isArchived = true;
+    } else if (view === 'ACTIVE' || excludeArchived) {
+      where.isArchived = false;
     }
 
     console.log('[GET Occupations] Filter:', where);
@@ -76,7 +78,13 @@ export async function GET(req: Request) {
 
     console.log('[GET Occupations] ✅ Success! Found:', occupations.length, 'occupations');
     if (occupations.length > 0) {
-      console.log('[GET Occupations] First occupation sample:', JSON.stringify(occupations[0], null, 2).substring(0, 200));
+      console.log('[GET Occupations] First occupation lignes count:', occupations[0].lignes?.length || 0);
+      if (occupations[0].lignes) {
+        occupations[0].lignes.forEach((ligne: any, idx: number) => {
+          console.log(`[GET Occupations] Ligne ${idx}:`, ligne.article?.designation, 'montant:', ligne.montant);
+        });
+      }
+      console.log('[GET Occupations] First occupation sample:', JSON.stringify(occupations[0], null, 2).substring(0, 300));
     }
 
     // Background geocoding (non-blocking, fire and forget)
@@ -126,6 +134,7 @@ export async function POST(req: Request) {
       type,
       dateDebut,
       dateFin,
+      dateAlerte,
       anneeTaxation,
       adresse,
       latitude,
@@ -133,6 +142,8 @@ export async function POST(req: Request) {
       description,
       photos,
       isCourtMetrage,
+      isExempt,
+      isNotAuthorized,
       isAgissantPourBillable,
       agissantPour
     } = body;
@@ -157,6 +168,7 @@ export async function POST(req: Request) {
         statut: 'EN_ATTENTE',
         dateDebut: dateDebut ? new Date(dateDebut) : null,
         dateFin: dateFin ? new Date(dateFin) : null,
+        dateAlerte: dateAlerte ? new Date(dateAlerte) : null,
         anneeTaxation: anneeTaxation ? parseInt(anneeTaxation) : null,
         adresse,
         latitude: latitude ? parseFloat(latitude) : null,
@@ -171,8 +183,13 @@ export async function POST(req: Request) {
 
     console.log('[POST Occupations] Created occupation:', occupation.id);
 
-    if (isCourtMetrage !== undefined) {
-      await (prisma as any).$executeRaw`UPDATE "Occupation" SET "isCourtMetrage" = ${!!isCourtMetrage} WHERE id = ${occupation.id}`;
+    if (isCourtMetrage !== undefined || isExempt !== undefined || isNotAuthorized !== undefined) {
+      const updates = [];
+      if (isCourtMetrage !== undefined) updates.push(`"isCourtMetrage" = ${!!isCourtMetrage}`);
+      if (isExempt !== undefined) updates.push(`"isExempt" = ${!!isExempt}`);
+      if (isNotAuthorized !== undefined) updates.push(`"isNotAuthorized" = ${!!isNotAuthorized}`);
+
+      await (prisma as any).$executeRaw`UPDATE "Occupation" SET ${updates.join(', ')} WHERE id = ${occupation.id}`;
     }
 
     return NextResponse.json(occupation);

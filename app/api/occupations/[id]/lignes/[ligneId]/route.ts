@@ -54,8 +54,12 @@ export async function PATCH(
     }
 
     const baseMontant = article?.montant || 0;
-    const finalMontantValue = (existingLigne.occupation.type === 'TLPE' && montant !== undefined) 
-      ? parseFloat(montant) 
+    const isDegrèvement = article?.designation === 'DEGRÈVEMENT';
+
+    // Pour les dégrèvements ou TLPE, utiliser le montant fourni directement
+    // Pour les autres, calculer à partir du montant de base
+    const finalMontantValue = (isDegrèvement || (existingLigne.occupation.type === 'TLPE' && montant !== undefined))
+      ? (montant !== undefined ? parseFloat(montant) : existingLigne.montant)
       : (baseMontant * finalQuantite1 * finalQuantite2);
 
     const ligne = await (prisma as any).ligneOccupation.update({

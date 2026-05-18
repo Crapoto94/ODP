@@ -35,7 +35,9 @@ import {
   Lock,
   LockOpen,
   AlertTriangle,
-  Archive
+  Archive,
+  DollarSign,
+  AlertCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -65,6 +67,8 @@ interface Occupation {
   photos: string | null;
   created_at: string;
   isCourtMetrage?: boolean;
+  isExempt?: boolean;
+  isNotAuthorized?: boolean;
   lignes?: any[];
   _count?: { notes: number };
   agissantPour?: string | null;
@@ -150,6 +154,8 @@ function OccupationsPageContent() {
     description: '',
     statut: 'EN_ATTENTE',
     isCourtMetrage: false,
+    isExempt: false,
+    isNotAuthorized: false,
     agissantPour: '',
     agissantPourId: '', // ID du tiers "Agissant pour le compte de"
     isAgissantPourBillable: false
@@ -409,6 +415,8 @@ function OccupationsPageContent() {
       description: occ.description || '',
       statut: occ.statut,
       isCourtMetrage: !!occ.isCourtMetrage,
+      isExempt: !!(occ as any).isExempt,
+      isNotAuthorized: !!(occ as any).isNotAuthorized,
       agissantPour: agissantPourTiers?.nom || '',
       agissantPourId: agissantPourId,
       isAgissantPourBillable: (occ as any).isAgissantPourBillable || false
@@ -434,6 +442,8 @@ function OccupationsPageContent() {
       description: '',
       statut: 'EN_ATTENTE',
       isCourtMetrage: false,
+      isExempt: false,
+      isNotAuthorized: false,
       agissantPour: '',
       agissantPourId: '',
       isAgissantPourBillable: false
@@ -582,7 +592,16 @@ function OccupationsPageContent() {
     if (!nextStatus) return;
 
     try {
-      await axios.patch(`/api/occupations/${id}`, { statut: nextStatus });
+      // Check if this is an exempt occupation being set to VALIDE
+      const occ = occupations.find(o => o.id === id);
+      if (nextStatus === 'VALIDE' && (occ as any)?.isExempt) {
+        // Show confirmation message and archive
+        alert('Ce dossier est exonéré. Il sera directement archivé.');
+        await axios.patch(`/api/occupations/${id}`, { statut: nextStatus });
+        await axios.patch(`/api/occupations/${id}/archive`);
+      } else {
+        await axios.patch(`/api/occupations/${id}`, { statut: nextStatus });
+      }
       fetchOccupations();
     } catch (err) { alert('Erreur lors du passage à l\'étape suivante'); }
   };
@@ -896,6 +915,16 @@ function OccupationsPageContent() {
                                  <span className={`flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest whitespace-nowrap ${alertConfig.status === 'overdue' ? 'bg-rose-200 text-rose-700' : 'bg-amber-200 text-amber-700'}`}>
                                    <AlertTriangle size={10} />
                                    {alertConfig.status === 'overdue' ? 'Alerte' : 'Alerte'}
+                                 </span>
+                               )}
+                               {(occ as any).isExempt && (
+                                 <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest whitespace-nowrap bg-emerald-200 text-emerald-700" title="Exonéré de facturation">
+                                   <DollarSign size={10} style={{ textDecoration: 'line-through' }} />
+                                 </span>
+                               )}
+                               {(occ as any).isNotAuthorized && (
+                                 <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest whitespace-nowrap bg-red-200 text-red-700" title="Non autorisé - Majoration 100%">
+                                   <AlertCircle size={10} />
                                  </span>
                                )}
                                <ExternalLink size={14} className="opacity-0 group-hover/title:opacity-100 transition-opacity" />
@@ -1442,11 +1471,11 @@ function OccupationsPageContent() {
                   {formData.type === 'TOURNAGE' && (
                     <div className="pt-2">
                       <label className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl cursor-pointer hover:bg-amber-100 transition-all group">
-                        <input 
-                          type="checkbox" 
-                          className="w-5 h-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500 cursor-pointer" 
-                          checked={formData.isCourtMetrage} 
-                          onChange={e => setFormData({...formData, isCourtMetrage: e.target.checked})} 
+                        <input
+                          type="checkbox"
+                          className="w-5 h-5 rounded border-amber-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
+                          checked={formData.isCourtMetrage}
+                          onChange={e => setFormData({...formData, isCourtMetrage: e.target.checked})}
                         />
                         <div className="flex flex-col">
                           <span className="text-xs font-black text-amber-900 uppercase tracking-tight">Court métrage <span className="lowercase font-bold tracking-normal">&lt; 59 minutes</span></span>
@@ -1454,6 +1483,38 @@ function OccupationsPageContent() {
                         </div>
                       </label>
                     </div>
+                  )}
+                  {(formData.type === 'CHANTIER' || formData.type === 'TOURNAGE') && (
+                    <>
+                      <div className="pt-2">
+                        <label className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl cursor-pointer hover:bg-emerald-100 transition-all group">
+                          <input
+                            type="checkbox"
+                            className="w-5 h-5 rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                            checked={formData.isExempt}
+                            onChange={e => setFormData({...formData, isExempt: e.target.checked})}
+                          />
+                          <div className="flex flex-col">
+                            <span className="text-xs font-black text-emerald-900 uppercase tracking-tight">Exonéré</span>
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-0.5">Exonéré de facturation - Sera archivé automatiquement</span>
+                          </div>
+                        </label>
+                      </div>
+                      <div className="pt-2">
+                        <label className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl cursor-pointer hover:bg-red-100 transition-all group">
+                          <input
+                            type="checkbox"
+                            className="w-5 h-5 rounded border-red-300 text-red-600 focus:ring-red-500 cursor-pointer"
+                            checked={formData.isNotAuthorized}
+                            onChange={e => setFormData({...formData, isNotAuthorized: e.target.checked})}
+                          />
+                          <div className="flex flex-col">
+                            <span className="text-xs font-black text-red-900 uppercase tracking-tight">Non autorisé</span>
+                            <span className="text-[10px] font-bold text-red-600 uppercase tracking-widest leading-none mt-0.5">Majoration 100% (Pas d'autorisation)</span>
+                          </div>
+                        </label>
+                      </div>
+                    </>
                   )}
                 </div>
 

@@ -4,21 +4,27 @@ import { Clock, Info, Trash2 } from 'lucide-react';
 interface Props {
   years: number[];
   getDispositivesTimeline: () => Record<number, any[]>;
+  chartData?: any[];
   selectedYear?: number;
   onSelectYear?: (year: number) => void;
   onDeleteYear?: (year: number) => void;
   isAdmin?: boolean;
 }
 
-export default function CommerceYearTimeline({ years, getDispositivesTimeline, selectedYear, onSelectYear, onDeleteYear, isAdmin }: Props) {
+export default function CommerceYearTimeline({ years, getDispositivesTimeline, chartData = [], selectedYear, onSelectYear, onDeleteYear, isAdmin }: Props) {
   if (years.length === 0) return null;
   const timelineData = getDispositivesTimeline();
   const sortedYears = Object.keys(timelineData).map(Number).sort((a, b) => a - b);
 
+  // Créer une map chartData par année pour accès rapide
+  const chartDataByYear = new Map(chartData.map(d => [d.year, d]));
+
   const sortedYearsData = sortedYears.map(year => {
     const items = timelineData[year] || [];
     const activeItems = items.filter(i => i.status !== 'supprimé');
-    const totalMontant = activeItems.reduce((sum, i) => sum + (i.montant || 0), 0);
+    // Utiliser le montant correct de chartData si disponible (qui inclut les dégrèvements)
+    const chartEntry = chartDataByYear.get(year);
+    const totalMontant = chartEntry ? chartEntry.total : activeItems.reduce((sum, i) => sum + (i.montant || 0), 0);
     return { year, totalMontant, items, activeItems };
   });
 

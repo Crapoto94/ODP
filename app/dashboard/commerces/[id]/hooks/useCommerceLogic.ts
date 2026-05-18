@@ -85,6 +85,7 @@ export function useCommerceLogic(paramId: string) {
 
   const fetchOccupations = async (year: number) => {
     try {
+      console.log('[useCommerceLogic] fetchOccupations called for year', year);
       const res = await axios.get('/api/occupations', {
         params: {
           type: 'COMMERCE',
@@ -92,6 +93,10 @@ export function useCommerceLogic(paramId: string) {
           tiersId: paramId
         }
       });
+      console.log('[useCommerceLogic] Occupations fetched:', res.data?.length || 0, 'items');
+      if (res.data && res.data.length > 0) {
+        console.log('[useCommerceLogic] First occupation lignes count:', res.data[0]?.lignes?.length || 0);
+      }
       setOccupations(res.data || []);
     } catch (err) {
       console.error('Failed to fetch occupations:', err);

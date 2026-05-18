@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pencil, Trash2, RefreshCw, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import axios from 'axios';
 import CommerceDispositivesManager from '@/components/CommerceDispositivesManager';
 import CommerceDegrevementManager from '@/components/CommerceDegrevementManager';
+import DegrevementModal from '@/components/DegrevementModal';
 
 interface Props {
   selectedYear: number | null;
@@ -30,15 +31,22 @@ export default function CommerceDispositifsList({
   isFactured = false
 }: Props) {
   const [showOld, setShowOld] = React.useState(false);
+  const [editingDegrèvement, setEditingDegrèvement] = useState<any>(null);
+  const [isDegrevementModalOpen, setIsDegrevementModalOpen] = useState(false);
 
-  const isAnyFactured = occupations.some((o: any) => 
+  const isAnyFactured = occupations.some((o: any) =>
     ['FACTURE', 'FACTURÉ', 'TITRE', 'TITRÉ', 'CLOS', 'PAYE', 'PAYÉ'].includes(o.statut)
   );
 
   // Current active lines
-  const currentLines = occupations.flatMap((occ: any) => 
+  const currentLines = occupations.flatMap((occ: any) =>
     (occ.lignes || []).filter((ligne: any) => !ligne.deletedAt)
   );
+
+  // Calculer le montant total de la facture (sans les dégrèvements)
+  const totalFactureAmount = currentLines
+    .filter(ligne => ligne.article?.designation !== 'DEGRÈVEMENT' && ligne.montant >= 0)
+    .reduce((sum, ligne) => sum + (ligne.montant || 0), 0);
 
   // Find devices from ALL previous years that are missing in N
   const oldDispositifs = React.useMemo(() => {
@@ -106,8 +114,12 @@ export default function CommerceDispositifsList({
                 selectedYear={selectedYear}
                 occupationId={occupations[0]?.id || 0}
                 onDegrevementAdded={() => {
+                  console.log('[CommerceDispositifsList] onDegrevementAdded callback triggered');
                   fetchCommerceDetails();
-                  if (selectedYear) fetchOccupations(selectedYear);
+                  if (selectedYear) {
+                    console.log('[CommerceDispositifsList] Calling fetchOccupations for year', selectedYear);
+                    fetchOccupations(selectedYear);
+                  }
                 }}
               />
             </>
@@ -219,8 +231,13 @@ export default function CommerceDispositifsList({
                       <div className="flex gap-2">
                         <button
                           onClick={() => {
-                            setEditingLigne(ligne);
-                            setIsLigneModalOpen(true);
+                            if (isDegrèvement) {
+                              setEditingDegrèvement(ligne);
+                              setIsDegrevementModalOpen(true);
+                            } else {
+                              setEditingLigne(ligne);
+                              setIsLigneModalOpen(true);
+                            }
                           }}
                           className="p-2 hover:bg-blue-50 rounded-lg text-blue-600 transition-colors"
                           title="Éditer"
@@ -292,6 +309,20 @@ export default function CommerceDispositifsList({
           )}
         </div>
       )}
+
+      {/* Modal pour éditer un dégrèvement */}
+      <DegrevementModal
+        isOpen={isDegrevementModalOpen}
+        onClose={() => setIsDegrevementModalOpen(false)}
+        onSave={() => {
+          fetchCommerceDetails();
+          if (selectedYear) fetchOccupations(selectedYear);
+          setIsDegrevementModalOpen(false);
+        }}
+        occupationId={occupations[0]?.id || 0}
+        initialData={editingDegrèvement}
+        maxMontant={totalFactureAmount}
+      />
     </div>
   );
 }

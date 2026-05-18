@@ -34,9 +34,11 @@ export async function GET(
         lignes: {
           select: {
             id: true,
+            montant: true,
             quantite1: true,
             dateDebut: true,
             dateFin: true,
+            deletedAt: true,
             article: {
               select: {
                 id: true,
@@ -78,17 +80,30 @@ export async function GET(
       let totalAmount = 0;
 
       occ.lignes.forEach((ligne: any) => {
-        if (ligne.article) {
+        // Filtrer les lignes supprimées et les dégrèvements
+        if (ligne.article && !ligne.deletedAt && ligne.article.designation !== 'DEGRÈVEMENT') {
           dispositifs.push({
             nom: ligne.article.designation,
             id: ligne.article.id,
             count: 1
           });
-          // Calculate total amount
-          const amount = (ligne.article.montant || 0) * (ligne.quantite1 || 0);
+          // Utiliser le montant stocké dans la ligne (qui peut être négatif pour les dégrèvements)
+          // Si ligne.montant n'existe pas, calculer à partir de article.montant
+          const amount = ligne.montant !== undefined && ligne.montant !== null
+            ? ligne.montant
+            : ((ligne.article.montant || 0) * (ligne.quantite1 || 0));
+          totalAmount += amount;
+        } else if (ligne.article && !ligne.deletedAt && ligne.article.designation === 'DEGRÈVEMENT') {
+          // Retrancher les dégrèvements du montant total
+          console.log('[API] Dégrèvement trouvé:', ligne.article.designation, 'montant:', ligne.montant);
+          const amount = ligne.montant !== undefined && ligne.montant !== null
+            ? ligne.montant
+            : 0;
           totalAmount += amount;
         }
       });
+
+      console.log('[API] Year', year, 'Occupation', occ.id, 'Total amount:', totalAmount, 'Dispositifs:', dispositifs.length);
 
       if (dispositifs.length > 0) {
         timelineEvents.push({
@@ -147,13 +162,14 @@ export async function GET(
       if (!year) return;
 
       occ.lignes.forEach((ligne: any) => {
+        // Inclure tous les dispositifs et dégrèvements (non supprimés)
         if (ligne.article && !ligne.deletedAt) {
           const yearDisps = dispositifsByYear.get(year);
           if (yearDisps) {
             yearDisps.push({
               id: ligne.id,
               nom: ligne.article.designation,
-              montant: ligne.article.montant || 0,
+              montant: ligne.montant !== undefined && ligne.montant !== null ? ligne.montant : (ligne.article.montant || 0),
               unite: ligne.article.modeTaxation?.nom || '',
               dateDebut: ligne.dateDebut,
               dateFin: ligne.dateFin,
@@ -166,8 +182,12 @@ export async function GET(
     });
 
     // Sort each year's dispositifs alphabetically
-    dispositifsByYear.forEach((disps) => {
+    dispositifsByYear.forEach((disps, year) => {
       disps.sort((a, b) => a.nom.localeCompare(b.nom));
+      console.log(`[API] Year ${year} dispositifsByYear:`, disps.length, 'items, total montant:', disps.reduce((sum, d) => sum + d.montant, 0));
+      disps.forEach(d => {
+        console.log(`  - ${d.nom}: montant=${d.montant}, count=${d.count}`);
+      });
     });
 
     // Calculate amounts by year with status tracking
@@ -213,6 +233,7 @@ export async function GET(
           billed: Math.max(0, data.billed),
           notBilled: Math.max(0, notBilled),
           total: data.total,
+          amount: data.total,
           status: data.statuses.length === 1 ? data.statuses[0] : 'MIXED',
           billedPercentage: Math.round(billedPercentage)
         };

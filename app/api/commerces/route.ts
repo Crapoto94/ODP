@@ -55,16 +55,16 @@ export async function GET(request: Request) {
         const articleMap = new Map<string, any>();
 
         occ.lignes.forEach((l: any) => {
-          if (l.article) {
+          if (l.article && !l.deletedAt) {
             const nom = l.article.designation;
             const count = articleCounts.get(nom) || 0;
             articleCounts.set(nom, count + 1);
             if (!articleMap.has(nom)) {
-              articleMap.set(nom, { 
-                id: l.article.id, 
-                nom, 
-                year, 
-                unitPrice: l.article.montant, 
+              articleMap.set(nom, {
+                id: l.article.id,
+                nom,
+                year,
+                unitPrice: l.article.montant,
                 total: l.montant,
                 quantite1: l.quantite1,
                 notes_raw: l.article.notes,
@@ -116,6 +116,11 @@ export async function GET(request: Request) {
                 // Replace with newer year version
                 existing.count = article.count || 1;
                 existing.year = article.year;
+                existing.total = article.total;
+                existing.quantite1 = article.quantite1;
+                existing.unitPrice = article.unitPrice;
+                existing.notes_raw = article.notes_raw;
+                existing.notes = article.notes;
               }
             } else {
               commerce.articles.push({ ...article, count: article.count || 1 });
@@ -154,7 +159,8 @@ export async function GET(request: Request) {
         ? commerce.articles.filter((a: any) => a.year === lastYear)
         : commerce.articles;
 
-      const lastYearTotal = filteredArticles.reduce((sum: number, a: any) => sum + (a.total || 0), 0);
+      const lastYearTotal = filteredArticles
+        .reduce((sum: number, a: any) => sum + (a.total || 0), 0);
       
       const enseigneSurface = filteredArticles.reduce((sum: number, a: any) => {
         let artNotes: any = {};

@@ -264,27 +264,31 @@ export async function generateInvoicePdfBuffer(
       if (ligne && ligne.article) {
         let mt: any = {};
         try { mt = ligne.article.notes ? JSON.parse(ligne.article.notes) : {}; } catch(e){}
-        
+
+        const isDegrèvement = ligne.article.designation === 'DEGRÈVEMENT';
+
         const d1 = new Date(ligne.dateDebutConstatee || ligne.dateDebut);
         const d2 = new Date(ligne.dateFinConstatee || ligne.dateFin);
         const dateStr = `${format(d1, 'dd/MM/yyyy')} - ${format(d2, 'dd/MM/yyyy')}`;
 
         const occD1 = occ.dateDebut ? new Date(occ.dateDebut) : null;
         const occD2 = occ.dateFin ? new Date(occ.dateFin) : null;
-        
-        const isDifferentDates = !occD1 || !occD2 || 
-          format(d1, 'yyyy-MM-dd') !== format(occD1, 'yyyy-MM-dd') || 
+
+        const isDifferentDates = !occD1 || !occD2 ||
+          format(d1, 'yyyy-MM-dd') !== format(occD1, 'yyyy-MM-dd') ||
           format(d2, 'yyyy-MM-dd') !== format(occD2, 'yyyy-MM-dd');
 
         replacements['{article.designation}'] = ligne.article.designation || '';
-        replacements['{article.designationcomplete}'] = isDifferentDates 
-          ? `${ligne.article.designation || ''} du ${dateStr}` 
-          : (ligne.article.designation || '');
+        replacements['{article.designationcomplete}'] = isDegrèvement
+          ? (ligne.article.designation || '')
+          : (isDifferentDates
+            ? `${ligne.article.designation || ''} du ${dateStr}`
+            : (ligne.article.designation || ''));
         replacements['{article.note}'] = ligne.note || '';
-        
+
         const modeNom = (ligne.article.modeTaxation?.nom || 'unité').toLowerCase();
         const modeParts = (ligne.article.modeTaxation?.nom || 'unité').split('/');
-        
+
         let unit = modeParts[1] || modeParts[0] || '';
         let timeUnit = modeParts[2] || (modeNom.includes('jour') ? 'jours' : 'mois');
 
@@ -297,27 +301,38 @@ export async function generateInvoicePdfBuffer(
         let qteFull = occ.type === 'TLPE'
           ? `${ligne.quantite1 || 0} m²`
           : `${ligne.quantite1 || 0} ${unit}`;
-        
-        replacements['{article.quantite}'] = qteFull;
-        replacements['{article.dates}'] = dateStr;
-        
+
+        replacements['{article.quantite}'] = isDegrèvement ? '' : qteFull;
+        replacements['{article.dates}'] = isDegrèvement ? '' : dateStr;
+
         const pu = occ.type === 'TLPE' ? (ligne.montant || 0) : (ligne.article.montant || 0);
         let lineVal = (ligne.montant || 0);
         let details = '';
 
-        if (occ.type === 'TLPE') {
+        if (isDegrèvement) {
+          // For reductions, display the deducted amount
+          lineVal = ligne.montant || 0;
+          const deductedAmount = Math.abs(lineVal);
+          details = `Déduction : ${deductedAmount.toFixed(2)}€`;
+          replacements['{article.pu}'] = `${deductedAmount.toFixed(2)} €`;
+          replacements['{article.totalHT}'] = `-${deductedAmount.toFixed(2)} €`;
+          replacements['{article.full_description}'] = `${ligne.article.designation}\n${details}`;
+        } else if (occ.type === 'TLPE') {
           const { months, ratio: prorata } = calculateMonthlyProrata(d1, d2);
           const isExempt = mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt;
           lineVal = isExempt ? 0 : (pu * (ligne.quantite1 || 0) * prorata);
           details = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (${months} mois)` : ''}${isExempt ? ' (Exonéré)' : ''}`;
+          replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
+          replacements['{article.totalHT}'] = `${lineVal.toFixed(2)} €`;
+          replacements['{article.full_description}'] = `${ligne.article.designation}\n${dateStr}\n${details}`;
         } else {
           lineVal = pu * (ligne.quantite1 || 0);
           details = `${ligne.quantite1} ${unit} à ${pu.toFixed(2)}€`;
+          replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
+          replacements['{article.totalHT}'] = `${lineVal.toFixed(2)} €`;
+          replacements['{article.full_description}'] = `${ligne.article.designation}\n${dateStr}\n${details}`;
         }
         replacements['{article.details}'] = details;
-        replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
-        replacements['{article.totalHT}'] = `${lineVal.toFixed(2)} €`;
-        replacements['{article.full_description}'] = `${ligne.article.designation}\n${dateStr}\n${details}`;
       }
 
       // Process conditionals first (e.g., {IF agissantPourTier.nom|text})
@@ -333,7 +348,7 @@ export async function generateInvoicePdfBuffer(
   for (const el of (elements as any[])) {
       const style = el.style || {};
       const isRepeated = typeof el.value === 'string' && el.value.includes('{article.');
-      const instances = (isRepeated && occ.lignes) ? occ.lignes.filter((l: any) => !l.deletedAt) : [null];
+      const instances = (isRepeated && occ.lignes) ? occ.lignes.filter((l: any) => !l.deletedAt && l.montant !== 0) : [null];
       for (let i = 0; i < instances.length; i++) {
           const y = el.y + (i * (el.verticalPitch || (isRepeated ? 25 : 30)));
           if (el.type === 'RECT' && !style.noBackground && style.backgroundColor && style.backgroundColor !== 'transparent') {

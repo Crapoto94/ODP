@@ -7,7 +7,7 @@
     "schemaDev": "ODP_DEV",
     "user": "postgres",
     "password": "ivrypassword",
-    "mode": "PROD"
+    "mode": "DEV"
   },
   "admin": {
     "login": "admin",

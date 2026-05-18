@@ -278,6 +278,7 @@ export default function CommerceDetailPage({ params }: Props) {
       <CommerceYearTimeline
         years={years}
         getDispositivesTimeline={getDispositivesTimeline}
+        chartData={chartData}
         selectedYear={selectedYear ?? undefined}
         onSelectYear={setSelectedYear}
         onDeleteYear={handleDeleteYear}
