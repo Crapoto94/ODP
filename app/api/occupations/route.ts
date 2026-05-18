@@ -50,7 +50,46 @@ export async function GET(req: Request) {
     console.log('[GET Occupations] Fetching occupations with tiers and lignes...');
     const occupations = await (prisma as any).occupation.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        nom: true,
+        tiersId: true,
+        type: true,
+        statut: true,
+        dateDebut: true,
+        dateFin: true,
+        anneeTaxation: true,
+        adresse: true,
+        latitude: true,
+        longitude: true,
+        description: true,
+        observations: true,
+        photos: true,
+        montantCalcule: true,
+        facturePath: true,
+        created_at: true,
+        updated_at: true,
+        numeroFacture: true,
+        dossierParentId: true,
+        isCourtMetrage: true,
+        agissantPour: true,
+        isAgissantPourBillable: true,
+        aotGabaritId: true,
+        aotFinalPath: true,
+        aotSigned: true,
+        datePaiement: true,
+        dateINIT: true,
+        dateINST: true,
+        datePREP: true,
+        dateEN_COURS: true,
+        dateVALIDE: true,
+        dateFACTURE: true,
+        dateTITRE: true,
+        dateCLOS: true,
+        dateAlerte: true,
+        isArchived: true,
+        isExempt: true,
+        isNotAuthorized: true,
         tiers: {
           select: {
             id: true,
@@ -148,7 +187,7 @@ export async function POST(req: Request) {
       agissantPour
     } = body;
 
-    console.log('[POST Occupations] Body:', { tiersId, type, adresse });
+    console.log('[POST Occupations] Body:', { tiersId, type, adresse, isCourtMetrage, isExempt, isNotAuthorized });
 
     if (!tiersId || !type) {
       return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });

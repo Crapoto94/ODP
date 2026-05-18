@@ -315,8 +315,13 @@ function OccupationsPageContent() {
         longitude: finalLng,
         photos: uploadedPhotos.join(','),
         // Send only the ID for agissantPour, not the name
-        agissantPour: formData.agissantPourId || ''
+        agissantPour: formData.agissantPourId || '',
+        // Ensure boolean flags are included
+        isCourtMetrage: formData.isCourtMetrage,
+        isExempt: formData.isExempt,
+        isNotAuthorized: formData.isNotAuthorized
       };
+      console.log('[handleSaveOccupation] Payload with flags:', { isCourtMetrage: payload.isCourtMetrage, isExempt: payload.isExempt, isNotAuthorized: payload.isNotAuthorized });
       if (isEditing) {
         await axios.patch(`/api/occupations/${formData.id}`, payload);
       } else {
