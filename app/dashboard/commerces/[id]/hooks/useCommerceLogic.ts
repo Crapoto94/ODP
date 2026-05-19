@@ -52,6 +52,8 @@ export function useCommerceLogic(paramId: string) {
   const [isGeneratingAot, setIsGeneratingAot] = useState(false);
   const [isAotFinalModalOpen, setIsAotFinalModalOpen] = useState(false);
   const [isUploadingAotFinal, setIsUploadingAotFinal] = useState(false);
+  const [isAotDateModalOpen, setIsAotDateModalOpen] = useState(false);
+  const [pendingAotUpload, setPendingAotUpload] = useState<{ file: File; occupationId: number } | null>(null);
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
 
   // Facture State
@@ -314,6 +316,15 @@ export function useCommerceLogic(paramId: string) {
   };
 
   const handleUploadAotFinal = async (occupationId: number, file: File, isSigned: boolean) => {
+    if (isSigned) {
+      // For signed AOT, open date modal instead
+      setPendingAotUpload({ file, occupationId });
+      setIsAotFinalModalOpen(false);
+      setIsAotDateModalOpen(true);
+      return;
+    }
+
+    // For unsigned AOT, upload directly
     setIsUploadingAotFinal(true);
     try {
       const fd = new FormData();
@@ -323,14 +334,40 @@ export function useCommerceLogic(paramId: string) {
 
       await axios.patch(`/api/occupations/${occupationId}`, {
         aotFinalPath: aotUrl,
-        aotSigned: isSigned,
-        ...(isSigned ? { statut: 'EN_COURS' } : {}),
+        aotSigned: false,
       });
       if (selectedYear) fetchOccupations(selectedYear);
       setIsAotFinalModalOpen(false);
     } catch (err) {
       console.error('[Upload AOT Final] Error:', err);
       alert("Erreur lors de l'envoi de l'AOT final");
+    } finally {
+      setIsUploadingAotFinal(false);
+    }
+  };
+
+  const handleConfirmAotDate = async (aotDate: string) => {
+    if (!pendingAotUpload) return;
+
+    setIsUploadingAotFinal(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', pendingAotUpload.file);
+      const res = await axios.post('/api/upload', fd);
+      const aotUrl = res.data.url;
+
+      await axios.patch(`/api/occupations/${pendingAotUpload.occupationId}`, {
+        aotFinalPath: aotUrl,
+        aotSigned: true,
+        aotDate: new Date(aotDate).toISOString(),
+        statut: 'EN_COURS',
+      });
+      if (selectedYear) fetchOccupations(selectedYear);
+      setIsAotDateModalOpen(false);
+      setPendingAotUpload(null);
+    } catch (err) {
+      console.error('[Confirm AOT Date] Error:', err);
+      alert("Erreur lors de l'enregistrement de la date");
     } finally {
       setIsUploadingAotFinal(false);
     }
@@ -588,6 +625,10 @@ export function useCommerceLogic(paramId: string) {
     isAotFinalModalOpen,
     setIsAotFinalModalOpen,
     isUploadingAotFinal,
+    isAotDateModalOpen,
+    setIsAotDateModalOpen,
+    pendingAotUpload,
+    setPendingAotUpload,
     isSignatureModalOpen,
     setIsSignatureModalOpen,
     isGeneratingFacture,
@@ -597,6 +638,7 @@ export function useCommerceLogic(paramId: string) {
     handleSetAotGabarit,
     handleDownloadAot,
     handleUploadAotFinal,
+    handleConfirmAotDate,
     handleDownloadFacture,
     handleSendAot,
     handleAddContact,

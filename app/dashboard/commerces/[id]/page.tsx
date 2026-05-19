@@ -16,6 +16,7 @@ import CommerceAmountChart from './components/CommerceAmountChart';
 import CommerceDispositifsList from './components/CommerceDispositifsList';
 import CommerceAotActions from './components/CommerceAotActions';
 import CommerceRenewModal from './components/CommerceRenewModal';
+import CommerceAotDateModal from './components/CommerceAotDateModal';
 import AotFinalModal from '../../occupations/[id]/components/AotFinalModal';
 import SignatureRequestModal from '../../occupations/[id]/components/SignatureRequestModal';
 import OccupationFinancialCard from '../../occupations/[id]/components/OccupationFinancialCard';
@@ -63,6 +64,10 @@ export default function CommerceDetailPage({ params }: Props) {
     isAotFinalModalOpen,
     setIsAotFinalModalOpen,
     isUploadingAotFinal,
+    isAotDateModalOpen,
+    setIsAotDateModalOpen,
+    pendingAotUpload,
+    setPendingAotUpload,
     isSignatureModalOpen,
     setIsSignatureModalOpen,
     isGeneratingFacture,
@@ -72,6 +77,7 @@ export default function CommerceDetailPage({ params }: Props) {
     handleSetAotGabarit,
     handleDownloadAot,
     handleUploadAotFinal,
+    handleConfirmAotDate,
     handleDownloadFacture,
     handleSendAot,
     handleAddContact,
@@ -398,6 +404,17 @@ export default function CommerceDetailPage({ params }: Props) {
           const occ = occupations.find((o: any) => o.statut === 'PREP' || o.statut === 'PREPARATION_AOT') || occupations[0];
           if (occ) handleUploadAotFinal(occ.id, file, isSigned);
         }}
+      />
+
+      <CommerceAotDateModal
+        isOpen={isAotDateModalOpen}
+        onClose={() => {
+          setIsAotDateModalOpen(false);
+          setPendingAotUpload(null);
+        }}
+        isLoading={isUploadingAotFinal}
+        onConfirm={handleConfirmAotDate}
+        aotPreviewUrl={pendingAotUpload ? URL.createObjectURL(pendingAotUpload.file) : undefined}
       />
 
       {occupations.length > 0 && (
