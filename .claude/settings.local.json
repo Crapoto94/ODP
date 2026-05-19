@@ -64,7 +64,15 @@
       "PowerShell(ls -l \"C:\\\\dev\\\\ODP\\\\public\\\\uploads\\\\factures\")",
       "PowerShell(grep \"Facture-535\")",
       "Bash(Get-ChildItem -Recurse \"C:\\\\dev\\\\ODP\\\\app\\\\dashboard\\\\occupations\" -Filter \"page.tsx\")",
-      "Bash(Select-Object FullName)"
+      "Bash(Select-Object FullName)",
+      "Bash(Remove-Item -Path \"C:\\\\dev\\\\ODP\\\\lib\\\\prisma-client\\\\query_engine-windows.dll.node.tmp*\" -Force -ErrorAction SilentlyContinue)",
+      "Bash(Get-Item \"C:\\\\dev\\\\ODP\\\\lib\\\\prisma-client\\\\query_engine-windows.dll.node*\")",
+      "Bash(DATABASE_URL=\"postgresql://postgres:ivrypassword@10.103.130.106:5432/ivry_admin?schema=ODP_DEV\" npx prisma migrate dev --name add_aotDate_field)",
+      "Bash(rm -f \"C:\\\\dev\\\\ODP\\\\lib\\\\prisma-client\"/*.tmp*)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:ivrypassword@10.103.130.106:5432/ivry_admin?schema=ODP_DEV\" npx prisma generate)",
+      "Bash(rm -f \"C:\\\\dev\\\\ODP\\\\lib\\\\prisma-client\"/*.tmp* && npx prisma generate)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:ivrypassword@10.103.130.106:5432/ivry_admin?schema=ODP\" npx prisma db push --skip-generate)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:ivrypassword@10.103.130.106:5432/ivry_admin?schema=ODP_DEV\" npx prisma db push --skip-generate)"
     ]
   }
 }

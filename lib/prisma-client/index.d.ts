@@ -4712,6 +4712,7 @@ export namespace Prisma {
     aotGabaritId: number | null
     aotFinalPath: string | null
     aotSigned: boolean | null
+    aotDate: Date | null
     datePaiement: Date | null
     dateINIT: Date | null
     dateINST: Date | null
@@ -4754,6 +4755,7 @@ export namespace Prisma {
     aotGabaritId: number | null
     aotFinalPath: string | null
     aotSigned: boolean | null
+    aotDate: Date | null
     datePaiement: Date | null
     dateINIT: Date | null
     dateINST: Date | null
@@ -4796,6 +4798,7 @@ export namespace Prisma {
     aotGabaritId: number
     aotFinalPath: number
     aotSigned: number
+    aotDate: number
     datePaiement: number
     dateINIT: number
     dateINST: number
@@ -4862,6 +4865,7 @@ export namespace Prisma {
     aotGabaritId?: true
     aotFinalPath?: true
     aotSigned?: true
+    aotDate?: true
     datePaiement?: true
     dateINIT?: true
     dateINST?: true
@@ -4904,6 +4908,7 @@ export namespace Prisma {
     aotGabaritId?: true
     aotFinalPath?: true
     aotSigned?: true
+    aotDate?: true
     datePaiement?: true
     dateINIT?: true
     dateINST?: true
@@ -4946,6 +4951,7 @@ export namespace Prisma {
     aotGabaritId?: true
     aotFinalPath?: true
     aotSigned?: true
+    aotDate?: true
     datePaiement?: true
     dateINIT?: true
     dateINST?: true
@@ -5075,6 +5081,7 @@ export namespace Prisma {
     aotGabaritId: number | null
     aotFinalPath: string | null
     aotSigned: boolean
+    aotDate: Date | null
     datePaiement: Date | null
     dateINIT: Date | null
     dateINST: Date | null
@@ -5136,6 +5143,7 @@ export namespace Prisma {
     aotGabaritId?: boolean
     aotFinalPath?: boolean
     aotSigned?: boolean
+    aotDate?: boolean
     datePaiement?: boolean
     dateINIT?: boolean
     dateINST?: boolean
@@ -5185,6 +5193,7 @@ export namespace Prisma {
     aotGabaritId?: boolean
     aotFinalPath?: boolean
     aotSigned?: boolean
+    aotDate?: boolean
     datePaiement?: boolean
     dateINIT?: boolean
     dateINST?: boolean
@@ -5228,6 +5237,7 @@ export namespace Prisma {
     aotGabaritId?: boolean
     aotFinalPath?: boolean
     aotSigned?: boolean
+    aotDate?: boolean
     datePaiement?: boolean
     dateINIT?: boolean
     dateINST?: boolean
@@ -5293,6 +5303,7 @@ export namespace Prisma {
       aotGabaritId: number | null
       aotFinalPath: string | null
       aotSigned: boolean
+      aotDate: Date | null
       datePaiement: Date | null
       dateINIT: Date | null
       dateINST: Date | null
@@ -5731,6 +5742,7 @@ export namespace Prisma {
     readonly aotGabaritId: FieldRef<"Occupation", 'Int'>
     readonly aotFinalPath: FieldRef<"Occupation", 'String'>
     readonly aotSigned: FieldRef<"Occupation", 'Boolean'>
+    readonly aotDate: FieldRef<"Occupation", 'DateTime'>
     readonly datePaiement: FieldRef<"Occupation", 'DateTime'>
     readonly dateINIT: FieldRef<"Occupation", 'DateTime'>
     readonly dateINST: FieldRef<"Occupation", 'DateTime'>
@@ -31955,6 +31967,7 @@ export namespace Prisma {
     aotGabaritId: 'aotGabaritId',
     aotFinalPath: 'aotFinalPath',
     aotSigned: 'aotSigned',
+    aotDate: 'aotDate',
     datePaiement: 'datePaiement',
     dateINIT: 'dateINIT',
     dateINST: 'dateINST',
@@ -32616,6 +32629,7 @@ export namespace Prisma {
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
+    aotDate?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dateINIT?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dateINST?: DateTimeNullableFilter<"Occupation"> | Date | string | null
@@ -32664,6 +32678,7 @@ export namespace Prisma {
     aotGabaritId?: SortOrderInput | SortOrder
     aotFinalPath?: SortOrderInput | SortOrder
     aotSigned?: SortOrder
+    aotDate?: SortOrderInput | SortOrder
     datePaiement?: SortOrderInput | SortOrder
     dateINIT?: SortOrderInput | SortOrder
     dateINST?: SortOrderInput | SortOrder
@@ -32715,6 +32730,7 @@ export namespace Prisma {
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
+    aotDate?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dateINIT?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dateINST?: DateTimeNullableFilter<"Occupation"> | Date | string | null
@@ -32763,6 +32779,7 @@ export namespace Prisma {
     aotGabaritId?: SortOrderInput | SortOrder
     aotFinalPath?: SortOrderInput | SortOrder
     aotSigned?: SortOrder
+    aotDate?: SortOrderInput | SortOrder
     datePaiement?: SortOrderInput | SortOrder
     dateINIT?: SortOrderInput | SortOrder
     dateINST?: SortOrderInput | SortOrder
@@ -32813,6 +32830,7 @@ export namespace Prisma {
     aotGabaritId?: IntNullableWithAggregatesFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableWithAggregatesFilter<"Occupation"> | string | null
     aotSigned?: BoolWithAggregatesFilter<"Occupation"> | boolean
+    aotDate?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
     datePaiement?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
     dateINIT?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
     dateINST?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
@@ -35060,6 +35078,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -35108,6 +35127,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -35153,6 +35173,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -35201,6 +35222,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -35248,6 +35270,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -35288,6 +35311,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -35330,6 +35354,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -37943,6 +37968,7 @@ export namespace Prisma {
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
+    aotDate?: SortOrder
     datePaiement?: SortOrder
     dateINIT?: SortOrder
     dateINST?: SortOrder
@@ -37996,6 +38022,7 @@ export namespace Prisma {
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
+    aotDate?: SortOrder
     datePaiement?: SortOrder
     dateINIT?: SortOrder
     dateINST?: SortOrder
@@ -38038,6 +38065,7 @@ export namespace Prisma {
     aotGabaritId?: SortOrder
     aotFinalPath?: SortOrder
     aotSigned?: SortOrder
+    aotDate?: SortOrder
     datePaiement?: SortOrder
     dateINIT?: SortOrder
     dateINST?: SortOrder
@@ -40939,6 +40967,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -40985,6 +41014,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -41159,6 +41189,7 @@ export namespace Prisma {
     aotGabaritId?: IntNullableFilter<"Occupation"> | number | null
     aotFinalPath?: StringNullableFilter<"Occupation"> | string | null
     aotSigned?: BoolFilter<"Occupation"> | boolean
+    aotDate?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     datePaiement?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dateINIT?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dateINST?: DateTimeNullableFilter<"Occupation"> | Date | string | null
@@ -41720,6 +41751,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -41767,6 +41799,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -41879,6 +41912,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -41926,6 +41960,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -41970,6 +42005,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -42017,6 +42053,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -42123,6 +42160,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -42170,6 +42208,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -43048,6 +43087,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -43095,6 +43135,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -43207,6 +43248,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -43254,6 +43296,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -43298,6 +43341,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -43345,6 +43389,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -43405,6 +43450,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -43452,6 +43498,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -43892,6 +43939,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -43939,6 +43987,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -44033,6 +44082,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -44080,6 +44130,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -44181,6 +44232,7 @@ export namespace Prisma {
     aotGabaritId?: number | null
     aotFinalPath?: string | null
     aotSigned?: boolean
+    aotDate?: Date | string | null
     datePaiement?: Date | string | null
     dateINIT?: Date | string | null
     dateINST?: Date | string | null
@@ -44290,6 +44342,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -44336,6 +44389,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -44382,6 +44436,7 @@ export namespace Prisma {
     aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
     aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
     aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

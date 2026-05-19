@@ -61,6 +61,7 @@ model Occupation {
   aotGabaritId           Int?
   aotFinalPath           String?
   aotSigned              Boolean            @default(false)
+  aotDate                DateTime?
   datePaiement           DateTime?
   dateINIT               DateTime?
   dateINST               DateTime?
