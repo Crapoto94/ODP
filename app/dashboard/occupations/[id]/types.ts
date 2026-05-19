@@ -79,7 +79,13 @@ export interface Occupation {
   aotGabaritId?: number | null;
   aotFinalPath?: string;
   aotSigned?: boolean;
+  aotDate?: string | Date | null;
   facturePath?: string;
+  isCourtMetrage?: boolean;
+  isExempt?: boolean;
+  isNotAuthorized?: boolean;
+  isAgissantPourBillable?: boolean;
+  isArchived?: boolean;
 }
 
 export interface StatusConfig {

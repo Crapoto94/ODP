@@ -1035,7 +1035,7 @@ function OccupationsPageContent() {
                       </td>
                       <td className="px-3 py-3 rounded-r-xl border-y border-r border-slate-100 bg-white text-right group-hover:border-blue-200">
                         <div className="flex items-center justify-end gap-0.5">
-                          {view === 'ACTIVE' && !occ.isArchived && (
+                          {view === 'ACTIVE' && !(occ as any).isArchived && (
                             <>
                               <button onClick={() => { setSelectedOccForLigne(occ); setEditingLigne(null); setIsLigneModalOpen(true); }} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Ajouter Article"><Package size={14} /></button>
                               {['EN_ATTENTE', 'EN_COURS'].includes(occ.statut) && <button onClick={() => handleApprove(occ.id)} className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all" title="Approuver"><CheckCircle2 size={14} /></button>}

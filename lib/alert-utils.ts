@@ -61,12 +61,13 @@ export function getAlertConfig(dateAlerte?: string | null, today = new Date()): 
         textClass: 'text-rose-600',
       };
     case 'upcoming':
+      const days = daysUntil ?? 0;
       return {
         status: 'upcoming',
-        label: daysUntil === 0 ? 'Alerte aujourd\'hui' : `Alerte dans ${daysUntil} jour${daysUntil > 1 ? 's' : ''}`,
+        label: days === 0 ? 'Alerte aujourd\'hui' : `Alerte dans ${days} jour${days > 1 ? 's' : ''}`,
         bgClass: 'bg-amber-50',
         textClass: 'text-amber-600',
-        daysUntil: daysUntil ?? 0,
+        daysUntil: days,
       };
     default:
       return {
