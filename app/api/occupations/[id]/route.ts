@@ -119,7 +119,7 @@ export async function PATCH(
       ...(isNotAuthorized !== undefined && { isNotAuthorized: !!isNotAuthorized }),
       ...(aotFinalPath !== undefined && { aotFinalPath }),
       ...(aotSigned !== undefined && { aotSigned: !!aotSigned }),
-      ...(aotDate !== undefined && { aotDate: aotDate ? new Date(aotDate) : null }),
+      ...(aotDate !== undefined && { aotDate: aotDate || null }),
       ...(aotGabaritId !== undefined && { aotGabaritId: aotGabaritId ? parseInt(aotGabaritId) : null }),
       ...(observations !== undefined && { observations }),
       ...(datePaiement !== undefined && { datePaiement: datePaiement ? new Date(datePaiement) : null }),
