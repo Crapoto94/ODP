@@ -39,7 +39,7 @@ export default function OccupationArticles({
   onSendForSignature
 }: Props) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const isInit = occupation.type === 'CHANTIER' && (occupation.statut === 'INIT' || occupation.statut === 'INITIALISATION' || occupation.statut === 'EN_ATTENTE');
+  const isInit = (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') && (occupation.statut === 'INIT' || occupation.statut === 'INITIALISATION' || occupation.statut === 'EN_ATTENTE');
   const hasAotFinal = !!occupation.aotFinalPath;
 
   return (
@@ -82,7 +82,7 @@ export default function OccupationArticles({
       </div>
       
       {/* AOT Preparation Mode Card */}
-      {occupation.type === 'CHANTIER' && (occupation.statut === 'PREP' || occupation.statut === 'PREPARATION_AOT') && (
+      {(occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') && (occupation.statut === 'PREP' || occupation.statut === 'PREPARATION_AOT') && (
         <div className="bg-white border-2 border-slate-100 rounded-3xl p-8 md:p-10 text-slate-900 shadow-xl shadow-slate-200/50 relative overflow-hidden group mb-12 animate-in zoom-in-95 duration-500">
           {/* Subtle backdrop */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 opacity-50 blur-3xl group-hover:bg-indigo-100 transition-colors"></div>

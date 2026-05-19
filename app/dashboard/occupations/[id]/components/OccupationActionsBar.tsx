@@ -22,7 +22,7 @@ export default function OccupationActionsBar({
   onValidateDemand,
   onToggleVerifie
 }: Props) {
-  const isInit = occupation.type === 'CHANTIER' && (occupation.statut === 'INIT' || occupation.statut === 'INITIALISATION' || occupation.statut === 'EN_ATTENTE');
+  const isInit = (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') && (occupation.statut === 'INIT' || occupation.statut === 'INITIALISATION' || occupation.statut === 'EN_ATTENTE');
   const isInst = occupation.statut === 'INST';
   const isPrep = occupation.statut === 'PREP' || occupation.statut === 'PREPARATION_AOT';
   const isEnCours = occupation.statut === 'EN_COURS';
