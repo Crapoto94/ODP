@@ -97,6 +97,9 @@ export async function processDossier(params: {
       isMajoration: true
     });
     total = subtotal + subtotal; // Double the amount
+  } else if (occ.type === 'TOURNAGE' && (occ as any).isCourtMetrage && subtotal > 0) {
+    // Apply 50% discount for short film/shoots
+    total = subtotal * 0.5;
   }
 
   // 3. Update DB
