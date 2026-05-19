@@ -458,9 +458,9 @@ export default function CommercesPage() {
                               aotAlert.isExpired
                                 ? 'bg-rose-100 text-rose-700'
                                 : 'bg-amber-100 text-amber-700'
-                            }`}>
+                            }`} title={getAotAlertMessage(aotAlert)}>
                               {aotAlert.isExpired ? <AlertTriangle size={12} /> : <AlertCircle size={12} />}
-                              {getAotAlertMessage(aotAlert).split(' ').slice(0, 3).join(' ')}
+                              {aotAlert.isExpired ? `${Math.abs(aotAlert.daysUntilExpiry || 0)}j` : `${aotAlert.daysUntilExpiry}j`}
                             </span>
                           ) : null;
                         })()}
