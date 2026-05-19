@@ -45,7 +45,9 @@ export async function PATCH(
     const isAutoUnit = u2.includes('jour') || u2.includes('nuit') || u2.includes('mois');
     const datesChanged = (dateDebut !== undefined || dateFin !== undefined || dateDebutConstatee !== undefined || dateFinConstatee !== undefined);
 
-    if (isAutoUnit || (quantite2 === undefined && datesChanged)) {
+    // Always calculate quantite2 for CHANTIER and TOURNAGE (use time-based calculation)
+    const shouldCalculateQ2 = (existingLigne.occupation.type === 'CHANTIER' || existingLigne.occupation.type === 'TOURNAGE') || isAutoUnit || (quantite2 === undefined && datesChanged);
+    if (shouldCalculateQ2) {
        const fd = dateDebut !== undefined ? (dateDebut ? new Date(dateDebut) : null) : existingLigne.dateDebut;
        const ff = dateFin !== undefined ? (dateFin ? new Date(dateFin) : null) : existingLigne.dateFin;
        const fdc = dateDebutConstatee !== undefined ? (dateDebutConstatee ? new Date(dateDebutConstatee) : null) : existingLigne.dateDebutConstatee;

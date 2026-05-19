@@ -54,7 +54,17 @@
       "Bash(cat > *)",
       "Bash(curl -s http://localhost:3000/api/occupations/514)",
       "Bash(curl -s \"http://localhost:3000/api/occupations?view=ACTIVE\")",
-      "Bash(curl -s http://localhost:3000/api/occupations/531)"
+      "Bash(curl -s http://localhost:3000/api/occupations/531)",
+      "Bash(PGPASSWORD=ivrypassword psql -h 10.103.130.106 -p 5432 -U postgres -d ivry_admin -c ' *)",
+      "Bash(npx tsx *)",
+      "Bash(pkill -f \"node|next\")",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(powershell -Command *)",
+      "Bash(node --input-type=module -e ' *)",
+      "PowerShell(ls -l \"C:\\\\dev\\\\ODP\\\\public\\\\uploads\\\\factures\")",
+      "PowerShell(grep \"Facture-535\")",
+      "Bash(Get-ChildItem -Recurse \"C:\\\\dev\\\\ODP\\\\app\\\\dashboard\\\\occupations\" -Filter \"page.tsx\")",
+      "Bash(Select-Object FullName)"
     ]
   }
 }

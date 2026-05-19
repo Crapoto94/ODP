@@ -283,56 +283,63 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
 
               {(isFocused && !formData.articleId) && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl z-[120] max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
-                  {articles
-                    .filter(a => {
-                      if (showAll) return true; // By-pass total
+                  {loading ? (
+                    <div className="px-6 py-8 text-center text-slate-400 text-[10px]">Chargement des articles...</div>
+                  ) : articles.length === 0 ? (
+                    <div className="px-6 py-8 text-center text-slate-400 text-[10px]">
+                      Aucun article disponible pour {currentYear}
+                    </div>
+                  ) : (() => {
+                    const filteredArticles = articles
+                      .filter(a => {
+                        if (showAll) return true;
+                        if (occupationType === 'COMMERCE') return a.numero?.startsWith('1');
+                        if (occupationType === 'CHANTIER') return a.numero?.startsWith('2') || a.numero?.startsWith('4') || a.numero?.startsWith('3');
+                        if (occupationType === 'TOURNAGE') {
+                          if (a.id.toString() === formData.articleId) return true;
+                          const c = (a as any).categorie;
+                          const keywords = ['TOURNAGE', 'COURT METRAGE', 'COURT MÉTRAGE', 'FILM', 'FILMS', 'EVENEMENT', 'MANIFESTATION'];
+                          const isTournage = (n?: string) => keywords.some(k => n?.toUpperCase().includes(k));
+                          const match = isTournage(c?.nom) || isTournage(c?.parent?.nom) || isTournage(c?.parent?.parent?.nom);
+                          const hasTournageArticles = articles.some(art => {
+                             const cat = (art as any).categorie;
+                             return isTournage(cat?.nom) || isTournage(cat?.parent?.nom) || isTournage(cat?.parent?.parent?.nom);
+                          });
+                          if (!hasTournageArticles) return true;
+                          return match;
+                        }
+                        return true;
+                      })
+                      .filter(a => {
+                        const q = filterText.toLowerCase();
+                        return a.numero?.toLowerCase().includes(q) || a.designation?.toLowerCase().includes(q);
+                      })
+                      .sort((a, b) => (a.numero || '').localeCompare(b.numero || '', undefined, { numeric: true }));
 
-                      if (occupationType === 'COMMERCE') return a.numero?.startsWith('1');
-                      if (occupationType === 'CHANTIER') return a.numero?.startsWith('2') || a.numero?.startsWith('4') || a.numero?.startsWith('3');
-                      if (occupationType === 'TOURNAGE') {
-                        // Toujours montrer l'article déjà sélectionné
-                        if (a.id.toString() === formData.articleId) return true;
-                        
-                        const c = (a as any).categorie;
-                        const keywords = ['TOURNAGE', 'COURT METRAGE', 'COURT MÉTRAGE', 'FILM', 'FILMS', 'EVENEMENT', 'MANIFESTATION'];
-                        const isTournage = (n?: string) => keywords.some(k => n?.toUpperCase().includes(k));
-                        
-                        const match = isTournage(c?.nom) || isTournage(c?.parent?.nom) || isTournage(c?.parent?.parent?.nom);
-                        
-                        // Si après application du filtre spécifique TOURNAGE la liste serait vide, 
-                        // on ignore le filtre de type pour laisser l'utilisateur choisir dans tout le catalogue de l'année
-                        const hasTournageArticles = articles.some(art => {
-                           const cat = (art as any).categorie;
-                           return isTournage(cat?.nom) || isTournage(cat?.parent?.nom) || isTournage(cat?.parent?.parent?.nom);
-                        });
-                        
-                        if (!hasTournageArticles) return true;
-                        return match;
-                      }
-                      return true;
-                    })
-                    .filter(a => {
-                      const q = filterText.toLowerCase();
-                      return a.numero?.toLowerCase().includes(q) || a.designation?.toLowerCase().includes(q);
-                    })
-                    .sort((a, b) => (a.numero || '').localeCompare(b.numero || '', undefined, { numeric: true }))
-                    .map(art => (
-                      <button
-                        key={art.id}
-                        type="button"
-                        onClick={() => {
-                          setFormData(prev => ({ ...prev, articleId: art.id.toString() }));
-                          setFilterText(`${art.numero ? `[${art.numero}] ` : ''}${art.designation}`);
-                        }}
-                        className="w-full text-left px-6 py-4 hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0 transition-colors"
-                      >
-                        <div className="flex flex-col">
-                          <span className="text-xs font-black text-slate-900">{art.numero ? `[${art.numero}] ` : ''}{art.designation}</span>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{art.modeTaxation?.nom || 'Unité'}</span>
-                        </div>
-                        <span className="text-xs font-black text-blue-600">{art.montant}€</span>
-                      </button>
-                    ))}
+                    return filteredArticles.length === 0 ? (
+                      <div className="px-6 py-8 text-center text-slate-400 text-[10px]">
+                        Aucun article trouvé
+                      </div>
+                    ) : (
+                      filteredArticles.map(art => (
+                        <button
+                          key={art.id}
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, articleId: art.id.toString() }));
+                            setFilterText(`${art.numero ? `[${art.numero}] ` : ''}${art.designation}`);
+                          }}
+                          className="w-full text-left px-6 py-4 hover:bg-slate-50 flex items-center justify-between border-b border-slate-50 last:border-0 transition-colors"
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-xs font-black text-slate-900">{art.numero ? `[${art.numero}] ` : ''}{art.designation}</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{art.modeTaxation?.nom || 'Unité'}</span>
+                          </div>
+                          <span className="text-xs font-black text-blue-600">{art.montant}€</span>
+                        </button>
+                      ))
+                    );
+                  })()}
                 </div>
               )}
             </div>

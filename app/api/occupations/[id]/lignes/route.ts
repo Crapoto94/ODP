@@ -36,11 +36,13 @@ export async function POST(
     const isAutoUnit = u2.includes('jour') || u2.includes('nuit') || u2.includes('mois');
     const q1 = parseFloat(quantite1 || '0');
     let q2 = parseFloat(quantite2 || '0');
-    
-    // Auto-calculate for auto units OR if missing
-    if (!q2 || isAutoUnit) {
-       q2 = calculateQ2(u2Label, 
-          dateDebut ? new Date(dateDebut) : null, 
+
+    // Auto-calculate Q2 for CHANTIER and TOURNAGE (always use time-based calculation)
+    // OR for auto units OR if missing
+    const shouldCalculateQ2 = (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') || !q2 || isAutoUnit;
+    if (shouldCalculateQ2) {
+       q2 = calculateQ2(u2Label,
+          dateDebut ? new Date(dateDebut) : null,
           dateFin ? new Date(dateFin) : null,
           dateDebutConstatee ? new Date(dateDebutConstatee) : null,
           dateFinConstatee ? new Date(dateFinConstatee) : null
@@ -83,7 +85,10 @@ export async function GET(
   try {
     const { id } = await params;
     const lignes = await (prisma as any).ligneOccupation.findMany({
-      where: { occupationId: parseInt(id) },
+      where: {
+        occupationId: parseInt(id),
+        deletedAt: null
+      },
       include: { article: { include: { modeTaxation: true } } }
     });
     return NextResponse.json(lignes);

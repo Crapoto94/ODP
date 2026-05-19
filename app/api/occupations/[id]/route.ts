@@ -19,12 +19,16 @@ export async function GET(
             code_sedit: true,
             etatAdministratif: true,
             latitude: true,
-            longitude: true
+            longitude: true,
+            contacts: true
           }
         },
         lignes: {
+          where: { deletedAt: null },
           include: {
-            article: true
+            article: {
+              include: { modeTaxation: true }
+            }
           }
         },
         notes: true,
@@ -68,6 +72,7 @@ export async function PATCH(
       nom,
       tiersId,
       type,
+      statut,
       dateDebut,
       dateFin,
       dateAlerte,
@@ -81,13 +86,22 @@ export async function PATCH(
       isExempt,
       isNotAuthorized,
       isAgissantPourBillable,
-      agissantPour
+      agissantPour,
+      aotFinalPath,
+      aotSigned,
+      aotGabaritId,
+      observations,
+      datePaiement,
+      numeroFacture,
+      facturePath,
+      isArchived
     } = body;
 
     const updateData: any = {
       ...(nom !== undefined && { nom }),
       ...(tiersId !== undefined && { tiersId: parseInt(tiersId) }),
       ...(type !== undefined && { type }),
+      ...(statut !== undefined && { statut }),
       ...(adresse !== undefined && { adresse }),
       ...(description !== undefined && { description }),
       ...(photos !== undefined && { photos }),
@@ -101,7 +115,15 @@ export async function PATCH(
       ...(isAgissantPourBillable !== undefined && { isAgissantPourBillable: !!isAgissantPourBillable }),
       ...(isCourtMetrage !== undefined && { isCourtMetrage: !!isCourtMetrage }),
       ...(isExempt !== undefined && { isExempt: !!isExempt }),
-      ...(isNotAuthorized !== undefined && { isNotAuthorized: !!isNotAuthorized })
+      ...(isNotAuthorized !== undefined && { isNotAuthorized: !!isNotAuthorized }),
+      ...(aotFinalPath !== undefined && { aotFinalPath }),
+      ...(aotSigned !== undefined && { aotSigned: !!aotSigned }),
+      ...(aotGabaritId !== undefined && { aotGabaritId: aotGabaritId ? parseInt(aotGabaritId) : null }),
+      ...(observations !== undefined && { observations }),
+      ...(datePaiement !== undefined && { datePaiement: datePaiement ? new Date(datePaiement) : null }),
+      ...(numeroFacture !== undefined && { numeroFacture }),
+      ...(facturePath !== undefined && { facturePath }),
+      ...(isArchived !== undefined && { isArchived: !!isArchived })
     };
 
     const occupation = await (prisma as any).occupation.update({

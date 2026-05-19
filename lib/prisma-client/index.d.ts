@@ -4723,6 +4723,8 @@ export namespace Prisma {
     dateCLOS: Date | null
     dateAlerte: Date | null
     isArchived: boolean | null
+    isExempt: boolean | null
+    isNotAuthorized: boolean | null
   }
 
   export type OccupationMaxAggregateOutputType = {
@@ -4763,6 +4765,8 @@ export namespace Prisma {
     dateCLOS: Date | null
     dateAlerte: Date | null
     isArchived: boolean | null
+    isExempt: boolean | null
+    isNotAuthorized: boolean | null
   }
 
   export type OccupationCountAggregateOutputType = {
@@ -4803,6 +4807,8 @@ export namespace Prisma {
     dateCLOS: number
     dateAlerte: number
     isArchived: number
+    isExempt: number
+    isNotAuthorized: number
     _all: number
   }
 
@@ -4867,6 +4873,8 @@ export namespace Prisma {
     dateCLOS?: true
     dateAlerte?: true
     isArchived?: true
+    isExempt?: true
+    isNotAuthorized?: true
   }
 
   export type OccupationMaxAggregateInputType = {
@@ -4907,6 +4915,8 @@ export namespace Prisma {
     dateCLOS?: true
     dateAlerte?: true
     isArchived?: true
+    isExempt?: true
+    isNotAuthorized?: true
   }
 
   export type OccupationCountAggregateInputType = {
@@ -4947,6 +4957,8 @@ export namespace Prisma {
     dateCLOS?: true
     dateAlerte?: true
     isArchived?: true
+    isExempt?: true
+    isNotAuthorized?: true
     _all?: true
   }
 
@@ -5074,6 +5086,8 @@ export namespace Prisma {
     dateCLOS: Date | null
     dateAlerte: Date | null
     isArchived: boolean
+    isExempt: boolean
+    isNotAuthorized: boolean
     _count: OccupationCountAggregateOutputType | null
     _avg: OccupationAvgAggregateOutputType | null
     _sum: OccupationSumAggregateOutputType | null
@@ -5133,6 +5147,8 @@ export namespace Prisma {
     dateCLOS?: boolean
     dateAlerte?: boolean
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: boolean | Occupation$contactsArgs<ExtArgs>
     dispositifs?: boolean | Occupation$dispositifsArgs<ExtArgs>
     lignes?: boolean | Occupation$lignesArgs<ExtArgs>
@@ -5180,6 +5196,8 @@ export namespace Prisma {
     dateCLOS?: boolean
     dateAlerte?: boolean
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["occupation"]>
 
@@ -5221,6 +5239,8 @@ export namespace Prisma {
     dateCLOS?: boolean
     dateAlerte?: boolean
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
   }
 
   export type OccupationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5284,6 +5304,8 @@ export namespace Prisma {
       dateCLOS: Date | null
       dateAlerte: Date | null
       isArchived: boolean
+      isExempt: boolean
+      isNotAuthorized: boolean
     }, ExtArgs["result"]["occupation"]>
     composites: {}
   }
@@ -5720,6 +5742,8 @@ export namespace Prisma {
     readonly dateCLOS: FieldRef<"Occupation", 'DateTime'>
     readonly dateAlerte: FieldRef<"Occupation", 'DateTime'>
     readonly isArchived: FieldRef<"Occupation", 'Boolean'>
+    readonly isExempt: FieldRef<"Occupation", 'Boolean'>
+    readonly isNotAuthorized: FieldRef<"Occupation", 'Boolean'>
   }
     
 
@@ -31941,7 +31965,9 @@ export namespace Prisma {
     dateTITRE: 'dateTITRE',
     dateCLOS: 'dateCLOS',
     dateAlerte: 'dateAlerte',
-    isArchived: 'isArchived'
+    isArchived: 'isArchived',
+    isExempt: 'isExempt',
+    isNotAuthorized: 'isNotAuthorized'
   };
 
   export type OccupationScalarFieldEnum = (typeof OccupationScalarFieldEnum)[keyof typeof OccupationScalarFieldEnum]
@@ -32601,6 +32627,8 @@ export namespace Prisma {
     dateCLOS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dateAlerte?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     isArchived?: BoolFilter<"Occupation"> | boolean
+    isExempt?: BoolFilter<"Occupation"> | boolean
+    isNotAuthorized?: BoolFilter<"Occupation"> | boolean
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -32647,6 +32675,8 @@ export namespace Prisma {
     dateCLOS?: SortOrderInput | SortOrder
     dateAlerte?: SortOrderInput | SortOrder
     isArchived?: SortOrder
+    isExempt?: SortOrder
+    isNotAuthorized?: SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     dispositifs?: DispositifOrderByRelationAggregateInput
     lignes?: LigneOccupationOrderByRelationAggregateInput
@@ -32696,6 +32726,8 @@ export namespace Prisma {
     dateCLOS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dateAlerte?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     isArchived?: BoolFilter<"Occupation"> | boolean
+    isExempt?: BoolFilter<"Occupation"> | boolean
+    isNotAuthorized?: BoolFilter<"Occupation"> | boolean
     contacts?: ContactListRelationFilter
     dispositifs?: DispositifListRelationFilter
     lignes?: LigneOccupationListRelationFilter
@@ -32742,6 +32774,8 @@ export namespace Prisma {
     dateCLOS?: SortOrderInput | SortOrder
     dateAlerte?: SortOrderInput | SortOrder
     isArchived?: SortOrder
+    isExempt?: SortOrder
+    isNotAuthorized?: SortOrder
     _count?: OccupationCountOrderByAggregateInput
     _avg?: OccupationAvgOrderByAggregateInput
     _max?: OccupationMaxOrderByAggregateInput
@@ -32790,6 +32824,8 @@ export namespace Prisma {
     dateCLOS?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
     dateAlerte?: DateTimeNullableWithAggregatesFilter<"Occupation"> | Date | string | null
     isArchived?: BoolWithAggregatesFilter<"Occupation"> | boolean
+    isExempt?: BoolWithAggregatesFilter<"Occupation"> | boolean
+    isNotAuthorized?: BoolWithAggregatesFilter<"Occupation"> | boolean
   }
 
   export type ContactWhereInput = {
@@ -35035,6 +35071,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -35081,6 +35119,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -35124,6 +35164,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -35170,6 +35212,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -35215,6 +35259,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
   }
 
   export type OccupationUpdateManyMutationInput = {
@@ -35253,6 +35299,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OccupationUncheckedUpdateManyInput = {
@@ -35293,6 +35341,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ContactCreateInput = {
@@ -37904,6 +37954,8 @@ export namespace Prisma {
     dateCLOS?: SortOrder
     dateAlerte?: SortOrder
     isArchived?: SortOrder
+    isExempt?: SortOrder
+    isNotAuthorized?: SortOrder
   }
 
   export type OccupationAvgOrderByAggregateInput = {
@@ -37955,6 +38007,8 @@ export namespace Prisma {
     dateCLOS?: SortOrder
     dateAlerte?: SortOrder
     isArchived?: SortOrder
+    isExempt?: SortOrder
+    isNotAuthorized?: SortOrder
   }
 
   export type OccupationMinOrderByAggregateInput = {
@@ -37995,6 +38049,8 @@ export namespace Prisma {
     dateCLOS?: SortOrder
     dateAlerte?: SortOrder
     isArchived?: SortOrder
+    isExempt?: SortOrder
+    isNotAuthorized?: SortOrder
   }
 
   export type OccupationSumOrderByAggregateInput = {
@@ -40894,6 +40950,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -40938,6 +40996,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -41110,6 +41170,8 @@ export namespace Prisma {
     dateCLOS?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     dateAlerte?: DateTimeNullableFilter<"Occupation"> | Date | string | null
     isArchived?: BoolFilter<"Occupation"> | boolean
+    isExempt?: BoolFilter<"Occupation"> | boolean
+    isNotAuthorized?: BoolFilter<"Occupation"> | boolean
   }
 
   export type NoteUpsertWithWhereUniqueWithoutTiersInput = {
@@ -41669,6 +41731,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -41714,6 +41778,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -41824,6 +41890,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -41869,6 +41937,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -41911,6 +41981,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -41956,6 +42028,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -42060,6 +42134,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -42105,6 +42181,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -42981,6 +43059,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -43026,6 +43106,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -43136,6 +43218,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -43181,6 +43265,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -43223,6 +43309,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
@@ -43268,6 +43356,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
@@ -43326,6 +43416,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
@@ -43371,6 +43463,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
@@ -43809,6 +43903,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
@@ -43854,6 +43950,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
     contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
@@ -43946,6 +44044,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -43991,6 +44091,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -44090,6 +44192,8 @@ export namespace Prisma {
     dateCLOS?: Date | string | null
     dateAlerte?: Date | string | null
     isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
   }
 
   export type NoteCreateManyTiersInput = {
@@ -44197,6 +44301,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
@@ -44241,6 +44347,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
     contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
@@ -44285,6 +44393,8 @@ export namespace Prisma {
     dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type NoteUpdateWithoutTiersInput = {

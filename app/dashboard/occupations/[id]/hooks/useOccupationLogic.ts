@@ -148,9 +148,25 @@ export function useOccupationLogic(occupationId: string) {
 
   const handleToggleVerifie = async () => {
     if (!occ) return;
-    const newStatut = occ.statut === 'VERIFIE' ? 'EN_COURS' : 'VERIFIE';
+
+    // When EN_COURS, progress to VALIDE (next step) instead of VERIFIE
+    let newStatut = '';
+    if (occ.statut === 'EN_COURS') {
+      newStatut = 'VALIDE';
+    } else if (occ.statut === 'VERIFIE') {
+      newStatut = 'EN_COURS';
+    } else {
+      return;
+    }
+
     try {
-      await axios.patch(`/api/occupations/${occ.id}`, { statut: newStatut });
+      // Check if this is an exempt occupation being set to VALIDE
+      if (newStatut === 'VALIDE' && (occ as any)?.isExempt) {
+        alert('Ce dossier est exonéré. Il sera directement archivé.');
+        await axios.patch(`/api/occupations/${occ.id}`, { statut: newStatut, isArchived: true });
+      } else {
+        await axios.patch(`/api/occupations/${occ.id}`, { statut: newStatut });
+      }
       fetchOccupation();
     } catch (err) {
       alert('Erreur lors du changement de statut');
@@ -182,10 +198,15 @@ export function useOccupationLogic(occupationId: string) {
   const handleDeleteLigne = async (ligneId: number) => {
     if (!occ || !confirm("Retirer cet article ?")) return;
     try {
-      await axios.delete(`/api/occupations/${occ.id}/lignes/${ligneId}`);
-      fetchOccupation();
-    } catch (err) {
-      alert("Erreur lors de la suppression de la ligne");
+      console.log(`Deleting ligne ${ligneId} from occupation ${occ.id}`);
+      const response = await axios.delete(`/api/occupations/${occ.id}/lignes/${ligneId}`);
+      console.log('Delete response:', response.data);
+      await fetchOccupation();
+      console.log('Occupation reloaded after deletion');
+    } catch (err: any) {
+      console.error('Error deleting ligne:', err);
+      const errorMsg = err.response?.data?.error || err.message || "Erreur inconnue";
+      alert(`Erreur lors de la suppression: ${errorMsg}`);
     }
   };
 
@@ -434,11 +455,22 @@ export function useOccupationLogic(occupationId: string) {
       };
       const newStatut = isSigned ? nextStatusMap[occ.statut] : undefined;
 
-      await axios.patch(`/api/occupations/${occ.id}`, {
-        aotFinalPath: aotUrl,
-        aotSigned: isSigned,
-        ...(newStatut ? { statut: newStatut } : {}),
-      });
+      // Check if this is an exempt occupation being set to VALIDE
+      if (newStatut === 'VALIDE' && (occ as any)?.isExempt) {
+        alert('Ce dossier est exonéré. Il sera directement archivé.');
+        await axios.patch(`/api/occupations/${occ.id}`, {
+          aotFinalPath: aotUrl,
+          aotSigned: isSigned,
+          statut: newStatut,
+          isArchived: true
+        });
+      } else {
+        await axios.patch(`/api/occupations/${occ.id}`, {
+          aotFinalPath: aotUrl,
+          aotSigned: isSigned,
+          ...(newStatut ? { statut: newStatut } : {}),
+        });
+      }
       await fetchOccupation();
       setIsAotFinalModalOpen(false);
 
@@ -491,7 +523,15 @@ export function useOccupationLogic(occupationId: string) {
   const typeInfo = occ ? TYPE_MAP[occ.type] || { label: occ.type, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' } : null;
   const isLocked = occ ? ['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) : false;
   const isFactured = occ ? ['FACTURE', 'PAYE'].includes(occ.statut) : false;
-  const totalAmount = occ?.montantCalcule || 0;
+  let totalAmount = (occ as any)?.isExempt ? 0 : (occ?.montantCalcule || 0);
+  // Apply surcharge or discount based on occupation type and flags
+  if ((occ as any)?.isNotAuthorized) {
+    // Add surcharge if occupation is not authorized (100% surcharge)
+    totalAmount = totalAmount * 2;
+  } else if (occ?.type === 'TOURNAGE' && (occ as any)?.isCourtMetrage) {
+    // Apply discount for short film/shoots (50% discount)
+    totalAmount = totalAmount * 0.5;
+  }
 
   return {
     occ,

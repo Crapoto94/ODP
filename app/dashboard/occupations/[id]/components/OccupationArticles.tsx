@@ -162,74 +162,93 @@ export default function OccupationArticles({
             <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Aucun article enregistré pour le moment</p>
           </div>
         ) : (
-          occupation.lignes.map((ligne) => (
-            <div key={ligne.id} className="bg-white p-8 md:p-10 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-center justify-between group transition-all hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/5 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-2 h-full bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              
-              <div className="flex items-start gap-8 flex-1 w-full">
-                <div className="w-20 h-20 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-slate-200 p-3 text-center group-hover:bg-white group-hover:border-blue-100 transition-all shrink-0">
-                  <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Code</p>
-                  <p className="font-black text-slate-950 text-xl leading-none">{ligne.article?.numero || '#'}</p>
-                </div>
-                
-                <div className="space-y-4 text-left flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h4 className="text-xl font-black text-slate-950 tracking-tight">{ligne.article?.designation}</h4>
-                    <span className="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-blue-100/50">
-                      {ligne.article?.modeTaxation?.nom || 'Tarif Fixe'}
-                    </span>
+          <>
+            {occupation.lignes.map((ligne) => (
+              <div key={ligne.id} className="bg-white p-8 md:p-10 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-center justify-between group transition-all hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/5 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-2 h-full bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                <div className="flex items-start gap-8 flex-1 w-full">
+                  <div className="w-20 h-20 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-slate-200 p-3 text-center group-hover:bg-white group-hover:border-blue-100 transition-all shrink-0">
+                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Code</p>
+                    <p className="font-black text-slate-950 text-xl leading-none">{ligne.article?.numero || '#'}</p>
                   </div>
 
-                  <div className="space-y-3">
-                    {/* Dates */}
-                    <div className="flex items-start gap-3 text-slate-500">
-                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 flex-shrink-0">
-                        <Clock size={14} />
-                      </div>
-                      <span className="text-xs font-bold uppercase tracking-wide">
-                        {occupation.type === 'TLPE'
-                          ? `Exercice ${occupation.anneeTaxation || new Date(ligne.dateDebut).getFullYear()}`
-                          : `Du ${(() => { try { return ligne.dateDebut ? format(new Date(ligne.dateDebut), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()} au ${(() => { try { return ligne.dateFin ? format(new Date(ligne.dateFin), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()}`
-                        }
-                        {(ligne.dateDebutConstatee || ligne.dateFinConstatee) && (
-                          <div className="text-[10px] text-emerald-600 mt-1">
-                            Réel : Du {(() => {
-                                if (!ligne.dateDebutConstatee) return '--';
-                                try { return format(new Date(ligne.dateDebutConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
-                              })()} au {(() => {
-                                if (!ligne.dateFinConstatee) return '--';
-                                try { return format(new Date(ligne.dateFinConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
-                              })()}
-                          </div>
-                        )}
+                  <div className="space-y-4 text-left flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h4 className="text-xl font-black text-slate-950 tracking-tight">{ligne.article?.designation}</h4>
+                      <span className="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-blue-100/50">
+                        {ligne.article?.modeTaxation?.nom || 'Tarif Fixe'}
                       </span>
                     </div>
 
-                    {/* Quantities and Price */}
-                    <div className="flex items-start gap-3 text-slate-500">
-                      <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 flex-shrink-0">
-                        <Hash size={14} />
+                    <div className="space-y-3">
+                      {/* Dates */}
+                      <div className="flex items-start gap-3 text-slate-500">
+                        <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 flex-shrink-0">
+                          <Clock size={14} />
+                        </div>
+                        <span className="text-xs font-bold uppercase tracking-wide">
+                          {occupation.type === 'TLPE'
+                            ? `Exercice ${occupation.anneeTaxation || new Date(ligne.dateDebut).getFullYear()}`
+                            : `Du ${(() => { try { return ligne.dateDebut ? format(new Date(ligne.dateDebut), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()} au ${(() => { try { return ligne.dateFin ? format(new Date(ligne.dateFin), 'dd/MM/yyyy') : '?'; } catch(e) { return '?'; } })()}`
+                          }
+                          {(ligne.dateDebutConstatee || ligne.dateFinConstatee) && (
+                            <div className="text-[10px] text-emerald-600 mt-1">
+                              Réel : Du {(() => {
+                                  if (!ligne.dateDebutConstatee) return '--';
+                                  try { return format(new Date(ligne.dateDebutConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
+                                })()} au {(() => {
+                                  if (!ligne.dateFinConstatee) return '--';
+                                  try { return format(new Date(ligne.dateFinConstatee), 'dd/MM/yyyy'); } catch(e) { return '--'; }
+                                })()}
+                            </div>
+                          )}
+                        </span>
                       </div>
-                      <div className="text-xs font-bold uppercase tracking-wide space-y-1.5">
-                        {(() => {
-                          const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
-                          const parts = rawMode.split('/').filter(Boolean).map((p: string) => p.trim().toLowerCase());
-                          const u1 = parts[0] || 'unités';
-                          const u2 = parts[1] || 'unités';
 
-                          const unitPrice = ligne.article?.montant || 0;
-                          const subTotal = ligne.montant;
+                      {/* Quantities and Price */}
+                      <div className="flex items-start gap-3 text-slate-500">
+                        <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 flex-shrink-0">
+                          <Hash size={14} />
+                        </div>
+                        <div className="text-xs font-bold uppercase tracking-wide space-y-1.5">
+                          {(() => {
+                            const rawMode = ligne.article?.modeTaxation?.nom || 'unité';
+                            const parts = rawMode.split('/').filter(Boolean).map((p: string) => p.trim());
+                            const u1 = parts[0] || 'unités';
+                            const u2 = parts[1] || '';
 
-                          if (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') {
+                            const unitPrice = ligne.article?.montant || 0;
+                            const subTotal = ligne.montant;
+
+                            if (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') {
+                              return (
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="text-slate-400">Quantités :</span>
+                                    <span className="text-blue-600 font-black">{ligne.quantite1}</span>
+                                    <span className="text-slate-600">{u1}</span>
+                                    {u2 && (
+                                      <>
+                                        <span className="text-slate-400">×</span>
+                                        <span className="text-blue-600 font-black">{ligne.quantite2}</span>
+                                        <span className="text-slate-600">{u2}</span>
+                                      </>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-slate-400">Tarif :</span>
+                                    <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
+                                  </div>
+                                </div>
+                              );
+                            }
                             return (
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-slate-400">Quantités :</span>
+                                  <span className="text-slate-400">Quantité :</span>
                                   <span className="text-blue-600 font-black">{ligne.quantite1}</span>
-                                  <span className="text-slate-300">{u1}</span>
-                                  <span className="text-slate-300">×</span>
-                                  <span className="text-blue-600 font-black">{ligne.quantite2}</span>
-                                  <span className="text-slate-300">{u2}</span>
+                                  <span className="text-slate-600">{u1}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-slate-400">Tarif :</span>
@@ -237,81 +256,145 @@ export default function OccupationArticles({
                                 </div>
                               </div>
                             );
-                          }
-                          return (
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-slate-400">Quantité :</span>
-                                <span className="text-blue-600 font-black">{ligne.quantite1}</span>
-                                <span className="text-slate-300">{u1}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-slate-400">Tarif :</span>
-                                <span className="text-slate-900 font-black">{unitPrice.toLocaleString('fr-FR')}€</span>
-                              </div>
-                            </div>
-                          );
-                        })()}
+                          })()}
+                        </div>
                       </div>
+
+                      {/* Note */}
+                      {ligne.note && (
+                        <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 ml-11">
+                          <p className="text-[10px] text-amber-800 leading-relaxed italic">
+                            <span className="font-black uppercase mr-2 tracking-tighter">Note :</span>
+                            {ligne.note}
+                          </p>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Note */}
-                    {ligne.note && (
-                      <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 ml-11">
-                        <p className="text-[10px] text-amber-800 leading-relaxed italic">
-                          <span className="font-black uppercase mr-2 tracking-tighter">Note :</span>
-                          {ligne.note}
-                        </p>
+                    {ligne.photos && (
+                      <div className="flex flex-wrap gap-3 mt-2">
+                         {ligne.photos.split(',').filter(Boolean).map((url, i) => {
+                           const isPdf = url.toLowerCase().endsWith('.pdf');
+                           return (
+                             <a key={i} href={url} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-xl overflow-hidden border border-slate-100 hover:border-blue-400 transition-all shadow-sm hover:scale-105 bg-slate-50 flex items-center justify-center">
+                               {isPdf ? (
+                                 <FileText size={20} className="text-rose-500" />
+                               ) : (
+                                 <img src={url} alt="Attachment" className="w-full h-full object-cover" />
+                               )}
+                             </a>
+                           );
+                         })}
                       </div>
                     )}
                   </div>
-                  
-                  {ligne.photos && (
-                    <div className="flex flex-wrap gap-3 mt-2">
-                       {ligne.photos.split(',').filter(Boolean).map((url, i) => {
-                         const isPdf = url.toLowerCase().endsWith('.pdf');
-                         return (
-                           <a key={i} href={url} target="_blank" rel="noreferrer" className="w-14 h-14 rounded-xl overflow-hidden border border-slate-100 hover:border-blue-400 transition-all shadow-sm hover:scale-105 bg-slate-50 flex items-center justify-center">
-                             {isPdf ? (
-                               <FileText size={20} className="text-rose-500" />
-                             ) : (
-                               <img src={url} alt="Attachment" className="w-full h-full object-cover" />
-                             )}
-                           </a>
-                         );
-                       })}
+                </div>
+
+                <div className="mt-8 md:mt-0 flex items-center gap-10 pl-28 md:pl-0 w-full md:w-auto border-t md:border-t-0 border-slate-100 pt-6 md:pt-0">
+                  <div className="text-right">
+                    <p className="text-[10px] font-black text-slate-400 uppercase mb-2 leading-none tracking-widest">Sous-total</p>
+                    <p className="text-3xl font-black text-slate-950 leading-none tabular-nums">
+                      {ligne.montant.toLocaleString('fr-FR')} <span className="text-lg text-blue-500">€</span>
+                    </p>
+                  </div>
+
+                  {(!isLocked && !isFactured || occupation.anneeTaxation === 2019) && (
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => onEditArticle(ligne)}
+                        className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all border border-transparent hover:border-blue-100"
+                      >
+                        <Pencil size={20} />
+                      </button>
+                      <button
+                        onClick={() => onDeleteArticle(ligne.id)}
+                        className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-all border border-transparent hover:border-rose-100"
+                      >
+                        <Trash2 size={20} />
+                      </button>
                     </div>
                   )}
                 </div>
               </div>
+            ))}
 
-              <div className="mt-8 md:mt-0 flex items-center gap-10 pl-28 md:pl-0 w-full md:w-auto border-t md:border-t-0 border-slate-100 pt-6 md:pt-0">
-                <div className="text-right">
-                  <p className="text-[10px] font-black text-slate-400 uppercase mb-2 leading-none tracking-widest">Sous-total</p>
-                  <p className="text-3xl font-black text-slate-950 leading-none tabular-nums">
-                    {ligne.montant.toLocaleString('fr-FR')} <span className="text-lg text-blue-500">€</span>
-                  </p>
-                </div>
-                
-                {(!isLocked && !isFactured || occupation.anneeTaxation === 2019) && (
-                  <div className="flex gap-3">
-                    <button 
-                      onClick={() => onEditArticle(ligne)}
-                      className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all border border-transparent hover:border-blue-100"
-                    >
-                      <Pencil size={20} />
-                    </button>
-                    <button 
-                      onClick={() => onDeleteArticle(ligne.id)}
-                      className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-all border border-transparent hover:border-rose-100"
-                    >
-                      <Trash2 size={20} />
-                    </button>
+            {occupation.isNotAuthorized && occupation.lignes && occupation.lignes.length > 0 && (() => {
+              const totalBase = occupation.lignes.reduce((sum, ligne) => sum + (ligne.montant || 0), 0);
+              return (
+                <div className="bg-rose-50 p-8 md:p-10 rounded-2xl border-2 border-rose-200 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-2 h-full bg-rose-600"></div>
+
+                  <div className="flex items-start gap-8 flex-1 w-full">
+                    <div className="w-20 h-20 rounded-xl bg-rose-100 flex flex-col items-center justify-center border border-rose-200 p-3 text-center shrink-0">
+                      <p className="text-[9px] font-black text-rose-600 uppercase mb-1">Majoration</p>
+                      <p className="font-black text-rose-700 text-lg leading-none">!</p>
+                    </div>
+
+                    <div className="space-y-4 text-left flex-1">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h4 className="text-xl font-black text-rose-900 tracking-tight">Majoration dossier non autorisé</h4>
+                        <span className="bg-rose-100 text-rose-700 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-rose-200">
+                          Dossier sans autorisation
+                        </span>
+                      </div>
+
+                      <div className="text-slate-600 text-sm leading-relaxed">
+                        <p>Ce dossier n'a pas obtenu l'autorisation requise. Une majoration égale au montant total des articles est appliquée.</p>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
-            </div>
-          ))
+
+                  <div className="mt-8 md:mt-0 flex items-center justify-end w-full md:w-auto border-t md:border-t-0 border-rose-200 pt-6 md:pt-0 pl-28 md:pl-0">
+                    <div className="text-right">
+                      <p className="text-[10px] font-black text-rose-600 uppercase mb-2 leading-none tracking-widest">Montant majoration</p>
+                      <p className="text-3xl font-black text-rose-700 leading-none tabular-nums">
+                        {totalBase.toLocaleString('fr-FR')} <span className="text-lg text-rose-600">€</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {occupation.type === 'TOURNAGE' && (occupation as any).isCourtMetrage && occupation.lignes && occupation.lignes.length > 0 && (() => {
+              const totalBase = occupation.lignes.reduce((sum, ligne) => sum + (ligne.montant || 0), 0);
+              const finalAmount = totalBase * 0.5;
+              return (
+                <div className="bg-amber-50 p-8 md:p-10 rounded-2xl border-2 border-amber-200 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-2 h-full bg-amber-600"></div>
+
+                  <div className="flex items-start gap-8 flex-1 w-full">
+                    <div className="w-20 h-20 rounded-xl bg-amber-100 flex flex-col items-center justify-center border border-amber-200 p-3 text-center shrink-0">
+                      <p className="text-[9px] font-black text-amber-600 uppercase mb-1">Minoration</p>
+                      <p className="font-black text-amber-700 text-lg leading-none">-50%</p>
+                    </div>
+
+                    <div className="space-y-4 text-left flex-1">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h4 className="text-xl font-black text-amber-900 tracking-tight">Minoration court métrage</h4>
+                        <span className="bg-amber-100 text-amber-700 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-amber-200">
+                          Tournage court métrage
+                        </span>
+                      </div>
+
+                      <div className="text-slate-600 text-sm leading-relaxed">
+                        <p>Ce tournage bénéficie d'une minoration de 50% du montant total.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 md:mt-0 flex items-center justify-end w-full md:w-auto border-t md:border-t-0 border-amber-200 pt-6 md:pt-0 pl-28 md:pl-0">
+                    <div className="text-right">
+                      <p className="text-[10px] font-black text-amber-600 uppercase mb-2 leading-none tracking-widest">Montant réduit</p>
+                      <p className="text-3xl font-black text-amber-700 leading-none tabular-nums">
+                        {finalAmount.toLocaleString('fr-FR')} <span className="text-lg text-amber-600">€</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </>
         )}
       </div>
       {onRegisterPayment && (

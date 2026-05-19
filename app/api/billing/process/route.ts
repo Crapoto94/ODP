@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
 async function fetchDossiers(ids: number[], type: string) {
   if (type === 'COMMERCE') {
     const occupations = await (prisma as any).occupation.findMany({
-      where: { tiersId: { in: ids }, type: 'COMMERCE', statut: { in: ['VERIFIE', 'VALIDE', 'VALIDÉ'] } },
+      where: { tiersId: { in: ids }, type: 'COMMERCE', statut: { in: ['VERIFIE', 'VALIDE', 'VALIDÉ'] }, isExempt: false },
       include: { tiers: true, lignes: { include: { article: { include: { modeTaxation: true } } } } }
     });
     const grouped = new Map();
@@ -180,7 +180,7 @@ async function fetchDossiers(ids: number[], type: string) {
     return result;
   } else {
     const occupations = await (prisma as any).occupation.findMany({
-      where: { id: { in: ids } },
+      where: { id: { in: ids }, isExempt: false },
       include: { tiers: true, lignes: { include: { article: { include: { modeTaxation: true } } } } }
     });
     // Ensure all occupations have isCommerceGroup and occupationsIncluded properties

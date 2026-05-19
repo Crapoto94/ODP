@@ -50,16 +50,16 @@ export default function OccupationHero({ occupation, statusInfo, typeInfo, lates
   return (
     <div className="relative group/hero">
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/10 to-emerald-600/10 rounded-xl blur-xl opacity-25 group-hover/hero:opacity-50 transition duration-1000"></div>
-      <div className="relative bg-white/70 backdrop-blur-md rounded-xl border border-white/40 p-8 md:p-10 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-xl shadow-slate-200/40">
-        <div className="space-y-6 flex-1 w-full">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <span className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border}`}>
+      <div className="relative bg-white/70 backdrop-blur-md rounded-xl border border-white/40 p-6 md:p-7 flex flex-col lg:flex-row items-start justify-between gap-6 shadow-xl shadow-slate-200/40">
+        <div className="space-y-3 flex-1 w-full">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border shadow-sm ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border}`}>
               {statusInfo.label}
             </span>
-            <span className={`px-4 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest shadow-sm ${typeInfo.bg} ${typeInfo.color} ${typeInfo.border}`}>
+            <span className={`px-3 py-1 rounded-full border text-[8px] font-black uppercase tracking-widest shadow-sm ${typeInfo.bg} ${typeInfo.color} ${typeInfo.border}`}>
               {typeInfo.label}
             </span>
-            <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest ml-1">
+            <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">
               Ref. #{occupation.id}
             </span>
             {latestSignatureRequest && (
@@ -67,67 +67,67 @@ export default function OccupationHero({ occupation, statusInfo, typeInfo, lates
             )}
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-black text-slate-950 tracking-tight leading-tight max-w-2xl">
+          <h1 className="text-lg md:text-xl font-black text-slate-950 tracking-tight leading-snug max-w-xl line-clamp-2">
             {occupation.nom || `Dossier sans nom`}
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-50/50 border border-transparent hover:bg-white hover:border-slate-100 transition-all cursor-pointer group">
-              <div className="w-11 h-11 rounded-xl bg-blue-100/50 text-blue-600 flex items-center justify-center border border-blue-200/50 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <User size={18} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+            <div className="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50/50 border border-transparent hover:bg-white hover:border-slate-100 transition-all cursor-pointer group">
+              <div className="w-9 h-9 rounded-lg bg-blue-100/50 text-blue-600 flex items-center justify-center border border-blue-200/50 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <User size={16} />
               </div>
               <div className="min-w-0">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Demandeur</p>
+                <p className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Demandeur</p>
                 <p
                   onClick={() => occupation.tiers?.id && onTierClick?.(occupation.tiers.id)}
-                  className="text-sm font-black text-slate-900 leading-none truncate underline decoration-blue-200 decoration-2 underline-offset-2 group-hover:text-blue-600 transition-colors cursor-pointer"
+                  className="text-xs font-black text-slate-900 leading-tight truncate underline decoration-blue-200 decoration-2 underline-offset-2 group-hover:text-blue-600 transition-colors cursor-pointer"
                 >
                   {occupation.tiers?.nom || 'N/A'}
                 </p>
                 {occupation.agissantPourTier ? (
                   <p
                     onClick={() => occupation.agissantPourTier?.id && onTierClick?.(occupation.agissantPourTier.id)}
-                    className="text-[9px] font-black text-blue-600 mt-2 flex items-center gap-1.5 uppercase bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/50 cursor-pointer hover:bg-blue-100 transition-colors"
+                    className="text-[7px] font-black text-blue-600 mt-1 flex items-center gap-1 uppercase bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100/50 cursor-pointer hover:bg-blue-100 transition-colors"
                   >
-                    <ArrowRight size={10} />
+                    <ArrowRight size={8} />
                     Pour : {occupation.agissantPourTier.nom}
                   </p>
                 ) : (
-                  <p className="text-[8px] font-bold text-slate-400 mt-1 uppercase">Sedit : {occupation.tiers?.code_sedit || '-'}</p>
+                  <p className="text-[7px] font-bold text-slate-400 mt-0.5 uppercase">Sedit : {occupation.tiers?.code_sedit || '-'}</p>
                 )}
               </div>
             </div>
             
-            <a 
+            <a
               href={occupation.latitude && occupation.longitude ? `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${occupation.latitude},${occupation.longitude}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(occupation.adresse)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-4 p-3 rounded-xl bg-emerald-50/50 border border-transparent hover:bg-white hover:border-emerald-200 transition-all group cursor-pointer"
+              className="flex items-center gap-2.5 p-2 rounded-lg bg-emerald-50/50 border border-transparent hover:bg-white hover:border-emerald-200 transition-all group cursor-pointer"
             >
-              <div className="w-11 h-11 rounded-xl bg-emerald-100/50 text-emerald-600 flex items-center justify-center border border-emerald-200/50 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                <MapPin size={18} />
+              <div className="w-9 h-9 rounded-lg bg-emerald-100/50 text-emerald-600 flex items-center justify-center border border-emerald-200/50 shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                <MapPin size={16} />
               </div>
               <div className="min-w-0">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5 flex items-center gap-1.5">
-                  Localisation <ArrowRight size={10} className="text-emerald-400" />
+                <p className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-0.5 flex items-center gap-1">
+                  Localisation <ArrowRight size={8} className="text-emerald-400" />
                 </p>
-                <p className="text-xs font-black text-slate-900 leading-tight line-clamp-2 underline decoration-emerald-200 decoration-2 underline-offset-4 group-hover:text-emerald-600 transition-colors">{occupation.adresse}</p>
+                <p className="text-xs font-black text-slate-900 leading-tight line-clamp-2 underline decoration-emerald-200 decoration-2 underline-offset-2 group-hover:text-emerald-600 transition-colors">{occupation.adresse}</p>
               </div>
             </a>
 
-            <div className="flex items-center gap-4 p-3 rounded-xl bg-amber-50/50 border border-transparent hover:bg-white hover:border-amber-100 transition-all">
-              <div className="w-11 h-11 rounded-xl bg-amber-100/50 text-amber-600 flex items-center justify-center border border-amber-200/50 shrink-0">
-                <Calendar size={18} />
+            <div className="flex items-center gap-2.5 p-2 rounded-lg bg-amber-50/50 border border-transparent hover:bg-white hover:border-amber-100 transition-all">
+              <div className="w-9 h-9 rounded-lg bg-amber-100/50 text-amber-600 flex items-center justify-center border border-amber-200/50 shrink-0">
+                <Calendar size={16} />
               </div>
               <div>
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
-                  {occupation.type === 'TLPE' ? 'Année de taxation' : 'Période'}
+                <p className="text-[7px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                  {occupation.type === 'TLPE' ? 'Année' : 'Période'}
                 </p>
-                <p className="text-sm font-black text-slate-900 leading-none">
+                <p className="text-xs font-black text-slate-900 leading-tight">
                   {occupation.type === 'TLPE' ? (occupation.anneeTaxation || '-') : (
-                    <span className="flex items-center gap-1.5">
-                      {occupation.dateDebut ? format(new Date(occupation.dateDebut), 'dd/MM/yy', { locale: fr }) : '?'} 
-                      <ArrowRight size={10} className="text-slate-300" />
+                    <span className="flex items-center gap-1">
+                      {occupation.dateDebut ? format(new Date(occupation.dateDebut), 'dd/MM/yy', { locale: fr }) : '?'}
+                      <ArrowRight size={8} className="text-slate-300" />
                       {occupation.dateFin ? format(new Date(occupation.dateFin), 'dd/MM/yy', { locale: fr }) : '?'}
                     </span>
                   )}

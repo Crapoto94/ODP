@@ -134,7 +134,7 @@ export default function FacturationPage() {
       // Fetch all occupations and filter client-side for all types to be consistent
       const res = await axios.get(`/api/occupations?type=${type}`);
       data = (res.data || []).filter((occ: any) =>
-        ['VERIFIE', 'VALIDE', 'VALIDÉ'].includes(occ.statut)
+        ['VERIFIE', 'VALIDE', 'VALIDÉ'].includes(occ.statut) && !(occ as any).isExempt
       );
 
       if (type === 'COMMERCE') {
