@@ -115,7 +115,19 @@ export default function DocumentList({  documents,
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest truncate">AOT Final — Signé</p>
-                <p className="text-[8px] font-black text-emerald-400/70 uppercase tracking-tighter mt-1">Document Finalisé</p>
+                <p className="text-[8px] font-black text-emerald-400/70 uppercase tracking-tighter mt-1">
+                  Document Finalisé
+                  {occupation.aotDate && (
+                    <>
+                      {' • '}
+                      {new Date(occupation.aotDate).toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                      })}
+                    </>
+                  )}
+                </p>
               </div>
               <button
                 type="button"
