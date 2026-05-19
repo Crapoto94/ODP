@@ -77,6 +77,7 @@ export async function GET(req: Request) {
         aotGabaritId: true,
         aotFinalPath: true,
         aotSigned: true,
+        aotDate: true,
         datePaiement: true,
         dateINIT: true,
         dateINST: true,
