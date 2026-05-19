@@ -365,9 +365,10 @@ export function useCommerceLogic(paramId: string) {
       if (selectedYear) fetchOccupations(selectedYear);
       setIsAotDateModalOpen(false);
       setPendingAotUpload(null);
-    } catch (err) {
-      console.error('[Confirm AOT Date] Error:', err);
-      alert("Erreur lors de l'enregistrement de la date");
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || err.message || 'Erreur inconnue';
+      console.error('[Confirm AOT Date] Error:', errorMsg, err.response?.data);
+      alert(`Erreur lors de l'enregistrement de la date: ${errorMsg}`);
     } finally {
       setIsUploadingAotFinal(false);
     }
