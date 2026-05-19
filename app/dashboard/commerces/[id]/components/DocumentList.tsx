@@ -7,7 +7,10 @@ import {
   Trash2,
   Send,
   Loader2,
+  AlertTriangle,
+  AlertCircle,
 } from 'lucide-react';
+import { checkAotAlert, getAotAlertMessage } from '@/lib/aot-alerts';
 
 interface Document {
   id: number;
@@ -57,6 +60,31 @@ export default function DocumentList({  documents,
           </button>
         )}
       </div>
+
+      {occupation && occupation.aotFinalPath && occupation.aotDate && (() => {
+        const aotAlert = checkAotAlert(occupation.aotDate);
+        return aotAlert.hasAlert ? (
+          <div className={`p-4 rounded-2xl border-2 flex items-start gap-3 ${
+            aotAlert.isExpired
+              ? 'bg-rose-50 border-rose-200'
+              : 'bg-amber-50 border-amber-200'
+          }`}>
+            {aotAlert.isExpired ? (
+              <AlertTriangle size={20} className="text-rose-600 flex-shrink-0 mt-0.5" />
+            ) : (
+              <AlertCircle size={20} className="text-amber-600 flex-shrink-0 mt-0.5" />
+            )}
+            <div>
+              <p className={`text-sm font-black ${aotAlert.isExpired ? 'text-rose-700' : 'text-amber-700'}`}>
+                {getAotAlertMessage(aotAlert)}
+              </p>
+              <p className={`text-[10px] font-bold mt-1 ${aotAlert.isExpired ? 'text-rose-600' : 'text-amber-600'}`}>
+                Date de signature : {new Date(occupation.aotDate).toLocaleDateString('fr-FR')}
+              </p>
+            </div>
+          </div>
+        ) : null;
+      })()}
 
       <div className="flex flex-col gap-3">
         {documents.map((doc) => {

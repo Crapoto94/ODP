@@ -5,9 +5,10 @@ import axios from 'axios';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle, Plus, Search, Lock, LockOpen, X, Star } from 'lucide-react';
+import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle, Plus, Search, Lock, LockOpen, X, Star, AlertTriangle } from 'lucide-react';
 import { useLockedYear } from './hooks/useLockedYear';
 import { getAvailableStatuses } from '@/lib/status-utils';
+import { checkAotAlert, getAotAlertMessage } from '@/lib/aot-alerts';
 
 interface Article {
   id: number;
@@ -445,11 +446,24 @@ export default function CommercesPage() {
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate">
                           {commerce.nom}
                         </h3>
                         {getStatusBadge(commerce.lastYearStatut)}
+                        {(commerce as any).lastAotDate && (() => {
+                          const aotAlert = checkAotAlert((commerce as any).lastAotDate);
+                          return aotAlert.hasAlert ? (
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest shrink-0 ${
+                              aotAlert.isExpired
+                                ? 'bg-rose-100 text-rose-700'
+                                : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              {aotAlert.isExpired ? <AlertTriangle size={12} /> : <AlertCircle size={12} />}
+                              {getAotAlertMessage(aotAlert).split(' ').slice(0, 3).join(' ')}
+                            </span>
+                          ) : null;
+                        })()}
                         {(commerce.etatAdministratif === 'Fermée' || commerce.etatAdministratif === 'Cessée') && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black bg-rose-100 text-rose-700 uppercase tracking-widest shrink-0">
                             Fermé

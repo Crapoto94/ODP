@@ -37,6 +37,22 @@ export async function GET(request: Request) {
             article: true
           }
         }
+      },
+      select: {
+        id: true,
+        type: true,
+        statut: true,
+        anneeTaxation: true,
+        dateDebut: true,
+        aotDate: true,
+        aotFinalPath: true,
+        aotSigned: true,
+        tiers: true,
+        lignes: {
+          include: {
+            article: true
+          }
+        }
       }
     });
 
@@ -105,6 +121,14 @@ export async function GET(request: Request) {
             commerce.lastYearForStatut = year;
           }
 
+          // Store latest AOT date for COMMERCE type
+          if (occ.type === 'COMMERCE') {
+            if (!commerce.lastAotDate || (occ.aotDate && new Date(occ.aotDate) > new Date(commerce.lastAotDate))) {
+              commerce.lastAotDate = occ.aotDate;
+              commerce.lastAotPath = occ.aotFinalPath;
+            }
+          }
+
           // Add articles (deduplicate and accumulate counts)
           articles.forEach((article: any) => {
             const existing = commerce.articles.find((a: any) => a.nom === article.nom);
@@ -142,7 +166,9 @@ export async function GET(request: Request) {
             etatAdministratif: occ.tiers.etatAdministratif,
             statut: occ.tiers.statut,
             lastYearStatut: occ.statut,
-            lastYearForStatut: year
+            lastYearForStatut: year,
+            lastAotDate: occ.type === 'COMMERCE' && occ.aotDate ? occ.aotDate : null,
+            lastAotPath: occ.type === 'COMMERCE' && occ.aotFinalPath ? occ.aotFinalPath : null
           });
         }
       }
