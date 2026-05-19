@@ -115,7 +115,7 @@ export default function OccupationHeader({
             </button>
           )}
 
-          {occupation.type !== 'CHANTIER' && (
+          {occupation.type !== 'CHANTIER' && occupation.type !== 'TOURNAGE' && (
             <button
               onClick={onToggleVerifie}
               disabled={isFactured}
