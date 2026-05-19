@@ -115,19 +115,24 @@ export default function DocumentList({  documents,
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest truncate">AOT Final — Signé</p>
-                <p className="text-[8px] font-black text-emerald-400/70 uppercase tracking-tighter mt-1">
-                  Document Finalisé
-                  {occupation.aotDate && (
-                    <>
-                      {' • '}
+                <div className="flex items-center gap-3 mt-1">
+                  <p className="text-[8px] font-black text-emerald-400/70 uppercase tracking-tighter">
+                    Document Finalisé
+                  </p>
+                  {occupation.aotDate ? (
+                    <span className="text-[8px] font-bold text-emerald-600 bg-emerald-100/50 px-2.5 py-1 rounded-md">
                       {new Date(occupation.aotDate).toLocaleDateString('fr-FR', {
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric',
                       })}
-                    </>
+                    </span>
+                  ) : (
+                    <span className="text-[8px] font-bold text-slate-400 bg-slate-100/50 px-2.5 py-1 rounded-md">
+                      Date à déterminer
+                    </span>
                   )}
-                </p>
+                </div>
               </div>
               <button
                 type="button"
