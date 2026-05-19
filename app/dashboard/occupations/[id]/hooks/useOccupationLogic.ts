@@ -524,13 +524,11 @@ export function useOccupationLogic(occupationId: string) {
   const isLocked = occ ? ['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut) : false;
   const isFactured = occ ? ['FACTURE', 'PAYE'].includes(occ.statut) : false;
   let totalAmount = (occ as any)?.isExempt ? 0 : (occ?.montantCalcule || 0);
-  // Apply surcharge or discount based on occupation type and flags
+  // Apply surcharge for non-authorized occupations
+  // Note: discounts/degrevements (court métrage) are applied as separate line items in invoices, not here
   if ((occ as any)?.isNotAuthorized) {
     // Add surcharge if occupation is not authorized (100% surcharge)
     totalAmount = totalAmount * 2;
-  } else if (occ?.type === 'TOURNAGE' && (occ as any)?.isCourtMetrage) {
-    // Apply discount for short film/shoots (50% discount)
-    totalAmount = totalAmount * 0.5;
   }
 
   return {
