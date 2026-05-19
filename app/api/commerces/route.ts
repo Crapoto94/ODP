@@ -37,22 +37,6 @@ export async function GET(request: Request) {
             article: true
           }
         }
-      },
-      select: {
-        id: true,
-        type: true,
-        statut: true,
-        anneeTaxation: true,
-        dateDebut: true,
-        aotDate: true,
-        aotFinalPath: true,
-        aotSigned: true,
-        tiers: true,
-        lignes: {
-          include: {
-            article: true
-          }
-        }
       }
     });
 
