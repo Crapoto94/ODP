@@ -369,12 +369,18 @@ export async function POST(
           const baseUrl = ((appSettings as any[])[0]?.appUrl || 'http://localhost:3000').replace(/\/$/, '');
           const lienDossier = `${baseUrl}/dashboard/occupations/${signatureRequest.occupation.id}`;
           const tiersNom = (signatureRequest.occupation as any).tiers?.nom || `Dossier #${signatureRequest.occupation.id}`;
+          const dateDebut = (signatureRequest.occupation as any).dateDebut ? new Date((signatureRequest.occupation as any).dateDebut).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+          const dateFin = (signatureRequest.occupation as any).dateFin ? new Date((signatureRequest.occupation as any).dateFin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
           const { html: emailHtml, subject: emailSubject } = await getContextualMessageData('MSG_AOT_SIGNE', {
             DEMANDEUR: `${requester.prenom} ${requester.nom}`.trim() || reqLogin,
             TIERS: tiersNom,
             LIEN_DOSSIER: lienDossier,
             SIGNATAIRE: signatureRequest.signatory.nom,
             DATE_SIGNATURE: signedAtStr,
+            'tiers.nom': tiersNom,
+            adresse: (signatureRequest.occupation as any).adresse || '',
+            dateDebut: dateDebut,
+            dateFin: dateFin,
           });
           await sendApmMail(requester.email, emailSubject || `✅ AOT signé — ${tiersNom}`, emailHtml);
         }

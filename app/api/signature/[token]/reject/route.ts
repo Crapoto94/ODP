@@ -100,11 +100,17 @@ export async function POST(
     // Notification admin (finance email)
     if (settings?.financeEmail) {
       try {
+        const dateDebut = (signatureRequest.occupation as any).dateDebut ? new Date((signatureRequest.occupation as any).dateDebut).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+        const dateFin = (signatureRequest.occupation as any).dateFin ? new Date((signatureRequest.occupation as any).dateFin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
         const { html: emailHtml, subject: emailSubject } = await getContextualMessageData('MSG_SIGNATURE_REJET', {
           SIGNATAIRE: signatureRequest.signatory.nom,
           AOT_REF: signatureRequest.occupation.id.toString(),
           DATE_REJET: rejectedAtStr,
           COMMENTAIRE: comment || '',
+          'tiers.nom': tiersNom,
+          adresse: (signatureRequest.occupation as any).adresse || '',
+          dateDebut: dateDebut,
+          dateFin: dateFin,
         });
         await sendApmMail(
           settings.financeEmail,
@@ -128,6 +134,8 @@ export async function POST(
         `;
         const requester = (userRows as any[])[0];
         if (requester?.email) {
+          const dateDebut = (signatureRequest.occupation as any).dateDebut ? new Date((signatureRequest.occupation as any).dateDebut).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+          const dateFin = (signatureRequest.occupation as any).dateFin ? new Date((signatureRequest.occupation as any).dateFin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
           const { html: emailHtml, subject: emailSubject } = await getContextualMessageData('MSG_AOT_REFUSE', {
             DEMANDEUR: `${requester.prenom} ${requester.nom}`.trim() || reqLogin,
             TIERS: tiersNom,
@@ -135,6 +143,10 @@ export async function POST(
             SIGNATAIRE: signatureRequest.signatory.nom,
             DATE_REJET: rejectedAtStr,
             COMMENTAIRE: comment || '',
+            'tiers.nom': tiersNom,
+            adresse: (signatureRequest.occupation as any).adresse || '',
+            dateDebut: dateDebut,
+            dateFin: dateFin,
           });
           await sendApmMail(requester.email, emailSubject || `⚠️ AOT refusé — ${tiersNom}`, emailHtml);
         }

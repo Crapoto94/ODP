@@ -40,6 +40,9 @@ export async function POST(
       );
     }
 
+    const dateDebut = occupation.dateDebut ? new Date(occupation.dateDebut).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+    const dateFin = occupation.dateFin ? new Date(occupation.dateFin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+
     // Validate document type
     if (!['pdf', 'docx'].includes(documentType)) {
       return NextResponse.json(
@@ -125,6 +128,10 @@ export async function POST(
         AOT_TYPE: occupation.type || 'AOT',
         LIEN_SIGNATURE: signatureLink,
         DATE_EXPIRATION: expirationDateStr,
+        'tiers.nom': occupation?.tiers?.nom || '',
+        adresse: occupation?.adresse || '',
+        dateDebut: dateDebut,
+        dateFin: dateFin,
       });
 
       await sendApmMail(

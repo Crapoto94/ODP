@@ -70,6 +70,8 @@ export async function POST(
     const settingsRows = await (prisma as any).$queryRaw`SELECT "appUrl" FROM "AppSettings" WHERE id = 1`;
     const tiersNom = occ.nom || occ.tiers?.nom || `Dossier #${occupationId}`;
     const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const dateDebut = occ.dateDebut ? new Date(occ.dateDebut).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+    const dateFin = occ.dateFin ? new Date(occ.dateFin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 
     const sent: string[] = [];
     for (const contact of recipients) {
@@ -78,6 +80,10 @@ export async function POST(
         CONTACT: contactNom,
         TIERS: tiersNom,
         DATE: date,
+        'tiers.nom': occ.tiers?.nom || '',
+        adresse: occ.adresse || '',
+        dateDebut: dateDebut,
+        dateFin: dateFin,
       });
       if (!html) continue;
       await sendApmMail(

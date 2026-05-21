@@ -69,6 +69,8 @@ export async function POST(
 
     const tiersNom = tierFacturable.nom || `Dossier #${occupationId}`;
     const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const dateDebut = occ.dateDebut ? new Date(occ.dateDebut).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+    const dateFin = occ.dateFin ? new Date(occ.dateFin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 
     const contactNom = [primaryContact.prenom, primaryContact.nom].filter(Boolean).join(' ') || primaryContact.email;
 
@@ -85,6 +87,10 @@ export async function POST(
       DATE: date,
       REDEVANCE_TYPE: redevanceType,
       ACTIVITE_TYPE: activityType,
+      'tiers.nom': tiersNom,
+      adresse: occ.adresse || '',
+      dateDebut: dateDebut,
+      dateFin: dateFin,
     });
 
     if (!html) {

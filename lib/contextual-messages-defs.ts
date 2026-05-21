@@ -14,7 +14,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   MSG_SIGNATURE_REQUEST: {
     label: 'Demande de signature',
     description: 'Envoyé au signataire pour lui demander de signer un AOT.',
-    vars: ['{{SIGNATAIRE}}', '{{AOT_REF}}', '{{AOT_TYPE}}', '{{LIEN_SIGNATURE}}', '{{DATE_EXPIRATION}}'],
+    vars: ['{{SIGNATAIRE}}', '{{AOT_REF}}', '{{AOT_TYPE}}', '{{LIEN_SIGNATURE}}', '{{DATE_EXPIRATION}}', '{{tiers.nom}}', '{{adresse}}', '{{dateDebut}}', '{{dateFin}}'],
     defaultSubject: 'Signature requise — AOT #{{AOT_REF}}',
     default: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -84,7 +84,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   MSG_AOT_SIGNE: {
     label: 'AOT signé — notification au demandeur',
     description: 'Envoyé à l\'agent qui a demandé la signature, une fois l\'AOT signé.',
-    vars: ['{{DEMANDEUR}}', '{{TIERS}}', '{{LIEN_DOSSIER}}', '{{SIGNATAIRE}}', '{{DATE_SIGNATURE}}'],
+    vars: ['{{DEMANDEUR}}', '{{TIERS}}', '{{LIEN_DOSSIER}}', '{{SIGNATAIRE}}', '{{DATE_SIGNATURE}}', '{{tiers.nom}}', '{{adresse}}', '{{dateDebut}}', '{{dateFin}}'],
     defaultSubject: '✅ AOT signé — {{TIERS}}',
     default: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -118,7 +118,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   MSG_AOT_REFUSE: {
     label: 'AOT refusé — notification au demandeur',
     description: 'Envoyé à l\'agent qui a demandé la signature, quand le signataire refuse.',
-    vars: ['{{DEMANDEUR}}', '{{TIERS}}', '{{LIEN_DOSSIER}}', '{{SIGNATAIRE}}', '{{DATE_REJET}}', '{{COMMENTAIRE}}'],
+    vars: ['{{DEMANDEUR}}', '{{TIERS}}', '{{LIEN_DOSSIER}}', '{{SIGNATAIRE}}', '{{DATE_REJET}}', '{{COMMENTAIRE}}', '{{tiers.nom}}', '{{adresse}}', '{{dateDebut}}', '{{dateFin}}'],
     defaultSubject: '⚠️ AOT refusé — {{TIERS}}',
     default: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -155,7 +155,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   MSG_AOT_DEMANDEUR: {
     label: 'Envoi AOT au demandeur',
     description: 'Envoyé aux contacts "Demandeur" et "Contact principal" du dossier pour leur transmettre l\'AOT final.',
-    vars: ['{{CONTACT}}', '{{TIERS}}', '{{DATE}}'],
+    vars: ['{{CONTACT}}', '{{TIERS}}', '{{DATE}}', '{{tiers.nom}}', '{{adresse}}', '{{dateDebut}}', '{{dateFin}}'],
     defaultSubject: 'Votre AOT — {{TIERS}}',
     default: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -209,7 +209,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   MSG_INVOICE_DEBTOR: {
     label: 'Envoi facture au débiteur',
     description: 'Envoyé au contact principal du tiers pour lui transmettre la facture.',
-    vars: ['{{CONTACT}}', '{{TIERS}}', '{{NOM_DOSSIER}}', '{{NUMERO_FACTURE}}', '{{DATE}}', '{{REDEVANCE_TYPE}}', '{{ACTIVITE_TYPE}}'],
+    vars: ['{{CONTACT}}', '{{TIERS}}', '{{NOM_DOSSIER}}', '{{NUMERO_FACTURE}}', '{{DATE}}', '{{REDEVANCE_TYPE}}', '{{ACTIVITE_TYPE}}', '{{tiers.nom}}', '{{adresse}}', '{{dateDebut}}', '{{dateFin}}'],
     defaultSubject: 'Votre facture ODP — {{NOM_DOSSIER}}',
     default: `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">

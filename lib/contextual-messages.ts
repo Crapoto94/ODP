@@ -15,11 +15,10 @@ export async function getContextualMessageData(
   let subject = '';
 
   try {
-    const rows = await (prisma as any).$queryRaw`
-      SELECT valeur, sujet, disabled FROM ContextualMessage WHERE cle = ${cle}
-    `;
-    const row = (rows as any[])[0];
-    if (row?.disabled === true || row?.disabled === 1) {
+    const row = await (prisma as any).contextualMessage.findUnique({
+      where: { cle }
+    });
+    if (row?.disabled) {
       return { html: '', subject: '' };
     }
     html = row?.valeur || '';
