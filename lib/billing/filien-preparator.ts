@@ -14,6 +14,20 @@ function removeYearSuffix(name: string): string {
   return name.replace(/_\d{4}$/, '').replace(/-\d{4}$/, '');
 }
 
+// Helper to read the TLPE type of an invoice line's article ("ENSEIGNE", "NUM", ...)
+function getLineTlpeType(ligne: any): string | null {
+  const art = ligne?.article;
+  if (!art) return null;
+  if (art.meta?.tlpeType) return art.meta.tlpeType;
+  if (art.notes) {
+    try {
+      const meta = typeof art.notes === 'string' ? JSON.parse(art.notes) : art.notes;
+      return meta?.tlpeType || null;
+    } catch { /* notes not JSON */ }
+  }
+  return null;
+}
+
 export interface BillingResult {
   id: number;
   numero: string;
@@ -65,7 +79,17 @@ export function getFullFilienContent(
     
     if (tc.filienChapitre) mov.lines.forEach((l: any) => l.chapitre = tc.filienChapitre);
     if (tc.filienNature) mov.lines.forEach((l: any) => l.nature = tc.filienNature);
-    if (tc.filienFonction) mov.lines.forEach((l: any) => l.fonction = tc.filienFonction);
+    // Fonction : pour les COMMERCE, une fonction distincte selon enseignes / autres
+    if (occ?.type === 'COMMERCE') {
+      mov.lines.forEach((l: any) => {
+        const fonction = l.category === 'ENSEIGNE'
+          ? (tc.filienFonctionEnseignes || tc.filienFonction)
+          : (tc.filienFonctionAutres || tc.filienFonction);
+        if (fonction) l.fonction = fonction;
+      });
+    } else if (tc.filienFonction) {
+      mov.lines.forEach((l: any) => l.fonction = tc.filienFonction);
+    }
     if (tc.filienCodeInterne) mov.lines.forEach((l: any) => l.codeInterne = tc.filienCodeInterne);
     if (tc.filienTypeMouvement) mov.lines.forEach((l: any) => l.typeMouvement = tc.filienTypeMouvement);
     if (tc.filienSens) mov.lines.forEach((l: any) => l.sens = tc.filienSens);
@@ -160,6 +184,52 @@ export function prepareFilienMovements(
     const startBordereauRaw = appSettings?.filienBordereau || '1';
     const startBordereau = parseInt(startBordereauRaw.replace(/\D/g, '')) || 1;
 
+    // Common analytical fields, taken from the 1st invoice line's article
+    const art0 = r.lignes?.[0]?.article || {};
+    const baseLineFields = {
+      imputation: art0?.numero || 'IMPUT_VIDE',
+      dateDebut: r.lignes?.[0]?.dateDebut || undefined,
+      dateFin: r.lignes?.[0]?.dateFin || undefined,
+      description: `Occupation du domaine public - ${occ?.nom || r.numero}`,
+      quantite: 1,
+      chapitre: art0?.chapitre || '',
+      nature: art0?.nature || '',
+      fonction: art0?.fonction || '',
+      codeInterne: art0?.codeInterne || '',
+      typeMouvement: art0?.typeMouvement || '',
+      sens: art0?.sens || '',
+      structure: art0?.structure || '',
+      gestionnaire: art0?.gestionnaire || '',
+    };
+
+    let lines: any[];
+    if (occ?.type === 'COMMERCE') {
+      // Split the invoice total into an "enseignes" line and an "autres" line.
+      const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
+      const enseignesTotal = round2(
+        (r.lignes || []).reduce(
+          (s: number, l: any) =>
+            getLineTlpeType(l) === 'ENSEIGNE' ? s + (l.calculatedTotal ?? l.montant ?? 0) : s,
+          0
+        )
+      );
+      // "autres" = remainder so the two lines always sum to the invoice total
+      const autresTotal = round2(r.total - enseignesTotal);
+
+      lines = [
+        { ...baseLineFields, label: 'Total enseignes', category: 'ENSEIGNE', montant: enseignesTotal, prixUnitaire: enseignesTotal },
+        { ...baseLineFields, label: 'Total autres', category: 'AUTRES', montant: autresTotal, prixUnitaire: autresTotal },
+      ].filter((l) => Math.abs(l.montant) > 0.001);
+
+      // Always keep at least one line (fallback to the full total under "autres")
+      if (lines.length === 0) {
+        lines = [{ ...baseLineFields, label: 'Total autres', category: 'AUTRES', montant: r.total, prixUnitaire: r.total }];
+      }
+      lines.forEach((l: any, i: number) => { l.numero = i + 1; });
+    } else {
+      lines = [{ ...baseLineFields, numero: 1, montant: r.total, prixUnitaire: r.total }];
+    }
+
     return {
       id: mouvementId,
       type: appSettings?.filienType || 'R',
@@ -175,24 +245,7 @@ export function prepareFilienMovements(
       bordereau: (startBordereau + idx).toString().padStart(5, '0'),
       objet: appSettings?.filienObjet || '',
       attachments,
-      lines: [{
-        numero: 1,
-        imputation: r.lignes[0]?.article?.numero || 'IMPUT_VIDE',
-        montant: r.total,
-        dateDebut: r.lignes[0]?.dateDebut || undefined,
-        dateFin: r.lignes[0]?.dateFin || undefined,
-        description: `Occupation du domaine public - ${occ?.nom || r.numero}`,
-        quantite: 1,
-        prixUnitaire: r.total,
-        chapitre: r.lignes[0]?.article?.chapitre || '',
-        nature: r.lignes[0]?.article?.nature || '',
-        fonction: r.lignes[0]?.article?.fonction || '',
-        codeInterne: r.lignes[0]?.article?.codeInterne || '',
-        typeMouvement: r.lignes[0]?.article?.typeMouvement || '',
-        sens: r.lignes[0]?.article?.sens || '',
-        structure: r.lignes[0]?.article?.structure || '',
-        gestionnaire: r.lignes[0]?.article?.gestionnaire || '',
-      }]
+      lines,
     };
   });
 }

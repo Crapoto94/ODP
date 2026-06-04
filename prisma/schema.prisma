@@ -300,6 +300,8 @@ model TypeDossierConfig {
   filienChapitre      String?  @default("")
   filienNature        String?  @default("")
   filienFonction      String?  @default("")
+  filienFonctionEnseignes String? @default("")
+  filienFonctionAutres    String? @default("")
   filienCodeInterne   String?  @default("")
   filienTypeMouvement String?  @default("")
   filienSens          String?  @default("")

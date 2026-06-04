@@ -60,13 +60,14 @@ export default function GeneralTab({
                   <div className="relative group">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
                     <input
-                      type="email"
+                      type="text"
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 pl-12 pr-6 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                      placeholder="finances@mairie.fr"
+                      placeholder="nom1@fbc.fr ; nom2@ivry94.fr ; nom3@fbc.fr"
                       value={settings.financeEmail || ''}
                       onChange={e => setSettings({...settings, financeEmail: e.target.value})}
                     />
                   </div>
+                  <p className="text-[10px] font-medium text-slate-400 ml-1">Plusieurs adresses possibles, séparées par un point-virgule «&nbsp;;&nbsp;»</p>
                 </div>
 
                 <div className="space-y-2 pt-4 border-t border-slate-50">

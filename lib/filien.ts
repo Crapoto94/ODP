@@ -58,6 +58,8 @@ export interface FilienLine {
   description?: string;
   quantite?: number;
   prixUnitaire?: number;
+  label?: string;       // Libellé de la ligne (ex: "Total enseignes" / "Total autres")
+  category?: string;    // Catégorie de ventilation (ex: "ENSEIGNE" / "AUTRES")
   // Analytical Ventilation
   chapitre?: string;
   nature?: string;
@@ -121,16 +123,19 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
     output += `/44/N\n`;
 
     // Lines
-    for (const line of mov.lines) {
+    mov.lines.forEach((line, li) => {
       const fmtNum = (n: number) => n.toFixed(2).replace('.', ',');
+      const ordre = (li + 1).toString().padStart(3, '0');
       output += `/**/\n`;
       output += `/500/P\n`;
-      output += `/501/001\n`;
-      
-      // Tag 502: Droits de voirie + type + année + " - Voir détail joint"
-      const label502 = `Droits de voirie ${typeLabel} ${year} - Voir détail joint`;
+      output += `/501/${ordre}\n`;
+
+      // Tag 502 : libellé de la ligne si fourni (ex: "Total enseignes"), sinon défaut
+      const label502 = line.label
+        ? line.label
+        : `Droits de voirie ${typeLabel} ${year} - Voir détail joint`;
       output += `/502/${label502.slice(0, 80)}\n`;
-      
+
       output += `/503/0101${year}\n`;
       output += `/504/3112${year}\n`;
       output += `/505/1,00\n`;
@@ -138,8 +143,8 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
       output += `/509/${fmtNum(line.montant)}\n`;
 
       output += `/--/\n`;
-      output += `/51/01\n`;
-      
+      output += `/51/${(line.numero || li + 1).toString().padStart(2, '0')}\n`;
+
       const p1Atts = [
         (line.chapitre || params.filienChapitre || '').padEnd(10, ' ').slice(0, 10),
         (line.nature || params.filienNature || '').padEnd(10, ' ').slice(0, 10),
@@ -157,9 +162,9 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
       ];
       output += `/542/${p2Atts.join('')}\n`;
       
-      output += `/57/Voir détail de facture\n`;
+      output += `/57/${(line.label || 'Voir détail de facture').slice(0, 40)}\n`;
       output += `/66/${fmtNum(line.montant)}\n`;
-    }
+    });
 
     // Separator after each movement
     output += `/##/\n`;

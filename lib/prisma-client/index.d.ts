@@ -20487,6 +20487,8 @@ export namespace Prisma {
     filienChapitre: string | null
     filienNature: string | null
     filienFonction: string | null
+    filienFonctionEnseignes: string | null
+    filienFonctionAutres: string | null
     filienCodeInterne: string | null
     filienTypeMouvement: string | null
     filienSens: string | null
@@ -20504,6 +20506,8 @@ export namespace Prisma {
     filienChapitre: string | null
     filienNature: string | null
     filienFonction: string | null
+    filienFonctionEnseignes: string | null
+    filienFonctionAutres: string | null
     filienCodeInterne: string | null
     filienTypeMouvement: string | null
     filienSens: string | null
@@ -20521,6 +20525,8 @@ export namespace Prisma {
     filienChapitre: number
     filienNature: number
     filienFonction: number
+    filienFonctionEnseignes: number
+    filienFonctionAutres: number
     filienCodeInterne: number
     filienTypeMouvement: number
     filienSens: number
@@ -20548,6 +20554,8 @@ export namespace Prisma {
     filienChapitre?: true
     filienNature?: true
     filienFonction?: true
+    filienFonctionEnseignes?: true
+    filienFonctionAutres?: true
     filienCodeInterne?: true
     filienTypeMouvement?: true
     filienSens?: true
@@ -20565,6 +20573,8 @@ export namespace Prisma {
     filienChapitre?: true
     filienNature?: true
     filienFonction?: true
+    filienFonctionEnseignes?: true
+    filienFonctionAutres?: true
     filienCodeInterne?: true
     filienTypeMouvement?: true
     filienSens?: true
@@ -20582,6 +20592,8 @@ export namespace Prisma {
     filienChapitre?: true
     filienNature?: true
     filienFonction?: true
+    filienFonctionEnseignes?: true
+    filienFonctionAutres?: true
     filienCodeInterne?: true
     filienTypeMouvement?: true
     filienSens?: true
@@ -20686,6 +20698,8 @@ export namespace Prisma {
     filienChapitre: string | null
     filienNature: string | null
     filienFonction: string | null
+    filienFonctionEnseignes: string | null
+    filienFonctionAutres: string | null
     filienCodeInterne: string | null
     filienTypeMouvement: string | null
     filienSens: string | null
@@ -20722,6 +20736,8 @@ export namespace Prisma {
     filienChapitre?: boolean
     filienNature?: boolean
     filienFonction?: boolean
+    filienFonctionEnseignes?: boolean
+    filienFonctionAutres?: boolean
     filienCodeInterne?: boolean
     filienTypeMouvement?: boolean
     filienSens?: boolean
@@ -20739,6 +20755,8 @@ export namespace Prisma {
     filienChapitre?: boolean
     filienNature?: boolean
     filienFonction?: boolean
+    filienFonctionEnseignes?: boolean
+    filienFonctionAutres?: boolean
     filienCodeInterne?: boolean
     filienTypeMouvement?: boolean
     filienSens?: boolean
@@ -20756,6 +20774,8 @@ export namespace Prisma {
     filienChapitre?: boolean
     filienNature?: boolean
     filienFonction?: boolean
+    filienFonctionEnseignes?: boolean
+    filienFonctionAutres?: boolean
     filienCodeInterne?: boolean
     filienTypeMouvement?: boolean
     filienSens?: boolean
@@ -20777,6 +20797,8 @@ export namespace Prisma {
       filienChapitre: string | null
       filienNature: string | null
       filienFonction: string | null
+      filienFonctionEnseignes: string | null
+      filienFonctionAutres: string | null
       filienCodeInterne: string | null
       filienTypeMouvement: string | null
       filienSens: string | null
@@ -21184,6 +21206,8 @@ export namespace Prisma {
     readonly filienChapitre: FieldRef<"TypeDossierConfig", 'String'>
     readonly filienNature: FieldRef<"TypeDossierConfig", 'String'>
     readonly filienFonction: FieldRef<"TypeDossierConfig", 'String'>
+    readonly filienFonctionEnseignes: FieldRef<"TypeDossierConfig", 'String'>
+    readonly filienFonctionAutres: FieldRef<"TypeDossierConfig", 'String'>
     readonly filienCodeInterne: FieldRef<"TypeDossierConfig", 'String'>
     readonly filienTypeMouvement: FieldRef<"TypeDossierConfig", 'String'>
     readonly filienSens: FieldRef<"TypeDossierConfig", 'String'>
@@ -32211,6 +32235,8 @@ export namespace Prisma {
     filienChapitre: 'filienChapitre',
     filienNature: 'filienNature',
     filienFonction: 'filienFonction',
+    filienFonctionEnseignes: 'filienFonctionEnseignes',
+    filienFonctionAutres: 'filienFonctionAutres',
     filienCodeInterne: 'filienCodeInterne',
     filienTypeMouvement: 'filienTypeMouvement',
     filienSens: 'filienSens',
@@ -33941,6 +33967,8 @@ export namespace Prisma {
     filienChapitre?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienNature?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienFonction?: StringNullableFilter<"TypeDossierConfig"> | string | null
+    filienFonctionEnseignes?: StringNullableFilter<"TypeDossierConfig"> | string | null
+    filienFonctionAutres?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienCodeInterne?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienTypeMouvement?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienSens?: StringNullableFilter<"TypeDossierConfig"> | string | null
@@ -33958,6 +33986,8 @@ export namespace Prisma {
     filienChapitre?: SortOrderInput | SortOrder
     filienNature?: SortOrderInput | SortOrder
     filienFonction?: SortOrderInput | SortOrder
+    filienFonctionEnseignes?: SortOrderInput | SortOrder
+    filienFonctionAutres?: SortOrderInput | SortOrder
     filienCodeInterne?: SortOrderInput | SortOrder
     filienTypeMouvement?: SortOrderInput | SortOrder
     filienSens?: SortOrderInput | SortOrder
@@ -33978,6 +34008,8 @@ export namespace Prisma {
     filienChapitre?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienNature?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienFonction?: StringNullableFilter<"TypeDossierConfig"> | string | null
+    filienFonctionEnseignes?: StringNullableFilter<"TypeDossierConfig"> | string | null
+    filienFonctionAutres?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienCodeInterne?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienTypeMouvement?: StringNullableFilter<"TypeDossierConfig"> | string | null
     filienSens?: StringNullableFilter<"TypeDossierConfig"> | string | null
@@ -33995,6 +34027,8 @@ export namespace Prisma {
     filienChapitre?: SortOrderInput | SortOrder
     filienNature?: SortOrderInput | SortOrder
     filienFonction?: SortOrderInput | SortOrder
+    filienFonctionEnseignes?: SortOrderInput | SortOrder
+    filienFonctionAutres?: SortOrderInput | SortOrder
     filienCodeInterne?: SortOrderInput | SortOrder
     filienTypeMouvement?: SortOrderInput | SortOrder
     filienSens?: SortOrderInput | SortOrder
@@ -34020,6 +34054,8 @@ export namespace Prisma {
     filienChapitre?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     filienNature?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     filienFonction?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
+    filienFonctionEnseignes?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
+    filienFonctionAutres?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     filienCodeInterne?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     filienTypeMouvement?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
     filienSens?: StringNullableWithAggregatesFilter<"TypeDossierConfig"> | string | null
@@ -36514,6 +36550,8 @@ export namespace Prisma {
     filienChapitre?: string | null
     filienNature?: string | null
     filienFonction?: string | null
+    filienFonctionEnseignes?: string | null
+    filienFonctionAutres?: string | null
     filienCodeInterne?: string | null
     filienTypeMouvement?: string | null
     filienSens?: string | null
@@ -36531,6 +36569,8 @@ export namespace Prisma {
     filienChapitre?: string | null
     filienNature?: string | null
     filienFonction?: string | null
+    filienFonctionEnseignes?: string | null
+    filienFonctionAutres?: string | null
     filienCodeInterne?: string | null
     filienTypeMouvement?: string | null
     filienSens?: string | null
@@ -36547,6 +36587,8 @@ export namespace Prisma {
     filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
     filienNature?: NullableStringFieldUpdateOperationsInput | string | null
     filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonctionEnseignes?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonctionAutres?: NullableStringFieldUpdateOperationsInput | string | null
     filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
     filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36564,6 +36606,8 @@ export namespace Prisma {
     filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
     filienNature?: NullableStringFieldUpdateOperationsInput | string | null
     filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonctionEnseignes?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonctionAutres?: NullableStringFieldUpdateOperationsInput | string | null
     filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
     filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36581,6 +36625,8 @@ export namespace Prisma {
     filienChapitre?: string | null
     filienNature?: string | null
     filienFonction?: string | null
+    filienFonctionEnseignes?: string | null
+    filienFonctionAutres?: string | null
     filienCodeInterne?: string | null
     filienTypeMouvement?: string | null
     filienSens?: string | null
@@ -36597,6 +36643,8 @@ export namespace Prisma {
     filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
     filienNature?: NullableStringFieldUpdateOperationsInput | string | null
     filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonctionEnseignes?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonctionAutres?: NullableStringFieldUpdateOperationsInput | string | null
     filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
     filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36614,6 +36662,8 @@ export namespace Prisma {
     filienChapitre?: NullableStringFieldUpdateOperationsInput | string | null
     filienNature?: NullableStringFieldUpdateOperationsInput | string | null
     filienFonction?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonctionEnseignes?: NullableStringFieldUpdateOperationsInput | string | null
+    filienFonctionAutres?: NullableStringFieldUpdateOperationsInput | string | null
     filienCodeInterne?: NullableStringFieldUpdateOperationsInput | string | null
     filienTypeMouvement?: NullableStringFieldUpdateOperationsInput | string | null
     filienSens?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38891,6 +38941,8 @@ export namespace Prisma {
     filienChapitre?: SortOrder
     filienNature?: SortOrder
     filienFonction?: SortOrder
+    filienFonctionEnseignes?: SortOrder
+    filienFonctionAutres?: SortOrder
     filienCodeInterne?: SortOrder
     filienTypeMouvement?: SortOrder
     filienSens?: SortOrder
@@ -38912,6 +38964,8 @@ export namespace Prisma {
     filienChapitre?: SortOrder
     filienNature?: SortOrder
     filienFonction?: SortOrder
+    filienFonctionEnseignes?: SortOrder
+    filienFonctionAutres?: SortOrder
     filienCodeInterne?: SortOrder
     filienTypeMouvement?: SortOrder
     filienSens?: SortOrder
@@ -38929,6 +38983,8 @@ export namespace Prisma {
     filienChapitre?: SortOrder
     filienNature?: SortOrder
     filienFonction?: SortOrder
+    filienFonctionEnseignes?: SortOrder
+    filienFonctionAutres?: SortOrder
     filienCodeInterne?: SortOrder
     filienTypeMouvement?: SortOrder
     filienSens?: SortOrder

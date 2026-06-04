@@ -42,18 +42,37 @@ export interface MailAttachment {
   content_type: string;
 }
 
+/**
+ * Parse a recipient field that may contain several addresses separated by
+ * ";" or "," (e.g. "nom1@fbc.fr ; nom2@ivry94.fr"). Returns a deduplicated
+ * list of trimmed, non-empty addresses.
+ */
+export function parseRecipients(to: string | string[]): string[] {
+  const raw = Array.isArray(to) ? to.join(';') : (to || '');
+  const list = raw
+    .split(/[;,]/)
+    .map((e) => e.trim())
+    .filter((e) => e.length > 0);
+  return Array.from(new Set(list));
+}
+
 export async function sendApmMail(
-  to: string,
+  to: string | string[],
   subject: string,
   content: string,
   fromName?: string,
   attachments?: MailAttachment[]
 ) {
-  try {
-    const { url, token, senderName, senderEmail, footer1, footer2, footer3, footerColor } = await getApmSettings();
+  const { url, token, senderName, senderEmail, footer1, footer2, footer3, footerColor } = await getApmSettings();
 
+  const recipients = parseRecipients(to);
+  if (recipients.length === 0) {
+    throw new Error('Aucun destinataire valide fourni pour l\'envoi du mail');
+  }
+
+  const sendOne = async (recipient: string) => {
     const payload: Record<string, any> = {
-      to,
+      to: recipient,
       subject,
       content,
       from_name: fromName || senderName,
@@ -71,10 +90,28 @@ export async function sendApmMail(
       httpsAgent,
     });
     return res.data;
-  } catch (error: any) {
-    console.error('[APM] Mail proxy failed:', error.response?.data || error.message);
-    throw error;
+  };
+
+  // Send one mail per recipient so delivery works regardless of the proxy's
+  // multi-recipient support. Don't let one failure block the others.
+  const results: any[] = [];
+  const errors: { recipient: string; message: string }[] = [];
+  for (const recipient of recipients) {
+    try {
+      results.push(await sendOne(recipient));
+    } catch (error: any) {
+      const message = error.response?.data || error.message;
+      console.error(`[APM] Mail proxy failed for ${recipient}:`, message);
+      errors.push({ recipient, message: typeof message === 'string' ? message : JSON.stringify(message) });
+    }
   }
+
+  // Throw only if every recipient failed (so partial sends still notify someone).
+  if (results.length === 0) {
+    throw new Error(`Échec de l'envoi du mail à tous les destinataires: ${errors.map((e) => e.recipient).join(', ')}`);
+  }
+
+  return results.length === 1 ? results[0] : results;
 }
 
 export async function checkApmHealth() {
