@@ -25,6 +25,7 @@ model Tiers {
   etatAdministratif String?
   observations      String?
   photo             String?
+  nomEtablissement  String?
   contacts          Contact[]
   occupations       Occupation[]
   notes             Note[]

@@ -9,6 +9,7 @@ export interface ProcessedInvoice {
   numero: string;
   path: string;
   tiers: string;
+  annee?: number;
   total: number;
   lignes: any[];
   pdfBuffer?: Buffer;
@@ -130,6 +131,7 @@ export async function processDossier(params: {
     numero: invoiceNumber,
     path: `/Factures/${runName}/${filename}`,
     tiers: occ.tiers?.nom || 'Inconnu',
+    annee: occ.anneeTaxation || year,
     total,
     lignes: lineResults,
     pdfBuffer

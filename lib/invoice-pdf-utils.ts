@@ -50,7 +50,7 @@ export async function generateInvoicePdfBuffer(
       where: { id: occupationId },
       include: {
         tiers: true,
-        lignes: { include: { article: { include: { modeTaxation: true } } } }
+        lignes: { where: { deletedAt: null }, include: { article: { include: { modeTaxation: true } } } }
       }
     });
     if (!occ) throw new Error('Occupation non trouvée');
@@ -62,7 +62,7 @@ export async function generateInvoicePdfBuffer(
       where: { id: { in: overrides.occupationIds } },
       include: {
         tiers: true,
-        lignes: { include: { article: { include: { modeTaxation: true } } } }
+        lignes: { where: { deletedAt: null }, include: { article: { include: { modeTaxation: true } } } }
       }
     });
     if (occs.length === 0) throw new Error('Aucune occupation trouvée');
@@ -77,7 +77,7 @@ export async function generateInvoicePdfBuffer(
       where: { tiersId: overrides.tiersId, anneeTaxation: overrides.annee },
       include: {
         tiers: true,
-        lignes: { include: { article: { include: { modeTaxation: true } } } }
+        lignes: { where: { deletedAt: null }, include: { article: { include: { modeTaxation: true } } } }
       }
     });
     if (occs.length === 0) throw new Error('Aucune occupation trouvée pour cette année');

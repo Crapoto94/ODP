@@ -42,7 +42,7 @@ export async function generateRecapPdf(params: {
   validResults.forEach((r) => {
     if (y > 270) { recapDoc.addPage(); y = 20; }
     recapDoc.setFont('helvetica', 'bold');
-    recapDoc.text(`${r.numero} - ${r.tiers}`, 20, y);
+    recapDoc.text(`${r.numero} - ${r.tiers}${r.annee ? ` (${r.annee})` : ''}`, 20, y);
     recapDoc.setFont('helvetica', 'normal');
     recapDoc.text(`${r.total.toFixed(2)} €`, 170, y, { align: 'right' });
     y += 5;

@@ -40,7 +40,7 @@ export default function FacturationPage() {
   const [type, setType] = useState('');
   const [loading, setLoading] = useState(false);
   const [dossiers, setDossiers] = useState<any[]>([]);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<(number | string)[]>([]);
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<any>(null);
 
@@ -138,28 +138,32 @@ export default function FacturationPage() {
       );
 
       if (type === 'COMMERCE') {
-        const grouped = new Map();
+        const grouped = new Map<string, any>();
         data.forEach((occ: any) => {
           if (!occ.tiers) return;
           const tId = occ.tiers.id;
+          const annee = occ.anneeTaxation;
+          const key = `${tId}_${annee}`;
           const isClosed = ['Fermée', 'Cessée'].includes(occ.tiers.etatAdministratif);
-          
-          if (!grouped.has(tId)) {
-            grouped.set(tId, {
-              id: tId,
+
+          if (!grouped.has(key)) {
+            grouped.set(key, {
+              id: key,
               isCommerceGroup: true,
-              isClosed: isClosed,
-              nom: occ.tiers.nom, 
+              isClosed,
+              nom: occ.tiers.nom,
               tiers: occ.tiers,
+              anneeTaxation: annee,
               lignes: [...(occ.lignes || [])],
-              montantCalcule: occ.montantCalcule || 0
+              montantCalcule: occ.montantCalcule || 0,
+              occupationIds: [occ.id]
             });
           } else {
-            const g = grouped.get(tId);
+            const g = grouped.get(key)!;
             g.lignes.push(...(occ.lignes || []));
             g.montantCalcule += (occ.montantCalcule || 0);
-            // Si une des occupations appartient à un tiers fermé, le groupe est marqué fermé
             if (isClosed) g.isClosed = true;
+            g.occupationIds.push(occ.id);
           }
         });
         data = Array.from(grouped.values());
@@ -185,7 +189,7 @@ export default function FacturationPage() {
     try {
       const dossier = dossiers.find(d => d.id === dossierId);
       if (!dossier) return true;
-      const tiersId = dossier.isCommerceGroup ? dossier.id : (dossier.tiers?.id);
+      const tiersId = dossier.tiers?.id;
       if (!tiersId) return true;
       const res = await axios.post(`/api/admin/verify-tiers?id=${tiersId}`);
       const status = res.data.status;
@@ -210,16 +214,21 @@ export default function FacturationPage() {
       }
 
       // Filter out any invalid ids
-      const validIds = selectedIds.filter((id: any) => id && id > 0);
+      const validIds = selectedIds.filter((id: any) => !!id);
       if (validIds.length === 0) {
         alert('Aucun dossier valide sélectionné');
         setProcessing(false);
         return;
       }
 
+      // For COMMERCE, convert group keys to occupation IDs for the API
+      const apiIds = type === 'COMMERCE'
+        ? dossiers.filter(d => validIds.includes(d.id)).flatMap((d: any) => d.occupationIds || [])
+        : validIds.map(Number);
+
       // 1. Verify required documents before billing
       const verifyRes = await axios.post('/api/billing/verify-documents', {
-        ids: validIds,
+        ids: apiIds,
         type: type
       });
 
@@ -254,7 +263,7 @@ export default function FacturationPage() {
         setWarningAction(() => async () => {
           try {
             const res = await axios.post('/api/billing/process', {
-              ids: validIds,
+              ids: apiIds,
               type: type
             });
             setResult(res.data);
@@ -274,7 +283,7 @@ export default function FacturationPage() {
       }
 
       const res = await axios.post('/api/billing/process', {
-        ids: validIds,
+        ids: apiIds,
         type: type
       });
       setResult(res.data);
@@ -487,7 +496,7 @@ export default function FacturationPage() {
                 <div>
                   <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Dossiers éligibles ({type})</h2>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
-                    État: VÉRIFIÉ / VALIDÉ ({dossiers.length} groupés)
+                    État: VÉRIFIÉ / VALIDÉ — {dossiers.length} ligne{dossiers.length > 1 ? 's' : ''} (1 par année et par commerce)
                   </p>
                 </div>
                 {dossiers.some(d => d.isClosed) && (
@@ -527,6 +536,7 @@ export default function FacturationPage() {
                         </th>
                         <th className="px-8 py-4 bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest">Dossier</th>
                         <th className="px-8 py-4 bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest">Tiers</th>
+                        <th className="px-8 py-4 bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Année</th>
                         <th className="px-8 py-4 bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Montant</th>
                       </tr>
                     </thead>
@@ -553,10 +563,13 @@ export default function FacturationPage() {
                                 </div>
                               )}
                             </div>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">ID {d.id}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">ID {d.tiers?.id || d.id}</p>
                           </td>
                           <td className="px-8 py-4 border-b border-slate-50 text-sm font-bold text-slate-600">
                             {d.tiers.nom}
+                          </td>
+                          <td className="px-8 py-4 border-b border-slate-50 text-sm font-black text-blue-700 text-center">
+                            {d.anneeTaxation || '—'}
                           </td>
                           <td className="px-8 py-4 border-b border-slate-50 text-sm font-black text-slate-900 text-right">
                             {(d.montantCalcule || d.lignes?.reduce((s: number, l: any) => s + l.montant, 0) || 0).toLocaleString('fr-FR')} €

@@ -464,6 +464,16 @@ export function useCommerceLogic(paramId: string) {
     }
   };
 
+  const handleUpdateNom = async (newNom: string) => {
+    try {
+      await axios.patch(`/api/commerces/${paramId}`, { nomEtablissement: newNom });
+      setCommerce((prev: any) => ({ ...prev, nomEtablissement: newNom }));
+    } catch (err) {
+      console.error('Error updating nomEtablissement:', err);
+      throw err;
+    }
+  };
+
   const handleDeleteYear = async (year: number) => {
     if (!confirm(`Supprimer toute l'année ${year} et ses dispositifs ? Cette action est irréversible.`)) return;
     try {
@@ -661,6 +671,7 @@ export function useCommerceLogic(paramId: string) {
     handleUpdateOccupationAddress,
     handleUpdateObservations,
     handleUpdatePhoto,
+    handleUpdateNom,
     handleDeleteYear
   };
 }

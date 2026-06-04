@@ -62,22 +62,25 @@ export async function DELETE(req: NextRequest) {
 
     if (!run) return NextResponse.json({ error: 'Train de facturation introuvable' }, { status: 404 });
 
-    // 2. Fetch invoices separately to avoid corruption errors
-    let invoiceIds: number[] = [];
+    // 2. Fetch invoice numbers separately to avoid corruption errors
+    let invoiceNumeros: string[] = [];
     try {
       const invoices = await (prisma as any).billingRunInvoice.findMany({
         where: { billingRunId: id },
-        select: { dossierId: true }
+        select: { numero: true }
       });
-      invoiceIds = invoices.map((inv: any) => inv.dossierId).filter((id: any) => id != null);
+      invoiceNumeros = invoices.map((inv: any) => inv.numero).filter((n: any) => !!n);
     } catch (err: any) {
       console.error(`[DELETE] Error fetching invoices for ${id}:`, err.message);
     }
 
-    // 3. Revert dossier statuses
-    if (invoiceIds.length > 0) {
+    // 3. Revert dossier statuses — keyed on numeroFacture so that EVERY occupation
+    //    carrying the cancelled invoice number is reverted. A commerce/year invoice
+    //    can cover several occupations, while billingRunInvoice only stores the first
+    //    one's id; reverting by id would leave the others stuck in "FACTURE".
+    if (invoiceNumeros.length > 0) {
       await (prisma as any).occupation.updateMany({
-        where: { id: { in: invoiceIds } },
+        where: { numeroFacture: { in: invoiceNumeros } },
         data: {
           statut: 'VERIFIE',
           numeroFacture: null,

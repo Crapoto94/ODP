@@ -32,11 +32,23 @@ export async function POST(req: Request) {
     for (const configData of configs) {
       const { type, id, updated_at, ...data } = configData;
       if (type) {
-        const result = await (prisma as any).typeDossierConfig.upsert({
-          where: { type },
-          update: data,
-          create: { type, ...data }
+        // Manual upsert (findFirst + update/create) instead of prisma.upsert:
+        // the Postgres "type" column lacks the UNIQUE constraint that the Prisma
+        // schema declares, so a native upsert's ON CONFLICT fails (error 42P10).
+        const existing = await (prisma as any).typeDossierConfig.findFirst({
+          where: { type }
         });
+        let result;
+        if (existing) {
+          result = await (prisma as any).typeDossierConfig.update({
+            where: { id: existing.id },
+            data
+          });
+        } else {
+          result = await (prisma as any).typeDossierConfig.create({
+            data: { type, ...data }
+          });
+        }
         results.push(result);
       }
     }

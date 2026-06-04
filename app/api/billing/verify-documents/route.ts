@@ -14,17 +14,15 @@ export async function POST(req: NextRequest) {
     let dossiers: any[] = [];
     if (type === 'COMMERCE') {
       const occupations = await (prisma as any).occupation.findMany({
-        where: { tiersId: { in: ids }, type: 'COMMERCE', statut: { in: ['VERIFIE', 'VALIDE', 'VALIDÉ'] } },
-        include: { tiers: true }
+        where: { id: { in: ids }, type: 'COMMERCE', statut: { in: ['VERIFIE', 'VALIDE', 'VALIDÉ'] } },
+        select: { id: true, type: true, anneeTaxation: true, tiersId: true }
       });
-      const grouped = new Map();
+      // One entry per unique (tiersId, anneeTaxation) for document year checking
+      const grouped = new Map<string, any>();
       occupations.forEach((occ: any) => {
-        if (!grouped.has(occ.tiersId)) {
-          grouped.set(occ.tiersId, {
-            id: occ.tiersId,
-            type: 'COMMERCE',
-            anneeTaxation: occ.anneeTaxation
-          });
+        const key = `${occ.tiersId}_${occ.anneeTaxation}`;
+        if (!grouped.has(key)) {
+          grouped.set(key, { id: occ.id, type: 'COMMERCE', anneeTaxation: occ.anneeTaxation });
         }
       });
       dossiers = Array.from(grouped.values());

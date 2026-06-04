@@ -10,6 +10,7 @@ interface Props {
   onUpdateAgissantPour?: (occupationId: number, agissantPourId: string) => void;
   onUpdateAddress?: (occupationId: number, newAddress: string) => void;
   onUpdatePhoto?: (photoUrl: string) => void;
+  onUpdateNom?: (newNom: string) => void;
   onChangeTiersClick?: () => void;
 }
 
@@ -22,6 +23,7 @@ export default function CommerceInfoCard({
   onUpdateAgissantPour,
   onUpdateAddress,
   onUpdatePhoto,
+  onUpdateNom,
   onChangeTiersClick
 }: Props) {
   if (!commerce) return null;
@@ -76,7 +78,24 @@ export default function CommerceInfoCard({
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Détails de l'établissement</p>
-          <h3 className="text-xl font-black text-slate-900 truncate">{commerce.nom}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-xl font-black text-slate-900 truncate">{commerce.nomEtablissement || commerce.nom}</h3>
+            {onUpdateNom && (
+              <button
+                onClick={() => {
+                  const current = commerce.nomEtablissement || commerce.nom;
+                  const newNom = prompt('Nom de l\'établissement :', current);
+                  if (newNom !== null && newNom.trim() !== '' && newNom.trim() !== current) {
+                    onUpdateNom(newNom.trim());
+                  }
+                }}
+                className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-blue-600 transition-colors shrink-0"
+                title="Modifier le nom de l'établissement"
+              >
+                <Pencil size={14} />
+              </button>
+            )}
+          </div>
           <div className="flex items-center gap-2 mt-1">
             <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold">
               ID: {commerce.id}

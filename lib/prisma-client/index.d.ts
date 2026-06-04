@@ -3509,6 +3509,7 @@ export namespace Prisma {
     etatAdministratif: string | null
     observations: string | null
     photo: string | null
+    nomEtablissement: string | null
   }
 
   export type TiersMaxAggregateOutputType = {
@@ -3527,6 +3528,7 @@ export namespace Prisma {
     etatAdministratif: string | null
     observations: string | null
     photo: string | null
+    nomEtablissement: string | null
   }
 
   export type TiersCountAggregateOutputType = {
@@ -3545,6 +3547,7 @@ export namespace Prisma {
     etatAdministratif: number
     observations: number
     photo: number
+    nomEtablissement: number
     _all: number
   }
 
@@ -3577,6 +3580,7 @@ export namespace Prisma {
     etatAdministratif?: true
     observations?: true
     photo?: true
+    nomEtablissement?: true
   }
 
   export type TiersMaxAggregateInputType = {
@@ -3595,6 +3599,7 @@ export namespace Prisma {
     etatAdministratif?: true
     observations?: true
     photo?: true
+    nomEtablissement?: true
   }
 
   export type TiersCountAggregateInputType = {
@@ -3613,6 +3618,7 @@ export namespace Prisma {
     etatAdministratif?: true
     observations?: true
     photo?: true
+    nomEtablissement?: true
     _all?: true
   }
 
@@ -3718,6 +3724,7 @@ export namespace Prisma {
     etatAdministratif: string | null
     observations: string | null
     photo: string | null
+    nomEtablissement: string | null
     _count: TiersCountAggregateOutputType | null
     _avg: TiersAvgAggregateOutputType | null
     _sum: TiersSumAggregateOutputType | null
@@ -3755,6 +3762,7 @@ export namespace Prisma {
     etatAdministratif?: boolean
     observations?: boolean
     photo?: boolean
+    nomEtablissement?: boolean
     contacts?: boolean | Tiers$contactsArgs<ExtArgs>
     occupations?: boolean | Tiers$occupationsArgs<ExtArgs>
     notes?: boolean | Tiers$notesArgs<ExtArgs>
@@ -3778,6 +3786,7 @@ export namespace Prisma {
     etatAdministratif?: boolean
     observations?: boolean
     photo?: boolean
+    nomEtablissement?: boolean
   }, ExtArgs["result"]["tiers"]>
 
   export type TiersSelectScalar = {
@@ -3796,6 +3805,7 @@ export namespace Prisma {
     etatAdministratif?: boolean
     observations?: boolean
     photo?: boolean
+    nomEtablissement?: boolean
   }
 
   export type TiersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3831,6 +3841,7 @@ export namespace Prisma {
       etatAdministratif: string | null
       observations: string | null
       photo: string | null
+      nomEtablissement: string | null
     }, ExtArgs["result"]["tiers"]>
     composites: {}
   }
@@ -4243,6 +4254,7 @@ export namespace Prisma {
     readonly etatAdministratif: FieldRef<"Tiers", 'String'>
     readonly observations: FieldRef<"Tiers", 'String'>
     readonly photo: FieldRef<"Tiers", 'String'>
+    readonly nomEtablissement: FieldRef<"Tiers", 'String'>
   }
     
 
@@ -31934,7 +31946,8 @@ export namespace Prisma {
     natureJuridique: 'natureJuridique',
     etatAdministratif: 'etatAdministratif',
     observations: 'observations',
-    photo: 'photo'
+    photo: 'photo',
+    nomEtablissement: 'nomEtablissement'
   };
 
   export type TiersScalarFieldEnum = (typeof TiersScalarFieldEnum)[keyof typeof TiersScalarFieldEnum]
@@ -32502,6 +32515,7 @@ export namespace Prisma {
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
     observations?: StringNullableFilter<"Tiers"> | string | null
     photo?: StringNullableFilter<"Tiers"> | string | null
+    nomEtablissement?: StringNullableFilter<"Tiers"> | string | null
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
     notes?: NoteListRelationFilter
@@ -32524,6 +32538,7 @@ export namespace Prisma {
     etatAdministratif?: SortOrderInput | SortOrder
     observations?: SortOrderInput | SortOrder
     photo?: SortOrderInput | SortOrder
+    nomEtablissement?: SortOrderInput | SortOrder
     contacts?: ContactOrderByRelationAggregateInput
     occupations?: OccupationOrderByRelationAggregateInput
     notes?: NoteOrderByRelationAggregateInput
@@ -32549,6 +32564,7 @@ export namespace Prisma {
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
     observations?: StringNullableFilter<"Tiers"> | string | null
     photo?: StringNullableFilter<"Tiers"> | string | null
+    nomEtablissement?: StringNullableFilter<"Tiers"> | string | null
     contacts?: ContactListRelationFilter
     occupations?: OccupationListRelationFilter
     notes?: NoteListRelationFilter
@@ -32571,6 +32587,7 @@ export namespace Prisma {
     etatAdministratif?: SortOrderInput | SortOrder
     observations?: SortOrderInput | SortOrder
     photo?: SortOrderInput | SortOrder
+    nomEtablissement?: SortOrderInput | SortOrder
     _count?: TiersCountOrderByAggregateInput
     _avg?: TiersAvgOrderByAggregateInput
     _max?: TiersMaxOrderByAggregateInput
@@ -32597,6 +32614,7 @@ export namespace Prisma {
     etatAdministratif?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
     observations?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
     photo?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
+    nomEtablissement?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
   }
 
   export type OccupationWhereInput = {
@@ -34929,6 +34947,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     occupations?: OccupationCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
@@ -34951,6 +34970,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
@@ -34972,6 +34992,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
@@ -34994,6 +35015,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
@@ -35016,6 +35038,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
   }
 
   export type TiersUpdateManyMutationInput = {
@@ -35033,6 +35056,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TiersUncheckedUpdateManyInput = {
@@ -35051,6 +35075,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OccupationCreateInput = {
@@ -37736,6 +37761,7 @@ export namespace Prisma {
     etatAdministratif?: SortOrder
     observations?: SortOrder
     photo?: SortOrder
+    nomEtablissement?: SortOrder
   }
 
   export type TiersAvgOrderByAggregateInput = {
@@ -37760,6 +37786,7 @@ export namespace Prisma {
     etatAdministratif?: SortOrder
     observations?: SortOrder
     photo?: SortOrder
+    nomEtablissement?: SortOrder
   }
 
   export type TiersMinOrderByAggregateInput = {
@@ -37778,6 +37805,7 @@ export namespace Prisma {
     etatAdministratif?: SortOrder
     observations?: SortOrder
     photo?: SortOrder
+    nomEtablissement?: SortOrder
   }
 
   export type TiersSumOrderByAggregateInput = {
@@ -41467,6 +41495,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
     favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
@@ -41488,6 +41517,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
     favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
@@ -41654,6 +41684,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
     favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
@@ -41675,6 +41706,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
     favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
@@ -41695,6 +41727,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     occupations?: OccupationCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
     favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
@@ -41716,6 +41749,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
     favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
@@ -41850,6 +41884,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
     favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
@@ -41871,6 +41906,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput
     favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
@@ -42093,6 +42129,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     occupations?: OccupationCreateNestedManyWithoutTiersInput
     favoritedBy?: FavoriteCommerceCreateNestedManyWithoutTiersInput
@@ -42114,6 +42151,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
     favoritedBy?: FavoriteCommerceUncheckedCreateNestedManyWithoutTiersInput
@@ -42254,6 +42292,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
     favoritedBy?: FavoriteCommerceUpdateManyWithoutTiersNestedInput
@@ -42275,6 +42314,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
@@ -42825,6 +42865,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     contacts?: ContactCreateNestedManyWithoutTiersInput
     occupations?: OccupationCreateNestedManyWithoutTiersInput
     notes?: NoteCreateNestedManyWithoutTiersInput
@@ -42846,6 +42887,7 @@ export namespace Prisma {
     etatAdministratif?: string | null
     observations?: string | null
     photo?: string | null
+    nomEtablissement?: string | null
     contacts?: ContactUncheckedCreateNestedManyWithoutTiersInput
     occupations?: OccupationUncheckedCreateNestedManyWithoutTiersInput
     notes?: NoteUncheckedCreateNestedManyWithoutTiersInput
@@ -42920,6 +42962,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUpdateManyWithoutTiersNestedInput
     notes?: NoteUpdateManyWithoutTiersNestedInput
@@ -42941,6 +42984,7 @@ export namespace Prisma {
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
+    nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     notes?: NoteUncheckedUpdateManyWithoutTiersNestedInput

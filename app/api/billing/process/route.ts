@@ -148,19 +148,19 @@ export async function POST(req: NextRequest) {
 async function fetchDossiers(ids: number[], type: string) {
   if (type === 'COMMERCE') {
     const occupations = await (prisma as any).occupation.findMany({
-      where: { tiersId: { in: ids }, type: 'COMMERCE', statut: { in: ['VERIFIE', 'VALIDE', 'VALIDÉ'] }, isExempt: false },
-      include: { tiers: true, lignes: { include: { article: { include: { modeTaxation: true } } } } }
+      where: { id: { in: ids }, type: 'COMMERCE', statut: { in: ['VERIFIE', 'VALIDE', 'VALIDÉ'] }, isExempt: false },
+      include: { tiers: true, lignes: { where: { deletedAt: null }, include: { article: { include: { modeTaxation: true } } } } }
     });
-    const grouped = new Map();
+    const grouped = new Map<string, any>();
     occupations.forEach((occ: any) => {
       if (!occ.tiersId || !occ.tiers) {
         console.warn('[FETCH DOSSIERS] COMMERCE occupation without tiersId or tiers:', occ.id);
-        return; // Skip invalid occupations
+        return;
       }
-
-      if (!grouped.has(occ.tiersId)) {
-        grouped.set(occ.tiersId, {
-          id: occ.tiersId,
+      const key = `${occ.tiersId}_${occ.anneeTaxation}`;
+      if (!grouped.has(key)) {
+        grouped.set(key, {
+          id: occ.id,
           isCommerceGroup: true,
           type: 'COMMERCE',
           tiers: occ.tiers,
@@ -169,8 +169,9 @@ async function fetchDossiers(ids: number[], type: string) {
           lignes: [...(occ.lignes || [])]
         });
       } else {
-        grouped.get(occ.tiersId).occupationsIncluded.push(occ);
-        grouped.get(occ.tiersId).lignes.push(...(occ.lignes || []));
+        const g = grouped.get(key)!;
+        g.occupationsIncluded.push(occ);
+        g.lignes.push(...(occ.lignes || []));
       }
     });
     const result = Array.from(grouped.values());
@@ -181,7 +182,7 @@ async function fetchDossiers(ids: number[], type: string) {
   } else {
     const occupations = await (prisma as any).occupation.findMany({
       where: { id: { in: ids }, isExempt: false },
-      include: { tiers: true, lignes: { include: { article: { include: { modeTaxation: true } } } } }
+      include: { tiers: true, lignes: { where: { deletedAt: null }, include: { article: { include: { modeTaxation: true } } } } }
     });
     // Ensure all occupations have isCommerceGroup and occupationsIncluded properties
     return occupations.map((occ: any) => ({
@@ -242,7 +243,7 @@ async function recordBillingRun(id: string, type: string, date: Date, results: P
           billingRunId: id,
           dossierId: r.id,
           numero: r.numero,
-          tiers: r.tiers,
+          tiers: r.annee ? `${r.tiers} (${r.annee})` : r.tiers,
           total: r.total,
           pdfPath: r.path
         }))
