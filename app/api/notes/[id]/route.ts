@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { hasPermissionServer as hasPermission } from '@/lib/permissions-server';
 
 export async function DELETE(
   request: Request,
@@ -8,8 +9,8 @@ export async function DELETE(
 ) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Seul un administrateur peut supprimer une note' }, { status: 403 });
+    if (!session || !hasPermission(session.role, 'MODIFY_DOSSIER')) {
+      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 
     const { id } = await params;

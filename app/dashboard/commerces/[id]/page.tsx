@@ -22,6 +22,7 @@ import SignatureRequestModal from '../../occupations/[id]/components/SignatureRe
 import OccupationFinancialCard from '../../occupations/[id]/components/OccupationFinancialCard';
 import { useCommerceLogic } from './hooks/useCommerceLogic';
 import TiersSearchModal from './components/TiersSearchModal';
+import { hasPermission } from '@/lib/permissions';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -290,7 +291,7 @@ export default function CommerceDetailPage({ params }: Props) {
         selectedYear={selectedYear ?? undefined}
         onSelectYear={setSelectedYear}
         onDeleteYear={handleDeleteYear}
-        isAdmin={currentUser?.role === 'ADMIN'}
+        isAdmin={!!(currentUser?.role && hasPermission(currentUser.role, 'MODIFY_DOSSIER'))}
       />
 
       {/* Main Content + Sidebar Grid */}

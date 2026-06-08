@@ -25,19 +25,20 @@ import {
   Zap,
   Loader2
 } from 'lucide-react';
+import { hasPermission, type Permission } from '@/lib/permissions';
 
-const menuItems = [
+const menuItems: Array<{ icon: any; label: string; href: string; permission?: Permission }> = [
   { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard' },
   { icon: HardHat, label: 'Chantiers et tournages', href: '/dashboard/occupations' },
   { icon: Store, label: 'Commerces', href: '/dashboard/commerces' },
   { icon: ShoppingBag, label: 'T.L.P.E.', href: '/dashboard/tlpe' },
   { icon: Users, label: 'Gestion des Tiers', href: '/dashboard/tiers' },
-  { icon: Euro, label: 'Tarifs & Articles', href: '/dashboard/tarifs' },
-  { icon: LayoutTemplate, label: 'Gabarits', href: '/dashboard/gabarit' },
-  { icon: ClipboardCheck, label: 'Facturation', href: '/dashboard/facturation' },
-  { icon: CopyPlus, label: 'Report d\'année', href: '/dashboard/report' },
-  { icon: MapIcon, label: 'Carte SIG', href: '/dashboard/carte' },
-  { icon: Settings, label: 'Paramètres', href: '/dashboard/settings' },
+  { icon: Euro, label: 'Tarifs & Articles', href: '/dashboard/tarifs', permission: 'MANAGE_TARIFS' },
+  { icon: LayoutTemplate, label: 'Gabarits', href: '/dashboard/gabarit', permission: 'MANAGE_TRAMES' },
+  { icon: ClipboardCheck, label: 'Facturation', href: '/dashboard/facturation', permission: 'SEND_EMAILS' },
+  { icon: CopyPlus, label: "Report d'année", href: '/dashboard/report', permission: 'MANAGE_TARIFS' },
+  { icon: MapIcon, label: 'Carte SIG', href: '/dashboard/carte', permission: 'CONTROLE_TERRAIN' },
+  { icon: Settings, label: 'Paramètres', href: '/dashboard/settings', permission: 'MANAGE_USERS' },
 ];
 
 export default function Sidebar() {
@@ -131,11 +132,10 @@ export default function Sidebar() {
       </div>
 
       <nav className={`flex-1 p-4 space-y-1 overflow-hidden ${isCollapsed ? 'items-center' : ''}`}>
-        {menuItems.map((item: any) => {
+        {menuItems.map((item) => {
           const isActive = pathname === item.href;
-          if (item.adminOnly && user?.role && user.role !== 'ADMIN') return null;
-          if (item.href === '/dashboard/settings' && user?.role && user.role !== 'ADMIN') return null;
-          if ((item.adminOnly || item.href === '/dashboard/settings') && !user) return null;
+          if (item.permission && user?.role && !hasPermission(user.role, item.permission)) return null;
+          if (item.permission && !user) return null;
 
           return (
             <Link

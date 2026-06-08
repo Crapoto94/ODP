@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prismaShared } from '@/lib/prisma-shared';
 import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
+import { hasPermissionServer as hasPermission } from '@/lib/permissions-server';
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -21,8 +22,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       console.error('[PATCH /api/backlog/[id]] Error decrypting session:', e);
     }
 
-    if (userRole !== 'ADMIN') {
-      return NextResponse.json({ error: 'Only admins can modify backlog items' }, { status: 403 });
+    if (!hasPermission(userRole, 'MANAGE_USERS')) {
+      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 
     const item = await prismaShared.backlogItem.update({

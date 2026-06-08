@@ -13,6 +13,7 @@ import {
   Clock,
   Mail,
   UserCog,
+  ShieldCheck,
   ChevronRight,
 } from 'lucide-react';
 
@@ -26,14 +27,16 @@ import PostgresTab from './components/PostgresTab';
 import SignatureConfigTab from './components/SignatureConfigTab';
 import MessagesContextuelsTab from './components/MessagesContextuelsTab';
 import ContactRolesTab from './components/ContactRolesTab';
+import RolesTab from './components/RolesTab';
 
-type TabType = 'general' | 'postgres' | 'users' | 'contact_roles' | 'mobile_logs' | 'backlog' | 'signature' | 'messages' | 'sql';
+type TabType = 'general' | 'postgres' | 'users' | 'roles' | 'contact_roles' | 'mobile_logs' | 'backlog' | 'signature' | 'messages' | 'sql';
 
 const tabs: { id: TabType; label: string; icon: any; description: string; group?: string }[] = [
   { id: 'general',        label: 'Général',            icon: LayoutGrid, description: 'APM, mail, Filièn…',        group: 'Configuration' },
   { id: 'signature',      label: 'Signatures',         icon: FileText,   description: 'Signataires & gabarits',    group: 'Configuration' },
   { id: 'messages',       label: 'Modèles d\'emails',  icon: Mail,       description: 'Messages contextuels',      group: 'Configuration' },
-  { id: 'users',          label: 'Utilisateurs',       icon: Users,      description: 'Comptes & accès',           group: 'Référentiels' },
+  { id: 'users',          label: 'Utilisateurs',       icon: Users,       description: 'Comptes & accès',           group: 'Référentiels' },
+  { id: 'roles',          label: 'Rôles',              icon: ShieldCheck, description: 'Droits par rôle',           group: 'Référentiels' },
   { id: 'contact_roles',  label: 'Types de contacts',  icon: UserCog,    description: 'Rôles des contacts',        group: 'Référentiels' },
   { id: 'postgres',       label: 'Base PostgreSQL',    icon: Database,   description: 'Connexion externe',         group: 'Technique' },
   { id: 'sql',            label: 'Console SQL',        icon: Database,   description: 'Requêtes directes',         group: 'Technique' },
@@ -188,6 +191,7 @@ export default function SettingsPage() {
           {activeTab === 'general' && <GeneralTab {...{settings, setSettings, handleSubmit, handleTestMail, saving, message, apmStatus}} />}
           {activeTab === 'postgres' && <PostgresTab />}
           {activeTab === 'users' && <UsersTab />}
+          {activeTab === 'roles' && <RolesTab />}
           {activeTab === 'contact_roles' && <ContactRolesTab />}
           {activeTab === 'signature' && <SignatureConfigTab />}
           {activeTab === 'messages' && <MessagesContextuelsTab />}

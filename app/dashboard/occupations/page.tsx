@@ -47,6 +47,7 @@ import OdpDocsBanner from '@/components/OdpDocsBanner';
 import ContactModal from '@/components/ContactModal';
 import { getStatusConfig, getAvailableStatuses } from '@/lib/status-utils';
 import { isAlertActive, getAlertConfig } from '@/lib/alert-utils';
+import { hasPermission } from '@/lib/permissions';
 import { useLockedYear } from './hooks/useLockedYear';
 import { isMixedOccupation, getOccupationTypes } from '@/lib/mixed-occupation-utils';
 
@@ -345,8 +346,8 @@ function OccupationsPageContent() {
   };
 
   const handleDelete = async (id: number, nom: string) => {
-    if (currentUser?.role !== 'ADMIN') {
-      alert('Seul un administrateur peut supprimer un dossier');
+    if (!currentUser?.role || !hasPermission(currentUser.role, 'MODIFY_DOSSIER')) {
+      alert('Vous n\'avez pas les droits pour supprimer un dossier');
       return;
     }
     if (!confirm(`Supprimer le dossier "${nom || id}" ?`)) return;
@@ -733,14 +734,13 @@ function OccupationsPageContent() {
                 <Plus size={18} />
                 Nouveau Dossier
               </button>
-              {currentUser?.role === 'ADMIN' && (
+              {currentUser?.role && hasPermission(currentUser.role, 'SEND_FILIEN') && (
                 <button
                   onClick={() => setIsFilienModalOpen(true)}
                   className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-900/20 transition-all active:scale-95 relative"
                 >
                   <FileText size={18} />
                   GENERER FILIEN
-                  <span className="ml-2 px-2 py-0.5 bg-slate-700 rounded-full text-xs font-bold">ADM</span>
                 </button>
               )}
            </div>
@@ -1044,7 +1044,7 @@ function OccupationsPageContent() {
                               {['FACTURE', 'PAYE'].includes(occ.statut) && <button onClick={() => handleUnlock(occ.id)} className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-all" title="Déverrouiller Dossier"><Unlock size={14} /></button>}
                               <button onClick={() => handleEdit(occ)} className="p-1.5 text-slate-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Modifier"><Pencil size={14} /></button>
                               <button onClick={() => handleArchive(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-1.5 text-slate-300 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all" title="Archiver"><Archive size={14} /></button>
-                              {currentUser?.role === 'ADMIN' && (
+                              {currentUser?.role && hasPermission(currentUser.role, 'MODIFY_DOSSIER') && (
                                 <button onClick={() => handleDelete(occ.id, occ.nom || `Dossier #${occ.id}`)} className="p-1.5 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Supprimer"><Trash2 size={14} /></button>
                               )}
                             </>

@@ -142,6 +142,8 @@ export async function GET(request: Request) {
             nom: occ.tiers.nom,
             adresse: occ.tiers.adresse,
             email: occ.tiers.email,
+            latitude: occ.tiers.latitude ?? null,
+            longitude: occ.tiers.longitude ?? null,
             tlpeYears: tlpeYears.filter(Boolean),
             commerceYears: commerceYears.filter(Boolean),
             tlpeCount: occ.type === 'TLPE' ? 1 : 0,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { hasPermissionServer as hasPermission } from '@/lib/permissions-server';
 import * as fs from 'fs';
 import * as path from 'path';
 import { randomBytes } from 'crypto';
@@ -22,7 +23,7 @@ if (!fs.existsSync(SIGNATURE_ASSETS_DIR)) {
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasPermission(session.role, 'MANAGE_USERS')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

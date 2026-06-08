@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { hasPermissionServer as hasPermission } from '@/lib/permissions-server';
 
 /**
  * PATCH /api/signatories/[id] - Update a signatory
@@ -14,7 +15,7 @@ export async function PATCH(
     const id = parseInt(idStr);
 
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasPermission(session.role, 'MANAGE_USERS')) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -79,7 +80,7 @@ export async function DELETE(
     const id = parseInt(idStr);
 
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasPermission(session.role, 'MANAGE_USERS')) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

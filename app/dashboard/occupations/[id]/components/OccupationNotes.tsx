@@ -19,6 +19,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { useNotesLogic } from '../hooks/useNotesLogic';
+import { hasPermission } from '@/lib/permissions';
 
 interface Props {
   occupationId: number;
@@ -134,7 +135,7 @@ export default function OccupationNotes({ occupationId, currentUser }: Props) {
                       )}
                     </div>
                     <div className="flex items-center gap-4">
-                      {currentUser?.role === 'ADMIN' && (
+                      {currentUser?.role && hasPermission(currentUser.role, 'MODIFY_DOSSIER') && (
                         <button 
                           onClick={() => handleDeleteNote(note.id)}
                           className={`p-1 rounded hover:bg-white/20 transition-colors ${isMe ? 'text-white/40 hover:text-white' : 'text-slate-300 hover:text-rose-500'}`}

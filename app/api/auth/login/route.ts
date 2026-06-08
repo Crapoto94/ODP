@@ -15,15 +15,16 @@ export async function POST(req: Request) {
     const adminConfig = config?.admin;
 
     if (adminConfig && inputLogin === adminConfig.login && inputPassword === adminConfig.password) {
-      const realAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
+      const realAdmin = await prisma.user.findFirst({ where: { login: adminConfig.login } });
       const adminId = realAdmin ? realAdmin.id : 0;
-      
+      const adminRole = realAdmin ? realAdmin.role : 'ADMINISTRATEUR';
+
       const sessionToken = await encrypt({
         id: adminId,
         login: adminConfig.login,
-        nom: 'ADMIN',
-        prenom: 'Fichier',
-        role: 'ADMIN'
+        nom: realAdmin?.nom ?? 'Administrateur',
+        prenom: realAdmin?.prenom ?? 'Fichier',
+        role: adminRole
       });
       
       const cookieStore = await cookies();

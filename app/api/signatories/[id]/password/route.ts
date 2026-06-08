@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { hasPermissionServer as hasPermission } from '@/lib/permissions-server';
 
 /**
  * PATCH /api/signatories/[id]/password
@@ -13,7 +14,7 @@ export async function PATCH(
 ) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasPermission(session.role, 'MANAGE_USERS')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

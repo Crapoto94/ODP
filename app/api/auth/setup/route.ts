@@ -19,7 +19,7 @@ export async function GET() {
         email: 'admin@odp.fr',
         login: 'admin',
         password: hashedPassword,
-        role: 'ADMIN' // AGENT_TERRAIN, AGENT_BUREAU, AGENT_COMPTABLE, ADMIN
+        role: 'ADMINISTRATEUR'
       }
     });
 

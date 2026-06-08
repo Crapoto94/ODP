@@ -7,6 +7,7 @@ import {
   Mail, Shield, Key, Building2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import TabHeader from './TabHeader';
+import { ROLE_LABELS, ROLE_COLORS, type Role } from '@/lib/permissions';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -27,7 +28,7 @@ interface AdCandidate {
   mail?: string;
 }
 
-const EMPTY_FORM = { nom: '', prenom: '', email: '', login: '', password: '', role: 'AGENT_TERRAIN', isAd: false };
+const EMPTY_FORM = { nom: '', prenom: '', email: '', login: '', password: '', role: 'SAISIE', isAd: false };
 
 // ─── Composant principal ──────────────────────────────────────────────────────
 
@@ -49,7 +50,7 @@ export default function UsersTab() {
   const [adSearching, setAdSearching] = useState(false);
   const [adSearchError, setAdSearchError] = useState<string | null>(null);
   const [adSelected, setAdSelected] = useState<AdCandidate | null>(null);
-  const [adRole, setAdRole] = useState('AGENT_TERRAIN');
+  const [adRole, setAdRole] = useState('SAISIE');
   const [adSaving, setAdSaving] = useState(false);
   const [adError, setAdError] = useState<string | null>(null);
 
@@ -232,10 +233,10 @@ export default function UsersTab() {
                   </td>
                   <td className="px-8 py-5">
                     <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 w-fit ${
-                      user.role === 'ADMIN' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'
+                      ROLE_COLORS[user.role as Role] ?? 'bg-slate-100 text-slate-600'
                     }`}>
-                      {user.role === 'ADMIN' ? <ShieldCheck size={10} /> : <UserCircle size={10} />}
-                      {user.role}
+                      {user.role === 'ADMINISTRATEUR' ? <ShieldCheck size={10} /> : <UserCircle size={10} />}
+                      {ROLE_LABELS[user.role as Role] ?? user.role}
                     </span>
                   </td>
                   <td className="px-8 py-5">
@@ -341,9 +342,10 @@ export default function UsersTab() {
                   <Shield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                   <select className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 outline-none focus:border-blue-500 transition-all font-bold text-sm appearance-none"
                     value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
-                    <option value="AGENT_TERRAIN">Agent Terrain</option>
-                    <option value="BO">Back Office</option>
-                    <option value="ADMIN">Administrateur</option>
+                    <option value="SAISIE">Saisie</option>
+                    <option value="INSTRUCTEUR">Instructeur</option>
+                    <option value="CONTROLEUR">Contrôleur</option>
+                    <option value="ADMINISTRATEUR">Administrateur</option>
                   </select>
                 </div>
               </div>
@@ -462,9 +464,10 @@ export default function UsersTab() {
                       <Shield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                       <select className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 outline-none focus:border-indigo-400 transition-all font-bold text-sm appearance-none"
                         value={adRole} onChange={e => setAdRole(e.target.value)}>
-                        <option value="AGENT_TERRAIN">Agent Terrain</option>
-                        <option value="BO">Back Office</option>
-                        <option value="ADMIN">Administrateur</option>
+                        <option value="SAISIE">Saisie</option>
+                        <option value="INSTRUCTEUR">Instructeur</option>
+                        <option value="CONTROLEUR">Contrôleur</option>
+                        <option value="ADMINISTRATEUR">Administrateur</option>
                       </select>
                     </div>
                   </div>

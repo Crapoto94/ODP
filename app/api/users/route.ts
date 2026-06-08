@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import { getSession } from '@/lib/auth';
+import { hasPermissionServer as hasPermission } from '@/lib/permissions-server';
 
 export async function GET() {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasPermission(session.role, 'MANAGE_USERS')) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 
@@ -33,7 +34,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasPermission(session.role, 'MANAGE_USERS')) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
         email: data.email || '',
         login: data.login || '',
         password: hashedPassword,
-        role: data.role || 'AGENT_TERRAIN',
+        role: data.role || 'SAISIE',
         isAd: isAd,
       }
     });

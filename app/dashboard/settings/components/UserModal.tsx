@@ -118,9 +118,10 @@ export default function UserModal({
                 value={userForm.role}
                 onChange={e => setUserForm({...userForm, role: e.target.value})}
               >
-                <option value="AGENT_TERRAIN">Agent Terrain</option>
-                <option value="ADMIN">Administrateur</option>
-                <option value="BO">Back Office</option>
+                <option value="SAISIE">Saisie</option>
+                <option value="INSTRUCTEUR">Instructeur</option>
+                <option value="CONTROLEUR">Contrôleur</option>
+                <option value="ADMINISTRATEUR">Administrateur</option>
               </select>
             </div>
           </div>

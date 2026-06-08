@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { searchAD } from '@/lib/ad';
+import { hasPermissionServer as hasPermission } from '@/lib/permissions-server';
 
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasPermission(session.role, 'MANAGE_USERS')) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 

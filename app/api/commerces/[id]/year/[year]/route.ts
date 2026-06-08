@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { hasPermissionServer as hasPermission } from '@/lib/permissions-server';
 
 export async function DELETE(
   request: Request,
@@ -12,9 +13,9 @@ export async function DELETE(
     const year = parseInt(yearStr);
 
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasPermission(session.role, 'MODIFY_DOSSIER')) {
       return NextResponse.json(
-        { error: 'Seul un administrateur peut supprimer une année de taxation' },
+        { error: 'Accès refusé' },
         { status: 403 }
       );
     }
