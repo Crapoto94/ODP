@@ -4,6 +4,7 @@ import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import { getFullFilienContent, exportToUnc } from '@/lib/billing-service';
 import { ProcessedInvoice } from './invoice-processor';
+import { computeNextFilienMouvement } from './filien-preparator';
 import { prisma } from '@/lib/prisma';
 
 export async function generateRecapPdf(params: {
@@ -93,6 +94,14 @@ export async function processFilienExport(params: {
   const filienFilename = `FACT-${timestampStr}.filien.txt`;
   const filienPath = join(facturesDir, filienFilename);
   await writeFile(filienPath, Buffer.from(filienContent, 'latin1'));
+
+  // Advance the movement counter so the next run starts after the last generated movement
+  const mouvementCount = results.filter((r) => r?.id).length;
+  if (mouvementCount > 0) {
+    const nextMouvement = computeNextFilienMouvement(appSettings?.filienMouvement || '1', mouvementCount);
+    await (prisma as any).appSettings.update({ where: { id: 1 }, data: { filienMouvement: nextMouvement } });
+    console.log(`[Filien] filienMouvement updated to ${nextMouvement}`);
+  }
 
   // Always export regulatory documents and AOT files to the factures directory
   const exportDir = appSettings?.filienUncPj || join(process.cwd(), 'public', 'Factures');

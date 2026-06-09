@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { join } from 'path';
 import { prepareFilienMovements, exportToUnc } from '@/lib/billing-service';
+import { computeNextFilienMouvement } from '@/lib/billing/filien-preparator';
 import { generateFilienFile, FilienParams } from '@/lib/filien';
 import { format } from 'date-fns';
 
@@ -147,6 +148,14 @@ export async function POST(req: NextRequest) {
         console.error('[Filien] UNC export FAILED:', uncError);
         throw new Error(`Erreur lors de la copie UNC : ${uncError.message}`);
       }
+    }
+
+    // Advance the movement counter
+    const mouvementCount = results.filter((r: any) => r?.id).length;
+    if (mouvementCount > 0) {
+      const nextMouvement = computeNextFilienMouvement((settings as any).filienMouvement || '1', mouvementCount);
+      await (prisma as any).appSettings.update({ where: { id: 1 }, data: { filienMouvement: nextMouvement } });
+      console.log(`[Filien] filienMouvement updated to ${nextMouvement}`);
     }
 
     return new NextResponse(Buffer.from(fileContent, 'latin1'), {

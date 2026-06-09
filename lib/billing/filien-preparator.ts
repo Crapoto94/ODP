@@ -28,6 +28,15 @@ function getLineTlpeType(ligne: any): string | null {
   return null;
 }
 
+export function computeNextFilienMouvement(rawStart: string, count: number): string {
+  const match = rawStart.match(/^(.*?)(\d+)$/);
+  if (!match) return rawStart;
+  const prefix = match[1];
+  const numStr = match[2];
+  const nextNum = (parseInt(numStr) || 1) + count;
+  return prefix + nextNum.toString().padStart(numStr.length, '0');
+}
+
 export interface BillingResult {
   id: number;
   numero: string;
@@ -121,7 +130,7 @@ export function prepareFilienMovements(
 
   return results.filter((r: any) => r?.id).map((r, idx) => {
     const occ = dossiers.find((d: any) => d.id === r.id);
-    const isOdp = occ?.type === 'CHANTIER' || occ?.type === 'TOURNAGE';
+    const isOdp = occ?.type === 'CHANTIER' || occ?.type === 'TOURNAGE' || occ?.type === 'COMMERCE';
     const movYear = occ?.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ?.anneeTaxation || year);
     const regConfig = isOdp ? (odpConfigs[movYear] || odpConfigs[year]) : tlpeConfig;
     
