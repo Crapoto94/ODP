@@ -50,7 +50,7 @@ export async function POST(req: Request) {
       annee: anneeInt,
       deliberationPath: deliberationPath || null,
       tarifsTournagesPath: tarifsTournagesPath || null,
-      tarifsOdpPath: tarifsOdpPath || null
+      tarifsOdpPath: tarifsOdpPath || null,
     };
 
     if (existing) {

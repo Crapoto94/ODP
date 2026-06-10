@@ -106,16 +106,17 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
     
     // Attachments (up to 5)
     if (mov.attachments && mov.attachments.length > 0) {
-      mov.attachments.slice(0, 5).forEach((att, idx) => {
+      const sliced = mov.attachments.slice(0, 5);
+      sliced.forEach((att, idx) => {
         const base = 26 + idx;
         const sub = base * 10;
-        
+
         output += `/${base}/${att.name.slice(0, 40)}\n`;
         output += `/${sub + 1}/${(att.filename || att.name).slice(0, 100)}\n`;
         output += `/${sub + 2}/${att.supportType || '01'}\n`;
         output += `/${sub + 3}/${att.path.slice(0, 200)}\n`;
-        // Only add /294/011 on the last PJ (Détails de facture)
-        if (base === 29) {
+        // Add /294/011 on the last PJ (always Détails de facture)
+        if (idx === sliced.length - 1) {
           output += `/294/011\n`;
         }
       });

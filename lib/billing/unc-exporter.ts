@@ -90,13 +90,20 @@ async function exportViaSmb(params: any, publicPath: string) {
     if (existsSync(source)) await smbWriteFile(join(targetSubDir, pdfName), await readFile(source));
 
     const occ = res?.id ? dossiers?.find((d: any) => d.id === res.id) : null;
-    console.log(`[EXPORT] Dossier ${res.id} (${occ?.nom}):`, { aotFinalPath: occ?.aotFinalPath, dateDebut: occ?.dateDebut, anneeTaxation: occ?.anneeTaxation });
+    // AOT: cherche d'abord sur l'occupation courante, puis sur toute occupation du même groupe (même tiers + même année)
+    const aotOcc = occ?.aotFinalPath
+      ? occ
+      : dossiers?.find((d: any) =>
+          d.tiersId && d.tiersId === occ?.tiersId &&
+          d.anneeTaxation === occ?.anneeTaxation &&
+          d.aotFinalPath
+        ) || null;
 
-    if (occ?.aotFinalPath) {
-      const aotSrc = occ.aotFinalPath.startsWith('/') ? join(publicPath, occ.aotFinalPath) : occ.aotFinalPath;
-      const aotYear = occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear());
-      const ext = occ.aotFinalPath.split('.').pop();
-      const baseName = occ?.nom ? removeYearSuffix(occ.nom) : `Dossier_${occ?.id}`;
+    if (aotOcc?.aotFinalPath) {
+      const aotSrc = aotOcc.aotFinalPath.startsWith('/') ? join(publicPath, aotOcc.aotFinalPath) : aotOcc.aotFinalPath;
+      const aotYear = aotOcc.dateDebut ? new Date(aotOcc.dateDebut).getFullYear() : (aotOcc.anneeTaxation || new Date().getFullYear());
+      const ext = aotOcc.aotFinalPath.split('.').pop();
+      const baseName = aotOcc?.nom ? removeYearSuffix(aotOcc.nom) : `Dossier_${aotOcc?.id}`;
       const newName = cleanFilename(`AOT_${baseName}_${aotYear}.${ext}`);
       console.log(`[EXPORT] AOT path: ${aotSrc}, exists: ${existsSync(aotSrc)}, newName: ${newName}`);
       if (existsSync(aotSrc)) {
@@ -169,13 +176,20 @@ async function exportViaLocalFs(params: any, publicPath: string) {
     if (existsSync(source)) await writeFile(join(targetDir, pdfName), await readFile(source));
 
     const occ = res?.id ? dossiers?.find((d: any) => d.id === res.id) : null;
-    if (occ?.aotFinalPath) {
-      const aotSrc = occ.aotFinalPath.startsWith('/') ? join(publicPath, occ.aotFinalPath) : occ.aotFinalPath;
-      const aotYear = occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ.anneeTaxation || new Date().getFullYear());
-      const ext = occ.aotFinalPath.split('.').pop();
-      const baseName = occ?.nom ? removeYearSuffix(occ.nom) : `Dossier_${occ?.id}`;
+    const aotOcc = occ?.aotFinalPath
+      ? occ
+      : dossiers?.find((d: any) =>
+          d.tiersId && d.tiersId === occ?.tiersId &&
+          d.anneeTaxation === occ?.anneeTaxation &&
+          d.aotFinalPath
+        ) || null;
+    if (aotOcc?.aotFinalPath) {
+      const aotSrc = aotOcc.aotFinalPath.startsWith('/') ? join(publicPath, aotOcc.aotFinalPath) : aotOcc.aotFinalPath;
+      const aotYear = aotOcc.dateDebut ? new Date(aotOcc.dateDebut).getFullYear() : (aotOcc.anneeTaxation || new Date().getFullYear());
+      const ext = aotOcc.aotFinalPath.split('.').pop();
+      const baseName = aotOcc?.nom ? removeYearSuffix(aotOcc.nom) : `Dossier_${aotOcc?.id}`;
       const newName = cleanFilename(`AOT_${baseName}_${aotYear}.${ext}`);
-      console.log(`[EXPORT LOCAL] AOT for ${occ?.id}: ${occ?.aotFinalPath} -> ${newName}`);
+      console.log(`[EXPORT LOCAL] AOT for ${aotOcc?.id}: ${aotOcc?.aotFinalPath} -> ${newName}`);
       if (existsSync(aotSrc)) await writeFile(join(targetDir, newName), await readFile(aotSrc));
     }
   }

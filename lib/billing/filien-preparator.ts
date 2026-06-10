@@ -171,15 +171,24 @@ export function prepareFilienMovements(
       console.warn(`[Filien] Missing Tarifs for ${occ.id} (Year ${movYear})`);
     }
 
-    if (occ?.aotFinalPath) {
-      const ext = occ.aotFinalPath.split('.').pop();
-      const baseName = occ?.nom ? removeYearSuffix(occ.nom) : `Dossier_${occ?.id}`;
+    // AOT: cherche d'abord sur l'occupation courante, puis sur toute occupation du même groupe (même tiers + même année)
+    const aotOcc = occ?.aotFinalPath
+      ? occ
+      : dossiers.find((d: any) =>
+          d.tiersId && d.tiersId === occ?.tiersId &&
+          d.anneeTaxation === occ?.anneeTaxation &&
+          d.aotFinalPath
+        ) || null;
+
+    if (aotOcc?.aotFinalPath) {
+      const ext = aotOcc.aotFinalPath.split('.').pop();
+      const baseName = aotOcc?.nom ? removeYearSuffix(aotOcc.nom) : `Dossier_${aotOcc?.id}`;
       const aotName = cleanFilename(`AOT_${baseName}_${movYear}.${ext}`);
       attachments.push({
         name: 'AOT',
         filename: aotName,
         supportType: '01',
-        path: runUncPath ? join(runUncPath, aotName) : occ.aotFinalPath,
+        path: runUncPath ? join(runUncPath, aotName) : aotOcc.aotFinalPath,
       });
     }
 

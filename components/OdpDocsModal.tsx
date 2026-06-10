@@ -191,6 +191,7 @@ export default function OdpDocsModal({ isOpen, onClose, onSuccess }: OdpDocsModa
                   <input type="file" accept=".pdf" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => setTarifsOdpFile(e.target.files?.[0] || null)} />
                </div>
             </div>
+
           </div>
 
           <div className="flex gap-4 pt-4 sticky bottom-0 bg-white pb-2">
