@@ -125,7 +125,7 @@ async function exportViaSmb(params: any, publicPath: string) {
 
   // Copy merged PDFs for multi-year COMMERCE groups
   if (mergedDocs) {
-    for (const [tiersId, docs] of Object.entries(mergedDocs)) {
+    for (const [tiersId, docs] of Object.entries(mergedDocs) as [string, MultiYearMergedDocs][]) {
       const tid = Number(tiersId);
       for (const [kind, absPath] of [
         ['delibs', docs.deliberation],
