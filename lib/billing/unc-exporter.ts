@@ -3,7 +3,7 @@ import { existsSync } from 'fs';
 import { writeFile, readFile, mkdir } from 'fs/promises';
 import { promisify } from 'util';
 const SMB2 = require('smb2');
-import { BillingResult } from './filien-preparator';
+import { BillingResult, MultiYearMergedDocs } from './filien-preparator';
 
 // Helper to remove accents and replace spaces with underscores
 function cleanFilename(str: string): string {
@@ -31,8 +31,9 @@ export async function exportToUnc(params: {
   facturesDir: string;
   appSettings?: any;
   dossiers?: any[];
+  mergedDocs?: Record<number, MultiYearMergedDocs>;
 }): Promise<boolean> {
-  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, odpConfigs, recapFilename, recapPath, facturesDir, appSettings, dossiers } = params;
+  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, odpConfigs, recapFilename, recapPath, facturesDir, appSettings, dossiers, mergedDocs } = params;
   const publicPath = join(process.cwd(), 'public');
   
   try {
@@ -47,8 +48,13 @@ export async function exportToUnc(params: {
   }
 }
 
+// Helper: compute the file system name for a merged doc
+function mergedDocFilename(kind: 'delibs' | 'tarifs' | 'AOT' | 'details', tiersId: number): string {
+  return `Liste_${kind}_${tiersId}.pdf`;
+}
+
 async function exportViaSmb(params: any, publicPath: string) {
-  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, odpConfigs, recapFilename, recapPath, facturesDir, appSettings, dossiers } = params;
+  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, odpConfigs, recapFilename, recapPath, facturesDir, appSettings, dossiers, mergedDocs } = params;
   
   const normalizedPath = uncDir.replace(/\//g, '\\');
   const parts = normalizedPath.split('\\').filter(Boolean);
@@ -117,6 +123,22 @@ async function exportViaSmb(params: any, publicPath: string) {
     }
   }
 
+  // Copy merged PDFs for multi-year COMMERCE groups
+  if (mergedDocs) {
+    for (const [tiersId, docs] of Object.entries(mergedDocs)) {
+      const tid = Number(tiersId);
+      for (const [kind, absPath] of [
+        ['delibs', docs.deliberation],
+        ['tarifs', docs.tarifs],
+        ['AOT', docs.aot],
+        ['details', docs.details],
+      ] as [string, string | undefined][]) {
+        if (!absPath || !existsSync(absPath)) continue;
+        await smbWriteFile(join(targetSubDir, mergedDocFilename(kind as any, tid)), await readFile(absPath));
+      }
+    }
+  }
+
   if (recapPath && existsSync(recapPath)) await smbWriteFile(join(targetSubDir, recapFilename!), await readFile(recapPath));
   await smbWriteFile(join(targetSubDir, filienFilename), Buffer.from(filienContent, 'latin1'));
 
@@ -166,7 +188,7 @@ async function exportViaSmb(params: any, publicPath: string) {
 }
 
 async function exportViaLocalFs(params: any, publicPath: string) {
-  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, odpConfigs, recapFilename, recapPath, facturesDir, dossiers } = params;
+  const { uncDir, runName, filienContent, filienFilename, results, tlpeConfig, odpConfigs, recapFilename, recapPath, facturesDir, dossiers, mergedDocs } = params;
   const targetDir = join(uncDir, runName);
   if (!existsSync(targetDir)) await mkdir(targetDir, { recursive: true });
 
@@ -191,6 +213,24 @@ async function exportViaLocalFs(params: any, publicPath: string) {
       const newName = cleanFilename(`AOT_${baseName}_${aotYear}.${ext}`);
       console.log(`[EXPORT LOCAL] AOT for ${aotOcc?.id}: ${aotOcc?.aotFinalPath} -> ${newName}`);
       if (existsSync(aotSrc)) await writeFile(join(targetDir, newName), await readFile(aotSrc));
+    }
+  }
+
+  // Copy merged PDFs for multi-year COMMERCE groups
+  if (mergedDocs) {
+    for (const [tiersId, docs] of Object.entries(mergedDocs)) {
+      const tid = Number(tiersId);
+      for (const [kind, absPath] of [
+        ['delibs', docs.deliberation],
+        ['tarifs', docs.tarifs],
+        ['AOT', docs.aot],
+        ['details', docs.details],
+      ] as [string, string | undefined][]) {
+        if (!absPath || !existsSync(absPath)) continue;
+        const dest = join(targetDir, mergedDocFilename(kind as any, tid));
+        // Only copy if source and dest differ (for local mode facturesDir=targetDir)
+        if (absPath !== dest) await writeFile(dest, await readFile(absPath));
+      }
     }
   }
 

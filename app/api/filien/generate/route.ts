@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
 
     const { getFullFilienContent, exportToUnc } = require('@/lib/billing-service');
     
-    const fileContent = getFullFilienContent(
+    const { content: fileContent } = getFullFilienContent(
       results,
       occupations,
       settings,

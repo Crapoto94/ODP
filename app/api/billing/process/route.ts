@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const session = await getSession();
     const agentName = session ? `${session.prenom} ${session.nom}` : 'Système';
 
-    const { ids, type } = await req.json();
+    const { ids, type, groupMultiYear } = await req.json();
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json({ error: 'Aucun dossier sélectionné' }, { status: 400 });
     }
@@ -119,7 +119,8 @@ export async function POST(req: NextRequest) {
 
     const filienPath = await processFilienExport({
       results, dossiers: flatDossiers, appSettings, odpConfigMap, year, runName, timestampStr, facturesDir,
-      recapFilename: recap.filename, recapPath: recap.path
+      recapFilename: recap.filename, recapPath: recap.path,
+      groupMultiYear: type === 'COMMERCE' && !!groupMultiYear
     });
 
     // 5. DB Run Record

@@ -43,6 +43,7 @@ export default function FacturationPage() {
   const [selectedIds, setSelectedIds] = useState<(number | string)[]>([]);
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [groupMultiYear, setGroupMultiYear] = useState(false);
 
   // État pour la modal d'avertissement du tiers
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
@@ -264,7 +265,8 @@ export default function FacturationPage() {
           try {
             const res = await axios.post('/api/billing/process', {
               ids: apiIds,
-              type: type
+              type: type,
+              groupMultiYear
             });
             setResult(res.data);
             setStep(4);
@@ -284,7 +286,8 @@ export default function FacturationPage() {
 
       const res = await axios.post('/api/billing/process', {
         ids: apiIds,
-        type: type
+        type: type,
+        groupMultiYear
       });
       setResult(res.data);
       setStep(4);
@@ -296,6 +299,17 @@ export default function FacturationPage() {
       setProcessing(false);
     }
   };
+
+  // Detect if the current selection contains the same commerce across multiple years
+  const hasMultiYearCommerces = (() => {
+    if (type !== 'COMMERCE') return false;
+    const tiersYearCount = new Map<string, number>();
+    dossiers.filter(d => selectedIds.includes(d.id)).forEach(d => {
+      const tid = String(d.tiers?.id || '');
+      if (tid) tiersYearCount.set(tid, (tiersYearCount.get(tid) || 0) + 1);
+    });
+    return Array.from(tiersYearCount.values()).some(v => v > 1);
+  })();
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -642,12 +656,27 @@ export default function FacturationPage() {
                   </table>
                </div>
 
+               {hasMultiYearCommerces && (
+                 <label className="flex items-start gap-3 p-5 bg-amber-50 border border-amber-200 rounded-2xl cursor-pointer select-none">
+                   <input
+                     type="checkbox"
+                     checked={groupMultiYear}
+                     onChange={e => setGroupMultiYear(e.target.checked)}
+                     className="mt-0.5 w-4 h-4 accent-amber-600 shrink-0"
+                   />
+                   <div>
+                     <p className="text-xs font-black text-amber-900">Regrouper les factures pluri-annuelles sur un même titre filien</p>
+                     <p className="text-[10px] font-medium text-amber-600 mt-0.5">Un seul titre par commerce, une ligne par année — toutes les pièces jointes sont fusionnées en un seul PDF chacune</p>
+                   </div>
+                 </label>
+               )}
+
                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <button onClick={prevStep} className="px-10 py-5 font-black text-[10px] uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-all shrink-0">
                      Retour
                   </button>
                   <div className="flex gap-4">
-                    <button 
+                    <button
                       onClick={handleStartBilling}
                       disabled={processing}
                       className="w-full sm:w-auto px-12 py-5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-emerald-500/20 active:scale-95 flex justify-center items-center gap-3 shrink-0"

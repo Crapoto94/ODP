@@ -20,8 +20,6 @@ export async function initializeTypeDossierConfigs() {
       filienChapitre: (settings as any)?.filienChapitre || '70',
       filienNature: (settings as any)?.filienNature || '70323',
       filienFonction: (settings as any)?.filienFonction || '020',
-      filienFonctionEnseignes: (settings as any)?.filienFonction || '020',
-      filienFonctionAutres: (settings as any)?.filienFonction || '020',
       filienCodeInterne: (settings as any)?.filienCodeInterne || '',
       filienTypeMouvement: (settings as any)?.filienTypeMouvement || 'F',
       filienSens: (settings as any)?.filienSens || '1',

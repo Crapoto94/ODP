@@ -1,7 +1,6 @@
 import { join } from 'path';
 import { FilienMovement, FilienParams, generateFilienFile } from '../filien';
 
-// Helper to remove accents and replace spaces with underscores
 function cleanFilename(str: string): string {
   return str
     .normalize('NFD')
@@ -9,23 +8,15 @@ function cleanFilename(str: string): string {
     .replace(/\s+/g, '_');
 }
 
-// Helper to remove year suffix from dossier name (e.g., "TEST_2023" -> "TEST")
 function removeYearSuffix(name: string): string {
   return name.replace(/_\d{4}$/, '').replace(/-\d{4}$/, '');
 }
 
-// Helper to read the TLPE type of an invoice line's article ("ENSEIGNE", "NUM", ...)
-function getLineTlpeType(ligne: any): string | null {
-  const art = ligne?.article;
-  if (!art) return null;
-  if (art.meta?.tlpeType) return art.meta.tlpeType;
-  if (art.notes) {
-    try {
-      const meta = typeof art.notes === 'string' ? JSON.parse(art.notes) : art.notes;
-      return meta?.tlpeType || null;
-    } catch { /* notes not JSON */ }
-  }
-  return null;
+export interface MultiYearMergedDocs {
+  deliberation?: string; // absolute path to merged delib PDF
+  tarifs?: string;       // absolute path to merged tarifs PDF
+  aot?: string;          // absolute path to merged AOT PDF
+  details?: string;      // absolute path to merged details PDF
 }
 
 export function computeNextFilienMouvement(rawStart: string, count: number): string {
@@ -47,6 +38,9 @@ export interface BillingResult {
   lignes: any[];
 }
 
+// Internal type — _representativeId allows getFullFilienContent to find the right typeConfig
+type FilienMovementWithMeta = FilienMovement & { _representativeId: number };
+
 export function getFullFilienContent(
   results: BillingResult[],
   dossiers: any[],
@@ -55,8 +49,9 @@ export function getFullFilienContent(
   tlpeConfig: any,
   odpConfigs: Record<number, any>,
   year: number,
-  runName: string
-): string {
+  runName: string,
+  options?: { groupMultiYear?: boolean; mergedDocs?: Record<number, MultiYearMergedDocs> }
+): { content: string; movementCount: number } {
   const filienParams: FilienParams = {
     orga: appSettings?.filienOrga || '01',
     budget: appSettings?.filienBudget || 'BA',
@@ -75,30 +70,21 @@ export function getFullFilienContent(
     filienGestionnaire: appSettings?.filienGestionnaire || '',
   };
 
-  const movements = prepareFilienMovements(results, dossiers, appSettings, tlpeConfig, odpConfigs, year, runName);
+  const movements = prepareFilienMovements(results, dossiers, appSettings, tlpeConfig, odpConfigs, year, runName, options);
 
-  movements.forEach((mov, idx) => {
-    const result = results[idx];
-    if (!result?.id) return; // Skip if result has no id
+  movements.forEach((mov) => {
+    const repId = (mov as FilienMovementWithMeta)._representativeId;
+    const result = results.find(r => r.id === repId);
+    if (!result?.id) return;
     const occ = dossiers.find(d => d.id === result.id);
     const tc = typeConfigMap[occ?.type] || {};
-    
+
     if (tc.filienObjet) mov.objet = tc.filienObjet;
     if (tc.filienPreBordereau) mov.preBordereau = tc.filienPreBordereau;
-    
+
     if (tc.filienChapitre) mov.lines.forEach((l: any) => l.chapitre = tc.filienChapitre);
     if (tc.filienNature) mov.lines.forEach((l: any) => l.nature = tc.filienNature);
-    // Fonction : pour les COMMERCE, une fonction distincte selon enseignes / autres
-    if (occ?.type === 'COMMERCE') {
-      mov.lines.forEach((l: any) => {
-        const fonction = l.category === 'ENSEIGNE'
-          ? (tc.filienFonctionEnseignes || tc.filienFonction)
-          : (tc.filienFonctionAutres || tc.filienFonction);
-        if (fonction) l.fonction = fonction;
-      });
-    } else if (tc.filienFonction) {
-      mov.lines.forEach((l: any) => l.fonction = tc.filienFonction);
-    }
+    if (tc.filienFonction) mov.lines.forEach((l: any) => l.fonction = tc.filienFonction);
     if (tc.filienCodeInterne) mov.lines.forEach((l: any) => l.codeInterne = tc.filienCodeInterne);
     if (tc.filienTypeMouvement) mov.lines.forEach((l: any) => l.typeMouvement = tc.filienTypeMouvement);
     if (tc.filienSens) mov.lines.forEach((l: any) => l.sens = tc.filienSens);
@@ -106,7 +92,7 @@ export function getFullFilienContent(
     if (tc.filienGestionnaire) mov.lines.forEach((l: any) => l.gestionnaire = tc.filienGestionnaire);
   });
 
-  return generateFilienFile(filienParams, movements);
+  return { content: generateFilienFile(filienParams, movements), movementCount: movements.length };
 }
 
 export function prepareFilienMovements(
@@ -116,8 +102,9 @@ export function prepareFilienMovements(
   tlpeConfig: any,
   odpConfigs: Record<number, any>,
   year: number,
-  runName: string
-): FilienMovement[] {
+  runName: string,
+  options?: { groupMultiYear?: boolean; mergedDocs?: Record<number, MultiYearMergedDocs> }
+): FilienMovementWithMeta[] {
   const uncBase = appSettings?.filienUncPj || '';
   const runUncPath = uncBase ? join(uncBase, runName) : '';
 
@@ -128,27 +115,25 @@ export function prepareFilienMovements(
   const startNum = parseInt(numStr) || 1;
   const padding = numStr.length;
 
-  return results.filter((r: any) => r?.id).map((r, idx) => {
+  const startBordereauRaw = appSettings?.filienBordereau || '1';
+  const startBordereau = parseInt(startBordereauRaw.replace(/\D/g, '')) || 1;
+
+  const filteredResults = results.filter((r: any) => r?.id);
+
+  // Build a single-year movement (existing logic, extracted)
+  function buildSingleMovement(r: BillingResult, movIdx: number, borderIdx: number): FilienMovementWithMeta {
     const occ = dossiers.find((d: any) => d.id === r.id);
     const isOdp = occ?.type === 'CHANTIER' || occ?.type === 'TOURNAGE' || occ?.type === 'COMMERCE';
     const movYear = occ?.dateDebut ? new Date(occ.dateDebut).getFullYear() : (occ?.anneeTaxation || year);
     const regConfig = isOdp ? (odpConfigs[movYear] || odpConfigs[year]) : tlpeConfig;
-    
-    const attachments = [];
-    const mouvementId = prefix + (startNum + idx).toString().padStart(padding, '0');
+    const attachments: any[] = [];
 
     if (regConfig?.deliberationPath) {
       const ext = regConfig.deliberationPath.split('.').pop();
       const delibName = cleanFilename(`Deliberation_${movYear}.${ext}`);
-      console.log(`[Filien] Found Delib for ${occ.id} (Year ${movYear}): ${delibName}`);
-      attachments.push({
-        name: 'Délibération',
-        filename: delibName,
-        supportType: '01',
-        path: runUncPath ? join(runUncPath, delibName) : regConfig.deliberationPath,
-      });
+      attachments.push({ name: 'Délibération', filename: delibName, supportType: '01', path: runUncPath ? join(runUncPath, delibName) : regConfig.deliberationPath });
     } else {
-      console.warn(`[Filien] Missing Delib for ${occ.id} (Year ${movYear})`);
+      console.warn(`[Filien] Missing Delib for ${occ?.id} (Year ${movYear})`);
     }
 
     const tarifsPath = isOdp
@@ -160,56 +145,34 @@ export function prepareFilienMovements(
       const tarifsName = cleanFilename(isOdp
         ? (occ?.type === 'TOURNAGE' ? `Tarifs_Tournages_${movYear}.${ext}` : `Tarifs_ODP_${movYear}.${ext}`)
         : `Tarifs_${movYear}.${ext}`);
-      console.log(`[Filien] Found Tarifs for ${occ.id} (Year ${movYear}): ${tarifsName}`);
-      attachments.push({
-        name: 'Tarifs',
-        filename: tarifsName,
-        supportType: '01',
-        path: runUncPath ? join(runUncPath, tarifsName) : tarifsPath,
-      });
+      attachments.push({ name: 'Tarifs', filename: tarifsName, supportType: '01', path: runUncPath ? join(runUncPath, tarifsName) : tarifsPath });
     } else {
-      console.warn(`[Filien] Missing Tarifs for ${occ.id} (Year ${movYear})`);
+      console.warn(`[Filien] Missing Tarifs for ${occ?.id} (Year ${movYear})`);
     }
 
-    // AOT: cherche d'abord sur l'occupation courante, puis sur toute occupation du même groupe (même tiers + même année)
     const aotOcc = occ?.aotFinalPath
       ? occ
-      : dossiers.find((d: any) =>
-          d.tiersId && d.tiersId === occ?.tiersId &&
-          d.anneeTaxation === occ?.anneeTaxation &&
-          d.aotFinalPath
-        ) || null;
+      : dossiers.find((d: any) => d.tiersId && d.tiersId === occ?.tiersId && d.anneeTaxation === occ?.anneeTaxation && d.aotFinalPath) || null;
 
     if (aotOcc?.aotFinalPath) {
       const ext = aotOcc.aotFinalPath.split('.').pop();
       const baseName = aotOcc?.nom ? removeYearSuffix(aotOcc.nom) : `Dossier_${aotOcc?.id}`;
       const aotName = cleanFilename(`AOT_${baseName}_${movYear}.${ext}`);
-      attachments.push({
-        name: 'AOT',
-        filename: aotName,
-        supportType: '01',
-        path: runUncPath ? join(runUncPath, aotName) : aotOcc.aotFinalPath,
-      });
+      attachments.push({ name: 'AOT', filename: aotName, supportType: '01', path: runUncPath ? join(runUncPath, aotName) : aotOcc.aotFinalPath });
     }
 
-    attachments.push({
-      name: 'Détails de facture',
-      filename: `${r.numero}.pdf`,
-      supportType: '01',
-      path: runUncPath ? join(runUncPath, `${r.numero}.pdf`) : r.path,
-    });
+    attachments.push({ name: 'Détails de facture', filename: `${r.numero}.pdf`, supportType: '01', path: runUncPath ? join(runUncPath, `${r.numero}.pdf`) : r.path });
 
-    const startBordereauRaw = appSettings?.filienBordereau || '1';
-    const startBordereau = parseInt(startBordereauRaw.replace(/\D/g, '')) || 1;
-
-    // Common analytical fields, taken from the 1st invoice line's article
     const art0 = r.lignes?.[0]?.article || {};
-    const baseLineFields = {
+    const lines = [{
+      numero: 1,
       imputation: art0?.numero || 'IMPUT_VIDE',
       dateDebut: r.lignes?.[0]?.dateDebut || undefined,
       dateFin: r.lignes?.[0]?.dateFin || undefined,
       description: `Occupation du domaine public - ${occ?.nom || r.numero}`,
       quantite: 1,
+      montant: r.total,
+      prixUnitaire: r.total,
       chapitre: art0?.chapitre || '',
       nature: art0?.nature || '',
       fonction: art0?.fonction || '',
@@ -218,38 +181,11 @@ export function prepareFilienMovements(
       sens: art0?.sens || '',
       structure: art0?.structure || '',
       gestionnaire: art0?.gestionnaire || '',
-    };
-
-    let lines: any[];
-    if (occ?.type === 'COMMERCE') {
-      // Split the invoice total into an "enseignes" line and an "autres" line.
-      const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
-      const enseignesTotal = round2(
-        (r.lignes || []).reduce(
-          (s: number, l: any) =>
-            getLineTlpeType(l) === 'ENSEIGNE' ? s + (l.calculatedTotal ?? l.montant ?? 0) : s,
-          0
-        )
-      );
-      // "autres" = remainder so the two lines always sum to the invoice total
-      const autresTotal = round2(r.total - enseignesTotal);
-
-      lines = [
-        { ...baseLineFields, label: 'Total enseignes', category: 'ENSEIGNE', montant: enseignesTotal, prixUnitaire: enseignesTotal },
-        { ...baseLineFields, label: 'Total autres', category: 'AUTRES', montant: autresTotal, prixUnitaire: autresTotal },
-      ].filter((l) => Math.abs(l.montant) > 0.001);
-
-      // Always keep at least one line (fallback to the full total under "autres")
-      if (lines.length === 0) {
-        lines = [{ ...baseLineFields, label: 'Total autres', category: 'AUTRES', montant: r.total, prixUnitaire: r.total }];
-      }
-      lines.forEach((l: any, i: number) => { l.numero = i + 1; });
-    } else {
-      lines = [{ ...baseLineFields, numero: 1, montant: r.total, prixUnitaire: r.total }];
-    }
+    }];
 
     return {
-      id: mouvementId,
+      _representativeId: r.id,
+      id: prefix + movIdx.toString().padStart(padding, '0'),
       type: appSettings?.filienType || 'R',
       businessType: occ?.type,
       year: movYear,
@@ -260,10 +196,134 @@ export function prepareFilienMovements(
       existant: appSettings?.filienMouvementEx || 'N',
       preBordereau: appSettings?.filienPreBordereau || '800',
       poste: appSettings?.filienPoste || '0001',
-      bordereau: (startBordereau + idx).toString().padStart(5, '0'),
+      bordereau: (startBordereau + borderIdx).toString().padStart(5, '0'),
       objet: appSettings?.filienObjet || '',
       attachments,
       lines,
-    };
+    } as FilienMovementWithMeta;
+  }
+
+  if (!options?.groupMultiYear) {
+    // Original behavior: one movement per result
+    return filteredResults.map((r, idx) => buildSingleMovement(r, startNum + idx, idx));
+  }
+
+  // ── Grouped mode: one movement per tiersId, multiple lines for multi-year ──
+
+  // Group results by tiersId (COMMERCE only)
+  const tiersResultsMap = new Map<number, BillingResult[]>();
+  filteredResults.forEach(r => {
+    const occ = dossiers.find((d: any) => d.id === r.id);
+    if (occ?.type === 'COMMERCE' && occ?.tiersId) {
+      const tid: number = occ.tiersId;
+      if (!tiersResultsMap.has(tid)) tiersResultsMap.set(tid, []);
+      tiersResultsMap.get(tid)!.push(r);
+    }
   });
+
+  const outputMovements: FilienMovementWithMeta[] = [];
+  const processedTiersIds = new Set<number>();
+  let movIdx = startNum;
+  let borderIdx = 0;
+
+  for (const r of filteredResults) {
+    const occ = dossiers.find((d: any) => d.id === r.id);
+    const tiersId: number | undefined = occ?.tiersId;
+
+    if (occ?.type === 'COMMERCE' && tiersId) {
+      if (processedTiersIds.has(tiersId)) continue; // already emitted
+      processedTiersIds.add(tiersId);
+
+      const group = tiersResultsMap.get(tiersId) || [r];
+
+      if (group.length < 2) {
+        // Single year — normal movement
+        outputMovements.push(buildSingleMovement(r, movIdx, borderIdx));
+      } else {
+        // Multi-year — grouped movement
+        const sortedGroup = [...group].sort((a, b) => {
+          const ya = dossiers.find((d: any) => d.id === a.id)?.anneeTaxation || 0;
+          const yb = dossiers.find((d: any) => d.id === b.id)?.anneeTaxation || 0;
+          return ya - yb;
+        });
+
+        const firstOcc = dossiers.find((d: any) => d.id === sortedGroup[0].id);
+        const earliestYear: number = firstOcc?.anneeTaxation || year;
+
+        // One line per year, sorted ascending
+        const lines = sortedGroup.map((r2, li) => {
+          const occ2 = dossiers.find((d: any) => d.id === r2.id);
+          const lineYear: number = occ2?.anneeTaxation || year;
+          const art0 = r2.lignes?.[0]?.article || {};
+          return {
+            numero: li + 1,
+            year: lineYear,
+            imputation: art0?.numero || 'IMPUT_VIDE',
+            dateDebut: new Date(lineYear, 0, 1),
+            dateFin: new Date(lineYear, 11, 31),
+            label: `Droits de voirie Commerce ${lineYear}`,
+            quantite: 1,
+            montant: r2.total,
+            prixUnitaire: r2.total,
+            chapitre: art0?.chapitre || '',
+            nature: art0?.nature || '',
+            fonction: art0?.fonction || '',
+            codeInterne: art0?.codeInterne || '',
+            typeMouvement: art0?.typeMouvement || '',
+            sens: art0?.sens || '',
+            structure: art0?.structure || '',
+            gestionnaire: art0?.gestionnaire || '',
+          };
+        });
+
+        // Merged attachments
+        const mergedDocInfo = options?.mergedDocs?.[tiersId];
+        const attachments: any[] = [];
+
+        if (mergedDocInfo?.deliberation) {
+          const fname = `Liste_delibs_${tiersId}.pdf`;
+          attachments.push({ name: 'Délibérations', filename: 'Liste_des_deliberations.pdf', supportType: '01', path: runUncPath ? join(runUncPath, fname) : `/Factures/${runName}/${fname}` });
+        }
+        if (mergedDocInfo?.tarifs) {
+          const fname = `Liste_tarifs_${tiersId}.pdf`;
+          attachments.push({ name: 'Tarifs', filename: 'Liste_des_tarifs.pdf', supportType: '01', path: runUncPath ? join(runUncPath, fname) : `/Factures/${runName}/${fname}` });
+        }
+        if (mergedDocInfo?.aot) {
+          const fname = `Liste_AOT_${tiersId}.pdf`;
+          attachments.push({ name: 'AOT', filename: 'Liste_des_AOT.pdf', supportType: '01', path: runUncPath ? join(runUncPath, fname) : `/Factures/${runName}/${fname}` });
+        }
+        if (mergedDocInfo?.details) {
+          const fname = `Liste_details_${tiersId}.pdf`;
+          attachments.push({ name: 'Détails de facture', filename: 'Liste_des_details_de_facture.pdf', supportType: '01', path: runUncPath ? join(runUncPath, fname) : `/Factures/${runName}/${fname}` });
+        }
+
+        outputMovements.push({
+          _representativeId: sortedGroup[0].id,
+          id: prefix + movIdx.toString().padStart(padding, '0'),
+          type: appSettings?.filienType || 'R',
+          businessType: 'COMMERCE',
+          year: earliestYear,
+          tiersCode: firstOcc?.tiers?.code_sedit || 'TIERS_INCONNU',
+          libelle: firstOcc?.tiers?.nom || 'Commerce',
+          calendrier: appSettings?.filienCalendrier || '01',
+          monnaie: appSettings?.filienMonnaie || 'E',
+          existant: appSettings?.filienMouvementEx || 'N',
+          preBordereau: appSettings?.filienPreBordereau || '800',
+          poste: appSettings?.filienPoste || '0001',
+          bordereau: (startBordereau + borderIdx).toString().padStart(5, '0'),
+          objet: appSettings?.filienObjet || '',
+          attachments,
+          lines,
+        } as FilienMovementWithMeta);
+      }
+    } else {
+      // Non-COMMERCE: normal movement
+      outputMovements.push(buildSingleMovement(r, movIdx, borderIdx));
+    }
+
+    movIdx++;
+    borderIdx++;
+  }
+
+  return outputMovements;
 }

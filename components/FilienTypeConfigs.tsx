@@ -30,8 +30,6 @@ export default function FilienTypeConfigs() {
             filienChapitre: '',
             filienNature: '',
             filienFonction: '',
-            filienFonctionEnseignes: '',
-            filienFonctionAutres: '',
             filienCodeInterne: '',
             filienTypeMouvement: '',
             filienSens: '',
@@ -161,23 +159,10 @@ export default function FilienTypeConfigs() {
               <label className="text-[10px] font-bold text-slate-500">Nature</label>
               <input type="text" className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 font-bold text-sm outline-none focus:border-indigo-500" value={currentConfig.filienNature || ''} onChange={e => handleChange('filienNature', e.target.value)} />
             </div>
-            {activeType === 'COMMERCE' ? (
-              <>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-emerald-600">Fonction enseignes</label>
-                  <input type="text" className="w-full bg-emerald-50 border border-emerald-100 rounded-xl py-3 px-4 font-bold text-sm text-emerald-700 outline-none focus:border-emerald-500" value={currentConfig.filienFonctionEnseignes || ''} onChange={e => handleChange('filienFonctionEnseignes', e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-amber-600">Fonction autres</label>
-                  <input type="text" className="w-full bg-amber-50 border border-amber-100 rounded-xl py-3 px-4 font-bold text-sm text-amber-700 outline-none focus:border-amber-500" value={currentConfig.filienFonctionAutres || ''} onChange={e => handleChange('filienFonctionAutres', e.target.value)} />
-                </div>
-              </>
-            ) : (
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500">Fonction</label>
-                <input type="text" className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 font-bold text-sm outline-none focus:border-indigo-500" value={currentConfig.filienFonction || ''} onChange={e => handleChange('filienFonction', e.target.value)} />
-              </div>
-            )}
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-500">Fonction</label>
+              <input type="text" className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 font-bold text-sm outline-none focus:border-indigo-500" value={currentConfig.filienFonction || ''} onChange={e => handleChange('filienFonction', e.target.value)} />
+            </div>
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-500">Code Interne</label>
               <input type="text" className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 font-bold text-sm outline-none focus:border-indigo-500" value={currentConfig.filienCodeInterne || ''} onChange={e => handleChange('filienCodeInterne', e.target.value)} />

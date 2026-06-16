@@ -55,11 +55,12 @@ export interface FilienLine {
   montant: number;
   dateDebut?: Date;
   dateFin?: Date;
+  year?: number;        // Exercice fiscal de cette ligne (surcharge le year du mouvement pour /503/ /504/)
   description?: string;
   quantite?: number;
   prixUnitaire?: number;
-  label?: string;       // Libellé de la ligne (ex: "Total enseignes" / "Total autres")
-  category?: string;    // Catégorie de ventilation (ex: "ENSEIGNE" / "AUTRES")
+  label?: string;       // Libellé de la ligne
+  category?: string;    // Catégorie de ventilation
   // Analytical Ventilation
   chapitre?: string;
   nature?: string;
@@ -137,8 +138,9 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
         : `Droits de voirie ${typeLabel} ${year} - Voir détail joint`;
       output += `/502/${label502.slice(0, 80)}\n`;
 
-      output += `/503/0101${year}\n`;
-      output += `/504/3112${year}\n`;
+      const lineYear = line.year || year;
+      output += `/503/0101${lineYear}\n`;
+      output += `/504/3112${lineYear}\n`;
       output += `/505/1,00\n`;
       output += `/506/${fmtNum(line.montant)}\n`;
       output += `/509/${fmtNum(line.montant)}\n`;
