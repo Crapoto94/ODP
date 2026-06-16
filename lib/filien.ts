@@ -125,8 +125,10 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
     output += `/44/N\n`;
 
     // Lines
+    const fmtNum = (n: number) => n.toFixed(2).replace('.', ',');
+    const totalMontant = mov.lines.reduce((sum, l) => sum + l.montant, 0);
+
     mov.lines.forEach((line, li) => {
-      const fmtNum = (n: number) => n.toFixed(2).replace('.', ',');
       const ordre = (li + 1).toString().padStart(3, '0');
       output += `/**/\n`;
       output += `/500/P\n`;
@@ -164,10 +166,11 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
         ''.padEnd(10, ' ')
       ];
       output += `/542/${p2Atts.join('')}\n`;
-      
-      output += `/57/${(line.label || 'Voir détail de facture').slice(0, 40)}\n`;
-      output += `/66/${fmtNum(line.montant)}\n`;
     });
+
+    // Total du titre (une seule fois, après toutes les lignes)
+    output += `/57/Total facture\n`;
+    output += `/66/${fmtNum(totalMontant)}\n`;
 
     // Separator after each movement
     output += `/##/\n`;
