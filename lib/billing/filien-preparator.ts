@@ -261,7 +261,7 @@ export function prepareFilienMovements(
             imputation: art0?.numero || 'IMPUT_VIDE',
             dateDebut: new Date(lineYear, 0, 1),
             dateFin: new Date(lineYear, 11, 31),
-            label: `Droits de voirie Commerce ${lineYear}`,
+            label: `Occup. Domaine Public - CF détail - ${lineYear}`,
             quantite: 1,
             montant: r2.total,
             prixUnitaire: r2.total,

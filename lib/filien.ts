@@ -132,13 +132,13 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
       output += `/500/P\n`;
       output += `/501/${ordre}\n`;
 
-      // Tag 502 : libellé de la ligne si fourni (ex: "Total enseignes"), sinon défaut
+      const lineYear = line.year || year;
+
+      // Tag 502 : libellé de la ligne si fourni, sinon défaut avec l'année de la ligne
       const label502 = line.label
         ? line.label
-        : `Droits de voirie ${typeLabel} ${year} - Voir détail joint`;
+        : `Occup. Domaine Public - CF détail - ${lineYear}`;
       output += `/502/${label502.slice(0, 80)}\n`;
-
-      const lineYear = line.year || year;
       output += `/503/0101${lineYear}\n`;
       output += `/504/3112${lineYear}\n`;
       output += `/505/1,00\n`;
