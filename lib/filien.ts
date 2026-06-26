@@ -128,6 +128,9 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
     const fmtNum = (n: number) => n.toFixed(2).replace('.', ',');
     const totalMontant = mov.lines.reduce((sum, l) => sum + l.montant, 0);
 
+    // Détails des prestations : un bloc /**/ /500/.../509/ par année (ligne).
+    // Pour un regroupement pluri-annuel, on liste ici chaque exercice, mais on
+    // ne génère ensuite qu'une seule ligne de mouvement /51/ (cf. ci-dessous).
     mov.lines.forEach((line, li) => {
       const ordre = (li + 1).toString().padStart(3, '0');
       output += `/**/\n`;
@@ -146,27 +149,31 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
       output += `/505/1,00\n`;
       output += `/506/${fmtNum(line.montant)}\n`;
       output += `/509/${fmtNum(line.montant)}\n`;
-
-      output += `/--/\n`;
-      output += `/51/${(line.numero || li + 1).toString().padStart(2, '0')}\n`;
-
-      const p1Atts = [
-        (line.chapitre || params.filienChapitre || '').padEnd(10, ' ').slice(0, 10),
-        (line.nature || params.filienNature || '').padEnd(10, ' ').slice(0, 10),
-        (line.fonction || params.filienFonction || '').padEnd(10, ' ').slice(0, 10),
-        (line.codeInterne || params.filienCodeInterne || '').padEnd(10, ' ').slice(0, 10),
-        (line.typeMouvement || params.filienTypeMouvement || 'R').slice(0, 1),
-        (line.sens || params.filienSens || (mov.type === 'R' ? 'R' : 'D')).slice(0, 1)
-      ];
-      output += `/541/${p1Atts.join('')}\n`;
-
-      const p2Atts = [
-        (line.structure || params.filienStructure || '').padEnd(10, ' ').slice(0, 10),
-        (line.gestionnaire || params.filienGestionnaire || '').padEnd(10, ' ').slice(0, 10),
-        ''.padEnd(10, ' ')
-      ];
-      output += `/542/${p2Atts.join('')}\n`;
     });
+
+    // Une seule ligne de mouvement /51/ pour tout le titre : la ventilation
+    // analytique provient de la première ligne (identique sur toutes les années),
+    // et /66/ porte le montant total du mouvement.
+    const ventil = mov.lines[0] || ({} as FilienLine);
+    output += `/--/\n`;
+    output += `/51/01\n`;
+
+    const p1Atts = [
+      (ventil.chapitre || params.filienChapitre || '').padEnd(10, ' ').slice(0, 10),
+      (ventil.nature || params.filienNature || '').padEnd(10, ' ').slice(0, 10),
+      (ventil.fonction || params.filienFonction || '').padEnd(10, ' ').slice(0, 10),
+      (ventil.codeInterne || params.filienCodeInterne || '').padEnd(10, ' ').slice(0, 10),
+      (ventil.typeMouvement || params.filienTypeMouvement || 'R').slice(0, 1),
+      (ventil.sens || params.filienSens || (mov.type === 'R' ? 'R' : 'D')).slice(0, 1)
+    ];
+    output += `/541/${p1Atts.join('')}\n`;
+
+    const p2Atts = [
+      (ventil.structure || params.filienStructure || '').padEnd(10, ' ').slice(0, 10),
+      (ventil.gestionnaire || params.filienGestionnaire || '').padEnd(10, ' ').slice(0, 10),
+      ''.padEnd(10, ' ')
+    ];
+    output += `/542/${p2Atts.join('')}\n`;
 
     // Total du titre (une seule fois, après toutes les lignes)
     output += `/57/Total facture\n`;
