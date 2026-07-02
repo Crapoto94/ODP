@@ -154,15 +154,39 @@ export async function processFilienExport(params: {
         console.warn(`[PDF MERGE] Tarifs merge returned null for tiersId ${tiersId} (${tarifsPaths.length} paths checked)`);
       }
 
-      // AOT (one per year — first occ with aotFinalPath for that tiersId + annee)
-      const aotPaths = sorted.map(({ annee: a }) => {
+      // AOT : fusionner TOUTES les autorisations du tiers (toutes années / tous types).
+      // Priorité au fichier signé (finalPath), sinon le PDF généré (generatedPdf).
+      const tiersOccIds = dossiers
+        .filter((d: any) => d.tiersId === tiersId)
+        .map((d: any) => d.id);
+
+      let autorisations: any[] = [];
+      try {
+        autorisations = await (prisma as any).autorisation.findMany({
+          where: { occupationId: { in: tiersOccIds } },
+          orderBy: [{ occupationId: 'asc' }, { ordre: 'asc' }, { id: 'asc' }],
+        });
+      } catch (e) {
+        console.warn(`[PDF MERGE] Could not load autorisations for tiersId ${tiersId}:`, e);
+      }
+
+      // Fallback compat : anciennes AOT stockées sur l'occupation (aotFinalPath)
+      const legacyAotPaths = sorted.map(({ annee: a }) => {
         const aotOcc = dossiers.find((d: any) => d.tiersId === tiersId && d.anneeTaxation === a && d.aotFinalPath);
-        if (!aotOcc?.aotFinalPath) { console.warn(`[PDF MERGE] No AOT for tiersId ${tiersId}, year ${a}`); return null; }
-        const src = aotOcc.aotFinalPath.startsWith('/') ? join(publicPath, aotOcc.aotFinalPath) : aotOcc.aotFinalPath;
-        if (!existsSync(src)) { console.warn(`[PDF MERGE] AOT not found: ${src}`); return null; }
-        return src;
+        return aotOcc?.aotFinalPath || null;
       }).filter(Boolean) as string[];
-      console.log(`[PDF MERGE] AOT paths for tiersId ${tiersId}:`, aotPaths);
+
+      const rawAotPaths = [
+        ...autorisations.map((au: any) => au.finalPath || au.generatedPdf).filter(Boolean),
+        ...legacyAotPaths,
+      ];
+
+      const seen = new Set<string>();
+      const aotPaths = rawAotPaths
+        .filter((p: string) => { if (seen.has(p)) return false; seen.add(p); return true; })
+        .map((p: string) => (p.startsWith('/') ? join(publicPath, p) : p))
+        .filter((src: string) => { const ok = existsSync(src); if (!ok) console.warn(`[PDF MERGE] AOT not found: ${src}`); return ok; });
+      console.log(`[PDF MERGE] AOT paths for tiersId ${tiersId} (${autorisations.length} autorisations):`, aotPaths);
 
       const aotBuf = await mergePdfFiles(aotPaths);
       if (aotBuf) {

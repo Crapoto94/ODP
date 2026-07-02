@@ -14,7 +14,7 @@ import CommerceInfoCard from './components/CommerceInfoCard';
 import CommerceYearTimeline from './components/CommerceYearTimeline';
 import CommerceAmountChart from './components/CommerceAmountChart';
 import CommerceDispositifsList from './components/CommerceDispositifsList';
-import CommerceAotActions from './components/CommerceAotActions';
+import AutorisationsList from '@/components/AutorisationsList';
 import CommerceRenewModal from './components/CommerceRenewModal';
 import CommerceAotDateModal from './components/CommerceAotDateModal';
 import AotFinalModal from '../../occupations/[id]/components/AotFinalModal';
@@ -105,6 +105,7 @@ export default function CommerceDetailPage({ params }: Props) {
   } = logic;
 
   const [isTiersSearchOpen, setIsTiersSearchOpen] = useState(false);
+  const [aotReload, setAotReload] = useState(0);
 
   if (loading) {
     return (
@@ -298,15 +299,13 @@ export default function CommerceDetailPage({ params }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Main Content */}
         <div className="lg:col-span-8 space-y-8">
-          {/* AOT Actions */}
-          {!isReadOnly && selectedYear && occupations.length > 0 && occupations.some((o: any) => ['EN_COURS', 'PREP', 'PREPARATION_AOT'].includes(o.statut)) && (
-            <CommerceAotActions
-              occupation={occupations.find((o: any) => ['EN_COURS', 'PREP', 'PREPARATION_AOT'].includes(o.statut)) || occupations[0]}
+          {/* Autorisations (AOT multiples) */}
+          {selectedYear && currentOccupation && (
+            <AutorisationsList
+              occupationId={currentOccupation.id}
               aotGabarits={aotGabarits}
-              onSetAotGabarit={handleSetAotGabarit}
-              onDownloadAot={handleDownloadAot}
-              isGeneratingAot={isGeneratingAot}
-              onUploadAotFinal={() => setIsAotFinalModalOpen(true)}
+              readOnly={isReadOnly}
+              reloadSignal={aotReload}
               onSendForSignature={() => setIsSignatureModalOpen(true)}
             />
           )}
@@ -397,6 +396,10 @@ export default function CommerceDetailPage({ params }: Props) {
         onClose={() => setIsDocModalOpen(false)}
         onUpload={handleUploadDocument}
         isUploading={isUploadingDoc}
+        occupationId={currentOccupation?.id}
+        aotGabarits={aotGabarits}
+        onAotCreated={() => setAotReload(n => n + 1)}
+        onRequestSignature={() => setIsSignatureModalOpen(true)}
       />
 
       <AotFinalModal

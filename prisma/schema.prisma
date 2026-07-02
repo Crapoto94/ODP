@@ -81,6 +81,7 @@ model Occupation {
   lignes                    LigneOccupation[]
   notes                     Note[]
   signatureRequests         SignatureRequest[]
+  autorisations             Autorisation[]
   tiers                     Tiers              @relation(fields: [tiersId], references: [id])
 
   @@index([tiersId])
@@ -132,6 +133,27 @@ model Note {
 
   @@index([occupationId])
   @@index([tiersId])
+}
+
+model Autorisation {
+  id            Int        @id @default(autoincrement())
+  occupationId  Int
+  libelle       String
+  gabaritId     Int?
+  dateDebut     DateTime?
+  dateFin       DateTime?
+  ligneIds      String?
+  generatedPath String?
+  generatedPdf  String?
+  finalPath     String?
+  signed        Boolean    @default(false)
+  dateSignature DateTime?
+  ordre         Int        @default(0)
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  occupation    Occupation @relation(fields: [occupationId], references: [id], onDelete: Cascade)
+
+  @@index([occupationId])
 }
 
 model O365Message {

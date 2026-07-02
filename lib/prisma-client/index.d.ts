@@ -34,6 +34,11 @@ export type Contact = $Result.DefaultSelection<Prisma.$ContactPayload>
  */
 export type Note = $Result.DefaultSelection<Prisma.$NotePayload>
 /**
+ * Model Autorisation
+ * 
+ */
+export type Autorisation = $Result.DefaultSelection<Prisma.$AutorisationPayload>
+/**
  * Model O365Message
  * 
  */
@@ -311,6 +316,16 @@ export class PrismaClient<
     * ```
     */
   get note(): Prisma.NoteDelegate<ExtArgs>;
+
+  /**
+   * `prisma.autorisation`: Exposes CRUD operations for the **Autorisation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Autorisations
+    * const autorisations = await prisma.autorisation.findMany()
+    * ```
+    */
+  get autorisation(): Prisma.AutorisationDelegate<ExtArgs>;
 
   /**
    * `prisma.o365Message`: Exposes CRUD operations for the **O365Message** model.
@@ -986,6 +1001,7 @@ export namespace Prisma {
     Occupation: 'Occupation',
     Contact: 'Contact',
     Note: 'Note',
+    Autorisation: 'Autorisation',
     O365Message: 'O365Message',
     Categorie: 'Categorie',
     ModeTaxation: 'ModeTaxation',
@@ -1024,7 +1040,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "autorisation" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1305,6 +1321,76 @@ export namespace Prisma {
           count: {
             args: Prisma.NoteCountArgs<ExtArgs>
             result: $Utils.Optional<NoteCountAggregateOutputType> | number
+          }
+        }
+      }
+      Autorisation: {
+        payload: Prisma.$AutorisationPayload<ExtArgs>
+        fields: Prisma.AutorisationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AutorisationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AutorisationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload>
+          }
+          findFirst: {
+            args: Prisma.AutorisationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AutorisationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload>
+          }
+          findMany: {
+            args: Prisma.AutorisationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload>[]
+          }
+          create: {
+            args: Prisma.AutorisationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload>
+          }
+          createMany: {
+            args: Prisma.AutorisationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AutorisationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload>[]
+          }
+          delete: {
+            args: Prisma.AutorisationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload>
+          }
+          update: {
+            args: Prisma.AutorisationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload>
+          }
+          deleteMany: {
+            args: Prisma.AutorisationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AutorisationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.AutorisationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutorisationPayload>
+          }
+          aggregate: {
+            args: Prisma.AutorisationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAutorisation>
+          }
+          groupBy: {
+            args: Prisma.AutorisationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AutorisationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AutorisationCountArgs<ExtArgs>
+            result: $Utils.Optional<AutorisationCountAggregateOutputType> | number
           }
         }
       }
@@ -3142,6 +3228,7 @@ export namespace Prisma {
     lignes: number
     notes: number
     signatureRequests: number
+    autorisations: number
   }
 
   export type OccupationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3150,6 +3237,7 @@ export namespace Prisma {
     lignes?: boolean | OccupationCountOutputTypeCountLignesArgs
     notes?: boolean | OccupationCountOutputTypeCountNotesArgs
     signatureRequests?: boolean | OccupationCountOutputTypeCountSignatureRequestsArgs
+    autorisations?: boolean | OccupationCountOutputTypeCountAutorisationsArgs
   }
 
   // Custom InputTypes
@@ -3196,6 +3284,13 @@ export namespace Prisma {
    */
   export type OccupationCountOutputTypeCountSignatureRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SignatureRequestWhereInput
+  }
+
+  /**
+   * OccupationCountOutputType without action
+   */
+  export type OccupationCountOutputTypeCountAutorisationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AutorisationWhereInput
   }
 
 
@@ -5174,6 +5269,7 @@ export namespace Prisma {
     lignes?: boolean | Occupation$lignesArgs<ExtArgs>
     notes?: boolean | Occupation$notesArgs<ExtArgs>
     signatureRequests?: boolean | Occupation$signatureRequestsArgs<ExtArgs>
+    autorisations?: boolean | Occupation$autorisationsArgs<ExtArgs>
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
     _count?: boolean | OccupationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["occupation"]>
@@ -5271,6 +5367,7 @@ export namespace Prisma {
     lignes?: boolean | Occupation$lignesArgs<ExtArgs>
     notes?: boolean | Occupation$notesArgs<ExtArgs>
     signatureRequests?: boolean | Occupation$signatureRequestsArgs<ExtArgs>
+    autorisations?: boolean | Occupation$autorisationsArgs<ExtArgs>
     tiers?: boolean | TiersDefaultArgs<ExtArgs>
     _count?: boolean | OccupationCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -5286,6 +5383,7 @@ export namespace Prisma {
       lignes: Prisma.$LigneOccupationPayload<ExtArgs>[]
       notes: Prisma.$NotePayload<ExtArgs>[]
       signatureRequests: Prisma.$SignatureRequestPayload<ExtArgs>[]
+      autorisations: Prisma.$AutorisationPayload<ExtArgs>[]
       tiers: Prisma.$TiersPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -5698,6 +5796,7 @@ export namespace Prisma {
     lignes<T extends Occupation$lignesArgs<ExtArgs> = {}>(args?: Subset<T, Occupation$lignesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LigneOccupationPayload<ExtArgs>, T, "findMany"> | Null>
     notes<T extends Occupation$notesArgs<ExtArgs> = {}>(args?: Subset<T, Occupation$notesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany"> | Null>
     signatureRequests<T extends Occupation$signatureRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Occupation$signatureRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SignatureRequestPayload<ExtArgs>, T, "findMany"> | Null>
+    autorisations<T extends Occupation$autorisationsArgs<ExtArgs> = {}>(args?: Subset<T, Occupation$autorisationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "findMany"> | Null>
     tiers<T extends TiersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TiersDefaultArgs<ExtArgs>>): Prisma__TiersClient<$Result.GetResult<Prisma.$TiersPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -6183,6 +6282,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SignatureRequestScalarFieldEnum | SignatureRequestScalarFieldEnum[]
+  }
+
+  /**
+   * Occupation.autorisations
+   */
+  export type Occupation$autorisationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    where?: AutorisationWhereInput
+    orderBy?: AutorisationOrderByWithRelationInput | AutorisationOrderByWithRelationInput[]
+    cursor?: AutorisationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AutorisationScalarFieldEnum | AutorisationScalarFieldEnum[]
   }
 
   /**
@@ -8439,6 +8558,1105 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: NoteInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Autorisation
+   */
+
+  export type AggregateAutorisation = {
+    _count: AutorisationCountAggregateOutputType | null
+    _avg: AutorisationAvgAggregateOutputType | null
+    _sum: AutorisationSumAggregateOutputType | null
+    _min: AutorisationMinAggregateOutputType | null
+    _max: AutorisationMaxAggregateOutputType | null
+  }
+
+  export type AutorisationAvgAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+    gabaritId: number | null
+    ordre: number | null
+  }
+
+  export type AutorisationSumAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+    gabaritId: number | null
+    ordre: number | null
+  }
+
+  export type AutorisationMinAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+    libelle: string | null
+    gabaritId: number | null
+    dateDebut: Date | null
+    dateFin: Date | null
+    ligneIds: string | null
+    generatedPath: string | null
+    generatedPdf: string | null
+    finalPath: string | null
+    signed: boolean | null
+    dateSignature: Date | null
+    ordre: number | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type AutorisationMaxAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+    libelle: string | null
+    gabaritId: number | null
+    dateDebut: Date | null
+    dateFin: Date | null
+    ligneIds: string | null
+    generatedPath: string | null
+    generatedPdf: string | null
+    finalPath: string | null
+    signed: boolean | null
+    dateSignature: Date | null
+    ordre: number | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type AutorisationCountAggregateOutputType = {
+    id: number
+    occupationId: number
+    libelle: number
+    gabaritId: number
+    dateDebut: number
+    dateFin: number
+    ligneIds: number
+    generatedPath: number
+    generatedPdf: number
+    finalPath: number
+    signed: number
+    dateSignature: number
+    ordre: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type AutorisationAvgAggregateInputType = {
+    id?: true
+    occupationId?: true
+    gabaritId?: true
+    ordre?: true
+  }
+
+  export type AutorisationSumAggregateInputType = {
+    id?: true
+    occupationId?: true
+    gabaritId?: true
+    ordre?: true
+  }
+
+  export type AutorisationMinAggregateInputType = {
+    id?: true
+    occupationId?: true
+    libelle?: true
+    gabaritId?: true
+    dateDebut?: true
+    dateFin?: true
+    ligneIds?: true
+    generatedPath?: true
+    generatedPdf?: true
+    finalPath?: true
+    signed?: true
+    dateSignature?: true
+    ordre?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type AutorisationMaxAggregateInputType = {
+    id?: true
+    occupationId?: true
+    libelle?: true
+    gabaritId?: true
+    dateDebut?: true
+    dateFin?: true
+    ligneIds?: true
+    generatedPath?: true
+    generatedPdf?: true
+    finalPath?: true
+    signed?: true
+    dateSignature?: true
+    ordre?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type AutorisationCountAggregateInputType = {
+    id?: true
+    occupationId?: true
+    libelle?: true
+    gabaritId?: true
+    dateDebut?: true
+    dateFin?: true
+    ligneIds?: true
+    generatedPath?: true
+    generatedPdf?: true
+    finalPath?: true
+    signed?: true
+    dateSignature?: true
+    ordre?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type AutorisationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Autorisation to aggregate.
+     */
+    where?: AutorisationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Autorisations to fetch.
+     */
+    orderBy?: AutorisationOrderByWithRelationInput | AutorisationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AutorisationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Autorisations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Autorisations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Autorisations
+    **/
+    _count?: true | AutorisationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AutorisationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AutorisationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AutorisationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AutorisationMaxAggregateInputType
+  }
+
+  export type GetAutorisationAggregateType<T extends AutorisationAggregateArgs> = {
+        [P in keyof T & keyof AggregateAutorisation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAutorisation[P]>
+      : GetScalarType<T[P], AggregateAutorisation[P]>
+  }
+
+
+
+
+  export type AutorisationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AutorisationWhereInput
+    orderBy?: AutorisationOrderByWithAggregationInput | AutorisationOrderByWithAggregationInput[]
+    by: AutorisationScalarFieldEnum[] | AutorisationScalarFieldEnum
+    having?: AutorisationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AutorisationCountAggregateInputType | true
+    _avg?: AutorisationAvgAggregateInputType
+    _sum?: AutorisationSumAggregateInputType
+    _min?: AutorisationMinAggregateInputType
+    _max?: AutorisationMaxAggregateInputType
+  }
+
+  export type AutorisationGroupByOutputType = {
+    id: number
+    occupationId: number
+    libelle: string
+    gabaritId: number | null
+    dateDebut: Date | null
+    dateFin: Date | null
+    ligneIds: string | null
+    generatedPath: string | null
+    generatedPdf: string | null
+    finalPath: string | null
+    signed: boolean
+    dateSignature: Date | null
+    ordre: number
+    created_at: Date
+    updated_at: Date
+    _count: AutorisationCountAggregateOutputType | null
+    _avg: AutorisationAvgAggregateOutputType | null
+    _sum: AutorisationSumAggregateOutputType | null
+    _min: AutorisationMinAggregateOutputType | null
+    _max: AutorisationMaxAggregateOutputType | null
+  }
+
+  type GetAutorisationGroupByPayload<T extends AutorisationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AutorisationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AutorisationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AutorisationGroupByOutputType[P]>
+            : GetScalarType<T[P], AutorisationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AutorisationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    occupationId?: boolean
+    libelle?: boolean
+    gabaritId?: boolean
+    dateDebut?: boolean
+    dateFin?: boolean
+    ligneIds?: boolean
+    generatedPath?: boolean
+    generatedPdf?: boolean
+    finalPath?: boolean
+    signed?: boolean
+    dateSignature?: boolean
+    ordre?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["autorisation"]>
+
+  export type AutorisationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    occupationId?: boolean
+    libelle?: boolean
+    gabaritId?: boolean
+    dateDebut?: boolean
+    dateFin?: boolean
+    ligneIds?: boolean
+    generatedPath?: boolean
+    generatedPdf?: boolean
+    finalPath?: boolean
+    signed?: boolean
+    dateSignature?: boolean
+    ordre?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["autorisation"]>
+
+  export type AutorisationSelectScalar = {
+    id?: boolean
+    occupationId?: boolean
+    libelle?: boolean
+    gabaritId?: boolean
+    dateDebut?: boolean
+    dateFin?: boolean
+    ligneIds?: boolean
+    generatedPath?: boolean
+    generatedPdf?: boolean
+    finalPath?: boolean
+    signed?: boolean
+    dateSignature?: boolean
+    ordre?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type AutorisationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+  }
+  export type AutorisationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    occupation?: boolean | OccupationDefaultArgs<ExtArgs>
+  }
+
+  export type $AutorisationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Autorisation"
+    objects: {
+      occupation: Prisma.$OccupationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      occupationId: number
+      libelle: string
+      gabaritId: number | null
+      dateDebut: Date | null
+      dateFin: Date | null
+      ligneIds: string | null
+      generatedPath: string | null
+      generatedPdf: string | null
+      finalPath: string | null
+      signed: boolean
+      dateSignature: Date | null
+      ordre: number
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["autorisation"]>
+    composites: {}
+  }
+
+  type AutorisationGetPayload<S extends boolean | null | undefined | AutorisationDefaultArgs> = $Result.GetResult<Prisma.$AutorisationPayload, S>
+
+  type AutorisationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<AutorisationFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: AutorisationCountAggregateInputType | true
+    }
+
+  export interface AutorisationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Autorisation'], meta: { name: 'Autorisation' } }
+    /**
+     * Find zero or one Autorisation that matches the filter.
+     * @param {AutorisationFindUniqueArgs} args - Arguments to find a Autorisation
+     * @example
+     * // Get one Autorisation
+     * const autorisation = await prisma.autorisation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AutorisationFindUniqueArgs>(args: SelectSubset<T, AutorisationFindUniqueArgs<ExtArgs>>): Prisma__AutorisationClient<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Autorisation that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {AutorisationFindUniqueOrThrowArgs} args - Arguments to find a Autorisation
+     * @example
+     * // Get one Autorisation
+     * const autorisation = await prisma.autorisation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AutorisationFindUniqueOrThrowArgs>(args: SelectSubset<T, AutorisationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AutorisationClient<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Autorisation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutorisationFindFirstArgs} args - Arguments to find a Autorisation
+     * @example
+     * // Get one Autorisation
+     * const autorisation = await prisma.autorisation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AutorisationFindFirstArgs>(args?: SelectSubset<T, AutorisationFindFirstArgs<ExtArgs>>): Prisma__AutorisationClient<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Autorisation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutorisationFindFirstOrThrowArgs} args - Arguments to find a Autorisation
+     * @example
+     * // Get one Autorisation
+     * const autorisation = await prisma.autorisation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AutorisationFindFirstOrThrowArgs>(args?: SelectSubset<T, AutorisationFindFirstOrThrowArgs<ExtArgs>>): Prisma__AutorisationClient<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Autorisations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutorisationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Autorisations
+     * const autorisations = await prisma.autorisation.findMany()
+     * 
+     * // Get first 10 Autorisations
+     * const autorisations = await prisma.autorisation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const autorisationWithIdOnly = await prisma.autorisation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AutorisationFindManyArgs>(args?: SelectSubset<T, AutorisationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Autorisation.
+     * @param {AutorisationCreateArgs} args - Arguments to create a Autorisation.
+     * @example
+     * // Create one Autorisation
+     * const Autorisation = await prisma.autorisation.create({
+     *   data: {
+     *     // ... data to create a Autorisation
+     *   }
+     * })
+     * 
+     */
+    create<T extends AutorisationCreateArgs>(args: SelectSubset<T, AutorisationCreateArgs<ExtArgs>>): Prisma__AutorisationClient<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Autorisations.
+     * @param {AutorisationCreateManyArgs} args - Arguments to create many Autorisations.
+     * @example
+     * // Create many Autorisations
+     * const autorisation = await prisma.autorisation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AutorisationCreateManyArgs>(args?: SelectSubset<T, AutorisationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Autorisations and returns the data saved in the database.
+     * @param {AutorisationCreateManyAndReturnArgs} args - Arguments to create many Autorisations.
+     * @example
+     * // Create many Autorisations
+     * const autorisation = await prisma.autorisation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Autorisations and only return the `id`
+     * const autorisationWithIdOnly = await prisma.autorisation.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AutorisationCreateManyAndReturnArgs>(args?: SelectSubset<T, AutorisationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Autorisation.
+     * @param {AutorisationDeleteArgs} args - Arguments to delete one Autorisation.
+     * @example
+     * // Delete one Autorisation
+     * const Autorisation = await prisma.autorisation.delete({
+     *   where: {
+     *     // ... filter to delete one Autorisation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AutorisationDeleteArgs>(args: SelectSubset<T, AutorisationDeleteArgs<ExtArgs>>): Prisma__AutorisationClient<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Autorisation.
+     * @param {AutorisationUpdateArgs} args - Arguments to update one Autorisation.
+     * @example
+     * // Update one Autorisation
+     * const autorisation = await prisma.autorisation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AutorisationUpdateArgs>(args: SelectSubset<T, AutorisationUpdateArgs<ExtArgs>>): Prisma__AutorisationClient<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Autorisations.
+     * @param {AutorisationDeleteManyArgs} args - Arguments to filter Autorisations to delete.
+     * @example
+     * // Delete a few Autorisations
+     * const { count } = await prisma.autorisation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AutorisationDeleteManyArgs>(args?: SelectSubset<T, AutorisationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Autorisations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutorisationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Autorisations
+     * const autorisation = await prisma.autorisation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AutorisationUpdateManyArgs>(args: SelectSubset<T, AutorisationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Autorisation.
+     * @param {AutorisationUpsertArgs} args - Arguments to update or create a Autorisation.
+     * @example
+     * // Update or create a Autorisation
+     * const autorisation = await prisma.autorisation.upsert({
+     *   create: {
+     *     // ... data to create a Autorisation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Autorisation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AutorisationUpsertArgs>(args: SelectSubset<T, AutorisationUpsertArgs<ExtArgs>>): Prisma__AutorisationClient<$Result.GetResult<Prisma.$AutorisationPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Autorisations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutorisationCountArgs} args - Arguments to filter Autorisations to count.
+     * @example
+     * // Count the number of Autorisations
+     * const count = await prisma.autorisation.count({
+     *   where: {
+     *     // ... the filter for the Autorisations we want to count
+     *   }
+     * })
+    **/
+    count<T extends AutorisationCountArgs>(
+      args?: Subset<T, AutorisationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AutorisationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Autorisation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutorisationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AutorisationAggregateArgs>(args: Subset<T, AutorisationAggregateArgs>): Prisma.PrismaPromise<GetAutorisationAggregateType<T>>
+
+    /**
+     * Group by Autorisation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutorisationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AutorisationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AutorisationGroupByArgs['orderBy'] }
+        : { orderBy?: AutorisationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AutorisationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAutorisationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Autorisation model
+   */
+  readonly fields: AutorisationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Autorisation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AutorisationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    occupation<T extends OccupationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OccupationDefaultArgs<ExtArgs>>): Prisma__OccupationClient<$Result.GetResult<Prisma.$OccupationPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Autorisation model
+   */ 
+  interface AutorisationFieldRefs {
+    readonly id: FieldRef<"Autorisation", 'Int'>
+    readonly occupationId: FieldRef<"Autorisation", 'Int'>
+    readonly libelle: FieldRef<"Autorisation", 'String'>
+    readonly gabaritId: FieldRef<"Autorisation", 'Int'>
+    readonly dateDebut: FieldRef<"Autorisation", 'DateTime'>
+    readonly dateFin: FieldRef<"Autorisation", 'DateTime'>
+    readonly ligneIds: FieldRef<"Autorisation", 'String'>
+    readonly generatedPath: FieldRef<"Autorisation", 'String'>
+    readonly generatedPdf: FieldRef<"Autorisation", 'String'>
+    readonly finalPath: FieldRef<"Autorisation", 'String'>
+    readonly signed: FieldRef<"Autorisation", 'Boolean'>
+    readonly dateSignature: FieldRef<"Autorisation", 'DateTime'>
+    readonly ordre: FieldRef<"Autorisation", 'Int'>
+    readonly created_at: FieldRef<"Autorisation", 'DateTime'>
+    readonly updated_at: FieldRef<"Autorisation", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Autorisation findUnique
+   */
+  export type AutorisationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    /**
+     * Filter, which Autorisation to fetch.
+     */
+    where: AutorisationWhereUniqueInput
+  }
+
+  /**
+   * Autorisation findUniqueOrThrow
+   */
+  export type AutorisationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    /**
+     * Filter, which Autorisation to fetch.
+     */
+    where: AutorisationWhereUniqueInput
+  }
+
+  /**
+   * Autorisation findFirst
+   */
+  export type AutorisationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    /**
+     * Filter, which Autorisation to fetch.
+     */
+    where?: AutorisationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Autorisations to fetch.
+     */
+    orderBy?: AutorisationOrderByWithRelationInput | AutorisationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Autorisations.
+     */
+    cursor?: AutorisationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Autorisations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Autorisations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Autorisations.
+     */
+    distinct?: AutorisationScalarFieldEnum | AutorisationScalarFieldEnum[]
+  }
+
+  /**
+   * Autorisation findFirstOrThrow
+   */
+  export type AutorisationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    /**
+     * Filter, which Autorisation to fetch.
+     */
+    where?: AutorisationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Autorisations to fetch.
+     */
+    orderBy?: AutorisationOrderByWithRelationInput | AutorisationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Autorisations.
+     */
+    cursor?: AutorisationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Autorisations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Autorisations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Autorisations.
+     */
+    distinct?: AutorisationScalarFieldEnum | AutorisationScalarFieldEnum[]
+  }
+
+  /**
+   * Autorisation findMany
+   */
+  export type AutorisationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    /**
+     * Filter, which Autorisations to fetch.
+     */
+    where?: AutorisationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Autorisations to fetch.
+     */
+    orderBy?: AutorisationOrderByWithRelationInput | AutorisationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Autorisations.
+     */
+    cursor?: AutorisationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Autorisations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Autorisations.
+     */
+    skip?: number
+    distinct?: AutorisationScalarFieldEnum | AutorisationScalarFieldEnum[]
+  }
+
+  /**
+   * Autorisation create
+   */
+  export type AutorisationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Autorisation.
+     */
+    data: XOR<AutorisationCreateInput, AutorisationUncheckedCreateInput>
+  }
+
+  /**
+   * Autorisation createMany
+   */
+  export type AutorisationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Autorisations.
+     */
+    data: AutorisationCreateManyInput | AutorisationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Autorisation createManyAndReturn
+   */
+  export type AutorisationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Autorisations.
+     */
+    data: AutorisationCreateManyInput | AutorisationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Autorisation update
+   */
+  export type AutorisationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Autorisation.
+     */
+    data: XOR<AutorisationUpdateInput, AutorisationUncheckedUpdateInput>
+    /**
+     * Choose, which Autorisation to update.
+     */
+    where: AutorisationWhereUniqueInput
+  }
+
+  /**
+   * Autorisation updateMany
+   */
+  export type AutorisationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Autorisations.
+     */
+    data: XOR<AutorisationUpdateManyMutationInput, AutorisationUncheckedUpdateManyInput>
+    /**
+     * Filter which Autorisations to update
+     */
+    where?: AutorisationWhereInput
+  }
+
+  /**
+   * Autorisation upsert
+   */
+  export type AutorisationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Autorisation to update in case it exists.
+     */
+    where: AutorisationWhereUniqueInput
+    /**
+     * In case the Autorisation found by the `where` argument doesn't exist, create a new Autorisation with this data.
+     */
+    create: XOR<AutorisationCreateInput, AutorisationUncheckedCreateInput>
+    /**
+     * In case the Autorisation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AutorisationUpdateInput, AutorisationUncheckedUpdateInput>
+  }
+
+  /**
+   * Autorisation delete
+   */
+  export type AutorisationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
+    /**
+     * Filter which Autorisation to delete.
+     */
+    where: AutorisationWhereUniqueInput
+  }
+
+  /**
+   * Autorisation deleteMany
+   */
+  export type AutorisationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Autorisations to delete
+     */
+    where?: AutorisationWhereInput
+  }
+
+  /**
+   * Autorisation without action
+   */
+  export type AutorisationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Autorisation
+     */
+    select?: AutorisationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AutorisationInclude<ExtArgs> | null
   }
 
 
@@ -32063,6 +33281,27 @@ export namespace Prisma {
   export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
 
 
+  export const AutorisationScalarFieldEnum: {
+    id: 'id',
+    occupationId: 'occupationId',
+    libelle: 'libelle',
+    gabaritId: 'gabaritId',
+    dateDebut: 'dateDebut',
+    dateFin: 'dateFin',
+    ligneIds: 'ligneIds',
+    generatedPath: 'generatedPath',
+    generatedPdf: 'generatedPdf',
+    finalPath: 'finalPath',
+    signed: 'signed',
+    dateSignature: 'dateSignature',
+    ordre: 'ordre',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type AutorisationScalarFieldEnum = (typeof AutorisationScalarFieldEnum)[keyof typeof AutorisationScalarFieldEnum]
+
+
   export const O365MessageScalarFieldEnum: {
     id: 'id',
     subject: 'subject',
@@ -32692,6 +33931,7 @@ export namespace Prisma {
     lignes?: LigneOccupationListRelationFilter
     notes?: NoteListRelationFilter
     signatureRequests?: SignatureRequestListRelationFilter
+    autorisations?: AutorisationListRelationFilter
     tiers?: XOR<TiersRelationFilter, TiersWhereInput>
   }
 
@@ -32741,6 +33981,7 @@ export namespace Prisma {
     lignes?: LigneOccupationOrderByRelationAggregateInput
     notes?: NoteOrderByRelationAggregateInput
     signatureRequests?: SignatureRequestOrderByRelationAggregateInput
+    autorisations?: AutorisationOrderByRelationAggregateInput
     tiers?: TiersOrderByWithRelationInput
   }
 
@@ -32793,6 +34034,7 @@ export namespace Prisma {
     lignes?: LigneOccupationListRelationFilter
     notes?: NoteListRelationFilter
     signatureRequests?: SignatureRequestListRelationFilter
+    autorisations?: AutorisationListRelationFilter
     tiers?: XOR<TiersRelationFilter, TiersWhereInput>
   }, "id">
 
@@ -33098,6 +34340,113 @@ export namespace Prisma {
     toEmail?: StringNullableWithAggregatesFilter<"Note"> | string | null
     origin?: StringNullableWithAggregatesFilter<"Note"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"Note"> | Date | string
+  }
+
+  export type AutorisationWhereInput = {
+    AND?: AutorisationWhereInput | AutorisationWhereInput[]
+    OR?: AutorisationWhereInput[]
+    NOT?: AutorisationWhereInput | AutorisationWhereInput[]
+    id?: IntFilter<"Autorisation"> | number
+    occupationId?: IntFilter<"Autorisation"> | number
+    libelle?: StringFilter<"Autorisation"> | string
+    gabaritId?: IntNullableFilter<"Autorisation"> | number | null
+    dateDebut?: DateTimeNullableFilter<"Autorisation"> | Date | string | null
+    dateFin?: DateTimeNullableFilter<"Autorisation"> | Date | string | null
+    ligneIds?: StringNullableFilter<"Autorisation"> | string | null
+    generatedPath?: StringNullableFilter<"Autorisation"> | string | null
+    generatedPdf?: StringNullableFilter<"Autorisation"> | string | null
+    finalPath?: StringNullableFilter<"Autorisation"> | string | null
+    signed?: BoolFilter<"Autorisation"> | boolean
+    dateSignature?: DateTimeNullableFilter<"Autorisation"> | Date | string | null
+    ordre?: IntFilter<"Autorisation"> | number
+    created_at?: DateTimeFilter<"Autorisation"> | Date | string
+    updated_at?: DateTimeFilter<"Autorisation"> | Date | string
+    occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
+  }
+
+  export type AutorisationOrderByWithRelationInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    libelle?: SortOrder
+    gabaritId?: SortOrderInput | SortOrder
+    dateDebut?: SortOrderInput | SortOrder
+    dateFin?: SortOrderInput | SortOrder
+    ligneIds?: SortOrderInput | SortOrder
+    generatedPath?: SortOrderInput | SortOrder
+    generatedPdf?: SortOrderInput | SortOrder
+    finalPath?: SortOrderInput | SortOrder
+    signed?: SortOrder
+    dateSignature?: SortOrderInput | SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    occupation?: OccupationOrderByWithRelationInput
+  }
+
+  export type AutorisationWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: AutorisationWhereInput | AutorisationWhereInput[]
+    OR?: AutorisationWhereInput[]
+    NOT?: AutorisationWhereInput | AutorisationWhereInput[]
+    occupationId?: IntFilter<"Autorisation"> | number
+    libelle?: StringFilter<"Autorisation"> | string
+    gabaritId?: IntNullableFilter<"Autorisation"> | number | null
+    dateDebut?: DateTimeNullableFilter<"Autorisation"> | Date | string | null
+    dateFin?: DateTimeNullableFilter<"Autorisation"> | Date | string | null
+    ligneIds?: StringNullableFilter<"Autorisation"> | string | null
+    generatedPath?: StringNullableFilter<"Autorisation"> | string | null
+    generatedPdf?: StringNullableFilter<"Autorisation"> | string | null
+    finalPath?: StringNullableFilter<"Autorisation"> | string | null
+    signed?: BoolFilter<"Autorisation"> | boolean
+    dateSignature?: DateTimeNullableFilter<"Autorisation"> | Date | string | null
+    ordre?: IntFilter<"Autorisation"> | number
+    created_at?: DateTimeFilter<"Autorisation"> | Date | string
+    updated_at?: DateTimeFilter<"Autorisation"> | Date | string
+    occupation?: XOR<OccupationRelationFilter, OccupationWhereInput>
+  }, "id">
+
+  export type AutorisationOrderByWithAggregationInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    libelle?: SortOrder
+    gabaritId?: SortOrderInput | SortOrder
+    dateDebut?: SortOrderInput | SortOrder
+    dateFin?: SortOrderInput | SortOrder
+    ligneIds?: SortOrderInput | SortOrder
+    generatedPath?: SortOrderInput | SortOrder
+    generatedPdf?: SortOrderInput | SortOrder
+    finalPath?: SortOrderInput | SortOrder
+    signed?: SortOrder
+    dateSignature?: SortOrderInput | SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: AutorisationCountOrderByAggregateInput
+    _avg?: AutorisationAvgOrderByAggregateInput
+    _max?: AutorisationMaxOrderByAggregateInput
+    _min?: AutorisationMinOrderByAggregateInput
+    _sum?: AutorisationSumOrderByAggregateInput
+  }
+
+  export type AutorisationScalarWhereWithAggregatesInput = {
+    AND?: AutorisationScalarWhereWithAggregatesInput | AutorisationScalarWhereWithAggregatesInput[]
+    OR?: AutorisationScalarWhereWithAggregatesInput[]
+    NOT?: AutorisationScalarWhereWithAggregatesInput | AutorisationScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Autorisation"> | number
+    occupationId?: IntWithAggregatesFilter<"Autorisation"> | number
+    libelle?: StringWithAggregatesFilter<"Autorisation"> | string
+    gabaritId?: IntNullableWithAggregatesFilter<"Autorisation"> | number | null
+    dateDebut?: DateTimeNullableWithAggregatesFilter<"Autorisation"> | Date | string | null
+    dateFin?: DateTimeNullableWithAggregatesFilter<"Autorisation"> | Date | string | null
+    ligneIds?: StringNullableWithAggregatesFilter<"Autorisation"> | string | null
+    generatedPath?: StringNullableWithAggregatesFilter<"Autorisation"> | string | null
+    generatedPdf?: StringNullableWithAggregatesFilter<"Autorisation"> | string | null
+    finalPath?: StringNullableWithAggregatesFilter<"Autorisation"> | string | null
+    signed?: BoolWithAggregatesFilter<"Autorisation"> | boolean
+    dateSignature?: DateTimeNullableWithAggregatesFilter<"Autorisation"> | Date | string | null
+    ordre?: IntWithAggregatesFilter<"Autorisation"> | number
+    created_at?: DateTimeWithAggregatesFilter<"Autorisation"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"Autorisation"> | Date | string
   }
 
   export type O365MessageWhereInput = {
@@ -35158,6 +36507,7 @@ export namespace Prisma {
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -35207,6 +36557,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationUpdateInput = {
@@ -35253,6 +36604,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -35302,6 +36654,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationCreateManyInput = {
@@ -35657,6 +37010,128 @@ export namespace Prisma {
     toEmail?: NullableStringFieldUpdateOperationsInput | string | null
     origin?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutorisationCreateInput = {
+    libelle: string
+    gabaritId?: number | null
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    ligneIds?: string | null
+    generatedPath?: string | null
+    generatedPdf?: string | null
+    finalPath?: string | null
+    signed?: boolean
+    dateSignature?: Date | string | null
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    occupation: OccupationCreateNestedOneWithoutAutorisationsInput
+  }
+
+  export type AutorisationUncheckedCreateInput = {
+    id?: number
+    occupationId: number
+    libelle: string
+    gabaritId?: number | null
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    ligneIds?: string | null
+    generatedPath?: string | null
+    generatedPdf?: string | null
+    finalPath?: string | null
+    signed?: boolean
+    dateSignature?: Date | string | null
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AutorisationUpdateInput = {
+    libelle?: StringFieldUpdateOperationsInput | string
+    gabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ligneIds?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPath?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPdf?: NullableStringFieldUpdateOperationsInput | string | null
+    finalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    signed?: BoolFieldUpdateOperationsInput | boolean
+    dateSignature?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    occupation?: OccupationUpdateOneRequiredWithoutAutorisationsNestedInput
+  }
+
+  export type AutorisationUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: IntFieldUpdateOperationsInput | number
+    libelle?: StringFieldUpdateOperationsInput | string
+    gabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ligneIds?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPath?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPdf?: NullableStringFieldUpdateOperationsInput | string | null
+    finalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    signed?: BoolFieldUpdateOperationsInput | boolean
+    dateSignature?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutorisationCreateManyInput = {
+    id?: number
+    occupationId: number
+    libelle: string
+    gabaritId?: number | null
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    ligneIds?: string | null
+    generatedPath?: string | null
+    generatedPdf?: string | null
+    finalPath?: string | null
+    signed?: boolean
+    dateSignature?: Date | string | null
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AutorisationUpdateManyMutationInput = {
+    libelle?: StringFieldUpdateOperationsInput | string
+    gabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ligneIds?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPath?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPdf?: NullableStringFieldUpdateOperationsInput | string | null
+    finalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    signed?: BoolFieldUpdateOperationsInput | boolean
+    dateSignature?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutorisationUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    occupationId?: IntFieldUpdateOperationsInput | number
+    libelle?: StringFieldUpdateOperationsInput | string
+    gabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ligneIds?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPath?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPdf?: NullableStringFieldUpdateOperationsInput | string | null
+    finalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    signed?: BoolFieldUpdateOperationsInput | boolean
+    dateSignature?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type O365MessageCreateInput = {
@@ -38002,6 +39477,12 @@ export namespace Prisma {
     none?: SignatureRequestWhereInput
   }
 
+  export type AutorisationListRelationFilter = {
+    every?: AutorisationWhereInput
+    some?: AutorisationWhereInput
+    none?: AutorisationWhereInput
+  }
+
   export type TiersRelationFilter = {
     is?: TiersWhereInput
     isNot?: TiersWhereInput
@@ -38016,6 +39497,10 @@ export namespace Prisma {
   }
 
   export type SignatureRequestOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AutorisationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -38360,6 +39845,79 @@ export namespace Prisma {
     id?: SortOrder
     occupationId?: SortOrder
     tiersId?: SortOrder
+  }
+
+  export type OccupationRelationFilter = {
+    is?: OccupationWhereInput
+    isNot?: OccupationWhereInput
+  }
+
+  export type AutorisationCountOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    libelle?: SortOrder
+    gabaritId?: SortOrder
+    dateDebut?: SortOrder
+    dateFin?: SortOrder
+    ligneIds?: SortOrder
+    generatedPath?: SortOrder
+    generatedPdf?: SortOrder
+    finalPath?: SortOrder
+    signed?: SortOrder
+    dateSignature?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AutorisationAvgOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    gabaritId?: SortOrder
+    ordre?: SortOrder
+  }
+
+  export type AutorisationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    libelle?: SortOrder
+    gabaritId?: SortOrder
+    dateDebut?: SortOrder
+    dateFin?: SortOrder
+    ligneIds?: SortOrder
+    generatedPath?: SortOrder
+    generatedPdf?: SortOrder
+    finalPath?: SortOrder
+    signed?: SortOrder
+    dateSignature?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AutorisationMinOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    libelle?: SortOrder
+    gabaritId?: SortOrder
+    dateDebut?: SortOrder
+    dateFin?: SortOrder
+    ligneIds?: SortOrder
+    generatedPath?: SortOrder
+    generatedPdf?: SortOrder
+    finalPath?: SortOrder
+    signed?: SortOrder
+    dateSignature?: SortOrder
+    ordre?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AutorisationSumOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+    gabaritId?: SortOrder
+    ordre?: SortOrder
   }
 
   export type O365MessageCountOrderByAggregateInput = {
@@ -38746,11 +40304,6 @@ export namespace Prisma {
   export type ArticleRelationFilter = {
     is?: ArticleWhereInput
     isNot?: ArticleWhereInput
-  }
-
-  export type OccupationRelationFilter = {
-    is?: OccupationWhereInput
-    isNot?: OccupationWhereInput
   }
 
   export type LigneOccupationCountOrderByAggregateInput = {
@@ -39832,6 +41385,13 @@ export namespace Prisma {
     connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
   }
 
+  export type AutorisationCreateNestedManyWithoutOccupationInput = {
+    create?: XOR<AutorisationCreateWithoutOccupationInput, AutorisationUncheckedCreateWithoutOccupationInput> | AutorisationCreateWithoutOccupationInput[] | AutorisationUncheckedCreateWithoutOccupationInput[]
+    connectOrCreate?: AutorisationCreateOrConnectWithoutOccupationInput | AutorisationCreateOrConnectWithoutOccupationInput[]
+    createMany?: AutorisationCreateManyOccupationInputEnvelope
+    connect?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
+  }
+
   export type TiersCreateNestedOneWithoutOccupationsInput = {
     create?: XOR<TiersCreateWithoutOccupationsInput, TiersUncheckedCreateWithoutOccupationsInput>
     connectOrCreate?: TiersCreateOrConnectWithoutOccupationsInput
@@ -39871,6 +41431,13 @@ export namespace Prisma {
     connectOrCreate?: SignatureRequestCreateOrConnectWithoutOccupationInput | SignatureRequestCreateOrConnectWithoutOccupationInput[]
     createMany?: SignatureRequestCreateManyOccupationInputEnvelope
     connect?: SignatureRequestWhereUniqueInput | SignatureRequestWhereUniqueInput[]
+  }
+
+  export type AutorisationUncheckedCreateNestedManyWithoutOccupationInput = {
+    create?: XOR<AutorisationCreateWithoutOccupationInput, AutorisationUncheckedCreateWithoutOccupationInput> | AutorisationCreateWithoutOccupationInput[] | AutorisationUncheckedCreateWithoutOccupationInput[]
+    connectOrCreate?: AutorisationCreateOrConnectWithoutOccupationInput | AutorisationCreateOrConnectWithoutOccupationInput[]
+    createMany?: AutorisationCreateManyOccupationInputEnvelope
+    connect?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -39967,6 +41534,20 @@ export namespace Prisma {
     deleteMany?: SignatureRequestScalarWhereInput | SignatureRequestScalarWhereInput[]
   }
 
+  export type AutorisationUpdateManyWithoutOccupationNestedInput = {
+    create?: XOR<AutorisationCreateWithoutOccupationInput, AutorisationUncheckedCreateWithoutOccupationInput> | AutorisationCreateWithoutOccupationInput[] | AutorisationUncheckedCreateWithoutOccupationInput[]
+    connectOrCreate?: AutorisationCreateOrConnectWithoutOccupationInput | AutorisationCreateOrConnectWithoutOccupationInput[]
+    upsert?: AutorisationUpsertWithWhereUniqueWithoutOccupationInput | AutorisationUpsertWithWhereUniqueWithoutOccupationInput[]
+    createMany?: AutorisationCreateManyOccupationInputEnvelope
+    set?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
+    disconnect?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
+    delete?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
+    connect?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
+    update?: AutorisationUpdateWithWhereUniqueWithoutOccupationInput | AutorisationUpdateWithWhereUniqueWithoutOccupationInput[]
+    updateMany?: AutorisationUpdateManyWithWhereWithoutOccupationInput | AutorisationUpdateManyWithWhereWithoutOccupationInput[]
+    deleteMany?: AutorisationScalarWhereInput | AutorisationScalarWhereInput[]
+  }
+
   export type TiersUpdateOneRequiredWithoutOccupationsNestedInput = {
     create?: XOR<TiersCreateWithoutOccupationsInput, TiersUncheckedCreateWithoutOccupationsInput>
     connectOrCreate?: TiersCreateOrConnectWithoutOccupationsInput
@@ -40045,6 +41626,20 @@ export namespace Prisma {
     deleteMany?: SignatureRequestScalarWhereInput | SignatureRequestScalarWhereInput[]
   }
 
+  export type AutorisationUncheckedUpdateManyWithoutOccupationNestedInput = {
+    create?: XOR<AutorisationCreateWithoutOccupationInput, AutorisationUncheckedCreateWithoutOccupationInput> | AutorisationCreateWithoutOccupationInput[] | AutorisationUncheckedCreateWithoutOccupationInput[]
+    connectOrCreate?: AutorisationCreateOrConnectWithoutOccupationInput | AutorisationCreateOrConnectWithoutOccupationInput[]
+    upsert?: AutorisationUpsertWithWhereUniqueWithoutOccupationInput | AutorisationUpsertWithWhereUniqueWithoutOccupationInput[]
+    createMany?: AutorisationCreateManyOccupationInputEnvelope
+    set?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
+    disconnect?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
+    delete?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
+    connect?: AutorisationWhereUniqueInput | AutorisationWhereUniqueInput[]
+    update?: AutorisationUpdateWithWhereUniqueWithoutOccupationInput | AutorisationUpdateWithWhereUniqueWithoutOccupationInput[]
+    updateMany?: AutorisationUpdateManyWithWhereWithoutOccupationInput | AutorisationUpdateManyWithWhereWithoutOccupationInput[]
+    deleteMany?: AutorisationScalarWhereInput | AutorisationScalarWhereInput[]
+  }
+
   export type TiersCreateNestedOneWithoutContactsInput = {
     create?: XOR<TiersCreateWithoutContactsInput, TiersUncheckedCreateWithoutContactsInput>
     connectOrCreate?: TiersCreateOrConnectWithoutContactsInput
@@ -40107,6 +41702,20 @@ export namespace Prisma {
     delete?: TiersWhereInput | boolean
     connect?: TiersWhereUniqueInput
     update?: XOR<XOR<TiersUpdateToOneWithWhereWithoutNotesInput, TiersUpdateWithoutNotesInput>, TiersUncheckedUpdateWithoutNotesInput>
+  }
+
+  export type OccupationCreateNestedOneWithoutAutorisationsInput = {
+    create?: XOR<OccupationCreateWithoutAutorisationsInput, OccupationUncheckedCreateWithoutAutorisationsInput>
+    connectOrCreate?: OccupationCreateOrConnectWithoutAutorisationsInput
+    connect?: OccupationWhereUniqueInput
+  }
+
+  export type OccupationUpdateOneRequiredWithoutAutorisationsNestedInput = {
+    create?: XOR<OccupationCreateWithoutAutorisationsInput, OccupationUncheckedCreateWithoutAutorisationsInput>
+    connectOrCreate?: OccupationCreateOrConnectWithoutAutorisationsInput
+    upsert?: OccupationUpsertWithoutAutorisationsInput
+    connect?: OccupationWhereUniqueInput
+    update?: XOR<XOR<OccupationUpdateToOneWithWhereWithoutAutorisationsInput, OccupationUpdateWithoutAutorisationsInput>, OccupationUncheckedUpdateWithoutAutorisationsInput>
   }
 
   export type ArticleCreateNestedManyWithoutCategorieInput = {
@@ -41070,6 +42679,7 @@ export namespace Prisma {
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationUncheckedCreateWithoutTiersInput = {
@@ -41117,6 +42727,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutTiersInput = {
@@ -41536,6 +43147,49 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type AutorisationCreateWithoutOccupationInput = {
+    libelle: string
+    gabaritId?: number | null
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    ligneIds?: string | null
+    generatedPath?: string | null
+    generatedPdf?: string | null
+    finalPath?: string | null
+    signed?: boolean
+    dateSignature?: Date | string | null
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AutorisationUncheckedCreateWithoutOccupationInput = {
+    id?: number
+    libelle: string
+    gabaritId?: number | null
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    ligneIds?: string | null
+    generatedPath?: string | null
+    generatedPdf?: string | null
+    finalPath?: string | null
+    signed?: boolean
+    dateSignature?: Date | string | null
+    ordre?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AutorisationCreateOrConnectWithoutOccupationInput = {
+    where: AutorisationWhereUniqueInput
+    create: XOR<AutorisationCreateWithoutOccupationInput, AutorisationUncheckedCreateWithoutOccupationInput>
+  }
+
+  export type AutorisationCreateManyOccupationInputEnvelope = {
+    data: AutorisationCreateManyOccupationInput | AutorisationCreateManyOccupationInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TiersCreateWithoutOccupationsInput = {
     nom: string
     siret?: string | null
@@ -41714,6 +43368,43 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"SignatureRequest"> | Date | string
   }
 
+  export type AutorisationUpsertWithWhereUniqueWithoutOccupationInput = {
+    where: AutorisationWhereUniqueInput
+    update: XOR<AutorisationUpdateWithoutOccupationInput, AutorisationUncheckedUpdateWithoutOccupationInput>
+    create: XOR<AutorisationCreateWithoutOccupationInput, AutorisationUncheckedCreateWithoutOccupationInput>
+  }
+
+  export type AutorisationUpdateWithWhereUniqueWithoutOccupationInput = {
+    where: AutorisationWhereUniqueInput
+    data: XOR<AutorisationUpdateWithoutOccupationInput, AutorisationUncheckedUpdateWithoutOccupationInput>
+  }
+
+  export type AutorisationUpdateManyWithWhereWithoutOccupationInput = {
+    where: AutorisationScalarWhereInput
+    data: XOR<AutorisationUpdateManyMutationInput, AutorisationUncheckedUpdateManyWithoutOccupationInput>
+  }
+
+  export type AutorisationScalarWhereInput = {
+    AND?: AutorisationScalarWhereInput | AutorisationScalarWhereInput[]
+    OR?: AutorisationScalarWhereInput[]
+    NOT?: AutorisationScalarWhereInput | AutorisationScalarWhereInput[]
+    id?: IntFilter<"Autorisation"> | number
+    occupationId?: IntFilter<"Autorisation"> | number
+    libelle?: StringFilter<"Autorisation"> | string
+    gabaritId?: IntNullableFilter<"Autorisation"> | number | null
+    dateDebut?: DateTimeNullableFilter<"Autorisation"> | Date | string | null
+    dateFin?: DateTimeNullableFilter<"Autorisation"> | Date | string | null
+    ligneIds?: StringNullableFilter<"Autorisation"> | string | null
+    generatedPath?: StringNullableFilter<"Autorisation"> | string | null
+    generatedPdf?: StringNullableFilter<"Autorisation"> | string | null
+    finalPath?: StringNullableFilter<"Autorisation"> | string | null
+    signed?: BoolFilter<"Autorisation"> | boolean
+    dateSignature?: DateTimeNullableFilter<"Autorisation"> | Date | string | null
+    ordre?: IntFilter<"Autorisation"> | number
+    created_at?: DateTimeFilter<"Autorisation"> | Date | string
+    updated_at?: DateTimeFilter<"Autorisation"> | Date | string
+  }
+
   export type TiersUpsertWithoutOccupationsInput = {
     update: XOR<TiersUpdateWithoutOccupationsInput, TiersUncheckedUpdateWithoutOccupationsInput>
     create: XOR<TiersCreateWithoutOccupationsInput, TiersUncheckedCreateWithoutOccupationsInput>
@@ -41859,6 +43550,7 @@ export namespace Prisma {
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -41907,6 +43599,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutContactsInput = {
@@ -42022,6 +43715,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -42070,6 +43764,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationCreateWithoutNotesInput = {
@@ -42115,6 +43810,7 @@ export namespace Prisma {
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -42163,6 +43859,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutNotesInput = {
@@ -42272,6 +43969,7 @@ export namespace Prisma {
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -42320,6 +44018,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type TiersUpsertWithoutNotesInput = {
@@ -42374,6 +44073,212 @@ export namespace Prisma {
     contacts?: ContactUncheckedUpdateManyWithoutTiersNestedInput
     occupations?: OccupationUncheckedUpdateManyWithoutTiersNestedInput
     favoritedBy?: FavoriteCommerceUncheckedUpdateManyWithoutTiersNestedInput
+  }
+
+  export type OccupationCreateWithoutAutorisationsInput = {
+    nom?: string | null
+    type: string
+    statut: string
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    anneeTaxation?: number | null
+    adresse: string
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    observations?: string | null
+    photos?: string | null
+    montantCalcule?: number
+    facturePath?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    numeroFacture?: string | null
+    dossierParentId?: number | null
+    isCourtMetrage?: boolean
+    agissantPour?: string | null
+    isAgissantPourBillable?: boolean
+    aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    aotSigned?: boolean
+    aotDate?: Date | string | null
+    datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
+    dateAlerte?: Date | string | null
+    isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
+    contacts?: ContactCreateNestedManyWithoutOccupationInput
+    dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
+    lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
+    notes?: NoteCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
+    tiers: TiersCreateNestedOneWithoutOccupationsInput
+  }
+
+  export type OccupationUncheckedCreateWithoutAutorisationsInput = {
+    id?: number
+    nom?: string | null
+    tiersId: number
+    type: string
+    statut: string
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    anneeTaxation?: number | null
+    adresse: string
+    latitude?: number | null
+    longitude?: number | null
+    description?: string | null
+    observations?: string | null
+    photos?: string | null
+    montantCalcule?: number
+    facturePath?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    numeroFacture?: string | null
+    dossierParentId?: number | null
+    isCourtMetrage?: boolean
+    agissantPour?: string | null
+    isAgissantPourBillable?: boolean
+    aotGabaritId?: number | null
+    aotFinalPath?: string | null
+    aotSigned?: boolean
+    aotDate?: Date | string | null
+    datePaiement?: Date | string | null
+    dateINIT?: Date | string | null
+    dateINST?: Date | string | null
+    datePREP?: Date | string | null
+    dateEN_COURS?: Date | string | null
+    dateVALIDE?: Date | string | null
+    dateFACTURE?: Date | string | null
+    dateTITRE?: Date | string | null
+    dateCLOS?: Date | string | null
+    dateAlerte?: Date | string | null
+    isArchived?: boolean
+    isExempt?: boolean
+    isNotAuthorized?: boolean
+    contacts?: ContactUncheckedCreateNestedManyWithoutOccupationInput
+    dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
+    lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
+    notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+    signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
+  }
+
+  export type OccupationCreateOrConnectWithoutAutorisationsInput = {
+    where: OccupationWhereUniqueInput
+    create: XOR<OccupationCreateWithoutAutorisationsInput, OccupationUncheckedCreateWithoutAutorisationsInput>
+  }
+
+  export type OccupationUpsertWithoutAutorisationsInput = {
+    update: XOR<OccupationUpdateWithoutAutorisationsInput, OccupationUncheckedUpdateWithoutAutorisationsInput>
+    create: XOR<OccupationCreateWithoutAutorisationsInput, OccupationUncheckedCreateWithoutAutorisationsInput>
+    where?: OccupationWhereInput
+  }
+
+  export type OccupationUpdateToOneWithWhereWithoutAutorisationsInput = {
+    where?: OccupationWhereInput
+    data: XOR<OccupationUpdateWithoutAutorisationsInput, OccupationUncheckedUpdateWithoutAutorisationsInput>
+  }
+
+  export type OccupationUpdateWithoutAutorisationsInput = {
+    nom?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
+    adresse?: StringFieldUpdateOperationsInput | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photos?: NullableStringFieldUpdateOperationsInput | string | null
+    montantCalcule?: FloatFieldUpdateOperationsInput | number
+    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
+    contacts?: ContactUpdateManyWithoutOccupationNestedInput
+    dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
+    lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
+    notes?: NoteUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
+    tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
+  }
+
+  export type OccupationUncheckedUpdateWithoutAutorisationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    nom?: NullableStringFieldUpdateOperationsInput | string | null
+    tiersId?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    anneeTaxation?: NullableIntFieldUpdateOperationsInput | number | null
+    adresse?: StringFieldUpdateOperationsInput | string
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    observations?: NullableStringFieldUpdateOperationsInput | string | null
+    photos?: NullableStringFieldUpdateOperationsInput | string | null
+    montantCalcule?: FloatFieldUpdateOperationsInput | number
+    facturePath?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    numeroFacture?: NullableStringFieldUpdateOperationsInput | string | null
+    dossierParentId?: NullableIntFieldUpdateOperationsInput | number | null
+    isCourtMetrage?: BoolFieldUpdateOperationsInput | boolean
+    agissantPour?: NullableStringFieldUpdateOperationsInput | string | null
+    isAgissantPourBillable?: BoolFieldUpdateOperationsInput | boolean
+    aotGabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    aotFinalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    aotSigned?: BoolFieldUpdateOperationsInput | boolean
+    aotDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePaiement?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINIT?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateINST?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    datePREP?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateEN_COURS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateVALIDE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFACTURE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateTITRE?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateCLOS?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateAlerte?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    isExempt?: BoolFieldUpdateOperationsInput | boolean
+    isNotAuthorized?: BoolFieldUpdateOperationsInput | boolean
+    contacts?: ContactUncheckedUpdateManyWithoutOccupationNestedInput
+    dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
+    lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
+    notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+    signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type ArticleCreateWithoutCategorieInput = {
@@ -43205,6 +45110,7 @@ export namespace Prisma {
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -43253,6 +45159,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutLignesInput = {
@@ -43366,6 +45273,7 @@ export namespace Prisma {
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -43414,6 +45322,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationCreateWithoutDispositifsInput = {
@@ -43459,6 +45368,7 @@ export namespace Prisma {
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -43507,6 +45417,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
     signatureRequests?: SignatureRequestUncheckedCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutDispositifsInput = {
@@ -43568,6 +45479,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -43616,6 +45528,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type BacklogCommentCreateWithoutBacklogItemInput = {
@@ -44057,6 +45970,7 @@ export namespace Prisma {
     dispositifs?: DispositifCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationCreateNestedManyWithoutOccupationInput
     notes?: NoteCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationCreateNestedManyWithoutOccupationInput
     tiers: TiersCreateNestedOneWithoutOccupationsInput
   }
 
@@ -44105,6 +46019,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedCreateNestedManyWithoutOccupationInput
     lignes?: LigneOccupationUncheckedCreateNestedManyWithoutOccupationInput
     notes?: NoteUncheckedCreateNestedManyWithoutOccupationInput
+    autorisations?: AutorisationUncheckedCreateNestedManyWithoutOccupationInput
   }
 
   export type OccupationCreateOrConnectWithoutSignatureRequestsInput = {
@@ -44200,6 +46115,7 @@ export namespace Prisma {
     dispositifs?: DispositifUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUpdateManyWithoutOccupationNestedInput
     tiers?: TiersUpdateOneRequiredWithoutOccupationsNestedInput
   }
 
@@ -44248,6 +46164,7 @@ export namespace Prisma {
     dispositifs?: DispositifUncheckedUpdateManyWithoutOccupationNestedInput
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type SignatoryUpsertWithoutSignatureRequestsInput = {
@@ -44461,6 +46378,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUpdateManyWithoutOccupationNestedInput
     notes?: NoteUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationUncheckedUpdateWithoutTiersInput = {
@@ -44508,6 +46426,7 @@ export namespace Prisma {
     lignes?: LigneOccupationUncheckedUpdateManyWithoutOccupationNestedInput
     notes?: NoteUncheckedUpdateManyWithoutOccupationNestedInput
     signatureRequests?: SignatureRequestUncheckedUpdateManyWithoutOccupationNestedInput
+    autorisations?: AutorisationUncheckedUpdateManyWithoutOccupationNestedInput
   }
 
   export type OccupationUncheckedUpdateManyWithoutTiersInput = {
@@ -44682,6 +46601,23 @@ export namespace Prisma {
     rejectionComment?: string | null
     signedAt?: Date | string | null
     requestedByLogin?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type AutorisationCreateManyOccupationInput = {
+    id?: number
+    libelle: string
+    gabaritId?: number | null
+    dateDebut?: Date | string | null
+    dateFin?: Date | string | null
+    ligneIds?: string | null
+    generatedPath?: string | null
+    generatedPdf?: string | null
+    finalPath?: string | null
+    signed?: boolean
+    dateSignature?: Date | string | null
+    ordre?: number
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -44887,6 +46823,56 @@ export namespace Prisma {
     rejectionComment?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     requestedByLogin?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutorisationUpdateWithoutOccupationInput = {
+    libelle?: StringFieldUpdateOperationsInput | string
+    gabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ligneIds?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPath?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPdf?: NullableStringFieldUpdateOperationsInput | string | null
+    finalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    signed?: BoolFieldUpdateOperationsInput | boolean
+    dateSignature?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutorisationUncheckedUpdateWithoutOccupationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    libelle?: StringFieldUpdateOperationsInput | string
+    gabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ligneIds?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPath?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPdf?: NullableStringFieldUpdateOperationsInput | string | null
+    finalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    signed?: BoolFieldUpdateOperationsInput | boolean
+    dateSignature?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ordre?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutorisationUncheckedUpdateManyWithoutOccupationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    libelle?: StringFieldUpdateOperationsInput | string
+    gabaritId?: NullableIntFieldUpdateOperationsInput | number | null
+    dateDebut?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    dateFin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ligneIds?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPath?: NullableStringFieldUpdateOperationsInput | string | null
+    generatedPdf?: NullableStringFieldUpdateOperationsInput | string | null
+    finalPath?: NullableStringFieldUpdateOperationsInput | string | null
+    signed?: BoolFieldUpdateOperationsInput | boolean
+    dateSignature?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ordre?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -45432,6 +47418,10 @@ export namespace Prisma {
      * @deprecated Use NoteDefaultArgs instead
      */
     export type NoteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = NoteDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use AutorisationDefaultArgs instead
+     */
+    export type AutorisationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AutorisationDefaultArgs<ExtArgs>
     /**
      * @deprecated Use O365MessageDefaultArgs instead
      */

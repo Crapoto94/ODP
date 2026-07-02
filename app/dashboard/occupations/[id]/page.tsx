@@ -27,6 +27,7 @@ import LigneArticleModal from '@/components/LigneArticleModal';
 import TlpeLigneArticleModal from '@/components/TlpeLigneArticleModal';
 import AotFinalModal from './components/AotFinalModal';
 import SignatureRequestModal from './components/SignatureRequestModal';
+import AutorisationsList from '@/components/AutorisationsList';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -213,7 +214,15 @@ export default function OccupationDetailPage({ params }: Props) {
                 onSendForSignature={() => setIsSignatureModalOpen(true)}
               />
             )}
-            <OccupationNotes 
+            {occ.type !== 'TLPE' && (
+              <AutorisationsList
+                occupationId={occ.id}
+                aotGabarits={aotGabarits}
+                readOnly={isFactured || isLocked}
+                onSendForSignature={() => setIsSignatureModalOpen(true)}
+              />
+            )}
+            <OccupationNotes
               key={noteKey}
               occupationId={occ.id} 
               currentUser={currentUser} 
