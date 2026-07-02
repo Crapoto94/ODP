@@ -23,6 +23,7 @@ const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
 interface Commerce {
   id: number;
   nom: string;
+  nomEtablissement?: string | null;
   adresse?: string;
   latitude?: number | null;
   longitude?: number | null;
@@ -60,9 +61,9 @@ export default function MobileCommercesPage() {
   const sorted = useMemo(() => {
     const q = query.toLowerCase();
     return withDistance
-      .filter(c => !q || c.nom.toLowerCase().includes(q) || (c.adresse ?? '').toLowerCase().includes(q))
+      .filter(c => !q || c.nom.toLowerCase().includes(q) || (c.nomEtablissement ?? '').toLowerCase().includes(q) || (c.adresse ?? '').toLowerCase().includes(q))
       .sort((a, b) => {
-        if (a.dist == null && b.dist == null) return a.nom.localeCompare(b.nom);
+        if (a.dist == null && b.dist == null) return (a.nomEtablissement || a.nom).localeCompare(b.nomEtablissement || b.nom);
         if (a.dist == null) return 1;
         if (b.dist == null) return -1;
         return a.dist - b.dist;
@@ -143,7 +144,12 @@ export default function MobileCommercesPage() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-1.5 min-w-0">
                       <Store size={13} className="text-emerald-500 shrink-0" />
-                      <p className="text-sm font-black text-slate-900 leading-tight truncate">{c.nom}</p>
+                      <div className="min-w-0">
+                        <p className="text-sm font-black text-slate-900 leading-tight truncate">{c.nomEtablissement || c.nom}</p>
+                        {c.nomEtablissement && c.nomEtablissement !== c.nom && (
+                          <p className="text-[10px] font-bold text-slate-400 leading-tight truncate">Tiers : {c.nom}</p>
+                        )}
+                      </div>
                     </div>
                     <span className={`shrink-0 text-[9px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full ${status.color}`}>
                       {status.label}

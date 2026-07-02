@@ -19,6 +19,7 @@ interface Article {
 interface Commerce {
   id: number;
   nom: string;
+  nomEtablissement?: string | null;
   adresse?: string;
   email: string;
   tlpeYears: number[];
@@ -137,8 +138,10 @@ export default function CommercesPage() {
   };
 
   const filteredCommerces = commerces.filter(commerce => {
-    const matchesSearch = commerce.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         commerce.adresse?.toLowerCase().includes(searchTerm.toLowerCase());
+    const term = searchTerm.toLowerCase();
+    const matchesSearch = commerce.nom.toLowerCase().includes(term) ||
+                         (commerce.nomEtablissement?.toLowerCase().includes(term) ?? false) ||
+                         (commerce.adresse?.toLowerCase().includes(term) ?? false);
     
     const matchesStatus = statusFilter === 'ALL' || commerce.lastYearStatut === statusFilter;
     
@@ -200,7 +203,7 @@ export default function CommercesPage() {
       const orderB = suffixOrder[pB.suffix] ?? 5;
       return orderA - orderB;
     }
-    return a.nom.localeCompare(b.nom);
+    return (a.nomEtablissement || a.nom).localeCompare(b.nomEtablissement || b.nom);
   });
 
   const availableYears = Array.from(new Set(
@@ -434,21 +437,21 @@ export default function CommercesPage() {
                   <div className="flex items-start gap-3 min-w-0" style={{ flex: '0 0 25%' }}>
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shrink-0 overflow-hidden relative">
                       <img
-                        src={`https://logo.clearbit.com/${encodeURIComponent(commerce.nom.toLowerCase().trim())}.com?size=64`}
-                        alt={commerce.nom}
+                        src={`https://logo.clearbit.com/${encodeURIComponent((commerce.nomEtablissement || commerce.nom).toLowerCase().trim())}.com?size=64`}
+                        alt={commerce.nomEtablissement || commerce.nom}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none';
                         }}
                       />
                       <span className="text-white font-black text-sm">
-                        {commerce.nom.substring(0, 2).toUpperCase()}
+                        {(commerce.nomEtablissement || commerce.nom).substring(0, 2).toUpperCase()}
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors truncate">
-                          {commerce.nom}
+                          {commerce.nomEtablissement || commerce.nom}
                         </h3>
                         {getStatusBadge(commerce.lastYearStatut)}
                         {(commerce as any).lastAotDate && (() => {
@@ -470,6 +473,11 @@ export default function CommercesPage() {
                           </span>
                         )}
                       </div>
+                      {commerce.nomEtablissement && commerce.nomEtablissement !== commerce.nom && (
+                        <p className="text-[11px] font-bold text-slate-400 mt-0.5 truncate" title={`Tiers de facturation : ${commerce.nom}`}>
+                          Tiers : {commerce.nom}
+                        </p>
+                      )}
                       {commerce.adresse && (
                         <p className="text-xs text-slate-500 mt-1 line-clamp-2">{commerce.adresse}</p>
                       )}

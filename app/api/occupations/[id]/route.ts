@@ -61,7 +61,7 @@ export async function PATCH(
     // Check if occupation is archived
     const existingOccupation = await (prisma as any).occupation.findUnique({
       where: { id: occupationId },
-      select: { isArchived: true }
+      select: { isArchived: true, type: true, tiersId: true }
     });
 
     if (existingOccupation?.isArchived) {
@@ -132,6 +132,17 @@ export async function PATCH(
       where: { id: occupationId },
       data: updateData
     });
+
+    // Pour un COMMERCE, le libellé du dossier nomme le commerce (établissement).
+    // Le nom du tiers (facturation) reste inchangé.
+    const effectiveType = type ?? existingOccupation?.type;
+    const effectiveTiersId = tiersId !== undefined ? parseInt(tiersId) : existingOccupation?.tiersId;
+    if (effectiveType === 'COMMERCE' && typeof nom === 'string' && nom.trim() !== '' && effectiveTiersId) {
+      await (prisma as any).tiers.update({
+        where: { id: effectiveTiersId },
+        data: { nomEtablissement: nom.trim() }
+      });
+    }
 
     return NextResponse.json(occupation);
   } catch (error: any) {

@@ -78,6 +78,7 @@ interface Occupation {
 interface Tiers {
   id: number;
   nom: string;
+  nomEtablissement?: string | null;
   adresse?: string | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -487,7 +488,12 @@ function OccupationsPageContent() {
 
   const handleTierChange = (tierIdStr: string) => {
     const selectedTier = tiers.find(t => t.id === Number(tierIdStr));
-    const newNom = (formData.type === 'COMMERCE' && selectedTier) ? selectedTier.nom : formData.nom;
+    // Pour un commerce, on pré-remplit le libellé avec le nom de l'établissement
+    // déjà enregistré (ou, à défaut, le nom du tiers). Il reste modifiable et
+    // deviendra le nom du commerce à l'enregistrement.
+    const newNom = (formData.type === 'COMMERCE' && selectedTier)
+      ? (selectedTier.nomEtablissement || selectedTier.nom)
+      : formData.nom;
     setFormData({ ...formData, tiersId: tierIdStr, nom: newNom });
   };
 
@@ -1191,8 +1197,15 @@ function OccupationsPageContent() {
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Libellé du Dossier</label>
-                    <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" placeholder="Ex: Terrasse été 2024..." value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                      {formData.type === 'COMMERCE' ? 'Libellé du Dossier / Nom du commerce' : 'Libellé du Dossier'}
+                    </label>
+                    <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-blue-500 transition-all font-bold" placeholder={formData.type === 'COMMERCE' ? 'Nom du commerce (établissement)...' : 'Ex: Terrasse été 2024...'} value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
+                    {formData.type === 'COMMERCE' && (
+                      <p className="text-[10px] font-medium text-slate-400 ml-1">
+                        Ce libellé nomme le commerce. La facturation reste au nom du tiers.
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-3 relative">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex justify-between">

@@ -226,6 +226,15 @@ export async function POST(req: Request) {
 
     console.log('[POST Occupations] Created occupation:', occupation.id);
 
+    // Pour un COMMERCE, le libellé du dossier nomme le commerce (établissement).
+    // Le nom du tiers (facturation) reste inchangé.
+    if (type === 'COMMERCE' && typeof nom === 'string' && nom.trim() !== '') {
+      await (prisma as any).tiers.update({
+        where: { id: parseInt(tiersId) },
+        data: { nomEtablissement: nom.trim() }
+      });
+    }
+
     return NextResponse.json(occupation);
   } catch (error: any) {
     console.error('[POST Occupations] Error:', error);

@@ -244,10 +244,13 @@ export async function GET(
       commerce: {
         id: tiers.id,
         nom: tiers.nom,
+        nomEtablissement: tiers.nomEtablissement,
+        code_sedit: tiers.code_sedit,
         adresse: tiers.adresse,
         email: tiers.email,
         telephone: tiers.telephone,
         statut: tiers.statut,
+        etatAdministratif: tiers.etatAdministratif,
         observations: tiers.observations,
         photo: tiers.photo
       },
