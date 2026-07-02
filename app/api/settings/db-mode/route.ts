@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { initializePrisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 import fs from 'fs';
 import path from 'path';
 
@@ -18,6 +19,15 @@ export async function POST(req: Request) {
     const { mode } = await req.json();
     if (mode !== 'PROD' && mode !== 'DEV') {
       return NextResponse.json({ error: 'Mode invalide' }, { status: 400 });
+    }
+
+    // Le mode DEV est réservé aux administrateurs ; les autres profils
+    // ne peuvent rester qu'en mode PROD.
+    if (mode === 'DEV') {
+      const session = await getSession();
+      if (!session || session.role !== 'ADMINISTRATEUR') {
+        return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+      }
     }
 
     const configPath = path.join(process.cwd(), 'config', 'settings.json');

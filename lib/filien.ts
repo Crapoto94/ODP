@@ -84,9 +84,16 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
     const year = mov.year || params.exercice || new Date().getFullYear();
     const bType = (mov.businessType || 'ODP').toLowerCase();
     const typeLabel = bType === 'tlpe' ? 'TLPE' : bType.charAt(0).toUpperCase() + bType.slice(1);
-    
-    // Formula: Variable + " - " + Type + " - " + Year
-    const dynamicLabel = `ODP - ${typeLabel} - ${year}`;
+
+    // Plage d'années couverte par le mouvement (facturation pluri-annuelle) :
+    // la plus petite et la plus grande année parmi les lignes du titre.
+    const movYears = mov.lines.length > 0 ? mov.lines.map(l => l.year || year) : [year];
+    const minYear = Math.min(...movYears);
+    const maxYear = Math.max(...movYears);
+    const yearLabel = minYear === maxYear ? `${minYear}` : `${minYear} à ${maxYear}`;
+
+    // Formula: Variable + " - " + Type + " - " + Year(s)
+    const dynamicLabel = `ODP - ${typeLabel} - ${yearLabel}`;
 
     // En-tête du mouvement
     output += `/01/${mov.id}\n`;
@@ -126,11 +133,14 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
 
     // Lines
     const fmtNum = (n: number) => n.toFixed(2).replace('.', ',');
-    const totalMontant = mov.lines.reduce((sum, l) => sum + l.montant, 0);
+
+    // Petit utilitaire partagé par les deux boucles ci-dessous : le libellé
+    // /502/ (détail de prestation) doit être identique au /57/ du mouvement /51/
+    // correspondant.
+    const lineLabel = (line: FilienLine, lineYear: number) =>
+      line.label ? line.label : `Occup. Domaine Public - CF détail - ${lineYear}`;
 
     // Détails des prestations : un bloc /**/ /500/.../509/ par année (ligne).
-    // Pour un regroupement pluri-annuel, on liste ici chaque exercice, mais on
-    // ne génère ensuite qu'une seule ligne de mouvement /51/ (cf. ci-dessous).
     mov.lines.forEach((line, li) => {
       const ordre = (li + 1).toString().padStart(3, '0');
       output += `/**/\n`;
@@ -138,12 +148,7 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
       output += `/501/${ordre}\n`;
 
       const lineYear = line.year || year;
-
-      // Tag 502 : libellé de la ligne si fourni, sinon défaut avec l'année de la ligne
-      const label502 = line.label
-        ? line.label
-        : `Occup. Domaine Public - CF détail - ${lineYear}`;
-      output += `/502/${label502.slice(0, 80)}\n`;
+      output += `/502/${lineLabel(line, lineYear).slice(0, 80)}\n`;
       output += `/503/0101${lineYear}\n`;
       output += `/504/3112${lineYear}\n`;
       output += `/505/1,00\n`;
@@ -151,33 +156,35 @@ export function generateFilienFile(params: FilienParams, movements: FilienMoveme
       output += `/509/${fmtNum(line.montant)}\n`;
     });
 
-    // Une seule ligne de mouvement /51/ pour tout le titre : la ventilation
-    // analytique provient de la première ligne (identique sur toutes les années),
-    // et /66/ porte le montant total du mouvement.
-    const ventil = mov.lines[0] || ({} as FilienLine);
-    output += `/--/\n`;
-    output += `/51/01\n`;
+    // Un mouvement /51/ par ligne/année, en miroir des blocs /500/ ci-dessus :
+    // pour une facturation pluri-annuelle, chaque exercice a son propre mouvement.
+    mov.lines.forEach((line, li) => {
+      const ordre = (li + 1).toString().padStart(3, '0');
+      const lineYear = line.year || year;
 
-    const p1Atts = [
-      (ventil.chapitre || params.filienChapitre || '').padEnd(10, ' ').slice(0, 10),
-      (ventil.nature || params.filienNature || '').padEnd(10, ' ').slice(0, 10),
-      (ventil.fonction || params.filienFonction || '').padEnd(10, ' ').slice(0, 10),
-      (ventil.codeInterne || params.filienCodeInterne || '').padEnd(10, ' ').slice(0, 10),
-      (ventil.typeMouvement || params.filienTypeMouvement || 'R').slice(0, 1),
-      (ventil.sens || params.filienSens || (mov.type === 'R' ? 'R' : 'D')).slice(0, 1)
-    ];
-    output += `/541/${p1Atts.join('')}\n`;
+      output += `/--/\n`;
+      output += `/51/${ordre}\n`;
 
-    const p2Atts = [
-      (ventil.structure || params.filienStructure || '').padEnd(10, ' ').slice(0, 10),
-      (ventil.gestionnaire || params.filienGestionnaire || '').padEnd(10, ' ').slice(0, 10),
-      ''.padEnd(10, ' ')
-    ];
-    output += `/542/${p2Atts.join('')}\n`;
+      const p1Atts = [
+        (line.chapitre || params.filienChapitre || '').padEnd(10, ' ').slice(0, 10),
+        (line.nature || params.filienNature || '').padEnd(10, ' ').slice(0, 10),
+        (line.fonction || params.filienFonction || '').padEnd(10, ' ').slice(0, 10),
+        (line.codeInterne || params.filienCodeInterne || '').padEnd(10, ' ').slice(0, 10),
+        (line.typeMouvement || params.filienTypeMouvement || 'R').slice(0, 1),
+        (line.sens || params.filienSens || (mov.type === 'R' ? 'R' : 'D')).slice(0, 1)
+      ];
+      output += `/541/${p1Atts.join('')}\n`;
 
-    // Total du titre (une seule fois, après toutes les lignes)
-    output += `/57/Total facture\n`;
-    output += `/66/${fmtNum(totalMontant)}\n`;
+      const p2Atts = [
+        (line.structure || params.filienStructure || '').padEnd(10, ' ').slice(0, 10),
+        (line.gestionnaire || params.filienGestionnaire || '').padEnd(10, ' ').slice(0, 10),
+        ''.padEnd(10, ' ')
+      ];
+      output += `/542/${p2Atts.join('')}\n`;
+
+      output += `/57/${lineLabel(line, lineYear).slice(0, 40)}\n`;
+      output += `/66/${fmtNum(line.montant)}\n`;
+    });
 
     // Separator after each movement
     output += `/##/\n`;

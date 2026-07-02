@@ -174,31 +174,33 @@ export default function Sidebar() {
           <div className="h-12 bg-slate-800/20 animate-pulse rounded-2xl" />
         )}
         
-        {/* PROD/DEV Toggle */}
-        <button 
-          onClick={handleToggleMode}
-          disabled={switchingMode}
-          className={`group flex items-center gap-4 transition-all font-black text-[10px] uppercase tracking-widest h-12 rounded-2xl w-full ${isCollapsed ? 'justify-center' : 'px-4'} ${
-            dbMode === 'PROD' 
-              ? 'text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10' 
-              : 'text-indigo-400 bg-indigo-400/5 hover:bg-indigo-400/10 border border-indigo-400/10'
-          }`}
-          title={dbMode === 'PROD' ? 'Passer en mode DEV' : 'Passer en mode PROD'}
-        >
-          {switchingMode ? (
-            <Loader2 size={18} className="animate-spin" />
-          ) : (
-            <Zap size={18} className={`${dbMode === 'PROD' ? 'text-rose-500' : 'text-indigo-400'} ${dbMode === 'DEV' ? 'animate-pulse' : ''}`} />
-          )}
-          {!isCollapsed && (
-            <div className="flex flex-1 items-center justify-between">
-              <span>Mode {dbMode}</span>
-              <div className={`w-8 h-4 rounded-full relative transition-colors ${dbMode === 'PROD' ? 'bg-rose-900/50' : 'bg-indigo-900/50'}`}>
-                <div className={`absolute top-1 w-2 h-2 rounded-full transition-all ${dbMode === 'PROD' ? 'left-1 bg-rose-500' : 'right-1 bg-indigo-400'}`} />
+        {/* PROD/DEV Toggle - réservé aux administrateurs */}
+        {user?.role === 'ADMINISTRATEUR' && (
+          <button
+            onClick={handleToggleMode}
+            disabled={switchingMode}
+            className={`group flex items-center gap-4 transition-all font-black text-[10px] uppercase tracking-widest h-12 rounded-2xl w-full ${isCollapsed ? 'justify-center' : 'px-4'} ${
+              dbMode === 'PROD'
+                ? 'text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10'
+                : 'text-indigo-400 bg-indigo-400/5 hover:bg-indigo-400/10 border border-indigo-400/10'
+            }`}
+            title={dbMode === 'PROD' ? 'Passer en mode DEV' : 'Passer en mode PROD'}
+          >
+            {switchingMode ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <Zap size={18} className={`${dbMode === 'PROD' ? 'text-rose-500' : 'text-indigo-400'} ${dbMode === 'DEV' ? 'animate-pulse' : ''}`} />
+            )}
+            {!isCollapsed && (
+              <div className="flex flex-1 items-center justify-between">
+                <span>Mode {dbMode}</span>
+                <div className={`w-8 h-4 rounded-full relative transition-colors ${dbMode === 'PROD' ? 'bg-rose-900/50' : 'bg-indigo-900/50'}`}>
+                  <div className={`absolute top-1 w-2 h-2 rounded-full transition-all ${dbMode === 'PROD' ? 'left-1 bg-rose-500' : 'right-1 bg-indigo-400'}`} />
+                </div>
               </div>
-            </div>
-          )}
-        </button>
+            )}
+          </button>
+        )}
 
         <button 
           onClick={handleLogout}

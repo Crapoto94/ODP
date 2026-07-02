@@ -72,7 +72,21 @@
       "Bash(DATABASE_URL=\"postgresql://postgres:ivrypassword@10.103.130.106:5432/ivry_admin?schema=ODP_DEV\" npx prisma generate)",
       "Bash(rm -f \"C:\\\\dev\\\\ODP\\\\lib\\\\prisma-client\"/*.tmp* && npx prisma generate)",
       "Bash(DATABASE_URL=\"postgresql://postgres:ivrypassword@10.103.130.106:5432/ivry_admin?schema=ODP\" npx prisma db push --skip-generate)",
-      "Bash(DATABASE_URL=\"postgresql://postgres:ivrypassword@10.103.130.106:5432/ivry_admin?schema=ODP_DEV\" npx prisma db push --skip-generate)"
+      "Bash(DATABASE_URL=\"postgresql://postgres:ivrypassword@10.103.130.106:5432/ivry_admin?schema=ODP_DEV\" npx prisma db push --skip-generate)",
+      "Bash(Get-ChildItem -Path \"app\\\\dashboard\" -Name)",
+      "Bash(Select-Object -First 20)",
+      "Bash(npm --version)",
+      "Bash(find ~ -type d -name \"AppDSI\" 2>/dev/null | head -5)",
+      "Bash(node -e ' *)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 5; Write-Output \"STATUS: $\\($r.StatusCode\\)\"; if \\($r.Content -match \"service attribué|administrateur\"\\) { Write-Output \"MESSAGE TROUVÉ DANS LA RÉPONSE\" } else { Write-Output \"Message non présent dans la racine\" } } catch { Write-Output \"ERREUR: $\\($_.Exception.Message\\)\" })",
+      "Bash(npx vitest *)",
+      "Bash(cd \"C:/dev/ODP\" && rm -f lib/prisma-client/query_engine-windows.dll.node.tmp* && echo \"=== package.json diff ===\" && git diff package.json)",
+      "Bash(Get-ChildItem -Path \"C:\\\\dev\\\\ODP\" -Directory)",
+      "Skill(run)",
+      "Skill(run:*)",
+      "PowerShell(git check-ignore public/Factures/2026-07-02-1326/ tmp/dev-server.log)",
+      "PowerShell(git add .claude/launch.json .claude/settings.local.json app/api/settings/db-mode/route.ts components/Sidebar.tsx lib/filien.ts)",
+      "PowerShell(git push)"
     ]
   }
 }
