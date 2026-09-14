@@ -19,7 +19,9 @@ import {
   Calendar,
   ChevronDown,
   ChevronUp,
-  Trash2
+  Trash2,
+  Search,
+  X
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -44,6 +46,7 @@ export default function FacturationPage() {
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [groupMultiYear, setGroupMultiYear] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // État pour la modal d'avertissement du tiers
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
@@ -54,6 +57,7 @@ export default function FacturationPage() {
   // État pour la modal d'erreur de configuration Filien
   const [isFilienErrorModalOpen, setIsFilienErrorModalOpen] = useState(false);
   const [filienErrorMessage, setFilienErrorMessage] = useState('');
+  const [missingDocsData, setMissingDocsData] = useState<{ year: number; documents: string[] }[]>([]);
 
   // État pour la validation des factures
   const [validatingInvoiceId, setValidatingInvoiceId] = useState<number | null>(null);
@@ -186,6 +190,27 @@ export default function FacturationPage() {
     .filter(d => selectedIds.includes(d.id))
     .reduce((sum, d) => sum + (d.montantCalcule || d.lignes?.reduce((s: number, l: any) => s + l.montant, 0) || 0), 0);
 
+  // Search / filter par commerce ou tiers pour faciliter la sélection
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filteredDossiers = normalizedQuery
+    ? dossiers.filter(d =>
+        (d.nom || '').toLowerCase().includes(normalizedQuery) ||
+        (d.tiers?.nom || '').toLowerCase().includes(normalizedQuery)
+      )
+    : dossiers;
+
+  const areAllFilteredSelected = filteredDossiers.length > 0 &&
+    filteredDossiers.every(d => selectedIds.includes(d.id));
+
+  const toggleSelectFiltered = (checked: boolean) => {
+    const filteredIds = filteredDossiers.map(d => d.id);
+    if (checked) {
+      setSelectedIds(Array.from(new Set([...selectedIds, ...filteredIds])));
+    } else {
+      setSelectedIds(selectedIds.filter(id => !filteredIds.includes(id)));
+    }
+  };
+
   const verifyTiersBeforeBilling = async (dossierId: number): Promise<boolean> => {
     try {
       const dossier = dossiers.find(d => d.id === dossierId);
@@ -235,9 +260,10 @@ export default function FacturationPage() {
 
       if (!verifyRes.data.success) {
         const missingDocs = verifyRes.data.missingDocuments;
-        let errorMsg = 'Documents obligatoires manquants pour la facturation:\n\n';
+        setMissingDocsData(missingDocs);
+        let errorMsg = 'Documents obligatoires manquants pour la facturation :\n\n';
         missingDocs.forEach((missing: any) => {
-          errorMsg += `Année ${missing.year}: ${missing.documents.join(', ')}\n`;
+          errorMsg += `• Année ${missing.year} : ${missing.documents.join(', ')}\n`;
         });
         errorMsg += '\nVous devez configurer ces documents avant de pouvoir facturer.';
 
@@ -273,6 +299,7 @@ export default function FacturationPage() {
           } catch (err: any) {
             console.error('Billing error:', err);
             const errorText = err.response?.data?.error || err.message || "Erreur lors du processus de facturation";
+            setMissingDocsData([]);
             setFilienErrorMessage(errorText);
             setIsFilienErrorModalOpen(true);
           } finally {
@@ -291,11 +318,12 @@ export default function FacturationPage() {
       });
       setResult(res.data);
       setStep(4);
-    } catch (err: any) {
+} catch (err: any) {
        const errorText = err.response?.data?.error || err.message || "Erreur lors du processus de facturation";
+       setMissingDocsData([]);
        setFilienErrorMessage(errorText);
        setIsFilienErrorModalOpen(true);
-    } finally {
+     } finally {
       setProcessing(false);
     }
   };
@@ -525,6 +553,52 @@ export default function FacturationPage() {
                 </div>
               </div>
 
+              {/* Barre de recherche pour faciliter la sélection d'un ou plusieurs commerces */}
+              <div className="px-8 py-5 border-b border-slate-100 bg-white flex flex-col md:flex-row md:items-center gap-4">
+                <div className="relative flex-1 max-w-md">
+                  <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Rechercher un commerce / dossier..."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-10 py-3 text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest">
+                  <span className={`px-3 py-1.5 rounded-full ${selectedIds.length > 0 ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-400'}`}>
+                    {selectedIds.length} sélectionné{selectedIds.length > 1 ? 's' : ''}
+                  </span>
+                  {normalizedQuery && (
+                    <span className="text-slate-400">
+                      {filteredDossiers.length} résultat{filteredDossiers.length > 1 ? 's' : ''}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => toggleSelectFiltered(true)}
+                    disabled={filteredDossiers.length === 0 || areAllFilteredSelected}
+                    className="text-blue-600 hover:underline disabled:opacity-40 disabled:no-underline cursor-pointer"
+                  >
+                    Tout sélectionner
+                  </button>
+                  <button
+                    onClick={() => setSelectedIds([])}
+                    disabled={selectedIds.length === 0}
+                    className="text-slate-400 hover:text-slate-700 hover:underline disabled:opacity-40 disabled:no-underline cursor-pointer"
+                  >
+                    Tout désélectionner
+                  </button>
+                </div>
+              </div>
+
               <div className="flex-1 overflow-y-auto max-h-[400px]">
                 {loading ? (
                   <div className="h-full flex items-center justify-center">
@@ -536,6 +610,12 @@ export default function FacturationPage() {
                     <p className="font-bold uppercase tracking-widest text-[10px]">Aucun dossier vérifié pour ce type</p>
                     <button onClick={prevStep} className="text-blue-600 font-black text-[10px] uppercase hover:underline">Changer de type</button>
                   </div>
+                ) : filteredDossiers.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-slate-400 gap-4 mt-20">
+                    <Search size={48} className="opacity-20" />
+                    <p className="font-bold uppercase tracking-widest text-[10px]">Aucun dossier ne correspond à « {searchQuery} »</p>
+                    <button onClick={() => setSearchQuery('')} className="text-blue-600 font-black text-[10px] uppercase hover:underline">Effacer la recherche</button>
+                  </div>
                 ) : (
                   <table className="w-full text-left border-separate border-spacing-0">
                     <thead className="sticky top-0 bg-white z-10">
@@ -543,8 +623,8 @@ export default function FacturationPage() {
                         <th className="px-8 py-4 bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest w-16">
                           <input 
                             type="checkbox" 
-                            checked={selectedIds.length === dossiers.length}
-                            onChange={(e) => setSelectedIds(e.target.checked ? dossiers.map(d => d.id) : [])}
+                            checked={areAllFilteredSelected}
+                            onChange={(e) => toggleSelectFiltered(e.target.checked)}
                             className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                           />
                         </th>
@@ -555,7 +635,7 @@ export default function FacturationPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {dossiers.map(d => (
+                      {filteredDossiers.map(d => (
                         <tr key={d.id} className="hover:bg-slate-50/50 transition-colors group">
                           <td className="px-8 py-4 border-b border-slate-50">
                             <input 
@@ -853,22 +933,51 @@ export default function FacturationPage() {
                 <AlertTriangle size={40} />
               </div>
 
-              <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">Configuration Incomplète</h2>
-              <p className="text-slate-500 font-bold mb-8">
-                L'export Filien ne peut pas être généré car des documents réglementaires obligatoires sont manquants.
-              </p>
-
-              <div className="w-full bg-rose-50 border border-rose-100 rounded-3xl p-6 mb-8 text-left">
-                <div className="flex items-start gap-3">
-                  <Info className="text-rose-600 mt-0.5 shrink-0" size={16} />
-                  <p className="text-sm font-bold text-rose-800 leading-relaxed">
-                    {filienErrorMessage}
+              {missingDocsData.length > 0 ? (
+                <>
+                  <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">Documents manquants</h2>
+                  <p className="text-slate-500 font-bold mb-8">
+                    Les documents réglementaires suivants doivent être configurés avant de pouvoir facturer.
                   </p>
-                </div>
-              </div>
+
+                  <div className="w-full bg-rose-50 border border-rose-100 rounded-3xl p-6 mb-8 text-left space-y-4">
+                    {missingDocsData.map((entry, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <AlertCircle className="text-rose-600 mt-0.5 shrink-0" size={16} />
+                        <div>
+                          <p className="text-xs font-black text-rose-500 uppercase tracking-widest mb-1">Année {entry.year}</p>
+                          <ul className="space-y-0.5">
+                            {entry.documents.map((doc, j) => (
+                              <li key={j} className="text-sm font-bold text-rose-800">
+                                • {doc}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">Erreur de facturation</h2>
+                  <p className="text-slate-500 font-bold mb-8">
+                    Une erreur est survenue lors du processus de facturation.
+                  </p>
+
+                  <div className="w-full bg-rose-50 border border-rose-100 rounded-3xl p-6 mb-8 text-left">
+                    <div className="flex items-start gap-3">
+                      <Info className="text-rose-600 mt-0.5 shrink-0" size={16} />
+                      <p className="text-sm font-bold text-rose-800 leading-relaxed">
+                        {filienErrorMessage}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
 
               <button
-                onClick={() => setIsFilienErrorModalOpen(false)}
+                onClick={() => { setIsFilienErrorModalOpen(false); setMissingDocsData([]); }}
                 className="w-full px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-slate-900/20 active:scale-95 transition-all"
               >
                 Fermer

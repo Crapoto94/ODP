@@ -13,6 +13,7 @@ export interface ProcessedInvoice {
   total: number;
   lignes: any[];
   pdfBuffer?: Buffer;
+  occupationIds?: number[];
 }
 
 export async function processDossier(params: {
@@ -24,7 +25,7 @@ export async function processDossier(params: {
   runName: string;
   agentName: string;
 }): Promise<ProcessedInvoice> {
-  const { occ, invoiceNumber, tlpeConfig, year, facturesDir, runName, agentName } = params;
+  const { occ, invoiceNumber, tlpeConfig, year, facturesDir, runName } = params;
 
   // 1. Generate PDF
   let pdfBuffer: Buffer;
@@ -101,33 +102,13 @@ export async function processDossier(params: {
   }
   // Note: court métrage minoration is handled as a separate line item in invoice-pdf-utils.ts
 
-  // 3. Update DB
-  const updateData = {
-    statut: 'FACTURE',
-    numeroFacture: invoiceNumber,
-    facturePath: `/Factures/${runName}/${filename}`
-  };
-
-  if (occ.isCommerceGroup) {
-    const occIds = occ.occupationsIncluded.map((o: any) => o.id);
-    await (prisma as any).occupation.updateMany({
-      where: { id: { in: occIds } },
-      data: updateData
-    });
-
-    for (const occupation of occ.occupationsIncluded) {
-      await addBillingNote(occupation.id, invoiceNumber, occupation.anneeTaxation || year, agentName);
-    }
-  } else {
-    await (prisma as any).occupation.update({
-      where: { id: occ.id },
-      data: updateData
-    });
-    await addBillingNote(occ.id, invoiceNumber, occ.anneeTaxation || year, agentName);
-  }
+  const occupationIds = occ.isCommerceGroup
+    ? occ.occupationsIncluded.map((o: any) => o.id)
+    : [occ.id];
 
   return {
     id: occ.isCommerceGroup ? (occ.occupationsIncluded?.[0]?.id || occ.id) : occ.id,
+    occupationIds,
     numero: invoiceNumber,
     path: `/Factures/${runName}/${filename}`,
     tiers: occ.tiers?.nom || 'Inconnu',
@@ -136,6 +117,58 @@ export async function processDossier(params: {
     lignes: lineResults,
     pdfBuffer
   };
+}
+
+/**
+ * Marks dossiers as FACTURE in the database. MUST be called only after the
+ * entire billing run (recap PDF, filien export, billing run record) has
+ * completed successfully, otherwise dossiers would be flagged as invoiced
+ * even though the process failed midway.
+ */
+export async function markDossiersAsFactured(params: {
+  results: ProcessedInvoice[];
+  dossiers: any[];
+  runName: string;
+  agentName: string;
+  year: number;
+}): Promise<void> {
+  const { results, dossiers, runName, agentName, year } = params;
+
+  const operations: Promise<any>[] = [];
+
+  for (let i = 0; i < dossiers.length; i++) {
+    const occ = dossiers[i];
+    const processed = results[i];
+    if (!processed) continue;
+
+    const occupationIds = processed.occupationIds && processed.occupationIds.length > 0
+      ? processed.occupationIds
+      : occ.isCommerceGroup
+        ? occ.occupationsIncluded.map((o: any) => o.id)
+        : [occ.id];
+
+    const filename = `${processed.numero}.pdf`;
+    operations.push(
+      (prisma as any).occupation.updateMany({
+        where: { id: { in: occupationIds } },
+        data: {
+          statut: 'FACTURE',
+          numeroFacture: processed.numero,
+          facturePath: `/Factures/${runName}/${filename}`,
+          dateFACTURE: new Date()
+        }
+      })
+    );
+
+    for (const occupationId of occupationIds) {
+      const annee = occ.isCommerceGroup
+        ? (occ.occupationsIncluded.find((o: any) => o.id === occupationId)?.anneeTaxation || year)
+        : (occ.anneeTaxation || year);
+      operations.push(addBillingNote(occupationId, processed.numero, annee, agentName));
+    }
+  }
+
+  await Promise.all(operations);
 }
 
 async function addBillingNote(occupationId: number, invoiceNumber: string, year: number, agentName: string) {

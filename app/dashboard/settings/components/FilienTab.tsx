@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FileText, 
   Settings as SettingsIcon, 
@@ -7,8 +7,15 @@ import {
   Loader2, 
   Save, 
   CheckCircle2, 
-  AlertCircle 
+  AlertCircle,
+  HardDrive,
+  RefreshCw,
+  Server,
+  FolderOpen,
+  Key,
+  User as UserIcon
 } from 'lucide-react';
+import axios from 'axios';
 import FilienTypeConfigs from '@/components/FilienTypeConfigs';
 
 interface Props {
@@ -19,7 +26,64 @@ interface Props {
   message: { type: 'success' | 'error', text: string } | null;
 }
 
+interface DiskSpace {
+  root: string;
+  mode: 'smb' | 'local';
+  total: number;
+  free: number;
+  used: number;
+  percentFree: number;
+  totalHuman: string;
+  freeHuman: string;
+  usedHuman: string;
+}
+
 export default function FilienTab({ settings, setSettings, handleSubmit, saving, message }: Props) {
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<{ success: boolean; mode?: string; message: string } | null>(null);
+  const [diskSpace, setDiskSpace] = useState<DiskSpace | null>(null);
+  const [loadingDisk, setLoadingDisk] = useState(false);
+
+  const fetchDiskSpace = async () => {
+    try {
+      setLoadingDisk(true);
+      const res = await axios.get('/api/settings/filien-repo');
+      setDiskSpace(res.data.diskSpace);
+      if (res.data.path && !res.data.diskSpace) {
+        setTestResult({ success: false, message: 'Espace libre indisponible pour ce dépôt (serveur inaccessible ?).' });
+      }
+    } catch (err: any) {
+      if (err.response?.status === 403) {
+        setTestResult({ success: false, message: 'Accès refusé : seuls les administrateurs peuvent consulter ce dépôt.' });
+      } else {
+        setTestResult({ success: false, message: err.response?.data?.error || err.message || 'Impossible de lire le dépôt.' });
+      }
+    } finally {
+      setLoadingDisk(false);
+    }
+  };
+
+  useEffect(() => { fetchDiskSpace(); }, []);
+
+  const handleTestRepo = async () => {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const res = await axios.post('/api/settings/filien-repo', {
+        path: settings.filienUncPj,
+        user: settings.filienUncUser,
+        password: settings.filienUncPass,
+        domain: settings.filienUncDomain,
+      });
+      setTestResult({ success: res.data.success, mode: res.data.mode, message: res.data.message });
+      setDiskSpace(res.data.diskSpace);
+    } catch (err: any) {
+      setTestResult({ success: false, message: err.response?.data?.message || err.message || 'Erreur lors du test.' });
+    } finally {
+      setTesting(false);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">
       <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-100/50 overflow-hidden max-w-4xl mx-auto">
@@ -114,117 +178,159 @@ export default function FilienTab({ settings, setSettings, handleSubmit, saving,
             </div>
           </div>
 
+          {/* Dépôt des fichiers générés lors de la facturation */}
           <div className="pt-10 border-t border-slate-50 space-y-8">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
-              <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                <LayoutGrid size={12} />
-              </div>
-              Valeurs par défaut des mouvements
-            </h3>
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] ml-1 flex items-center gap-3">
+                <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+                  <HardDrive size={12} />
+                </div>
+                Dépôt des fichiers (Factures Filien)
+              </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">N° 1er mouvement (/01/)</label>
-                <input 
-                  type="text" 
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm text-center"
-                  placeholder="1"
-                  value={settings.filienMouvement || ''}
-                  onChange={e => setSettings({...settings, filienMouvement: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">N° 1er bordereau (/13/)</label>
-                <input 
-                  type="text" 
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm text-center"
-                  placeholder="1"
-                  value={settings.filienBordereau || ''}
-                  onChange={e => setSettings({...settings, filienBordereau: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Type (/02/)</label>
-                <select 
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                  value={settings.filienType || 'R'}
-                  onChange={e => setSettings({...settings, filienType: e.target.value})}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleTestRepo}
+                  disabled={testing || saving}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 disabled:opacity-50 transition-all"
                 >
-                  <option value="R">Recette (R)</option>
-                  <option value="D">Dépense (D)</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Monnaie (/06/)</label>
-                <select 
-                  className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                  value={settings.filienMonnaie || 'E'}
-                  onChange={e => setSettings({...settings, filienMonnaie: e.target.value})}
-                >
-                  <option value="E">Euros (E)</option>
-                  <option value="F">Francs (F)</option>
-                </select>
+                  {testing ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                  Tester le dépôt
+                </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Objet du Mouvement (/04/)</label>
-                  <input 
-                    type="text" 
-                    maxLength={40}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                    placeholder="Objet du mouvement"
-                    value={settings.filienObjet || ''}
-                    onChange={e => setSettings({...settings, filienObjet: e.target.value})}
-                  />
-                </div>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+              <div className="lg:col-span-3 space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Dossier des PJ (UNC)</label>
-                  <input 
-                    type="text" 
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                    placeholder="\\\\server\\share\\folder"
-                    value={settings.filienUncPj || ''}
-                    onChange={e => setSettings({...settings, filienUncPj: e.target.value})}
-                  />
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Chemin du dépôt (UNC ou local)</label>
+                  <div className="relative">
+                    <FolderOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
+                    <input 
+                      type="text" 
+                      className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 pl-12 pr-6 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                      placeholder="\\\\serveur\\partage\\sous-dossier"
+                      value={settings.filienUncPj || ''}
+                      onChange={e => setSettings({...settings, filienUncPj: e.target.value})}
+                    />
+                  </div>
+                  <p className="text-[10px] font-medium text-slate-400 ml-1">Les factures PDF, le récapitulatif et l'export Filien y sont copiés dans un sous-dossier daté.</p>
                 </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Utilisateur SMB (Share)</label>
-                  <input 
-                    type="text" 
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                    placeholder="Username"
-                    value={settings.filienUncUser || ''}
-                    onChange={e => setSettings({...settings, filienUncUser: e.target.value})}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Utilisateur SMB (Compte)</label>
+                    <div className="relative">
+                      <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 pl-12 pr-6 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                        placeholder="compte_de_service"
+                        value={settings.filienUncUser || ''}
+                        onChange={e => setSettings({...settings, filienUncUser: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Mot de passe SMB</label>
+                    <div className="relative">
+                      <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
+                      <input 
+                        type="password" 
+                        className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 pl-12 pr-6 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                        placeholder="••••••••"
+                        value={settings.filienUncPass || ''}
+                        onChange={e => setSettings({...settings, filienUncPass: e.target.value})}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Mot de passe SMB</label>
-                  <input 
-                    type="password" 
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                    placeholder="••••••••"
-                    value={settings.filienUncPass || ''}
-                    onChange={e => setSettings({...settings, filienUncPass: e.target.value})}
-                  />
-                </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Domaine SMB</label>
-                  <input 
-                    type="text" 
-                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 px-5 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
-                    placeholder="WORKGROUP"
-                    value={settings.filienUncDomain || ''}
-                    onChange={e => setSettings({...settings, filienUncDomain: e.target.value})}
-                  />
+                  <div className="relative">
+                    <Server size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" />
+                    <input 
+                      type="text" 
+                      className="w-full bg-slate-50 border border-slate-100 rounded-xl py-4 pl-12 pr-6 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                      placeholder="WORKGROUP"
+                      value={settings.filienUncDomain || ''}
+                      onChange={e => setSettings({...settings, filienUncDomain: e.target.value})}
+                    />
+                  </div>
                 </div>
+
+                {testResult && (
+                  <div className={`p-4 rounded-xl flex items-start gap-3 animate-in zoom-in-95 duration-300 ${testResult.success ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+                    {testResult.success ? <CheckCircle2 size={18} className="mt-0.5 shrink-0" /> : <AlertCircle size={18} className="mt-0.5 shrink-0" />}
+                    <div>
+                      <p className="font-black text-[10px] uppercase tracking-widest mb-0.5">
+                        {testResult.success ? `Test réussi (${testResult.mode === 'smb' ? 'SMB/UNC' : 'Local'})` : 'Test échoué'}
+                      </p>
+                      <p className="text-xs font-bold">{testResult.message}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="lg:col-span-2">
+                <div className="rounded-2xl border border-slate-100 bg-slate-50/60 p-6 h-full flex flex-col gap-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <HardDrive size={16} className="text-blue-600" />
+                      <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Espace libre du dépôt</h4>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={fetchDiskSpace}
+                      disabled={loadingDisk}
+                      className="text-slate-400 hover:text-blue-600 transition-colors cursor-pointer"
+                      title="Rafraîchir"
+                    >
+                      <RefreshCw size={14} className={loadingDisk ? 'animate-spin' : ''} />
+                    </button>
+                  </div>
+
+                  {loadingDisk ? (
+                    <div className="flex-1 flex items-center justify-center">
+                      <Loader2 size={20} className="animate-spin text-blue-600" />
+                    </div>
+                  ) : diskSpace ? (
+                    <>
+                      <div className="flex items-end justify-between gap-3">
+                        <div>
+                          <p className="text-2xl font-black text-slate-900 leading-none">{diskSpace.freeHuman}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">libres</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-black text-slate-700 leading-none">/ {diskSpace.totalHuman}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{diskSpace.usedHuman} utilisés</p>
+                        </div>
+                      </div>
+
+                      <div className="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            diskSpace.percentFree < 10 ? 'bg-rose-500' : diskSpace.percentFree < 25 ? 'bg-amber-500' : 'bg-emerald-500'
+                          }`}
+                          style={{ width: `${Math.min(100, Math.max(2, diskSpace.percentFree))}%` }}
+                        />
+                      </div>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                        {diskSpace.percentFree}% libres — {diskSpace.mode === 'smb' ? 'partage SMB' : 'système local'}
+                      </p>
+                      <p className="text-[10px] font-medium text-slate-400 break-all">{diskSpace.root}</p>
+                    </>
+                  ) : (
+                    <div className="flex-1 flex flex-col items-center justify-center text-center gap-2 text-slate-400">
+                      <AlertCircle size={24} className="opacity-40" />
+                      <p className="text-[10px] font-bold uppercase tracking-widest">Espace indisponible</p>
+                      <p className="text-[9px] font-medium">Vérifiez le chemin puis « Tester le dépôt ».</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 

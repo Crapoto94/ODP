@@ -7,7 +7,7 @@ import { join } from 'path';
 import { existsSync } from 'fs';
 
 // Refactored Services
-import { processDossier, ProcessedInvoice } from '@/lib/billing/invoice-processor';
+import { processDossier, markDossiersAsFactured, ProcessedInvoice } from '@/lib/billing/invoice-processor';
 import { generateRecapPdf, processFilienExport } from '@/lib/billing/batch-service';
 import { distributeInvoiceBatch } from '@/lib/billing/distribution-service';
 import { sendFinanceNotification } from '@/lib/billing/notification-service';
@@ -127,7 +127,13 @@ export async function POST(req: NextRequest) {
     const billingRunId = `FACT-${timestampStr}`;
     await recordBillingRun(billingRunId, type, now, results, grandTotal, agentName, recap.filename, runName, timestampStr);
 
-    // 6. Notification
+    // 6. Mark dossiers as FACTURE — only now that the whole run has succeeded
+    // (recap PDF, filien export and billing run record are all committed). This
+    // prevents dossiers from being left in "Facturé" when the process fails
+    // midway (e.g. disk full during the filien export).
+    await markDossiersAsFactured({ results, dossiers, runName, agentName, year });
+
+    // 7. Notification
     await sendFinanceNotification({ appSettings, session, billingRunId, resultsCount: results.length, dossiers: flatDossiers, agentName, runName, filienPath });
 
     return NextResponse.json({

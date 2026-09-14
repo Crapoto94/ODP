@@ -28,11 +28,13 @@ import SignatureConfigTab from './components/SignatureConfigTab';
 import MessagesContextuelsTab from './components/MessagesContextuelsTab';
 import ContactRolesTab from './components/ContactRolesTab';
 import RolesTab from './components/RolesTab';
+import FilienTab from './components/FilienTab';
 
-type TabType = 'general' | 'postgres' | 'users' | 'roles' | 'contact_roles' | 'mobile_logs' | 'backlog' | 'signature' | 'messages' | 'sql';
+type TabType = 'general' | 'filien' | 'postgres' | 'users' | 'roles' | 'contact_roles' | 'mobile_logs' | 'backlog' | 'signature' | 'messages' | 'sql';
 
 const tabs: { id: TabType; label: string; icon: any; description: string; group?: string }[] = [
   { id: 'general',        label: 'Général',            icon: LayoutGrid, description: 'APM, mail, Filièn…',        group: 'Configuration' },
+  { id: 'filien',         label: 'Filien / Dépôt',     icon: FileText,   description: 'Export & dépôt des factures', group: 'Configuration' },
   { id: 'signature',      label: 'Signatures',         icon: FileText,   description: 'Signataires & gabarits',    group: 'Configuration' },
   { id: 'messages',       label: 'Modèles d\'emails',  icon: Mail,       description: 'Messages contextuels',      group: 'Configuration' },
   { id: 'users',          label: 'Utilisateurs',       icon: Users,       description: 'Comptes & accès',           group: 'Référentiels' },
@@ -189,6 +191,7 @@ export default function SettingsPage() {
 
         <div className="p-8">
           {activeTab === 'general' && <GeneralTab {...{settings, setSettings, handleSubmit, handleTestMail, saving, message, apmStatus}} />}
+          {activeTab === 'filien' && <FilienTab {...{settings, setSettings, handleSubmit, saving, message}} />}
           {activeTab === 'postgres' && <PostgresTab />}
           {activeTab === 'users' && <UsersTab />}
           {activeTab === 'roles' && <RolesTab />}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { use, useState } from 'react';
-import { Loader2, Store, ArrowLeft, AlertCircle, Plus } from 'lucide-react';
+import { Loader2, Store, ArrowLeft, AlertCircle, Plus, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import axios from 'axios';
 import LigneArticleModal from '@/components/LigneArticleModal';
@@ -17,6 +17,7 @@ import CommerceDispositifsList from './components/CommerceDispositifsList';
 import AutorisationsList from '@/components/AutorisationsList';
 import CommerceRenewModal from './components/CommerceRenewModal';
 import CommerceAotDateModal from './components/CommerceAotDateModal';
+import CommerceDefacturerModal from './components/CommerceDefacturerModal';
 import AotFinalModal from '../../occupations/[id]/components/AotFinalModal';
 import SignatureRequestModal from '../../occupations/[id]/components/SignatureRequestModal';
 import OccupationFinancialCard from '../../occupations/[id]/components/OccupationFinancialCard';
@@ -106,6 +107,8 @@ export default function CommerceDetailPage({ params }: Props) {
 
   const [isTiersSearchOpen, setIsTiersSearchOpen] = useState(false);
   const [aotReload, setAotReload] = useState(0);
+  const [isDefacturerModalOpen, setIsDefacturerModalOpen] = useState(false);
+  const [isDefacturing, setIsDefacturing] = useState(false);
 
   if (loading) {
     return (
@@ -176,6 +179,35 @@ export default function CommerceDetailPage({ params }: Props) {
     }
   };
 
+  const BILLED_STATUSES = [
+    'FACTURE', 'FACTURÉ',
+    'TITRE', 'TITRÉ',
+    'PAYE', 'PAYÉ',
+    'CLOS'
+  ];
+
+  const isAdmin = currentUser?.role === 'ADMINISTRATEUR';
+  const hasBilledYears = chartData.some((d: any) => BILLED_STATUSES.includes(d.status));
+
+  const handleDefacturer = async (annees: number[]) => {
+    if (annees.length === 0) return;
+    if (!window.confirm(`Défacturer les années ${annees.join(', ')} ? Les dossiers repasseront en étape « Validé » et perdront leur numéro de facture.`)) return;
+    setIsDefacturing(true);
+    try {
+      const res = await axios.post(`/api/commerces/${paramId}/defacturer`, { annees });
+      alert(res.data.message || 'Défacturation effectuée');
+      setIsDefacturerModalOpen(false);
+      await fetchCommerceDetails();
+      if (selectedYear) await fetchOccupations(selectedYear);
+    } catch (err: any) {
+      console.error('Failed to defacturer:', err);
+      const msg = err.response?.data?.error || err.message;
+      alert(`Erreur lors de la défacturation : ${msg}`);
+    } finally {
+      setIsDefacturing(false);
+    }
+  };
+
   const isReadOnly = isArchived || isReallyFactured;
 
   return (
@@ -209,23 +241,35 @@ export default function CommerceDetailPage({ params }: Props) {
           </div>
         </div>
 
-        {!isArchived ? (
-          <button
-            onClick={handleArchiveCommerce}
-            className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm cursor-pointer group"
-          >
-            <AlertCircle size={16} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Archiver le commerce</span>
-          </button>
-        ) : (
-          <button
-            onClick={handleUnarchiveCommerce}
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm cursor-pointer group"
-          >
-            <Plus size={16} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Désarchiver</span>
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {isAdmin && hasBilledYears && (
+            <button
+              onClick={() => setIsDefacturerModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-600 rounded-xl hover:bg-amber-600 hover:text-white transition-all shadow-sm cursor-pointer group"
+              title="Repasser les années sélectionnées en étape Validé"
+            >
+              <RotateCcw size={16} />
+              <span className="text-[10px] font-black uppercase tracking-widest">Défacturer</span>
+            </button>
+          )}
+          {!isArchived ? (
+            <button
+              onClick={handleArchiveCommerce}
+              className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-600 hover:text-white transition-all shadow-sm cursor-pointer group"
+            >
+              <AlertCircle size={16} />
+              <span className="text-[10px] font-black uppercase tracking-widest">Archiver le commerce</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleUnarchiveCommerce}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm cursor-pointer group"
+            >
+              <Plus size={16} />
+              <span className="text-[10px] font-black uppercase tracking-widest">Désarchiver</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Commerce Info & Financial Cards */}
@@ -453,6 +497,14 @@ export default function CommerceDetailPage({ params }: Props) {
           }
           setIsTiersSearchOpen(false);
         }}
+      />
+
+      <CommerceDefacturerModal
+        isOpen={isDefacturerModalOpen}
+        onClose={() => setIsDefacturerModalOpen(false)}
+        onConfirm={handleDefacturer}
+        isLoading={isDefacturing}
+        chartData={chartData}
       />
     </div>
   );
