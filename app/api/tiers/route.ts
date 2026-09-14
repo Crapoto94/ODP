@@ -45,7 +45,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { id, nom, natureJuridique, siret, email, adresse, code_sedit, isRhRequest, isSeditRequest } = body;
+    const { id, nom, natureJuridique, siret, email, adresse, code_sedit, isRhRequest, isSeditRequest, etatAdministratif } = body;
 
     if (!nom) {
       return NextResponse.json({ error: 'Le nom est requis' }, { status: 400 });
@@ -53,6 +53,7 @@ export async function POST(req: Request) {
 
     let finalNom = nom;
     let finalAdresse = adresse;
+    let finalEtatAdministratif = etatAdministratif || null;
 
     // Auto-fetch info if SIRET is provided and name is generic or missing
     const cleanSiret = (siret && siret.trim() !== '') ? siret.replace(/\s+/g, '') : null;
@@ -61,6 +62,7 @@ export async function POST(req: Request) {
       if (info) {
         finalNom = info.nom;
         finalAdresse = info.adresse;
+        finalEtatAdministratif = info.etat_administratif || finalEtatAdministratif;
         if (!natureJuridique && info.categorie_juridique) {
           body.natureJuridique = mapNatureJuridique(info.categorie_juridique);
         }
@@ -130,7 +132,8 @@ export async function POST(req: Request) {
             siret: cleanSiret,
             email,
             adresse: finalAdresse,
-            code_sedit: code_sedit || undefined
+            code_sedit: code_sedit || undefined,
+            etatAdministratif: finalEtatAdministratif
           }
         });
     } else {
@@ -141,7 +144,8 @@ export async function POST(req: Request) {
             siret: cleanSiret,
             email,
             adresse: finalAdresse,
-            code_sedit
+            code_sedit,
+            etatAdministratif: finalEtatAdministratif
           }
         });
     }
@@ -188,7 +192,7 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { id, nom, natureJuridique, siret, email, adresse, code_sedit } = body;
+    const { id, nom, natureJuridique, siret, email, adresse, code_sedit, etatAdministratif } = body;
 
     if (!id) {
       return NextResponse.json({ error: "L'ID est requis pour la modification" }, { status: 400 });
@@ -233,7 +237,8 @@ export async function PUT(req: Request) {
         siret: finalCleanSiret,
         email,
         adresse,
-        code_sedit: code_sedit || null
+        code_sedit: code_sedit || null,
+        ...(etatAdministratif !== undefined ? { etatAdministratif: etatAdministratif || null } : {})
       }
     });
 

@@ -13,7 +13,9 @@ import {
   Server,
   FolderOpen,
   Key,
-  User as UserIcon
+  User as UserIcon,
+  BellRing,
+  Activity
 } from 'lucide-react';
 import axios from 'axios';
 import FilienTypeConfigs from '@/components/FilienTypeConfigs';
@@ -43,12 +45,16 @@ export default function FilienTab({ settings, setSettings, handleSubmit, saving,
   const [testResult, setTestResult] = useState<{ success: boolean; mode?: string; message: string } | null>(null);
   const [diskSpace, setDiskSpace] = useState<DiskSpace | null>(null);
   const [loadingDisk, setLoadingDisk] = useState(false);
+  const [monitor, setMonitor] = useState<{ enabled: boolean; state: string; lastCheck: string | null } | null>(null);
 
   const fetchDiskSpace = async () => {
     try {
       setLoadingDisk(true);
       const res = await axios.get('/api/settings/filien-repo');
       setDiskSpace(res.data.diskSpace);
+      if (res.data.monitor) {
+        setMonitor(res.data.monitor);
+      }
       if (res.data.path && !res.data.diskSpace) {
         setTestResult({ success: false, message: 'Espace libre indisponible pour ce dépôt (serveur inaccessible ?).' });
       }
@@ -331,6 +337,70 @@ export default function FilienTab({ settings, setSettings, handleSubmit, saving,
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Surveillance automatique du dépôt */}
+          <div className="pt-10 border-t border-slate-50">
+            <div className="rounded-2xl border border-slate-100 bg-slate-50/60 p-6">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <BellRing size={16} className="text-blue-600" />
+                  <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Surveillance automatique (toutes les 4 h)</h4>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={(settings as any).repoMonitorEnabled || false}
+                    onChange={e => setSettings({...settings, repoMonitorEnabled: e.target.checked})}
+                  />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-slate-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 peer-checked:after:translate-x-full" />
+                </label>
+              </div>
+
+              {(settings as any).repoMonitorEnabled && (
+                <div className="mt-5 grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Alerte si moins de (% libres)</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={99}
+                      className="w-full bg-white border border-slate-100 rounded-xl py-3 px-4 outline-none focus:border-blue-500 transition-all font-bold text-sm"
+                      value={(settings as any).repoMinFreePercent ?? 10}
+                      onChange={e => setSettings({...settings, repoMinFreePercent: e.target.value})}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Dernier contrôle</label>
+                    <div className="flex items-center gap-2 bg-white border border-slate-100 rounded-xl py-3 px-4">
+                      <Activity size={14} className={monitor?.state === 'failed' ? 'text-rose-500' : 'text-emerald-500'} />
+                      <span className="text-xs font-bold text-slate-600 flex-1">
+                        {monitor?.lastCheck
+                          ? `${new Date(monitor.lastCheck).toLocaleDateString('fr-FR')} ${new Date(monitor.lastCheck).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
+                          : 'Jamais'}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${monitor?.state === 'failed' ? 'bg-rose-100 text-rose-600' : monitor?.state === 'ok' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>
+                        {monitor?.state === 'failed' ? 'Problème' : monitor?.state === 'ok' ? 'OK' : '—'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Destinataire des alertes</label>
+                    <div className="bg-white border border-slate-100 rounded-xl py-3 px-4 text-xs font-bold text-slate-600 truncate">
+                      {(settings as any).adminEmail || <span className="text-slate-400">Non défini — onglet Général</span>}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <p className="mt-4 text-[10px] font-medium text-slate-400">
+                Un contrôle teste régulièrement l'accès au dépôt et l'espace libre. En cas de difficulté d'accès ou d'espace libre
+                insuffisant, un mail est envoyé immédiatement à l'adresse administrateur ODP (paramètres → Général).
+              </p>
             </div>
           </div>
 

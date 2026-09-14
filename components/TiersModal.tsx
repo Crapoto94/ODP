@@ -3,7 +3,7 @@
 import React from 'react';
 import { 
   X, Fingerprint, Building2, Mail, MapPin, 
-  SearchCode, CheckCircle2, Loader2, Info
+  SearchCode, CheckCircle2, Loader2, Info, AlertTriangle
 } from 'lucide-react';
 
 export const NATURE_JURIDIQUE_OPTIONS = [
@@ -27,7 +27,7 @@ interface TiersModalProps {
   setFormData: (data: any) => void;
   submitting: boolean;
   handleSubmit: (e: React.FormEvent, isSeditRequest?: boolean) => void;
-  handleSiretSearch: () => void;
+  handleSiretSearch: (siret?: string) => void;
   isEditing: boolean;
 }
 
@@ -41,7 +41,18 @@ export default function TiersModal({
   handleSiretSearch,
   isEditing
 }: TiersModalProps) {
+  const lastSearchedRef = React.useRef<string>('');
+
   if (!isOpen) return null;
+
+  const handleSiretChange = (value: string) => {
+    setFormData({ ...formData, siret: value, etatAdministratif: '' });
+    const clean = value.replace(/\s+/g, '');
+    if (/^\d{14}$/.test(clean) && clean !== lastSearchedRef.current) {
+      lastSearchedRef.current = clean;
+      handleSiretSearch(clean);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 animate-in fade-in duration-300">
@@ -77,12 +88,12 @@ export default function TiersModal({
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 pl-12 pr-4 outline-none focus:border-blue-500 transition-all font-bold text-lg tracking-tight"
                     placeholder="Ex: 954 509... (ou laisser vide)"
                     value={formData.siret}
-                    onChange={e => setFormData({...formData, siret: e.target.value})}
+                    onChange={e => handleSiretChange(e.target.value)}
                   />
                 </div>
                 <button 
                   type="button"
-                  onClick={handleSiretSearch}
+                  onClick={() => handleSiretSearch()}
                   disabled={submitting || !formData.siret || formData.siret.trim() === ''}
                   className="bg-slate-900 hover:bg-slate-800 text-white px-6 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 flex items-center gap-2 group disabled:opacity-50"
                 >
@@ -94,6 +105,25 @@ export default function TiersModal({
                 <Info size={12} />
                 Laissez vide pour un particulier. La recherche INSEE est optionnelle.
               </p>
+
+              {formData.etatAdministratif && formData.etatAdministratif !== 'Actif' && (
+                <div className="mt-3 flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 animate-in fade-in duration-300">
+                  <AlertTriangle size={16} className="text-rose-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-rose-700">Tiers inactif dans la base de l'État</p>
+                    <p className="text-xs font-bold text-rose-700 mt-0.5">
+                      État administratif : {formData.etatAdministratif}. Ce tiers n'est plus actif ; vous pouvez tout de même l'enregistrer.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {formData.etatAdministratif === 'Actif' && (
+                <div className="mt-3 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 animate-in fade-in duration-300">
+                  <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                  <p className="text-xs font-bold text-emerald-700">Tiers actif dans la base de l'État.</p>
+                </div>
+              )}
             </div>
 
             <div className="md:col-span-2 space-y-2">

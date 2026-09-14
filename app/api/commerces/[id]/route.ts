@@ -251,6 +251,7 @@ export async function GET(
         telephone: tiers.telephone,
         statut: tiers.statut,
         etatAdministratif: tiers.etatAdministratif,
+        isReglemente: tiers.isReglemente,
         observations: tiers.observations,
         photo: tiers.photo
       },
@@ -272,7 +273,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('[PATCH-COMMERCE] Start', params);
+    console.log('[PATCH-COMMERCE] Start');
     const session = await getSession();
     if (!session) {
       console.log('[PATCH-COMMERCE] No session');

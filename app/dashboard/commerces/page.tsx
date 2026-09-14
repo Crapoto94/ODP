@@ -5,7 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle, Plus, Search, Lock, LockOpen, X, Star, AlertTriangle } from 'lucide-react';
+import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle, Plus, Search, Lock, LockOpen, X, Star, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { useLockedYear } from './hooks/useLockedYear';
 import { getAvailableStatuses } from '@/lib/status-utils';
 import { checkAotAlert, getAotAlertMessage } from '@/lib/aot-alerts';
@@ -28,6 +28,7 @@ interface Commerce {
   commerceCount: number;
   articles: Article[];
   etatAdministratif?: string;
+  isReglemente?: boolean;
   enseigneSurface?: number;
   isExonere?: boolean;
   threshold?: number;
@@ -492,19 +493,37 @@ export default function CommercesPage() {
                             {commerce.articles.reduce((acc: number, a: any) => acc + (a.count || 0), 0)} dispositif(s)
                           </span>
                           {commerce.enseigneSurface !== undefined && commerce.enseigneSurface > 0 && (
-                            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black border shadow-sm ${
-                              commerce.isExonere 
-                                ? 'bg-amber-50 text-amber-700 border-amber-200' 
-                                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            }`}>
-                              {commerce.isExonere ? <AlertCircle size={12} className="text-amber-500" /> : null}
-                              Enseigne : {commerce.enseigneSurface.toLocaleString('fr-FR')} m²
-                              {commerce.isExonere && (
+                            commerce.isReglemente ? (
+                              <span
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black border shadow-sm bg-indigo-50 text-indigo-700 border-indigo-200"
+                                title="Commerce réglementé : peut être exonéré d'enseigne même au-delà du seuil (décision manuelle). Aucune alerte de dépassement."
+                              >
+                                <ShieldCheck size={12} />
+                                Enseigne : {commerce.enseigneSurface.toLocaleString('fr-FR')} m²
+                                <span className="bg-indigo-200/50 px-1.5 py-0.5 rounded text-[8px] uppercase tracking-tighter">
+                                  Réglementé
+                                </span>
+                              </span>
+                            ) : commerce.isExonere ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black border shadow-sm bg-amber-50 text-amber-700 border-amber-200">
+                                <AlertCircle size={12} className="text-amber-500" />
+                                Enseigne : {commerce.enseigneSurface.toLocaleString('fr-FR')} m²
                                 <span className="bg-amber-200/50 px-1.5 py-0.5 rounded text-[8px] uppercase tracking-tighter">
                                   Exonéré (&lt;{commerce.threshold}m²)
                                 </span>
-                              )}
-                            </span>
+                              </span>
+                            ) : (
+                              <span
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black border shadow-sm bg-rose-50 text-rose-700 border-rose-200"
+                                title="La surface d'enseigne dépasse le seuil d'exonération : le commerce est assujetti."
+                              >
+                                <AlertTriangle size={12} />
+                                Enseigne : {commerce.enseigneSurface.toLocaleString('fr-FR')} m²
+                                <span className="bg-rose-200/50 px-1.5 py-0.5 rounded text-[8px] uppercase tracking-tighter">
+                                  Seuil dépassé (&gt;{commerce.threshold}m²)
+                                </span>
+                              </span>
+                            )
                           )}
                         </div>
                     ) : (

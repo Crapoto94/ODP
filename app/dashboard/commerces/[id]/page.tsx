@@ -102,6 +102,7 @@ export default function CommerceDetailPage({ params }: Props) {
     handleUpdateObservations,
     handleUpdatePhoto,
     handleUpdateNom,
+    handleUpdateIsReglemente,
     handleDeleteYear
   } = logic;
 
@@ -284,6 +285,7 @@ export default function CommerceDetailPage({ params }: Props) {
           onUpdateAddress={handleUpdateOccupationAddress}
           onUpdatePhoto={handleUpdatePhoto}
           onUpdateNom={handleUpdateNom}
+          onUpdateIsReglemente={handleUpdateIsReglemente}
           onChangeTiersClick={() => setIsTiersSearchOpen(true)}
         />
         {showFactureCard && (

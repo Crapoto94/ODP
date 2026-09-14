@@ -3602,6 +3602,7 @@ export namespace Prisma {
     updated_at: Date | null
     natureJuridique: string | null
     etatAdministratif: string | null
+    isReglemente: boolean | null
     observations: string | null
     photo: string | null
     nomEtablissement: string | null
@@ -3621,6 +3622,7 @@ export namespace Prisma {
     updated_at: Date | null
     natureJuridique: string | null
     etatAdministratif: string | null
+    isReglemente: boolean | null
     observations: string | null
     photo: string | null
     nomEtablissement: string | null
@@ -3640,6 +3642,7 @@ export namespace Prisma {
     updated_at: number
     natureJuridique: number
     etatAdministratif: number
+    isReglemente: number
     observations: number
     photo: number
     nomEtablissement: number
@@ -3673,6 +3676,7 @@ export namespace Prisma {
     updated_at?: true
     natureJuridique?: true
     etatAdministratif?: true
+    isReglemente?: true
     observations?: true
     photo?: true
     nomEtablissement?: true
@@ -3692,6 +3696,7 @@ export namespace Prisma {
     updated_at?: true
     natureJuridique?: true
     etatAdministratif?: true
+    isReglemente?: true
     observations?: true
     photo?: true
     nomEtablissement?: true
@@ -3711,6 +3716,7 @@ export namespace Prisma {
     updated_at?: true
     natureJuridique?: true
     etatAdministratif?: true
+    isReglemente?: true
     observations?: true
     photo?: true
     nomEtablissement?: true
@@ -3817,6 +3823,7 @@ export namespace Prisma {
     updated_at: Date
     natureJuridique: string | null
     etatAdministratif: string | null
+    isReglemente: boolean
     observations: string | null
     photo: string | null
     nomEtablissement: string | null
@@ -3855,6 +3862,7 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
+    isReglemente?: boolean
     observations?: boolean
     photo?: boolean
     nomEtablissement?: boolean
@@ -3879,6 +3887,7 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
+    isReglemente?: boolean
     observations?: boolean
     photo?: boolean
     nomEtablissement?: boolean
@@ -3898,6 +3907,7 @@ export namespace Prisma {
     updated_at?: boolean
     natureJuridique?: boolean
     etatAdministratif?: boolean
+    isReglemente?: boolean
     observations?: boolean
     photo?: boolean
     nomEtablissement?: boolean
@@ -3934,6 +3944,7 @@ export namespace Prisma {
       updated_at: Date
       natureJuridique: string | null
       etatAdministratif: string | null
+      isReglemente: boolean
       observations: string | null
       photo: string | null
       nomEtablissement: string | null
@@ -4347,6 +4358,7 @@ export namespace Prisma {
     readonly updated_at: FieldRef<"Tiers", 'DateTime'>
     readonly natureJuridique: FieldRef<"Tiers", 'String'>
     readonly etatAdministratif: FieldRef<"Tiers", 'String'>
+    readonly isReglemente: FieldRef<"Tiers", 'Boolean'>
     readonly observations: FieldRef<"Tiers", 'String'>
     readonly photo: FieldRef<"Tiers", 'String'>
     readonly nomEtablissement: FieldRef<"Tiers", 'String'>
@@ -31730,11 +31742,13 @@ export namespace Prisma {
   export type AppSettingsAvgAggregateOutputType = {
     id: number | null
     filienExercice: number | null
+    repoMinFreePercent: number | null
   }
 
   export type AppSettingsSumAggregateOutputType = {
     id: number | null
     filienExercice: number | null
+    repoMinFreePercent: number | null
   }
 
   export type AppSettingsMinAggregateOutputType = {
@@ -31787,6 +31801,12 @@ export namespace Prisma {
     dbMode: string | null
     autoDistributeInvoices: boolean | null
     distributeOnlyVerified: boolean | null
+    adminEmail: string | null
+    repoMonitorEnabled: boolean | null
+    repoMinFreePercent: number | null
+    repoMonitorState: string | null
+    repoMonitorLastCheck: Date | null
+    repoMonitorLastAlertAt: Date | null
   }
 
   export type AppSettingsMaxAggregateOutputType = {
@@ -31839,6 +31859,12 @@ export namespace Prisma {
     dbMode: string | null
     autoDistributeInvoices: boolean | null
     distributeOnlyVerified: boolean | null
+    adminEmail: string | null
+    repoMonitorEnabled: boolean | null
+    repoMinFreePercent: number | null
+    repoMonitorState: string | null
+    repoMonitorLastCheck: Date | null
+    repoMonitorLastAlertAt: Date | null
   }
 
   export type AppSettingsCountAggregateOutputType = {
@@ -31891,6 +31917,12 @@ export namespace Prisma {
     dbMode: number
     autoDistributeInvoices: number
     distributeOnlyVerified: number
+    adminEmail: number
+    repoMonitorEnabled: number
+    repoMinFreePercent: number
+    repoMonitorState: number
+    repoMonitorLastCheck: number
+    repoMonitorLastAlertAt: number
     _all: number
   }
 
@@ -31898,11 +31930,13 @@ export namespace Prisma {
   export type AppSettingsAvgAggregateInputType = {
     id?: true
     filienExercice?: true
+    repoMinFreePercent?: true
   }
 
   export type AppSettingsSumAggregateInputType = {
     id?: true
     filienExercice?: true
+    repoMinFreePercent?: true
   }
 
   export type AppSettingsMinAggregateInputType = {
@@ -31955,6 +31989,12 @@ export namespace Prisma {
     dbMode?: true
     autoDistributeInvoices?: true
     distributeOnlyVerified?: true
+    adminEmail?: true
+    repoMonitorEnabled?: true
+    repoMinFreePercent?: true
+    repoMonitorState?: true
+    repoMonitorLastCheck?: true
+    repoMonitorLastAlertAt?: true
   }
 
   export type AppSettingsMaxAggregateInputType = {
@@ -32007,6 +32047,12 @@ export namespace Prisma {
     dbMode?: true
     autoDistributeInvoices?: true
     distributeOnlyVerified?: true
+    adminEmail?: true
+    repoMonitorEnabled?: true
+    repoMinFreePercent?: true
+    repoMonitorState?: true
+    repoMonitorLastCheck?: true
+    repoMonitorLastAlertAt?: true
   }
 
   export type AppSettingsCountAggregateInputType = {
@@ -32059,6 +32105,12 @@ export namespace Prisma {
     dbMode?: true
     autoDistributeInvoices?: true
     distributeOnlyVerified?: true
+    adminEmail?: true
+    repoMonitorEnabled?: true
+    repoMinFreePercent?: true
+    repoMonitorState?: true
+    repoMonitorLastCheck?: true
+    repoMonitorLastAlertAt?: true
     _all?: true
   }
 
@@ -32198,6 +32250,12 @@ export namespace Prisma {
     dbMode: string
     autoDistributeInvoices: boolean
     distributeOnlyVerified: boolean
+    adminEmail: string | null
+    repoMonitorEnabled: boolean
+    repoMinFreePercent: number
+    repoMonitorState: string | null
+    repoMonitorLastCheck: Date | null
+    repoMonitorLastAlertAt: Date | null
     _count: AppSettingsCountAggregateOutputType | null
     _avg: AppSettingsAvgAggregateOutputType | null
     _sum: AppSettingsSumAggregateOutputType | null
@@ -32269,6 +32327,12 @@ export namespace Prisma {
     dbMode?: boolean
     autoDistributeInvoices?: boolean
     distributeOnlyVerified?: boolean
+    adminEmail?: boolean
+    repoMonitorEnabled?: boolean
+    repoMinFreePercent?: boolean
+    repoMonitorState?: boolean
+    repoMonitorLastCheck?: boolean
+    repoMonitorLastAlertAt?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
   export type AppSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -32321,6 +32385,12 @@ export namespace Prisma {
     dbMode?: boolean
     autoDistributeInvoices?: boolean
     distributeOnlyVerified?: boolean
+    adminEmail?: boolean
+    repoMonitorEnabled?: boolean
+    repoMinFreePercent?: boolean
+    repoMonitorState?: boolean
+    repoMonitorLastCheck?: boolean
+    repoMonitorLastAlertAt?: boolean
   }, ExtArgs["result"]["appSettings"]>
 
   export type AppSettingsSelectScalar = {
@@ -32373,6 +32443,12 @@ export namespace Prisma {
     dbMode?: boolean
     autoDistributeInvoices?: boolean
     distributeOnlyVerified?: boolean
+    adminEmail?: boolean
+    repoMonitorEnabled?: boolean
+    repoMinFreePercent?: boolean
+    repoMonitorState?: boolean
+    repoMonitorLastCheck?: boolean
+    repoMonitorLastAlertAt?: boolean
   }
 
 
@@ -32429,6 +32505,12 @@ export namespace Prisma {
       dbMode: string
       autoDistributeInvoices: boolean
       distributeOnlyVerified: boolean
+      adminEmail: string | null
+      repoMonitorEnabled: boolean
+      repoMinFreePercent: number
+      repoMonitorState: string | null
+      repoMonitorLastCheck: Date | null
+      repoMonitorLastAlertAt: Date | null
     }, ExtArgs["result"]["appSettings"]>
     composites: {}
   }
@@ -32871,6 +32953,12 @@ export namespace Prisma {
     readonly dbMode: FieldRef<"AppSettings", 'String'>
     readonly autoDistributeInvoices: FieldRef<"AppSettings", 'Boolean'>
     readonly distributeOnlyVerified: FieldRef<"AppSettings", 'Boolean'>
+    readonly adminEmail: FieldRef<"AppSettings", 'String'>
+    readonly repoMonitorEnabled: FieldRef<"AppSettings", 'Boolean'>
+    readonly repoMinFreePercent: FieldRef<"AppSettings", 'Int'>
+    readonly repoMonitorState: FieldRef<"AppSettings", 'String'>
+    readonly repoMonitorLastCheck: FieldRef<"AppSettings", 'DateTime'>
+    readonly repoMonitorLastAlertAt: FieldRef<"AppSettings", 'DateTime'>
   }
     
 
@@ -33187,6 +33275,7 @@ export namespace Prisma {
     updated_at: 'updated_at',
     natureJuridique: 'natureJuridique',
     etatAdministratif: 'etatAdministratif',
+    isReglemente: 'isReglemente',
     observations: 'observations',
     photo: 'photo',
     nomEtablissement: 'nomEtablissement'
@@ -33660,7 +33749,13 @@ export namespace Prisma {
     watermark: 'watermark',
     dbMode: 'dbMode',
     autoDistributeInvoices: 'autoDistributeInvoices',
-    distributeOnlyVerified: 'distributeOnlyVerified'
+    distributeOnlyVerified: 'distributeOnlyVerified',
+    adminEmail: 'adminEmail',
+    repoMonitorEnabled: 'repoMonitorEnabled',
+    repoMinFreePercent: 'repoMinFreePercent',
+    repoMonitorState: 'repoMonitorState',
+    repoMonitorLastCheck: 'repoMonitorLastCheck',
+    repoMonitorLastAlertAt: 'repoMonitorLastAlertAt'
   };
 
   export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
@@ -33778,6 +33873,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
+    isReglemente?: BoolFilter<"Tiers"> | boolean
     observations?: StringNullableFilter<"Tiers"> | string | null
     photo?: StringNullableFilter<"Tiers"> | string | null
     nomEtablissement?: StringNullableFilter<"Tiers"> | string | null
@@ -33801,6 +33897,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrderInput | SortOrder
     etatAdministratif?: SortOrderInput | SortOrder
+    isReglemente?: SortOrder
     observations?: SortOrderInput | SortOrder
     photo?: SortOrderInput | SortOrder
     nomEtablissement?: SortOrderInput | SortOrder
@@ -33827,6 +33924,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableFilter<"Tiers"> | string | null
+    isReglemente?: BoolFilter<"Tiers"> | boolean
     observations?: StringNullableFilter<"Tiers"> | string | null
     photo?: StringNullableFilter<"Tiers"> | string | null
     nomEtablissement?: StringNullableFilter<"Tiers"> | string | null
@@ -33850,6 +33948,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrderInput | SortOrder
     etatAdministratif?: SortOrderInput | SortOrder
+    isReglemente?: SortOrder
     observations?: SortOrderInput | SortOrder
     photo?: SortOrderInput | SortOrder
     nomEtablissement?: SortOrderInput | SortOrder
@@ -33877,6 +33976,7 @@ export namespace Prisma {
     updated_at?: DateTimeWithAggregatesFilter<"Tiers"> | Date | string
     natureJuridique?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
     etatAdministratif?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
+    isReglemente?: BoolWithAggregatesFilter<"Tiers"> | boolean
     observations?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
     photo?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
     nomEtablissement?: StringNullableWithAggregatesFilter<"Tiers"> | string | null
@@ -36096,6 +36196,12 @@ export namespace Prisma {
     dbMode?: StringFilter<"AppSettings"> | string
     autoDistributeInvoices?: BoolFilter<"AppSettings"> | boolean
     distributeOnlyVerified?: BoolFilter<"AppSettings"> | boolean
+    adminEmail?: StringNullableFilter<"AppSettings"> | string | null
+    repoMonitorEnabled?: BoolFilter<"AppSettings"> | boolean
+    repoMinFreePercent?: IntFilter<"AppSettings"> | number
+    repoMonitorState?: StringNullableFilter<"AppSettings"> | string | null
+    repoMonitorLastCheck?: DateTimeNullableFilter<"AppSettings"> | Date | string | null
+    repoMonitorLastAlertAt?: DateTimeNullableFilter<"AppSettings"> | Date | string | null
   }
 
   export type AppSettingsOrderByWithRelationInput = {
@@ -36148,6 +36254,12 @@ export namespace Prisma {
     dbMode?: SortOrder
     autoDistributeInvoices?: SortOrder
     distributeOnlyVerified?: SortOrder
+    adminEmail?: SortOrderInput | SortOrder
+    repoMonitorEnabled?: SortOrder
+    repoMinFreePercent?: SortOrder
+    repoMonitorState?: SortOrderInput | SortOrder
+    repoMonitorLastCheck?: SortOrderInput | SortOrder
+    repoMonitorLastAlertAt?: SortOrderInput | SortOrder
   }
 
   export type AppSettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -36203,6 +36315,12 @@ export namespace Prisma {
     dbMode?: StringFilter<"AppSettings"> | string
     autoDistributeInvoices?: BoolFilter<"AppSettings"> | boolean
     distributeOnlyVerified?: BoolFilter<"AppSettings"> | boolean
+    adminEmail?: StringNullableFilter<"AppSettings"> | string | null
+    repoMonitorEnabled?: BoolFilter<"AppSettings"> | boolean
+    repoMinFreePercent?: IntFilter<"AppSettings"> | number
+    repoMonitorState?: StringNullableFilter<"AppSettings"> | string | null
+    repoMonitorLastCheck?: DateTimeNullableFilter<"AppSettings"> | Date | string | null
+    repoMonitorLastAlertAt?: DateTimeNullableFilter<"AppSettings"> | Date | string | null
   }, "id">
 
   export type AppSettingsOrderByWithAggregationInput = {
@@ -36255,6 +36373,12 @@ export namespace Prisma {
     dbMode?: SortOrder
     autoDistributeInvoices?: SortOrder
     distributeOnlyVerified?: SortOrder
+    adminEmail?: SortOrderInput | SortOrder
+    repoMonitorEnabled?: SortOrder
+    repoMinFreePercent?: SortOrder
+    repoMonitorState?: SortOrderInput | SortOrder
+    repoMonitorLastCheck?: SortOrderInput | SortOrder
+    repoMonitorLastAlertAt?: SortOrderInput | SortOrder
     _count?: AppSettingsCountOrderByAggregateInput
     _avg?: AppSettingsAvgOrderByAggregateInput
     _max?: AppSettingsMaxOrderByAggregateInput
@@ -36315,6 +36439,12 @@ export namespace Prisma {
     dbMode?: StringWithAggregatesFilter<"AppSettings"> | string
     autoDistributeInvoices?: BoolWithAggregatesFilter<"AppSettings"> | boolean
     distributeOnlyVerified?: BoolWithAggregatesFilter<"AppSettings"> | boolean
+    adminEmail?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    repoMonitorEnabled?: BoolWithAggregatesFilter<"AppSettings"> | boolean
+    repoMinFreePercent?: IntWithAggregatesFilter<"AppSettings"> | number
+    repoMonitorState?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
+    repoMonitorLastCheck?: DateTimeNullableWithAggregatesFilter<"AppSettings"> | Date | string | null
+    repoMonitorLastAlertAt?: DateTimeNullableWithAggregatesFilter<"AppSettings"> | Date | string | null
   }
 
   export type TiersCreateInput = {
@@ -36330,6 +36460,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -36353,6 +36484,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -36375,6 +36507,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36398,6 +36531,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36421,6 +36555,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -36439,6 +36574,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36458,6 +36594,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -38850,6 +38987,12 @@ export namespace Prisma {
     dbMode?: string
     autoDistributeInvoices?: boolean
     distributeOnlyVerified?: boolean
+    adminEmail?: string | null
+    repoMonitorEnabled?: boolean
+    repoMinFreePercent?: number
+    repoMonitorState?: string | null
+    repoMonitorLastCheck?: Date | string | null
+    repoMonitorLastAlertAt?: Date | string | null
   }
 
   export type AppSettingsUncheckedCreateInput = {
@@ -38902,6 +39045,12 @@ export namespace Prisma {
     dbMode?: string
     autoDistributeInvoices?: boolean
     distributeOnlyVerified?: boolean
+    adminEmail?: string | null
+    repoMonitorEnabled?: boolean
+    repoMinFreePercent?: number
+    repoMonitorState?: string | null
+    repoMonitorLastCheck?: Date | string | null
+    repoMonitorLastAlertAt?: Date | string | null
   }
 
   export type AppSettingsUpdateInput = {
@@ -38953,6 +39102,12 @@ export namespace Prisma {
     dbMode?: StringFieldUpdateOperationsInput | string
     autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
     distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+    adminEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    repoMonitorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    repoMinFreePercent?: IntFieldUpdateOperationsInput | number
+    repoMonitorState?: NullableStringFieldUpdateOperationsInput | string | null
+    repoMonitorLastCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    repoMonitorLastAlertAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type AppSettingsUncheckedUpdateInput = {
@@ -39005,6 +39160,12 @@ export namespace Prisma {
     dbMode?: StringFieldUpdateOperationsInput | string
     autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
     distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+    adminEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    repoMonitorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    repoMinFreePercent?: IntFieldUpdateOperationsInput | number
+    repoMonitorState?: NullableStringFieldUpdateOperationsInput | string | null
+    repoMonitorLastCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    repoMonitorLastAlertAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type AppSettingsCreateManyInput = {
@@ -39057,6 +39218,12 @@ export namespace Prisma {
     dbMode?: string
     autoDistributeInvoices?: boolean
     distributeOnlyVerified?: boolean
+    adminEmail?: string | null
+    repoMonitorEnabled?: boolean
+    repoMinFreePercent?: number
+    repoMonitorState?: string | null
+    repoMonitorLastCheck?: Date | string | null
+    repoMonitorLastAlertAt?: Date | string | null
   }
 
   export type AppSettingsUpdateManyMutationInput = {
@@ -39108,6 +39275,12 @@ export namespace Prisma {
     dbMode?: StringFieldUpdateOperationsInput | string
     autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
     distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+    adminEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    repoMonitorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    repoMinFreePercent?: IntFieldUpdateOperationsInput | number
+    repoMonitorState?: NullableStringFieldUpdateOperationsInput | string | null
+    repoMonitorLastCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    repoMonitorLastAlertAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type AppSettingsUncheckedUpdateManyInput = {
@@ -39160,6 +39333,12 @@ export namespace Prisma {
     dbMode?: StringFieldUpdateOperationsInput | string
     autoDistributeInvoices?: BoolFieldUpdateOperationsInput | boolean
     distributeOnlyVerified?: BoolFieldUpdateOperationsInput | boolean
+    adminEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    repoMonitorEnabled?: BoolFieldUpdateOperationsInput | boolean
+    repoMinFreePercent?: IntFieldUpdateOperationsInput | number
+    repoMonitorState?: NullableStringFieldUpdateOperationsInput | string | null
+    repoMonitorLastCheck?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    repoMonitorLastAlertAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -39225,6 +39404,11 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type ContactListRelationFilter = {
     every?: ContactWhereInput
     some?: ContactWhereInput
@@ -39284,6 +39468,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrder
     etatAdministratif?: SortOrder
+    isReglemente?: SortOrder
     observations?: SortOrder
     photo?: SortOrder
     nomEtablissement?: SortOrder
@@ -39309,6 +39494,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrder
     etatAdministratif?: SortOrder
+    isReglemente?: SortOrder
     observations?: SortOrder
     photo?: SortOrder
     nomEtablissement?: SortOrder
@@ -39328,6 +39514,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     natureJuridique?: SortOrder
     etatAdministratif?: SortOrder
+    isReglemente?: SortOrder
     observations?: SortOrder
     photo?: SortOrder
     nomEtablissement?: SortOrder
@@ -39421,6 +39608,14 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -39452,11 +39647,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type DispositifListRelationFilter = {
@@ -39699,14 +39889,6 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type TiersNullableRelationFilter = {
@@ -41030,11 +41212,18 @@ export namespace Prisma {
     dbMode?: SortOrder
     autoDistributeInvoices?: SortOrder
     distributeOnlyVerified?: SortOrder
+    adminEmail?: SortOrder
+    repoMonitorEnabled?: SortOrder
+    repoMinFreePercent?: SortOrder
+    repoMonitorState?: SortOrder
+    repoMonitorLastCheck?: SortOrder
+    repoMonitorLastAlertAt?: SortOrder
   }
 
   export type AppSettingsAvgOrderByAggregateInput = {
     id?: SortOrder
     filienExercice?: SortOrder
+    repoMinFreePercent?: SortOrder
   }
 
   export type AppSettingsMaxOrderByAggregateInput = {
@@ -41087,6 +41276,12 @@ export namespace Prisma {
     dbMode?: SortOrder
     autoDistributeInvoices?: SortOrder
     distributeOnlyVerified?: SortOrder
+    adminEmail?: SortOrder
+    repoMonitorEnabled?: SortOrder
+    repoMinFreePercent?: SortOrder
+    repoMonitorState?: SortOrder
+    repoMonitorLastCheck?: SortOrder
+    repoMonitorLastAlertAt?: SortOrder
   }
 
   export type AppSettingsMinOrderByAggregateInput = {
@@ -41139,11 +41334,18 @@ export namespace Prisma {
     dbMode?: SortOrder
     autoDistributeInvoices?: SortOrder
     distributeOnlyVerified?: SortOrder
+    adminEmail?: SortOrder
+    repoMonitorEnabled?: SortOrder
+    repoMinFreePercent?: SortOrder
+    repoMonitorState?: SortOrder
+    repoMonitorLastCheck?: SortOrder
+    repoMonitorLastAlertAt?: SortOrder
   }
 
   export type AppSettingsSumOrderByAggregateInput = {
     id?: SortOrder
     filienExercice?: SortOrder
+    repoMinFreePercent?: SortOrder
   }
 
   export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -41228,6 +41430,10 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type ContactUpdateManyWithoutTiersNestedInput = {
@@ -41458,10 +41664,6 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type ContactUpdateManyWithoutOccupationNestedInput = {
@@ -42409,6 +42611,11 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -42511,6 +42718,14 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -42520,11 +42735,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -42571,14 +42781,6 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedBoolNullableFilter<$PrismaModel = never> = {
@@ -43203,6 +43405,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -43225,6 +43428,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -43429,6 +43633,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43451,6 +43656,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43472,6 +43678,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -43494,6 +43701,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -43631,6 +43839,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43653,6 +43862,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43880,6 +44090,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -43902,6 +44113,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -44045,6 +44257,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44067,6 +44280,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44824,6 +45038,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -44846,6 +45061,7 @@ export namespace Prisma {
     updated_at?: Date | string
     natureJuridique?: string | null
     etatAdministratif?: string | null
+    isReglemente?: boolean
     observations?: string | null
     photo?: string | null
     nomEtablissement?: string | null
@@ -44921,6 +45137,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44943,6 +45160,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     natureJuridique?: NullableStringFieldUpdateOperationsInput | string | null
     etatAdministratif?: NullableStringFieldUpdateOperationsInput | string | null
+    isReglemente?: BoolFieldUpdateOperationsInput | boolean
     observations?: NullableStringFieldUpdateOperationsInput | string | null
     photo?: NullableStringFieldUpdateOperationsInput | string | null
     nomEtablissement?: NullableStringFieldUpdateOperationsInput | string | null

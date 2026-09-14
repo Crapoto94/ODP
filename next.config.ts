@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  serverExternalPackages: ['smb2'],
   async headers() {
     return [
       {

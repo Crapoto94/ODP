@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Mail, Phone, Calendar, ExternalLink, Navigation, Building2, Pencil, AlertCircle } from 'lucide-react';
+import { MapPin, Mail, Phone, Calendar, ExternalLink, Navigation, Building2, Pencil, AlertCircle, ShieldCheck } from 'lucide-react';
 
 interface Props {
   commerce: any;
@@ -11,6 +11,7 @@ interface Props {
   onUpdateAddress?: (occupationId: number, newAddress: string) => void;
   onUpdatePhoto?: (photoUrl: string) => void;
   onUpdateNom?: (newNom: string) => void;
+  onUpdateIsReglemente?: (isReglemente: boolean) => void;
   onChangeTiersClick?: () => void;
 }
 
@@ -24,6 +25,7 @@ export default function CommerceInfoCard({
   onUpdateAddress,
   onUpdatePhoto,
   onUpdateNom,
+  onUpdateIsReglemente,
   onChangeTiersClick
 }: Props) {
   if (!commerce) return null;
@@ -214,6 +216,34 @@ export default function CommerceInfoCard({
 
         {/* Right Column: Billing & Amount */}
         <div className="space-y-6">
+          {/* Commerce réglementé */}
+          {onUpdateIsReglemente && (
+            <div className={`rounded-xl p-4 border transition-colors ${commerce.isReglemente ? 'bg-indigo-50/70 border-indigo-100' : 'bg-slate-50 border-slate-100'}`}>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${commerce.isReglemente ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-400'}`}>
+                    <ShieldCheck size={18} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-black text-slate-800 uppercase tracking-widest">Commerce réglementé</p>
+                    <p className="text-[10px] font-medium text-slate-400 leading-tight mt-0.5">
+                      Peut être exonéré d'enseigne même au-delà du seuil ({'> '}12 m²). Exonération décidée manuellement, sans alerte de dépassement.
+                    </p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={!!commerce.isReglemente}
+                    onChange={e => onUpdateIsReglemente(e.target.checked)}
+                  />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-slate-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:translate-x-full" />
+                </label>
+              </div>
+            </div>
+          )}
+
           {/* Billing Tier Selection */}
           <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
             <div className="flex items-center justify-between mb-3">

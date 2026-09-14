@@ -23,6 +23,7 @@ model Tiers {
   updated_at        DateTime           @updatedAt
   natureJuridique   String?
   etatAdministratif String?
+  isReglemente      Boolean            @default(false)
   observations      String?
   photo             String?
   nomEtablissement  String?
@@ -449,53 +450,59 @@ model SignatureRequest {
 }
 
 model AppSettings {
-  id                     Int      @id @default(autoincrement())
+  id                     Int       @id @default(autoincrement())
   financeEmail           String?
   appUrl                 String?
   apmUrl                 String?
   apmToken               String?
-  senderName             String?  @default("Domaine Public")
-  senderEmail            String?  @default("dsihub@fbc.fr")
-  filienOrga             String?  @default("01")
-  filienBudget           String?  @default("BA")
+  senderName             String?   @default("Domaine Public")
+  senderEmail            String?   @default("dsihub@fbc.fr")
+  filienOrga             String?   @default("01")
+  filienBudget           String?   @default("BA")
   filienExercice         Int?
-  filienAvancement       String?  @default("5")
-  filienRejetDispo       Boolean? @default(true)
-  filienRejetCA          Boolean? @default(false)
-  filienRejetMarche      Boolean? @default(false)
-  filienMouvement        String?  @default("1")
-  filienType             String?  @default("R")
+  filienAvancement       String?   @default("5")
+  filienRejetDispo       Boolean?  @default(true)
+  filienRejetCA          Boolean?  @default(false)
+  filienRejetMarche      Boolean?  @default(false)
+  filienMouvement        String?   @default("1")
+  filienType             String?   @default("R")
   filienLibelle          String?
-  filienCalendrier       String?  @default("01")
-  filienMonnaie          String?  @default("E")
-  filienMouvementEx      String?  @default("N")
-  filienPreBordereau     String?  @default("1235")
-  filienPoste            String?  @default("0001")
-  filienBordereau        String?  @default("0001")
+  filienCalendrier       String?   @default("01")
+  filienMonnaie          String?   @default("E")
+  filienMouvementEx      String?   @default("N")
+  filienPreBordereau     String?   @default("1235")
+  filienPoste            String?   @default("0001")
+  filienBordereau        String?   @default("0001")
   filienObjet            String?
-  filienChapitre         String?  @default("")
-  filienNature           String?  @default("")
-  filienFonction         String?  @default("")
-  filienCodeInterne      String?  @default("")
-  filienTypeMouvement    String?  @default("")
-  filienSens             String?  @default("")
-  filienStructure        String?  @default("")
-  filienGestionnaire     String?  @default("")
-  filienUncPj            String?  @default("")
-  adDomain               String?  @default("ivry.local")
-  signataireRole         String?  @default("Le Maire d'Ivry-sur-Seine,")
-  signataireDelegation   String?  @default("et par délégation,")
-  signataireNom          String?  @default("Dominique Montet - Directrice Générale Adjointe")
+  filienChapitre         String?   @default("")
+  filienNature           String?   @default("")
+  filienFonction         String?   @default("")
+  filienCodeInterne      String?   @default("")
+  filienTypeMouvement    String?   @default("")
+  filienSens             String?   @default("")
+  filienStructure        String?   @default("")
+  filienGestionnaire     String?   @default("")
+  filienUncPj            String?   @default("")
+  adDomain               String?   @default("ivry.local")
+  signataireRole         String?   @default("Le Maire d'Ivry-sur-Seine,")
+  signataireDelegation   String?   @default("et par délégation,")
+  signataireNom          String?   @default("Dominique Montet - Directrice Générale Adjointe")
   footer1                String?
   footer2                String?
   footer3                String?
   footerColor            String?
-  updated_at             DateTime @updatedAt
-  filienUncPass          String?  @default("")
-  filienUncUser          String?  @default("")
-  filienUncDomain        String?  @default("WORKGROUP")
-  watermark              String?  @default("BROUILLON")
-  dbMode                 String   @default("PROD") // PROD or DEV
-  autoDistributeInvoices Boolean  @default(false)
-  distributeOnlyVerified Boolean  @default(true)
+  updated_at             DateTime  @updatedAt
+  filienUncPass          String?   @default("")
+  filienUncUser          String?   @default("")
+  filienUncDomain        String?   @default("WORKGROUP")
+  watermark              String?   @default("BROUILLON")
+  dbMode                 String    @default("PROD") // PROD or DEV
+  autoDistributeInvoices Boolean   @default(false)
+  distributeOnlyVerified Boolean   @default(true)
+  adminEmail             String?
+  repoMonitorEnabled     Boolean   @default(false)
+  repoMinFreePercent     Int       @default(10)
+  repoMonitorState       String?
+  repoMonitorLastCheck   DateTime?
+  repoMonitorLastAlertAt DateTime?
 }

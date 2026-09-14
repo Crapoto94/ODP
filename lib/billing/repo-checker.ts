@@ -4,6 +4,7 @@ import { existsSync } from 'fs';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 const SMB2 = require('smb2');
+require('./smb-statfs'); // Ajoute SMB2.prototype.statfs (QUERY_INFO / FileFsFullSizeInformation)
 
 const execFileAsync = promisify(execFile);
 
@@ -68,6 +69,7 @@ function formatError(err: any): string {
   if (/STATUS_OBJECT_NAME_NOT_FOUND|STATUS_PATH_NOT_FOUND/i.test(msg)) return 'Dossier introuvable sur le partage réseau.';
   if (/STATUS_OBJECT_NAME_COLLISION/i.test(msg)) return 'Conflit de nom sur le partage réseau.';
   if (code === 'ECONNREFUSED') return 'Connexion refusée : le serveur n\'est pas accessible.';
+  if (code === 'EISCONN') return 'Connexion déjà établie puis interrompue : vérifiez l\'identifiant/mot de passe SMB du dépôt.';
   if (code === 'ENOTFOUND') return 'Serveur introuvable : vérifiez le nom d\'hôte du dépôt.';
   if (code === 'ETIMEDOUT' || code === 'ECONNABORTED' || /timed out/i.test(msg)) return 'Timeout : le serveur est inaccessible ou trop lent.';
   if (code === 'ENOENT') return 'Dossier introuvable : le chemin n\'existe pas ou n\'est pas accessible.';
@@ -164,6 +166,124 @@ async function tryStatfs(p: string): Promise<DiskSpaceInfo | null> {
   }
 }
 
+// Espace libre lu directement auprès du serveur SMB (protocole SMB2), via
+// `SMB2.prototype.statfs` ajouté par ./smb-statfs. C'est la méthode qui
+// fonctionne aussi bien sous Linux (prod Docker) que sous Windows.
+async function trySmbSpace(config: RepoConfig): Promise<DiskSpaceInfo | null> {
+  const { basePrefix } = parseUnc(config.path);
+  // Une seule tentative : ouvrir le sous-dossier configuré (créé au dépôt),
+  // sinon la racine du partage. Évite de multiplier les authentifications
+  // (risque de verrouillage du compte de service).
+  const target = normalizeWindows(basePrefix || '');
+  const client: any = makeSmbClient(config);
+  const statfsAsync = promisify(client.statfs.bind(client));
+  try {
+    const info: any = await statfsAsync(target);
+    const total = Number(info?.total);
+    const free = Number(info?.free);
+    if (!isFinite(total) || total <= 0) throw new Error('Espace total invalide retourné par le serveur SMB.');
+    const used = Math.max(0, total - free);
+    return {
+      root: `\\\\${parseUnc(config.path).server}\\${parseUnc(config.path).share}`,
+      mode: 'smb',
+      total,
+      free,
+      used,
+      percentFree: Math.round((free / total) * 100),
+      totalHuman: formatBytes(total),
+      freeHuman: formatBytes(free),
+      usedHuman: formatBytes(used),
+    };
+  } catch (err) {
+    const stack = err instanceof Error && err.stack ? err.stack.split('\n').slice(0, 4).join(' | ') : '';
+    console.warn(`[REPO DISK] SMB statfs (${target || '.'}) échoué:`, formatError(err), stack);
+    return null;
+  } finally {
+    try { client.close(); } catch (e) { /* ignore */ }
+  }
+}
+
+// Mappe temporairement le partage Windows sur une lettre de lecteur libre avec
+// `net use`, lit l'espace libre via WMI puis nettoie. Essaie d'abord le compte
+// avec son domaine puis sans domaine (comptes locaux NAS / WORKGROUP).
+//
+// C'est la méthode la plus fiable en prod : statfs/Get-PSDrive ne remontent pas
+// l'espace libre des partages SMB sans session OS préalable, et New-PSDrive
+// seul renvoie des valeurs vides pour les lecteurs non persistés.
+async function tryNetUseSpace(config: RepoConfig, shareRoot: string): Promise<DiskSpaceInfo | null> {
+  if (process.platform !== 'win32') return null;
+  const creds: string[] = [];
+  if (config.domain && config.domain.trim().toLowerCase() !== 'workgroup') {
+    creds.push(`${config.domain}\\${config.user}`);
+  }
+  creds.push(config.user);
+
+  const script = [
+    "$used = (Get-PSDrive -PSProvider FileSystem).Name -replace ':', ''",
+    "$letter = $null",
+    "foreach ($l in 'ZYXWVUTSRQPONMLKJIHGFEDCBA') {",
+    "  if ($used -notcontains $l) { $letter = $l; break }",
+    "}",
+    "if (-not $letter) { [Console]::Out.WriteLine('NO_LETTER'); exit }",
+    "$drive = $letter + ':'",
+    "& net.exe use $drive $env:ODP_SMB_ROOT $env:ODP_SMB_PASS /user:$env:ODP_SMB_USER /persistent:no 2>&1 | Out-Null",
+    "if ($LASTEXITCODE -ne 0) {",
+    "  [Console]::Out.WriteLine('NETUSE_FAIL')",
+    "  exit",
+    "}",
+    "$disk = Get-CimInstance Win32_LogicalDisk -Filter (\"DeviceID='\" + $drive + \"'\") -ErrorAction SilentlyContinue",
+    "$free = $null; $size = $null",
+    "if ($disk) { $free = $disk.FreeSpace; $size = $disk.Size }",
+    "& net.exe use $drive /delete /y 2>&1 | Out-Null",
+    "if ($free -ne $null -and $size -ne $null) {",
+    '  [Console]::Out.WriteLine("OK " + $free + " " + $size)',
+    "} else {",
+    "  [Console]::Out.WriteLine('WMI_FAIL')",
+    "}",
+  ].join('\n');
+
+  for (const cred of creds) {
+    try {
+      const { stdout } = await execFileAsync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', script], {
+        env: {
+          ...(process.env as any),
+          ODP_SMB_USER: cred,
+          ODP_SMB_PASS: config.password,
+          ODP_SMB_ROOT: shareRoot,
+        },
+        windowsHide: true,
+        timeout: 45000,
+      });
+      const line = stdout.split(/\r?\n/).find(l => l.startsWith('OK '));
+      if (line) {
+        const [, freeStr, sizeStr] = line.split(/\s+/);
+        const free = parseFloat(freeStr);
+        const total = parseFloat(sizeStr);
+        const used = total - free;
+        if (isFinite(free) && isFinite(total) && total > 0) {
+          return {
+            root: shareRoot,
+            mode: 'smb',
+            total,
+            free,
+            used,
+            percentFree: Math.round((free / total) * 100),
+            totalHuman: formatBytes(total),
+            freeHuman: formatBytes(free),
+            usedHuman: formatBytes(used),
+          };
+        }
+      }
+      console.warn(`[REPO DISK] net use / WMI (${cred}) KO:`, stdout.trim().split('\n').pop() || stdout.trim());
+    } catch (err) {
+      console.warn(`[REPO DISK] net use (${cred}) échoué:`, (err as any)?.message || err);
+    }
+  }
+  return null;
+}
+
+// Interroge l'espace libre d'un partage SMB via disque mappé (`net use`).
+
 export async function getRepoDiskSpace(config: RepoConfig): Promise<DiskSpaceInfo | null> {
   if (!config.path || !String(config.path).trim()) return null;
   const path = normalizeWindows(String(config.path).trim());
@@ -195,21 +315,26 @@ export async function getRepoDiskSpace(config: RepoConfig): Promise<DiskSpaceInf
       }
     }
 
-    let info = await tryStatfs(shareRoot);
+    let info: DiskSpaceInfo | null = null;
+
+    // Méthode privilégiée : interrogation SMB2 auprès du serveur (fonctionne
+    // sous Linux prod comme sous Windows), cohérente avec le compte utilisé
+    // pour déposer les fichiers.
+    if (useSmb) {
+      info = await trySmbSpace(config);
+      if (info) return info;
+    }
+
+    // Repli Windows : disque mappé `net use` + WMI (statfs UNC étant erroné).
+    if (useSmb && process.platform === 'win32') {
+      info = await tryNetUseSpace(config, shareRoot);
+      if (info) return info;
+    }
+
+    info = await tryStatfs(shareRoot);
     if (info) return { ...info, mode: useSmb ? 'smb' : 'local' };
 
-    // Windows : mappe temporairement le partage avec les identifiants SMB puis relit l'espace libre.
-    if (useSmb && process.platform === 'win32') {
-      try {
-        const cred = config.domain ? `${config.domain}\\${config.user}` : config.user;
-        await execFileAsync('net', ['use', shareRoot, config.password, '/user:' + cred, '/persistent:no'], { windowsHide: true, timeout: 20000 });
-        info = await tryStatfs(shareRoot);
-        try { await execFileAsync('net', ['use', shareRoot, '/delete', '/y'], { windowsHide: true, timeout: 10000 }); } catch (e) { /* ignore */ }
-        if (info) return { ...info, mode: 'smb' };
-      } catch (err) {
-        console.error('[REPO DISK] net use du partage impossible:', formatError(err));
-      }
-    }
+    console.error('[REPO DISK] Espace libre du partage indisponible (SMB / statfs / net use échoués).');
     return null;
   }
 

@@ -85,6 +85,7 @@ export default function TiersPage() {
     email: '',
     adresse: '',
     code_sedit: '',
+    etatAdministratif: '',
     isRhRequest: false
   });
 
@@ -105,9 +106,10 @@ export default function TiersPage() {
     fetchTiers();
   }, []);
 
-  const handleSiretSearch = async () => {
-    if (!formData.siret || formData.siret.trim() === '') return;
-    const cleanSiret = formData.siret.replace(/\s+/g, '');
+  const handleSiretSearch = async (siretOverride?: string) => {
+    const raw = (siretOverride ?? formData.siret) || '';
+    if (!raw || raw.trim() === '') return;
+    const cleanSiret = raw.replace(/\s+/g, '');
     setSubmitting(true);
     try {
       const res = await axios.get(`/api/tiers/search?siret=${cleanSiret}`);
@@ -117,8 +119,12 @@ export default function TiersPage() {
         nom: data.nom,
         adresse: data.adresse,
         natureJuridique: data.natureJuridique || formData.natureJuridique,
-        siret: data.siret
+        siret: data.siret,
+        etatAdministratif: data.etatAdministratif || ''
       });
+      if (data.etatAdministratif && data.etatAdministratif !== 'Actif') {
+        alert(`Attention : ce tiers n'est plus actif dans la base de l'État (état administratif : ${data.etatAdministratif}).`);
+      }
     } catch (err) {
       alert('SIRET non trouvé ou erreur INSEE');
     } finally {
@@ -269,6 +275,7 @@ export default function TiersPage() {
       email: t.email || '',
       adresse: t.adresse || '',
       code_sedit: t.code_sedit || '',
+      etatAdministratif: t.etatAdministratif || '',
       isRhRequest: false
     });
     setIsModalOpen(true);
@@ -317,6 +324,7 @@ export default function TiersPage() {
       email: '',
       adresse: '',
       code_sedit: '',
+      etatAdministratif: '',
       isRhRequest: false
     });
   };

@@ -474,6 +474,16 @@ export function useCommerceLogic(paramId: string) {
     }
   };
 
+  const handleUpdateIsReglemente = async (isReglemente: boolean) => {
+    try {
+      await axios.patch(`/api/commerces/${paramId}`, { isReglemente });
+      setCommerce((prev: any) => ({ ...prev, isReglemente }));
+    } catch (err) {
+      console.error('Error updating isReglemente:', err);
+      alert('Erreur lors de la mise à jour du statut « commerce réglementé »');
+    }
+  };
+
   const handleDeleteYear = async (year: number) => {
     if (!confirm(`Supprimer toute l'année ${year} et ses dispositifs ? Cette action est irréversible.`)) return;
     try {
@@ -672,6 +682,7 @@ export function useCommerceLogic(paramId: string) {
     handleUpdateObservations,
     handleUpdatePhoto,
     handleUpdateNom,
+    handleUpdateIsReglemente,
     handleDeleteYear
   };
 }

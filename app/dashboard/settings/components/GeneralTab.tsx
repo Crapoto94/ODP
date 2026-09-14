@@ -1,5 +1,6 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Mail,
   Globe,
@@ -9,7 +10,8 @@ import {
   Save,
   CheckCircle2,
   AlertCircle,
-  FileText
+  FileText,
+  ShieldCheck
 } from 'lucide-react';
 import TabHeader from './TabHeader';
 import FormSection from './FormSection';
@@ -33,6 +35,21 @@ export default function GeneralTab({
   message,
   apmStatus
 }: Props) {
+  const [adminMailTest, setAdminMailTest] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [adminMailLoading, setAdminMailLoading] = useState(false);
+
+  const handleTestAdminMail = async () => {
+    setAdminMailTest(null);
+    setAdminMailLoading(true);
+    try {
+      const res = await axios.post('/api/settings/test-admin-mail');
+      setAdminMailTest({ type: 'success', text: `Mail test envoyé à ${res.data.target}` });
+    } catch (err: any) {
+      setAdminMailTest({ type: 'error', text: err.response?.data?.error || err.message || 'Échec de l\'envoi' });
+    } finally {
+      setAdminMailLoading(false);
+    }
+  };
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <TabHeader
@@ -68,6 +85,38 @@ export default function GeneralTab({
                     />
                   </div>
                   <p className="text-[10px] font-medium text-slate-400 ml-1">Plusieurs adresses possibles, séparées par un point-virgule «&nbsp;;&nbsp;»</p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-700 ml-1 uppercase tracking-widest">Email de l'administrateur ODP</label>
+                  <div className="relative group">
+                    <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-600 transition-colors" size={18} />
+                    <input
+                      type="text"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 pl-12 pr-6 outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-sm"
+                      placeholder="responsable@ivry94.fr"
+                      value={settings.adminEmail || ''}
+                      onChange={e => setSettings({...settings, adminEmail: e.target.value})}
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleTestAdminMail}
+                      disabled={adminMailLoading || saving}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-black uppercase tracking-widest text-[10px] transition-all active:scale-[0.98] disabled:opacity-50"
+                    >
+                      {adminMailLoading ? <Loader2 size={14} className="animate-spin" /> : <Mail size={14} />}
+                      Tester l'envoi (admin)
+                    </button>
+                    {adminMailTest && (
+                      <span className={`inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${adminMailTest.type === 'success' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                        {adminMailTest.type === 'success' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+                        {adminMailTest.text}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] font-medium text-slate-400 ml-1">Utilisée pour les alertes de surveillance du dépôt des factures. Pensez à enregistrer avant de tester.</p>
                 </div>
 
                 <div className="space-y-2 pt-4 border-t border-slate-50">

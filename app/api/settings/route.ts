@@ -50,7 +50,7 @@ export async function PATCH(req: Request) {
       id, updated_at, ...appSettingsData 
     } = body;
 
-    const booleanFields = ['filienRejetDispo', 'filienRejetCA', 'filienRejetMarche', 'autoDistributeInvoices', 'distributeOnlyVerified'];
+    const booleanFields = ['filienRejetDispo', 'filienRejetCA', 'filienRejetMarche', 'autoDistributeInvoices', 'distributeOnlyVerified', 'repoMonitorEnabled'];
     booleanFields.forEach(field => {
       if (appSettingsData[field] !== undefined) {
         appSettingsData[field] = !!appSettingsData[field];
@@ -60,6 +60,13 @@ export async function PATCH(req: Request) {
     if (appSettingsData.filienExercice) {
       appSettingsData.filienExercice = parseInt(appSettingsData.filienExercice.toString()) || new Date().getFullYear();
     }
+
+    const intFields = ['repoMinFreePercent'];
+    intFields.forEach(field => {
+      if (appSettingsData[field] !== undefined && appSettingsData[field] !== null && appSettingsData[field] !== '') {
+        appSettingsData[field] = parseInt(appSettingsData[field], 10);
+      }
+    });
 
     // 1. Update AppSettings in Postgres
     const existing = await (prisma as any).appSettings.findFirst({ where: { id: 1 } });

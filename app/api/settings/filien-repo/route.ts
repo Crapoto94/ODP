@@ -25,12 +25,18 @@ export async function GET() {
   try {
     const config = await readSavedConfig();
     const diskSpace = await getRepoDiskSpace(config);
+    const appSettings = await (prisma as any).appSettings.findFirst({ where: { id: 1 } });
     return NextResponse.json({
       path: config.path,
       user: config.user,
       domain: config.domain,
       hasPassword: !!(config.password && config.password !== '••••••••'),
       diskSpace: diskSpace ? { ...diskSpace, mode: diskSpace.mode } : null,
+      monitor: {
+        enabled: !!appSettings?.repoMonitorEnabled,
+        state: appSettings?.repoMonitorState || '',
+        lastCheck: appSettings?.repoMonitorLastCheck || null,
+      },
     });
   } catch (error: any) {
     console.error('[FILIEN-REPO GET ERROR]', error);

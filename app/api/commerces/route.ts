@@ -151,6 +151,7 @@ export async function GET(request: Request) {
             commerceCount: occ.type === 'COMMERCE' ? 1 : 0,
             articles: articles,
             etatAdministratif: occ.tiers.etatAdministratif,
+            isReglemente: occ.tiers.isReglemente,
             statut: occ.tiers.statut,
             lastYearStatut: occ.statut,
             lastYearForStatut: year,

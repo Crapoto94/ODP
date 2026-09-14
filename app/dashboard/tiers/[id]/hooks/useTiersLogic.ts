@@ -21,6 +21,7 @@ export function useTiersLogic(tiersId: string) {
     email: '',
     adresse: '',
     code_sedit: '',
+    etatAdministratif: '',
     isRhRequest: false
   });
   const [submittingEdit, setSubmittingEdit] = useState(false);
@@ -38,6 +39,7 @@ export function useTiersLogic(tiersId: string) {
         email: res.data.email || '',
         adresse: res.data.adresse || '',
         code_sedit: res.data.code_sedit || '',
+        etatAdministratif: res.data.etatAdministratif || '',
         isRhRequest: false
       });
     } catch (err) {
@@ -110,18 +112,23 @@ export function useTiersLogic(tiersId: string) {
     }
   };
 
-  const handleSiretSearch = async () => {
-    if (!editFormData.siret) return;
+  const handleSiretSearch = async (siretOverride?: string) => {
+    const raw = (siretOverride ?? editFormData.siret) || '';
+    if (!raw) return;
     setSubmittingEdit(true);
     try {
-      const res = await axios.get(`https://recherche-entreprises.api.gouv.fr/search?q=${editFormData.siret.replace(/\s+/g, '')}`);
-      if (res.data.results && res.data.results.length > 0) {
-        const result = res.data.results[0];
-        setEditFormData({
-          ...editFormData,
-          nom: result.nom_complet || result.nom_raison_sociale,
-          adresse: result.siege?.adresse || result.adresse
-        });
+      const res = await axios.get(`/api/tiers/search?siret=${raw.replace(/\s+/g, '')}`);
+      const data = res.data;
+      setEditFormData({
+        ...editFormData,
+        nom: data.nom || editFormData.nom,
+        adresse: data.adresse || editFormData.adresse,
+        natureJuridique: data.natureJuridique || editFormData.natureJuridique,
+        siret: data.siret || raw,
+        etatAdministratif: data.etatAdministratif || ''
+      });
+      if (data.etatAdministratif && data.etatAdministratif !== 'Actif') {
+        alert(`Attention : ce tiers n'est plus actif dans la base de l'État (état administratif : ${data.etatAdministratif}).`);
       }
     } catch (err) {
       alert('SIRET introuvable');
