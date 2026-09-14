@@ -211,6 +211,21 @@ export default function FacturationPage() {
     }
   };
 
+  // Lors d'une recherche, désélectionne automatiquement les dossiers qui ne
+  // correspondent pas au filtre : le montant du train ne reflète alors que
+  // les dossiers cochés et visibles.
+  useEffect(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return;
+    const matching = new Set(
+      dossiers.filter(d =>
+        (d.nom || '').toLowerCase().includes(q) ||
+        (d.tiers?.nom || '').toLowerCase().includes(q)
+      ).map(d => d.id)
+    );
+    setSelectedIds(prev => prev.filter(id => matching.has(id)));
+  }, [searchQuery, dossiers]);
+
   const verifyTiersBeforeBilling = async (dossierId: number): Promise<boolean> => {
     try {
       const dossier = dossiers.find(d => d.id === dossierId);
@@ -548,7 +563,9 @@ export default function FacturationPage() {
                   </div>
                 )}
                 <div className="sm:text-right">
-                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Montant du train</p>
+                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">
+                    Montant du train · {selectedIds.length} dossier{selectedIds.length > 1 ? 's' : ''} coché{selectedIds.length > 1 ? 's' : ''}
+                  </p>
                   <p className="text-2xl font-black text-blue-700">{totalAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</p>
                 </div>
               </div>
