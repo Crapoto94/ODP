@@ -6,28 +6,16 @@ import { Loader2, ShoppingBag, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-interface Ligne {
-  id: number;
-  articleId: number;
-  article?: {
-    id: number;
-    designation: string;
-  };
-}
-
 interface TLPEDossier {
-  id: number;
-  numero?: string;
-  dateDebut?: string;
-  dateFin?: string;
-  statut?: string;
-  adresse?: string;
-  tiers?: {
-    nom: string;
-    prenom?: string;
-    adresse?: string;
-  };
-  lignes?: Ligne[];
+  id: number; // tiersId
+  nom: string;
+  code_sedit?: string | null;
+  adresse?: string | null;
+  years: number[];
+  lastYear: number;
+  lastYearStatut: string;
+  lastYearTotal: number;
+  nbDispositifs: number;
 }
 
 export default function TLPEPage() {
@@ -42,7 +30,7 @@ export default function TLPEPage() {
 
   const fetchTLPEData = async () => {
     try {
-      const res = await axios.get('/api/occupations?type=TLPE');
+      const res = await axios.get('/api/tlpe');
       setDossiers(res.data || []);
     } catch (err) {
       console.error('Failed to fetch TLPE data:', err);
@@ -53,8 +41,8 @@ export default function TLPEPage() {
   };
 
   const filteredDossiers = dossiers.filter((dossier) =>
-    dossier.numero?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    dossier.tiers?.nom?.toLowerCase().includes(searchTerm.toLowerCase())
+    dossier.code_sedit?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    dossier.nom?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -110,60 +98,33 @@ export default function TLPEPage() {
           {filteredDossiers.map((dossier) => (
             <Link
               key={dossier.id}
-              href={`/dashboard/occupations/${dossier.id}`}
+              href={`/dashboard/tlpe/${dossier.id}`}
               className="group block bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all duration-300 p-4"
             >
               <div className="flex items-center justify-between gap-6">
-                <div className="flex items-start gap-3 min-w-0" style={{ flex: '0 0 25%' }}>
+                <div className="flex items-start gap-3 min-w-0" style={{ flex: '0 0 30%' }}>
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-black text-sm shrink-0">
-                    {(dossier.tiers?.nom || 'TLPE').substring(0, 2).toUpperCase()}
+                    {(dossier.nom || 'TLPE').substring(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="text-sm font-black text-slate-900 group-hover:text-purple-600 transition-colors truncate">
-                      {dossier.tiers?.prenom && `${dossier.tiers.prenom} `}{dossier.tiers?.nom}
+                      {dossier.nom}
                     </h3>
-                    {dossier.adresse && (
-                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">{dossier.adresse}</p>
-                    )}
+                    <p className="text-xs text-slate-500 mt-1 truncate">
+                      {dossier.code_sedit ? `${dossier.code_sedit} — ` : ''}{dossier.adresse || ''}
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  {dossier.lignes && dossier.lignes.length > 0 ? (
-                    <div className="space-y-1">
-                      {dossier.lignes.slice(0, 4).map((ligne, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center gap-2"
-                        >
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 shrink-0">
-                            1
-                          </span>
-                          <span className="text-xs font-bold text-slate-700 truncate">
-                            {ligne.article?.designation || 'Article'}
-                          </span>
-                        </div>
-                      ))}
-                      {dossier.lignes.length > 4 && (
-                        <div className="text-xs font-bold text-slate-700">
-                          +{dossier.lignes.length - 4} autres
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-xs text-slate-400">—</span>
-                  )}
+                  <span className="text-xs font-bold text-slate-700">{dossier.nbDispositifs} dispositif{dossier.nbDispositifs !== 1 ? 's' : ''}</span>
                 </div>
 
                 <div className="flex items-center gap-4 shrink-0">
-                  {dossier.dateDebut && (
-                    <div className="text-right">
-                      <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">Période</p>
-                      <p className="text-xs text-slate-500">
-                        {new Date(dossier.dateDebut).toLocaleDateString('fr-FR')}
-                      </p>
-                    </div>
-                  )}
+                  <div className="text-right">
+                    <p className="text-xs font-bold text-purple-600 uppercase tracking-widest">{dossier.lastYear}</p>
+                    <p className="text-xs text-slate-500">{dossier.lastYearTotal.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</p>
+                  </div>
 
                   <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-colors">
                     <ShoppingBag size={18} />

@@ -1,19 +1,26 @@
-import React from 'react';
-import { User, Plus, Mail, Smartphone, Trash2, ImageIcon, Maximize2 } from 'lucide-react';
+import React, { useRef } from 'react';
+import { User, Plus, Mail, Smartphone, Trash2, ImageIcon, Maximize2, Loader2 } from 'lucide-react';
 
 interface Props {
   occupation: any;
   isFactured: boolean;
   onOpenContactModal: () => void;
   onDeleteContact: (id: number) => void;
+  onUploadPhoto?: (file: File) => void;
+  onDeletePhoto?: (index: number) => void;
+  isUploadingPhoto?: boolean;
 }
 
 export default function TlpeSidebar({
   occupation,
   isFactured,
   onOpenContactModal,
-  onDeleteContact
+  onDeleteContact,
+  onUploadPhoto,
+  onDeletePhoto,
+  isUploadingPhoto
 }: Props) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const photoList = occupation.photos ? occupation.photos.split(',').filter(Boolean) : [];
 
   return (
@@ -70,7 +77,32 @@ export default function TlpeSidebar({
 
       {/* Photos Widget */}
       <section className="bg-slate-900 rounded-[3rem] p-10 text-white space-y-8 shadow-2xl">
-        <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Photos Terrain</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Photos Terrain</h3>
+          {!isFactured && onUploadPhoto && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) onUploadPhoto(file);
+                  e.target.value = '';
+                }}
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingPhoto}
+                className="p-2.5 bg-white/10 text-white rounded-xl hover:bg-purple-600 transition-all disabled:opacity-50"
+                title="Ajouter une photo"
+              >
+                {isUploadingPhoto ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />}
+              </button>
+            </>
+          )}
+        </div>
         <div className="grid grid-cols-2 gap-4">
           {photoList.length > 0 ? photoList.map((url: string, i: number) => (
             <div key={i} className="aspect-square rounded-2xl overflow-hidden border border-white/10 relative group bg-slate-800">
@@ -78,6 +110,15 @@ export default function TlpeSidebar({
               <a href={url} target="_blank" rel="noreferrer" className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Maximize2 size={24} />
               </a>
+              {!isFactured && onDeletePhoto && (
+                <button
+                  onClick={() => onDeletePhoto(i)}
+                  className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-black/60 flex items-center justify-center text-white/70 hover:text-rose-400 hover:bg-black/80 opacity-0 group-hover:opacity-100 transition-all"
+                  title="Supprimer cette photo"
+                >
+                  <Trash2 size={13} />
+                </button>
+              )}
             </div>
           )) : (
             <div className="col-span-2 py-10 text-center border-2 border-dashed border-white/5 rounded-2xl">

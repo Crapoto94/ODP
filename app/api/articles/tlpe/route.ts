@@ -96,13 +96,18 @@ export async function POST(req: Request) {
     }
 
     // 2. Manage Reference Articles (The Slots)
+    // Les libelles ne doivent PAS contenir l'annee : le report d'annee
+    // (app/api/report/process/route.ts) fait correspondre les tarifs d'une
+    // annee a l'autre par egalite exacte du texte "designation". Un libelle
+    // qui change chaque annee (ex: "TLPE 2025 - ...") ne matcherait jamais
+    // le meme slot pour l'annee suivante.
     const refSlots = [
-      { slot: 'enseignes_12_50', designation: `TLPE ${anneeInt} - Enseignes (12m² à 50m²)` },
-      { slot: 'enseignes_50_plus', designation: `TLPE ${anneeInt} - Enseignes (> 50m²)` },
-      { slot: 'pub_non_num_50_moins', designation: `TLPE ${anneeInt} - Dispositifs non-numérique (<= 50m²)` },
-      { slot: 'pub_non_num_50_plus', designation: `TLPE ${anneeInt} - Dispositifs non-numérique (> 50m²)` },
-      { slot: 'pub_num_50_moins', designation: `TLPE ${anneeInt} - Dispositifs numérique (<= 50m²)` },
-      { slot: 'pub_num_50_plus', designation: `TLPE ${anneeInt} - Dispositifs numérique (> 50m²)` }
+      { slot: 'enseignes_12_50', designation: `Enseignes (12m² à 50m²)` },
+      { slot: 'enseignes_50_plus', designation: `Enseignes (> 50m²)` },
+      { slot: 'pub_non_num_50_moins', designation: `Dispositifs non-numérique (<= 50m²)` },
+      { slot: 'pub_non_num_50_plus', designation: `Dispositifs non-numérique (> 50m²)` },
+      { slot: 'pub_num_50_moins', designation: `Dispositifs numérique (<= 50m²)` },
+      { slot: 'pub_num_50_plus', designation: `Dispositifs numérique (> 50m²)` }
     ];
 
     for (const s of refSlots) {

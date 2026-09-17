@@ -1,300 +1,204 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import axios from 'axios';
-import { 
-  Euro, 
-  MapPin, 
-  Calendar, 
-  Package, 
-  List, 
-  Download, 
-  Loader2, 
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  ExternalLink,
-  ChevronRight,
-  Info,
-  Maximize2,
-  Plus,
-  Search,
-  Tag,
-  Hash,
-  Fingerprint,
-  Pencil,
-  Trash2,
-  MessageSquare
-} from 'lucide-react';
-import { format, differenceInDays, isLeapYear } from 'date-fns';
+import React, { use, useState } from 'react';
+import Link from 'next/link';
+import { ArrowLeft, ShoppingBag, RefreshCw, Trash2 } from 'lucide-react';
 import TlpeLigneArticleModal from '@/components/TlpeLigneArticleModal';
-import OccupationHeader from '@/app/dashboard/occupations/[id]/components/OccupationHeader';
-import OccupationHero from '@/app/dashboard/occupations/[id]/components/OccupationHero';
+import AutorisationsList from '@/components/AutorisationsList';
+import OccupationFinancialCard from '@/app/dashboard/occupations/[id]/components/OccupationFinancialCard';
 import OccupationNotes from '@/app/dashboard/occupations/[id]/components/OccupationNotes';
+import SignatureRequestModal from '@/app/dashboard/occupations/[id]/components/SignatureRequestModal';
 import TlpeSidebar from './components/TlpeSidebar';
 import TlpeContactModal from './components/TlpeContactModal';
 import TlpeArticles from './components/TlpeArticles';
-import Link from 'next/link';
+import TlpeStepper from './components/TlpeStepper';
+import TlpeRenewModal from './components/TlpeRenewModal';
+import { useTlpeLogic } from './hooks/useTlpeLogic';
 
-const STATUS_MAP: Record<string, any> = {
-  'EN_ATTENTE': { label: 'En attente', color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
-  'EN_COURS': { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-  'TERMINE': { label: 'Terminé', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-100' },
-  'VERIFIE': { label: 'Vérifié', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-  'FACTURE': { label: 'Facturé', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
-  'PAYE': { label: 'Payé', color: 'text-emerald-700', bg: 'bg-emerald-100', border: 'border-emerald-300' },
-};
+interface Props {
+  params: Promise<{ id: string }>;
+}
 
-const TYPE_MAP: Record<string, any> = {
-  'TLPE': { label: 'T.L.P.E.', color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-  'COMMERCE': { label: 'Commerce', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-};
+const READ_ONLY_STATUSES = ['FACTURÉ', 'FACTURE', 'TITRÉ', 'TITRE', 'PAYÉ', 'PAYE', 'CLOS'];
 
-export default function TlpeDetailPage() {
-  const params = useParams();
-  const paramId = params.id;
-  const [occ, setOcc] = useState<any>(null);
-  const [tlpeConfig, setTlpeConfig] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [configLoading, setConfigLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
-  const [editingLigne, setEditingLigne] = useState<any>(null);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [generatingPdf, setGeneratingPdf] = useState(false);
-  const [isSubmittingContact, setIsSubmittingContact] = useState(false);
-  const [newContact, setNewContact] = useState({
-    nom: '', prenom: '', email: '', telephone: '', titre: '', entreprise: '', role: 'Contact principal', pjPath: ''
-  });
+export default function TlpeDetailPage({ params }: Props) {
+  const { id: paramId } = use(params);
+  const logic = useTlpeLogic(paramId);
+  const {
+    tiersId, tiers, occupations, years, selectedYear, setSelectedYear, currentOccupation,
+    loading, currentUser, aotGabarits,
+    isUpdatingStatus, handleStatusChange, getStepDates, getTotalAmount,
+    isRenewModalOpen, setIsRenewModalOpen,
+    isGeneratingFacture, handleDownloadFacture,
+    isLigneModalOpen, setIsLigneModalOpen, editingLigne, setEditingLigne, handleDeleteLigne,
+    isContactModalOpen, setIsContactModalOpen, isSubmittingContact, newContact, setNewContact,
+    handleAddContact, handleDeleteContact,
+    isUploadingPhoto, handleUploadPhoto, handleDeletePhoto,
+    handleDeleteYear,
+    refresh,
+  } = logic;
 
-  const fetchOccupation = async () => {
-    try {
-      const res = await axios.get(`/api/occupations/${paramId}`);
-      const data = res.data;
-      setOcc(data);
+  const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
+  const [aotReload, setAotReload] = useState(0);
 
-      const year = data.anneeTaxation || (data.dateDebut ? new Date(data.dateDebut).getFullYear() : new Date().getFullYear());
-      const configRes = await axios.get(`/api/articles/tlpe?annee=${year}`);
-      setTlpeConfig(configRes.data.config);
-      setConfigLoading(false);
-
-      if (data.contacts?.length === 0 && data.tiers) {
-        autoAddTierContact(data);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const autoAddTierContact = async (data: any) => {
-    try {
-      await axios.post(`/api/occupations/${data.id}/contacts`, {
-        prenom: data.tiers.nom,
-        email: data.tiers.email,
-        role: 'Contact Tiers'
-      });
-      fetchOccupation();
-    } catch (err) {
-      console.error('Failed to auto-add tier contact:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchOccupation();
-    axios.get('/api/auth/me').then(res => setCurrentUser(res.data)).catch(() => {});
-  }, [paramId]);
-
-  if (loading || configLoading) {
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <Loader2 size={40} className="animate-spin text-purple-600" />
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-          {loading ? 'Chargement du dossier...' : 'Chargement de la configuration tarifaire...'}
-        </p>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Chargement du dossier TLPE...</p>
       </div>
     );
   }
 
-  if (!occ) {
+  if (!tiers) {
     return (
       <div className="text-center py-20 font-black">
-        <p className="text-xl text-slate-900 uppercase tracking-widest">Dossier non trouvé</p>
+        <p className="text-xl text-slate-900 uppercase tracking-widest">Tiers non trouvé</p>
         <Link href="/dashboard/tlpe" className="text-purple-600 hover:underline mt-4 inline-block text-[10px] uppercase">Retour à la liste</Link>
       </div>
     );
   }
 
-  const statusInfo = STATUS_MAP[occ.statut] || { label: occ.statut, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' };
-  const typeInfo = TYPE_MAP[occ.type] || { label: occ.type, color: 'text-slate-500', bg: 'bg-slate-100', border: 'border-slate-200' };
-  const isLocked = ['VERIFIE', 'FACTURE', 'PAYE'].includes(occ.statut);
-  const isFactured = ['FACTURE', 'PAYE'].includes(occ.statut);
-  const anneeTaxation = occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear());
-
-  const totalEnseigneSurface = occ.lignes?.reduce((sum: number, l: any) => {
-    if (l.article?.meta?.tlpeType === 'ENSEIGNE') return sum + (l.quantite1 || 0);
-    return sum;
-  }, 0) || 0;
-
-  const threshold = tlpeConfig?.exoneration ?? 7;
-  const isEnseigneExempt = totalEnseigneSurface <= threshold;
-
-  const totalAmount = occ.lignes?.reduce((sum: number, l: any) => {
-    const isEnseigne = l.article?.meta?.tlpeType === 'ENSEIGNE';
-    if (isEnseigne && isEnseigneExempt) return sum;
-
-    const d1 = new Date(l.dateDebut);
-    const d2 = new Date(l.dateFin);
-    const year = anneeTaxation;
-    const daysInYear = isLeapYear(new Date(year, 0, 1)) ? 366 : 365;
-    const daysActive = differenceInDays(d2, d1) + 1;
-    const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
-    return sum + ((l.montant || 0) * (l.quantite1 || 0) * prorata);
-  }, 0) || 0;
-
-  const handleToggleVerifie = async () => {
-    const newStatut = occ.statut === 'VERIFIE' ? 'EN_COURS' : 'VERIFIE';
-    try {
-      await axios.patch(`/api/occupations/${occ.id}`, { statut: newStatut });
-      fetchOccupation();
-    } catch (err) { alert('Erreur lors du changement de statut'); }
-  };
-
-  const downloadFacture = async () => {
-    setGeneratingPdf(true);
-    try {
-      const res = await axios.get(`/api/facture-pdf/${occ.id}`, { responseType: 'blob' });
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `Facture-TLPE-${occ.id}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      alert('Erreur lors de la génération de la facture');
-    } finally {
-      setGeneratingPdf(false);
-    }
-  };
-
-  const handleDeleteLigne = async (ligneId: number) => {
-    if (!confirm("Retirer cet article ?")) return;
-    try {
-      await axios.delete(`/api/occupations/${occ.id}/lignes/${ligneId}`);
-      fetchOccupation();
-    } catch (err) { alert("Erreur lors de la suppression"); }
-  };
-
-  const handleAddContact = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmittingContact(true);
-    try {
-      await axios.post(`/api/occupations/${occ.id}/contacts`, newContact);
-      setIsContactModalOpen(false);
-      setNewContact({ nom: '', prenom: '', email: '', telephone: '', titre: '', entreprise: '', role: 'Contact principal', pjPath: '' });
-      fetchOccupation();
-    } catch (err) { alert('Erreur lors de l\'ajout du contact'); }
-    finally { setIsSubmittingContact(false); }
-  };
-
-  const handleDeleteContact = async (contactId: number) => {
-    if (!confirm('Supprimer ce contact ?')) return;
-    try {
-      await axios.delete(`/api/occupations/${occ.id}/contacts/${contactId}`);
-      fetchOccupation();
-    } catch (err) { alert('Erreur lors de la suppression'); }
-  };
+  const isReadOnly = currentOccupation ? READ_ONLY_STATUSES.includes(currentOccupation.statut) : false;
+  const totalAmount = getTotalAmount();
 
   return (
-    <div className="min-h-screen pb-10 space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
-      
-      <OccupationHeader 
-        occupation={occ} 
-        isFactured={isFactured} 
-        isLocked={isLocked} 
-        onToggleVerifie={handleToggleVerifie}
-        backLink="/dashboard/tlpe"
-        backLabel="Retour aux dossiers TLPE"
-        editLink={`/dashboard/tlpe?edit=${occ.id}`}
-      />
-
-      <div className="max-w-7xl mx-auto space-y-6 px-4">
-        {/* Condensed Hero with Financial Summary */}
-        <div className="flex flex-col lg:flex-row items-stretch gap-6">
-          <div className="flex-1">
-             <OccupationHero occupation={occ} statusInfo={statusInfo} typeInfo={typeInfo} />
-          </div>
-          
-          <div className="w-full lg:w-[320px] shrink-0">
-            <div className="bg-slate-900 rounded-xl p-6 text-white relative overflow-hidden group/wallet h-full shadow-xl">
-               <div className="absolute -right-10 -bottom-10 opacity-20 group-hover/wallet:scale-110 transition-all duration-700">
-                  <Euro size={160} className="text-white/10" />
-               </div>
-               <div className="relative z-10 flex flex-col h-full justify-between gap-6">
-                  <div>
-                    <p className="text-slate-500 font-black text-[9px] uppercase tracking-widest mb-1.5 leading-none">Redevance Totale {anneeTaxation}</p>
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-3xl font-black tracking-tighter tabular-nums text-white">
-                        {totalAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })}
-                      </span>
-                      <span className="text-lg font-black text-purple-400">€</span>
-                    </div>
-                  </div>
-                  
-                  <button 
-                    onClick={downloadFacture}
-                    disabled={generatingPdf}
-                    className="w-full bg-white text-slate-900 hover:bg-slate-100 py-3 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
-                  >
-                    {generatingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-                    {generatingPdf ? 'Génération...' : 'Facture PDF'}
-                  </button>
-               </div>
+    <div className="min-h-screen pb-10 space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard/tlpe" className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+            <ArrowLeft size={20} className="text-slate-600" />
+          </Link>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
+              <ShoppingBag size={24} />
             </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          <div className="lg:col-span-2 space-y-6">
-             <TlpeArticles 
-               lignes={occ.lignes || []} 
-               isFactured={isFactured}
-               anneeTaxation={anneeTaxation}
-               isEnseigneExempt={isEnseigneExempt}
-               onAddArticle={() => { setEditingLigne(null); setIsLigneModalOpen(true); }}
-               onEditArticle={(ligne) => { setEditingLigne(ligne); setIsLigneModalOpen(true); }}
-               onDeleteArticle={handleDeleteLigne}
-             />
-             <OccupationNotes occupationId={occ.id} currentUser={currentUser} />
-          </div>
-
-          <div className="space-y-6">
-             <TlpeSidebar 
-               occupation={occ} 
-               isFactured={isFactured} 
-               onOpenContactModal={() => setIsContactModalOpen(true)}
-               onDeleteContact={handleDeleteContact}
-             />
+            <div>
+              <h1 className="text-3xl font-black text-slate-900 leading-tight">{tiers.nom}</h1>
+              <p className="text-sm font-medium text-slate-500 mt-1">
+                {tiers.code_sedit ? `Code ${tiers.code_sedit}` : 'Dossier T.L.P.E.'}{tiers.adresse ? ` — ${tiers.adresse}` : ''}
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      {isLigneModalOpen && (
-        <TlpeLigneArticleModal 
+      <div className="max-w-7xl mx-auto w-full space-y-8 px-4">
+        {/* Financial card */}
+        {currentOccupation && (
+          <OccupationFinancialCard
+            totalAmount={totalAmount}
+            generatingPdf={isGeneratingFacture}
+            onDownloadFacture={handleDownloadFacture}
+            taxationYear={selectedYear}
+          />
+        )}
+
+        {/* Stepper */}
+        {currentOccupation && (
+          <TlpeStepper
+            totalAmount={totalAmount}
+            currentStatus={currentOccupation.statut}
+            onStatusChange={isReadOnly ? async () => {} : handleStatusChange}
+            isUpdating={isUpdatingStatus}
+            isReadOnly={isReadOnly}
+            stepDates={getStepDates()}
+          />
+        )}
+
+        {/* Year selector + Reconduire */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          {years.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {[...years].sort((a, b) => b - a).map((year) => (
+                <div key={year} className="group relative">
+                  <button
+                    onClick={() => setSelectedYear(year)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${
+                      selectedYear === year
+                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    {year}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteYear(year)}
+                    title="Supprimer ce dossier"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-rose-500 text-white items-center justify-center hidden group-hover:flex"
+                  >
+                    <Trash2 size={10} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          {selectedYear && (
+            <button
+              onClick={() => setIsRenewModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-600 rounded-xl hover:bg-purple-600 hover:text-white transition-all shadow-sm"
+            >
+              <RefreshCw size={16} />
+              <span className="text-[10px] font-black uppercase tracking-widest">Reconduire vers {selectedYear + 1}</span>
+            </button>
+          )}
+        </div>
+
+        {!currentOccupation ? (
+          <div className="py-20 text-center bg-white rounded-2xl border border-dashed border-slate-200">
+            <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Aucun dossier T.L.P.E. pour {selectedYear}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <div className="lg:col-span-2 space-y-6">
+              <TlpeArticles
+                lignes={currentOccupation.lignes || []}
+                isFactured={isReadOnly}
+                anneeTaxation={selectedYear || new Date().getFullYear()}
+                isEnseigneExempt={false}
+                onAddArticle={() => { setEditingLigne(null); setIsLigneModalOpen(true); }}
+                onEditArticle={(ligne: any) => { setEditingLigne(ligne); setIsLigneModalOpen(true); }}
+                onDeleteArticle={handleDeleteLigne}
+              />
+
+              <AutorisationsList
+                occupationId={currentOccupation.id}
+                aotGabarits={aotGabarits}
+                readOnly={isReadOnly}
+                reloadSignal={aotReload}
+                onSendForSignature={() => setIsSignatureModalOpen(true)}
+              />
+
+              <OccupationNotes occupationId={currentOccupation.id} currentUser={currentUser} />
+            </div>
+
+            <div className="space-y-6">
+              <TlpeSidebar
+                occupation={currentOccupation}
+                isFactured={isReadOnly}
+                onOpenContactModal={() => setIsContactModalOpen(true)}
+                onDeleteContact={handleDeleteContact}
+                onUploadPhoto={handleUploadPhoto}
+                onDeletePhoto={handleDeletePhoto}
+                isUploadingPhoto={isUploadingPhoto}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {isLigneModalOpen && currentOccupation && (
+        <TlpeLigneArticleModal
           isOpen={isLigneModalOpen}
           onClose={() => setIsLigneModalOpen(false)}
-          occupationId={occ.id}
-          annee={anneeTaxation}
-          onSuccess={fetchOccupation}
+          occupationId={currentOccupation.id}
+          annee={selectedYear || new Date().getFullYear()}
+          onSuccess={refresh}
           editingLigne={editingLigne}
         />
       )}
 
-      <TlpeContactModal 
+      <TlpeContactModal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
         newContact={newContact}
@@ -302,6 +206,26 @@ export default function TlpeDetailPage() {
         isSubmitting={isSubmittingContact}
         onSubmit={handleAddContact}
       />
+
+      {isRenewModalOpen && selectedYear && (
+        <TlpeRenewModal
+          isOpen={isRenewModalOpen}
+          onClose={() => setIsRenewModalOpen(false)}
+          onSuccess={() => { refresh(); }}
+          tiersId={tiersId}
+          currentYear={selectedYear}
+          occupations={occupations}
+        />
+      )}
+
+      {currentOccupation && (
+        <SignatureRequestModal
+          isOpen={isSignatureModalOpen}
+          onClose={() => setIsSignatureModalOpen(false)}
+          occupationId={currentOccupation.id}
+          onSuccess={() => setAotReload((n) => n + 1)}
+        />
+      )}
     </div>
   );
 }

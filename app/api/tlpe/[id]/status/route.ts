@@ -1,0 +1,103 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
+
+// Meme parcours de statuts que les commerces (app/api/commerces/[id]/status/route.ts),
+// applique aux dossiers TLPE. [id] = tiersId.
+const PROCESS_STEPS = [
+  'INITIALISATION',
+  'INSTRUCTION',
+  'PREPARATION_AOT',
+  'EN_COURS',
+  'VALIDÉ',
+  'FACTURÉ',
+  'TITRÉ',
+  'CLOS',
+];
+
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id: paramId } = await params;
+    const tiersId = parseInt(paramId);
+    const { statut, annee } = await req.json();
+
+    if (!statut || !PROCESS_STEPS.includes(statut)) {
+      return NextResponse.json(
+        { error: 'Invalid status' },
+        { status: 400 }
+      );
+    }
+
+    const occupationsToUpdate = await (prisma as any).occupation.findMany({
+      where: {
+        tiersId,
+        type: 'TLPE',
+        ...(annee ? { anneeTaxation: parseInt(annee) } : {})
+      },
+      select: { id: true, statut: true, anneeTaxation: true }
+    });
+
+    const statusDateMap: Record<string, string> = {
+      'INITIALISATION': 'dateINIT',
+      'INSTRUCTION': 'dateINST',
+      'PREPARATION_AOT': 'datePREP',
+      'EN_COURS': 'dateEN_COURS',
+      'VALIDÉ': 'dateVALIDE',
+      'FACTURÉ': 'dateFACTURE',
+      'TITRÉ': 'dateTITRE',
+      'CLOS': 'dateCLOS'
+    };
+
+    const dateField = statusDateMap[statut];
+    const now = new Date();
+
+    const updated = await (prisma as any).occupation.updateMany({
+      where: {
+        tiersId,
+        type: 'TLPE',
+        ...(annee ? { anneeTaxation: parseInt(annee) } : {})
+      },
+      data: {
+        statut,
+        ...(dateField ? { [dateField]: now } : {})
+      }
+    });
+
+    if (updated.count > 0) {
+      const session = await getSession();
+      const author = session ? `${session.prenom} ${session.nom}`.trim() : 'Conseiller';
+      const nowIso = new Date().toISOString();
+
+      for (const occ of occupationsToUpdate) {
+        if (occ.statut !== statut) {
+          const year = occ.anneeTaxation || new Date().getFullYear();
+          const noteContent = `📊 Passage de statut : ${occ.statut} → ${statut} (${year})`;
+          await (prisma as any).note.create({
+            data: {
+              occupationId: occ.id,
+              content: noteContent,
+              author,
+              isEmail: false,
+              origin: 'desktop',
+              created_at: nowIso
+            }
+          });
+        }
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      updatedCount: updated.count,
+      status: statut
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500 }
+    );
+  }
+}

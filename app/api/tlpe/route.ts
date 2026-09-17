@@ -1,69 +1,58 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 
-export async function GET() {
+// Liste des dossiers TLPE, un tiers = une ligne (comme /api/commerces),
+// pour la page /dashboard/tlpe.
+export async function GET(request: Request) {
   try {
-    console.log('[tlpe] Starting query...');
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
     const occupations = await (prisma as any).occupation.findMany({
-      where: {
-        type: 'TLPE'
-      },
+      where: { type: 'TLPE' },
       include: {
         tiers: true,
-        lignes: {
-          include: {
-            article: true
-          }
-        }
+        lignes: { where: { deletedAt: null } }
+      },
+      orderBy: { anneeTaxation: 'desc' }
+    });
+
+    const byTiers = new Map<number, any>();
+    for (const occ of occupations) {
+      if (!occ.tiers) continue;
+      const tierId = occ.tiers.id;
+      const montant = occ.montantCalcule || 0;
+
+      if (!byTiers.has(tierId)) {
+        byTiers.set(tierId, {
+          id: tierId,
+          nom: occ.tiers.nom,
+          code_sedit: occ.tiers.code_sedit,
+          adresse: occ.tiers.adresse,
+          years: [],
+          lastYear: occ.anneeTaxation,
+          lastYearStatut: occ.statut,
+          lastYearTotal: montant,
+          nbDispositifs: occ.lignes.length
+        });
       }
-    });
-    console.log('[tlpe] Found', occupations.length, 'dossiers');
+      const entry = byTiers.get(tierId);
+      if (occ.anneeTaxation && !entry.years.includes(occ.anneeTaxation)) entry.years.push(occ.anneeTaxation);
+      if (occ.anneeTaxation && occ.anneeTaxation >= entry.lastYear) {
+        entry.lastYear = occ.anneeTaxation;
+        entry.lastYearStatut = occ.statut;
+        entry.lastYearTotal = montant;
+        entry.nbDispositifs = occ.lignes.length;
+      }
+    }
 
-    const dossiers = occupations.map((occ: any) => {
-      const articleMap = new Map<string, { id: number; count: number }>();
-
-      (occ.lignes || []).forEach((ligne: any) => {
-        if (ligne.article) {
-          const articleName = ligne.article.designation || ligne.article.nom || 'Unknown';
-          if (articleMap.has(articleName)) {
-            const existing = articleMap.get(articleName)!;
-            existing.count++;
-          } else {
-            articleMap.set(articleName, {
-              id: ligne.article.id,
-              count: 1
-            });
-          }
-        }
-      });
-
-      const articles = Array.from(articleMap.entries()).map(([nom, data]) => ({
-        id: data.id,
-        nom,
-        count: data.count
-      }));
-
-      return {
-        id: occ.id,
-        numero: occ.numero || `Dossier ${occ.id}`,
-        dateDebut: occ.dateDebut,
-        dateFin: occ.dateFin,
-        montant: occ.montantCalcule || 0,
-        statut: occ.statut,
-        tiers: {
-          id: occ.tiers?.id,
-          nom: occ.tiers?.nom || '',
-          prenom: occ.tiers?.prenom,
-          adresse: occ.tiers?.adresse,
-          email: occ.tiers?.email
-        },
-        articles
-      };
-    });
-
-    return NextResponse.json(dossiers);
+    const result = Array.from(byTiers.values()).sort((a, b) => a.nom.localeCompare(b.nom));
+    return NextResponse.json(result);
   } catch (err: any) {
-    console.error('[tlpe] Error:', err.message);
-    return NextResponse.json({ error: err.message, stack: err.stack }, { status: 500 });
+    console.error('[tlpe-list]', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
