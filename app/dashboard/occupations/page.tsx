@@ -88,6 +88,11 @@ interface Tiers {
 
 // Local STATUS_MAP removed in favor of dynamic mapping from @/lib/status-utils
 
+const DOSSIER_SECTIONS = [
+  { type: 'CHANTIER', label: 'Chantiers', icon: MapPin, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { type: 'TOURNAGE', label: 'Tournages', icon: Info, color: 'text-amber-600', bg: 'bg-amber-50' },
+] as const;
+
 const TYPE_MAP: Record<string, { label: string; icon: any; color: string; bg: string }> = {
   'TLPE': { label: 'TLPE', icon: Euro, color: 'text-purple-600', bg: 'bg-purple-50' },
   'COMMERCE': { label: 'Commerce', icon: Package, color: 'text-blue-600', bg: 'bg-blue-50' },
@@ -109,6 +114,9 @@ function OccupationsPageContent() {
 
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
+  // Type verrouillé par le menu latéral (?filtre=CHANTIER | ?filtre=TOURNAGE).
+  // Quand il est défini, la page se cantonne à ce seul type de dossier.
+  const [filtreType, setFiltreType] = useState<'CHANTIER' | 'TOURNAGE' | null>(null);
   const [yearFilter, setYearFilter] = useState('ALL'); // Default to ALL years to show all dossiers
   const [alertFilter, setAlertFilter] = useState(false);
   const [view, setView] = useState<'ACTIVE' | 'ARCHIVE'>('ACTIVE');
@@ -253,6 +261,19 @@ function OccupationsPageContent() {
     }
   }, [searchParams]);
 
+  // Chantiers et Tournages sont deux dossiers distincts : le menu latéral pointe
+  // vers /dashboard/occupations?filtre=CHANTIER ou ?filtre=TOURNAGE.
+  useEffect(() => {
+    const filtre = searchParams.get('filtre');
+    if (filtre === 'CHANTIER' || filtre === 'TOURNAGE') {
+      setFiltreType(filtre);
+      setTypeFilter(filtre);
+    } else {
+      setFiltreType(null);
+      setTypeFilter((current) => (current === 'CHANTIER' || current === 'TOURNAGE' ? 'ALL' : current));
+    }
+  }, [searchParams]);
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -330,7 +351,7 @@ function OccupationsPageContent() {
         await axios.post('/api/occupations', payload);
       }
       setIsModalOpen(false);
-      resetForm();
+      resetForm(filtreType || 'CHANTIER');
       fetchOccupations();
 
       // If editing from the detail page (?edit=ID), redirect to the detail page to see updates
@@ -696,24 +717,38 @@ function OccupationsPageContent() {
     return acc;
   }, {} as Record<string, { total: number; enCours: number; aFacturer: number; facture: number }>);
 
+  // Quand le menu latéral a verrouillé un type (Chantiers / Tournages), on
+  // n'affiche que la synthèse et la liste de ce type de dossier.
+  const visibleSections = filtreType
+    ? DOSSIER_SECTIONS.filter((section) => section.type === filtreType)
+    : DOSSIER_SECTIONS;
+  const pageTitle = filtreType ? DOSSIER_SECTIONS.find((s) => s.type === filtreType)!.label : 'Dossiers';
+  const pageSubtitle = filtreType
+    ? (filtreType === 'CHANTIER'
+        ? "Dossiers de travaux occupant le domaine public"
+        : "Autorisations de tournage sur le domaine public")
+    : "Gestion des autorisations d'occupation du domaine public";
+  const countForView = (o: { type: string }) =>
+    (o.type === 'CHANTIER' || o.type === 'TOURNAGE') && (!filtreType || o.type === filtreType);
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Dossiers</h2>
-          <p className="text-slate-500 font-medium tracking-wide">Gestion des autorisations d'occupation du domaine public</p>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">{pageTitle}</h2>
+          <p className="text-slate-500 font-medium tracking-wide">{pageSubtitle}</p>
           <div className="flex gap-6 mt-4">
             <button
               onClick={() => setView('ACTIVE')}
               className={`text-sm font-black uppercase tracking-widest ${view === 'ACTIVE' ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
             >
-              Actifs ({view === 'ACTIVE' ? occupations.filter(o => (o.type === 'CHANTIER' || o.type === 'TOURNAGE')).length : '...'})
+              Actifs ({view === 'ACTIVE' ? occupations.filter(countForView).length : '...'})
             </button>
             <button
               onClick={() => setView('ARCHIVE')}
               className={`text-sm font-black uppercase tracking-widest ${view === 'ARCHIVE' ? 'text-rose-600' : 'text-slate-400 hover:text-slate-600'}`}
             >
-              Archivés ({view === 'ARCHIVE' ? occupations.filter(o => (o.type === 'CHANTIER' || o.type === 'TOURNAGE')).length : '...'})
+              Archivés ({view === 'ARCHIVE' ? occupations.filter(countForView).length : '...'})
             </button>
           </div>
         </div>
@@ -734,7 +769,7 @@ function OccupationsPageContent() {
                 <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
               </button>
               <button
-                onClick={() => { resetForm(); setIsModalOpen(true); }}
+                onClick={() => { resetForm(filtreType || 'CHANTIER'); setIsModalOpen(true); }}
                 className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-3.5 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-500/20 transition-all active:scale-95"
               >
                 <Plus size={18} />
@@ -753,14 +788,11 @@ function OccupationsPageContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
-        {[
-          { type: 'CHANTIER', label: 'Chantiers', icon: MapPin, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { type: 'TOURNAGE', label: 'Tournages', icon: Info, color: 'text-amber-600', bg: 'bg-amber-50' },
-        ].map((cat) => (
+      <div className={`grid gap-6 mb-8 ${visibleSections.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
+        {visibleSections.map((cat) => (
           <button
             key={cat.type}
-            onClick={() => setTypeFilter(typeFilter === cat.type ? 'ALL' : cat.type)}
+            onClick={filtreType ? undefined : () => setTypeFilter(typeFilter === cat.type ? 'ALL' : cat.type)}
             className={`p-6 rounded-2xl border transition-all text-left group ${
               typeFilter === cat.type
                 ? 'bg-white border-blue-500 shadow-xl shadow-blue-500/10'

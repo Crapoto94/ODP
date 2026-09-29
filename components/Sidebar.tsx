@@ -2,8 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
 import axios from 'axios';
 import {
   LayoutDashboard,
@@ -21,15 +21,28 @@ import {
   Store,
   ShoppingBag,
   HardHat,
+  Clapperboard,
   Database,
   Zap,
   Loader2
 } from 'lucide-react';
 import { hasPermission, type Permission } from '@/lib/permissions';
 
-const menuItems: Array<{ icon: any; label: string; href: string; permission?: Permission }> = [
+type MenuItem = {
+  icon: any;
+  label: string;
+  href: string;
+  permission?: Permission;
+  // Chemin de la page servant à l'état actif lorsque `href` porte une query string
+  path?: string;
+  // Type de dossier attendu pour l'état actif (CHANTIER / TOURNAGE)
+  dossierType?: string;
+};
+
+const menuItems: MenuItem[] = [
   { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard' },
-  { icon: HardHat, label: 'Chantiers et tournages', href: '/dashboard/occupations' },
+  { icon: HardHat, label: 'Chantiers', href: '/dashboard/occupations?filtre=CHANTIER', path: '/dashboard/occupations', dossierType: 'CHANTIER' },
+  { icon: Clapperboard, label: 'Tournages', href: '/dashboard/occupations?filtre=TOURNAGE', path: '/dashboard/occupations', dossierType: 'TOURNAGE' },
   { icon: Store, label: 'Commerces', href: '/dashboard/commerces' },
   { icon: ShoppingBag, label: 'T.L.P.E.', href: '/dashboard/tlpe' },
   { icon: Users, label: 'Gestion des Tiers', href: '/dashboard/tiers' },
@@ -40,6 +53,62 @@ const menuItems: Array<{ icon: any; label: string; href: string; permission?: Pe
   { icon: MapIcon, label: 'Carte SIG', href: '/dashboard/carte', permission: 'CONTROLE_TERRAIN' },
   { icon: Settings, label: 'Paramètres', href: '/dashboard/settings', permission: 'MANAGE_USERS' },
 ];
+
+type SidebarLinksProps = {
+  isCollapsed: boolean;
+  user: any;
+  activePath: string;
+  activeDossierType: string | null;
+};
+
+function SidebarLinks({ isCollapsed, user, activePath, activeDossierType }: SidebarLinksProps) {
+  return (
+    <nav className={`flex-1 p-4 space-y-1 overflow-hidden ${isCollapsed ? 'items-center' : ''}`}>
+      {menuItems.map((item) => {
+        const isActive = item.dossierType && activeDossierType
+          ? activePath === item.path && item.dossierType === activeDossierType
+          : activePath === item.href;
+        if (item.permission && user?.role && !hasPermission(user.role, item.permission)) return null;
+        if (item.permission && !user) return null;
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            title={isCollapsed ? item.label : ''}
+            className={`flex items-center gap-4 transition-all group font-bold text-sm h-10 rounded-2xl ${
+              isCollapsed ? 'justify-center w-full px-0' : 'px-4'
+            } ${
+              isActive
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <item.icon size={20} className={`${isActive ? 'text-white' : 'group-hover:scale-110 transition-transform'} shrink-0`} />
+            {!isCollapsed && <span className="animate-in fade-in slide-in-from-left-2 duration-300">{item.label}</span>}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+// `useSearchParams` impose une frontière Suspense pour ne pas bloquer le
+// pré-rendu de la page : le fallback affiche le menu sans état actif.
+function SidebarNav({ isCollapsed, user }: { isCollapsed: boolean; user: any }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeDossierType = searchParams.get('filtre') || searchParams.get('type');
+
+  return (
+    <SidebarLinks
+      isCollapsed={isCollapsed}
+      user={user}
+      activePath={pathname}
+      activeDossierType={activeDossierType}
+    />
+  );
+}
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -131,31 +200,9 @@ export default function Sidebar() {
         </button>
       </div>
 
-      <nav className={`flex-1 p-4 space-y-1 overflow-hidden ${isCollapsed ? 'items-center' : ''}`}>
-        {menuItems.map((item) => {
-          const isActive = pathname === item.href;
-          if (item.permission && user?.role && !hasPermission(user.role, item.permission)) return null;
-          if (item.permission && !user) return null;
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={isCollapsed ? item.label : ''}
-              className={`flex items-center gap-4 transition-all group font-bold text-sm h-10 rounded-2xl ${
-                isCollapsed ? 'justify-center w-full px-0' : 'px-4'
-              } ${
-                isActive
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
-            >
-              <item.icon size={20} className={`${isActive ? 'text-white' : 'group-hover:scale-110 transition-transform'} shrink-0`} />
-              {!isCollapsed && <span className="animate-in fade-in slide-in-from-left-2 duration-300">{item.label}</span>}
-            </Link>
-          );
-        })}
-      </nav>
+      <Suspense fallback={<SidebarLinks isCollapsed={isCollapsed} user={user} activePath={pathname} activeDossierType={null} />}>
+        <SidebarNav isCollapsed={isCollapsed} user={user} />
+      </Suspense>
 
       <div className={`p-4 border-t border-slate-800 space-y-2`}>
         {user ? (
