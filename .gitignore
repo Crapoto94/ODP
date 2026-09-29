@@ -45,3 +45,6 @@ public/Factures/*.pdf
 public/Factures/*.filien
 scratch/
 DIP/
+
+# deploiement local (pulldocker.ini contient des identifiants serveur)
+pulldocker.ini
