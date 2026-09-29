@@ -75,13 +75,30 @@ Write-Host "Commandes      : $($orderedCmds -join ' | ')"
 Write-Host ""
 
 # Recherche de plink.exe (PuTTY) pour l'authentification par mot de passe non interactive.
-$plinkCmd = Get-Command plink.exe -ErrorAction SilentlyContinue
-if ($plinkCmd) {
-    $plinkPath = $plinkCmd.Path
-} elseif (Test-Path 'C:\Program Files\PuTTY\plink.exe') {
-    $plinkPath = 'C:\Program Files\PuTTY\plink.exe'
-} else {
-    Write-Error "plink.exe introuvable (PuTTY). Installez PuTTY, ou adaptez ce script pour utiliser ssh.exe avec une cle."
+# plink n'est pas toujours dans le PATH ni sous C:\Program Files : on balaie
+# les emplacements d'installation courants (dont le dossier utilisateur).
+$plinkCandidates = @(
+    (Get-Command plink.exe -ErrorAction SilentlyContinue).Path
+    "$env:LOCALAPPDATA\Programs\PuTTY\plink.exe"
+    "$env:ProgramFiles\PuTTY\plink.exe"
+    "${env:ProgramFiles(x86)}\PuTTY\plink.exe"
+    "$env:USERPROFILE\scoop\apps\putty\current\plink.exe"
+    "C:\ProgramData\chocolatey\bin\plink.exe"
+)
+
+$plinkPath = $plinkCandidates | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
+
+# Dernier recours : recherche limitee dans les dossiers utilisateur/programmes.
+if (-not $plinkPath) {
+    $searchRoots = @("$env:LOCALAPPDATA\Programs", $env:ProgramFiles) |
+        Where-Object { $_ -and (Test-Path -LiteralPath $_) }
+    $found = Get-ChildItem -Path $searchRoots -Filter 'plink.exe' -Recurse -Depth 4 -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+    if ($found) { $plinkPath = $found.FullName }
+}
+
+if (-not $plinkPath) {
+    Write-Error "plink.exe introuvable (PuTTY). Installez PuTTY (winget install PuTTY.PuTTY) ou adaptez ce script pour utiliser ssh.exe avec une cle."
     exit 1
 }
 
