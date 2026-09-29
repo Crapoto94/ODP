@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { addYears } from 'date-fns';
-import { updateOccupationTotal } from '@/lib/tlpe-utils';
+import { updateOccupationTotal, retariferEnseignes } from '@/lib/tlpe-utils';
 
 export async function POST(req: NextRequest) {
   try {
@@ -70,13 +70,18 @@ export async function POST(req: NextRequest) {
         } else {
           const q1 = ligne.quantite1 || 0;
           const q2 = ligne.quantite2 || 1;
+          // TLPE : `montant` est le tarif UNITAIRE (€/m²), recalcule par
+          // retariferEnseignes ci-dessous -> on part de 0 pour ne pas
+          // compter la surface deux fois.
+          // Hors TLPE : `montant` est le total de la ligne (tarif x q1 x q2).
+          const isTlpe = oldDossier.type === 'TLPE';
           lignesDataToCreate.push({
             articleId: targetArticle.id,
             quantite1: q1,
             quantite2: q2,
             dateDebut: ligne.dateDebut ? addYears(new Date(ligne.dateDebut), yearDiff) : null,
             dateFin: ligne.dateFin ? addYears(new Date(ligne.dateFin), yearDiff) : null,
-            montant: targetArticle.montant * q1 * q2,
+            montant: isTlpe ? 0 : (targetArticle.montant * q1 * q2),
             photos: ligne.photos,
             _hasError: false
           });
@@ -117,7 +122,9 @@ export async function POST(req: NextRequest) {
         }
       });
 
-      // Recalculate montant for the newly created dossier
+      // Realigne les tarifs TLPE sur la grille de l'annee cible (cumul des
+      // enseignes + paliers des dispositifs), puis recalcule le total.
+      await retariferEnseignes(newDossier.id, { force: true });
       await updateOccupationTotal(newDossier.id);
 
       results.push({

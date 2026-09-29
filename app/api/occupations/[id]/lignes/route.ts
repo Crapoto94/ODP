@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { updateOccupationTotal, calculateQ2 } from '@/lib/tlpe-utils';
+import { updateOccupationTotal, calculateQ2, retariferEnseignes } from '@/lib/tlpe-utils';
 
 export async function POST(
   request: NextRequest,
@@ -70,6 +70,9 @@ export async function POST(
       }
     });
 
+    // Les enseignes sont tarifees sur la surface cumulee : l'ajout de cette
+    // ligne peut faire changer le tarif des autres lignes d'enseigne.
+    await retariferEnseignes(parseInt(id));
     await updateOccupationTotal(parseInt(id));
     return NextResponse.json(ligne);
   } catch (error) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Check, Save, Loader2, Euro, Upload, Image as ImageIcon, Trash2, Plus, Info, Hash, Tag, Search, Calendar, Maximize2 } from 'lucide-react';
 import axios from 'axios';
+import { getEnseigneSurfaceCumulee, resolveTlpeTarif } from '@/lib/tlpe-tarifs';
 
 function getDaysInMonth(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -43,9 +44,11 @@ interface Props {
   occupationId: number;
   annee: number;
   editingLigne?: any;
+  /** Lignes du dossier : necessaires pour tarifer les enseignes sur la surface cumulee. */
+  lignes?: any[];
 }
 
-export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occupationId, annee, editingLigne: initialData }: Props) {
+export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occupationId, annee, editingLigne: initialData, lignes }: Props) {
   const [catalogueArticles, setCatalogueArticles] = useState<Article[]>([]);
   const [refTarifs, setRefTarifs] = useState<any>(null);
   const [tlpeConfig, setTlpeConfig] = useState<any>(null);
@@ -124,23 +127,23 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
     const s = parseFloat(surface.replace(',', '.')) || 0;
     const type = art.meta?.tlpeType;
 
-    if (type === 'ENSEIGNE') {
-      if (s <= 50) return refTarifs.enseignes_12_50;
-      return refTarifs.enseignes_50_plus;
-    }
-    if (type === 'NON_NUM') {
-      if (s <= 50) return refTarifs.pub_non_num_50_moins;
-      return refTarifs.pub_non_num_50_plus;
-    }
-    if (type === 'NUM') {
-      if (s <= 50) return refTarifs.pub_num_50_moins;
-      return refTarifs.pub_num_50_plus;
-    }
-    return 0;
+    // Les enseignes sont tarifees sur la surface CUMULEE du dossier, pas sur
+    // la surface de la ligne seule.
+    const cumulEnseignes = getEnseigneSurfaceCumulee(lignes, {
+      excludeLigneId: initialData?.id ?? null,
+      surfaceRemplacee: type === 'ENSEIGNE' ? s : 0,
+    });
+
+    return resolveTlpeTarif(type, s, cumulEnseignes, refTarifs);
   };
 
   const unitPrice = calculateMontant();
   const s = parseFloat(surface.replace(',', '.')) || 0;
+  const selectedType = catalogueArticles.find(a => a.id === selectedArticleId)?.meta?.tlpeType;
+  const cumulEnseignes = getEnseigneSurfaceCumulee(lignes, {
+    excludeLigneId: initialData?.id ?? null,
+    surfaceRemplacee: selectedType === 'ENSEIGNE' ? s : 0,
+  });
   
   // Prorata calculation based on full months
   const getProrata = () => {
@@ -391,7 +394,9 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
                    </div>
                    
                    <p className="text-[10px] font-bold text-slate-500 leading-relaxed max-w-[200px] text-left">
-                     Tarif appliqué automatiquement selon la zone et la surface totale.
+                     {selectedType === 'ENSEIGNE'
+                       ? `Tarif enseigne appliqué sur la surface cumulée du dossier (${cumulEnseignes.toLocaleString('fr-FR')} m²).`
+                       : 'Tarif appliqué automatiquement selon la zone et la surface totale.'}
                    </p>
                 </div>
                 

@@ -259,6 +259,7 @@ export default function OccupationDetailPage({ params }: Props) {
             }
             onSuccess={fetchOccupation}
             editingLigne={editingLigne}
+            lignes={occ.lignes || []}
           />
         ) : (
           <LigneArticleModal

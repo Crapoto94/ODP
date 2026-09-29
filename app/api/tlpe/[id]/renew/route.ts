@@ -78,7 +78,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         data: newLinesData
       });
 
-      const { updateOccupationTotal } = await import('@/lib/tlpe-utils');
+      // Les montants copies (`match.montant`) sont ceux des articles de
+      // l'annee cible : faux pour les articles de catalogue (montant 0) et
+      // ignores la regle du cumul des enseignes. On realigne donc tout le
+      // dossier sur la grille de l'annee cible.
+      const { updateOccupationTotal, retariferEnseignes } = await import('@/lib/tlpe-utils');
+      await retariferEnseignes(targetOccupation.id, { force: true });
       await updateOccupationTotal(targetOccupation.id);
 
       const session = await getSession();

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { updateOccupationTotal, calculateQ2 } from '@/lib/tlpe-utils';
+import { updateOccupationTotal, calculateQ2, retariferEnseignes } from '@/lib/tlpe-utils';
 
 export async function PATCH(
   request: NextRequest,
@@ -80,6 +80,8 @@ export async function PATCH(
       }
     });
 
+    // Les enseignes sont tarifees sur la surface cumulee du dossier.
+    await retariferEnseignes(occupationId);
     await updateOccupationTotal(occupationId);
     return NextResponse.json(ligne);
   } catch (error) {
@@ -110,6 +112,8 @@ export async function DELETE(
     });
 
     if (occId) {
+       // La suppression change la surface cumulee : on retarife les enseignes restantes.
+       await retariferEnseignes(occId);
        await updateOccupationTotal(occId);
     }
 

@@ -1,4 +1,12 @@
 import { prisma } from './prisma';
+import {
+  getTlpeSlotAttendu,
+  getTlpeSlotCourant,
+  getEnseigneSurfaceCumulee,
+  getTlpeType,
+  isTlpeRefArticle,
+  type TlpeRefTarifs,
+} from './tlpe-tarifs';
 
 function getDaysInMonth(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -120,6 +128,114 @@ export async function updateOccupationTotal(occupationId: number) {
     console.error(`Erreur updateOccupationTotal for ID ${occupationId}:`, error?.message || error);
     return 0;
   }
+}
+
+/**
+ * Charge la grille tarifaire de reference d'une annee : les 6 "slots"
+ * enregistres dans Article.notes sous categorieId=30, avec l'id de l'article
+ * de reference correspondant (utile pour reparenter une ligne enseignes).
+ */
+export async function getTlpeGrille(annee: number): Promise<{
+  tarifs: TlpeRefTarifs;
+  articleIdBySlot: Partial<Record<keyof TlpeRefTarifs, number>>;
+}> {
+  const tarifs: TlpeRefTarifs = {
+    enseignes_12_50: 0,
+    enseignes_50_plus: 0,
+    pub_non_num_50_moins: 0,
+    pub_non_num_50_plus: 0,
+    pub_num_50_moins: 0,
+    pub_num_50_plus: 0,
+  };
+  const articleIdBySlot: Partial<Record<keyof TlpeRefTarifs, number>> = {};
+
+  const articles = await (prisma as any).article.findMany({ where: { categorieId: 30 } });
+  for (const a of articles) {
+    let meta: any = {};
+    try { meta = JSON.parse(a.notes || '{}'); } catch (e) {}
+    if (meta.isRef === true && meta.annee === annee && meta.refSlot in tarifs) {
+      tarifs[meta.refSlot as keyof TlpeRefTarifs] = a.montant || 0;
+      articleIdBySlot[meta.refSlot as keyof TlpeRefTarifs] = a.id;
+    }
+  }
+
+  return { tarifs, articleIdBySlot };
+}
+
+/**
+ * Re-applique les tarifs TLPE a toutes les lignes du dossier :
+ *  - enseignes : tarif au m² base sur la surface CUMULEE du dossier ;
+ *  - dispositifs non-numeriques / numeriques : tarif base sur la surface de
+ *    la ligne.
+ *
+ * @param force  false (defaut) : ne corrige que les lignes dont le palier est
+ *               faux (on ne "normalise" pas un tarif historique deja dans le
+ *               bon palier).
+ *               true : aligne TOUTES les lignes sur la grille de l'annee.
+ *               Utilise quand le dossier est reconstruit de zero (reconduction,
+ *               report d'annee) car les montants copies peuvent etre faux.
+ */
+export async function retariferEnseignes(occupationId: number, options: { force?: boolean } = {}) {
+  const { force = false } = options;
+
+  const occupation = await (prisma as any).occupation.findUnique({
+    where: { id: occupationId },
+    include: {
+      lignes: {
+        where: { deletedAt: null },
+        include: { article: true }
+      }
+    }
+  });
+
+  if (!occupation || occupation.type !== 'TLPE') {
+    return { updated: [] as Array<{ ligneId: number; from: number; to: number }> };
+  }
+
+  const anneeTaxation = occupation.anneeTaxation
+    || (occupation.dateDebut ? new Date(occupation.dateDebut).getFullYear() : new Date().getFullYear());
+
+  const { tarifs, articleIdBySlot } = await getTlpeGrille(anneeTaxation);
+  const cumulEnseignes = getEnseigneSurfaceCumulee(occupation.lignes);
+
+  const updated: Array<{ ligneId: number; from: number; to: number }> = [];
+
+  for (const ligne of occupation.lignes) {
+    const slotAttendu = getTlpeSlotAttendu(getTlpeType(ligne), ligne.quantite1 || 0, cumulEnseignes);
+    if (!slotAttendu) continue;
+
+    const tarifAttendu = tarifs[slotAttendu];
+    const articleAttendu = articleIdBySlot[slotAttendu];
+    // Palier non configure pour l'annee : on ne touche pas (ne jamais mettre 0).
+    if (!articleAttendu) continue;
+
+    const isRef = isTlpeRefArticle(ligne);
+
+    const montantOk = Math.abs((ligne.montant || 0) - tarifAttendu) <= 0.005;
+    const articleOk = !isRef || !articleAttendu || ligne.articleId === articleAttendu;
+
+    const needsFix = force
+      ? (!montantOk || !articleOk)
+      // Sans force : on ne touche que les lignes dont le PALIER est faux.
+      : (getTlpeSlotCourant(ligne, tarifs) !== null && getTlpeSlotCourant(ligne, tarifs) !== slotAttendu);
+
+    if (!needsFix) continue;
+
+    // Si la ligne pointe sur un article de reference (import historique), on
+    // la reparente sur l'article du bon palier pour que libelle et tarif
+    // restent coherents (UI, facture PDF). Une ligne de catalogue, elle,
+    // garde son article : seul le montant porte le tarif.
+    await (prisma as any).ligneOccupation.update({
+      where: { id: ligne.id },
+      data: {
+        montant: tarifAttendu,
+        ...(isRef && articleAttendu ? { articleId: articleAttendu } : {}),
+      }
+    });
+    updated.push({ ligneId: ligne.id, from: ligne.montant || 0, to: tarifAttendu });
+  }
+
+  return { updated };
 }
 
 export function calculateQ2(u2: string, start: Date | null, end: Date | null, startC: Date | null, endC: Date | null) {

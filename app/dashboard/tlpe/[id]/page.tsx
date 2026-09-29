@@ -195,6 +195,7 @@ export default function TlpeDetailPage({ params }: Props) {
           annee={selectedYear || new Date().getFullYear()}
           onSuccess={refresh}
           editingLigne={editingLigne}
+          lignes={currentOccupation.lignes || []}
         />
       )}
 

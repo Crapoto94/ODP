@@ -293,10 +293,14 @@ export default function TarifsPage() {
     return '#3b82f6'; // Default blue
   };
 
-  const filtered = articles.filter(a => 
-    a.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.numero?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.categorie?.nom.toLowerCase().includes(searchTerm.toLowerCase())
+  // Les articles sans montant pour l'année ne sont pas de vrais tarifs
+  // (entrées techniques TLPE, articles non renseignés) : on ne les affiche pas.
+  const filtered = articles.filter(a =>
+    a.montant !== 0 && (
+      a.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      a.numero?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      a.categorie?.nom.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   );
 
   const groupedArticles = useMemo(() => {
