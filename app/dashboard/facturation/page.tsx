@@ -21,7 +21,8 @@ import {
   ChevronUp,
   Trash2,
   Search,
-  X
+  X,
+  FileSpreadsheet
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -47,6 +48,7 @@ export default function FacturationPage() {
   const [result, setResult] = useState<any>(null);
   const [groupMultiYear, setGroupMultiYear] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [exporting, setExporting] = useState(false);
 
   // État pour la modal d'avertissement du tiers
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
@@ -189,6 +191,89 @@ export default function FacturationPage() {
   const totalAmount = dossiers
     .filter(d => selectedIds.includes(d.id))
     .reduce((sum, d) => sum + (d.montantCalcule || d.lignes?.reduce((s: number, l: any) => s + l.montant, 0) || 0), 0);
+
+  const getDossierAmount = (d: any) =>
+    d.montantCalcule || d.lignes?.reduce((s: number, l: any) => s + (l.montant || 0), 0) || 0;
+
+  const handleExportExcel = async () => {
+    const selected = dossiers.filter(d => selectedIds.includes(d.id));
+    if (selected.length === 0) {
+      setFilienErrorMessage('Veuillez sélectionner au moins un dossier à exporter.');
+      setIsFilienErrorModalOpen(true);
+      return;
+    }
+
+    setExporting(true);
+    try {
+      const XLSX = await import('xlsx');
+
+      const rows = selected.map(d => ({
+        'Type': type,
+        'ID Dossier': d.tiers?.id ?? d.id,
+        'Dossier': d.nom || `Dossier #${d.id}`,
+        'Tiers': d.tiers?.nom || '—',
+        'Code SEDIT': d.tiers?.code_sedit || '—',
+        'État Tiers': d.tiers?.etatAdministratif || '—',
+        'Année taxation': d.anneeTaxation || '—',
+        'Adresse': d.adresse || '—',
+        'Nb articles': d.lignes?.length || 0,
+        'Montant TTC (€)': getDossierAmount(d)
+      }));
+
+      const total = selected.reduce((sum, d) => sum + getDossierAmount(d), 0);
+      rows.push({
+        'Type': type,
+        'ID Dossier': '',
+        'Dossier': `TOTAL (${selected.length} dossier${selected.length > 1 ? 's' : ''})`,
+        'Tiers': '',
+        'Code SEDIT': '',
+        'État Tiers': '',
+        'Année taxation': '',
+        'Adresse': '',
+        'Nb articles': selected.reduce((s, d) => s + (d.lignes?.length || 0), 0),
+        'Montant TTC (€)': total
+      } as any);
+
+      const detailRows = selected.flatMap(d =>
+        (d.lignes || []).map((l: any) => ({
+          'Dossier': d.nom || `Dossier #${d.id}`,
+          'Tiers': d.tiers?.nom || '—',
+          'Année taxation': d.anneeTaxation || '—',
+          'Article': l.article?.designation || '—',
+          'N° article': l.article?.numero || '—',
+          'Quantité 1': l.quantite1 || 0,
+          'Quantité 2': l.quantite2 || 0,
+          'Montant (€)': l.montant || 0
+        }))
+      );
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws['!cols'] = [
+        { wch: 12 }, { wch: 12 }, { wch: 32 }, { wch: 32 }, { wch: 14 },
+        { wch: 14 }, { wch: 14 }, { wch: 40 }, { wch: 12 }, { wch: 18 }
+      ];
+      XLSX.utils.book_append_sheet(wb, ws, 'Dossiers');
+      if (detailRows.length > 0) {
+        const wsDetail = XLSX.utils.json_to_sheet(detailRows);
+        wsDetail['!cols'] = [
+          { wch: 32 }, { wch: 32 }, { wch: 14 }, { wch: 40 }, { wch: 12 },
+          { wch: 12 }, { wch: 12 }, { wch: 14 }
+        ];
+        XLSX.utils.book_append_sheet(wb, wsDetail, 'Détail articles');
+      }
+
+      const datePart = format(new Date(), 'yyyy-MM-dd');
+      XLSX.writeFile(wb, `facturation_${type}_${datePart}.xlsx`);
+    } catch (err: any) {
+      console.error(err);
+      setMissingDocsData([]);
+      setFilienErrorMessage(err.message || "Erreur lors de la génération du fichier Excel");
+      setIsFilienErrorModalOpen(true);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   // Search / filter par commerce ou tiers pour faciliter la sélection
   const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -562,11 +647,21 @@ export default function FacturationPage() {
                     <span className="text-[10px] font-black uppercase tracking-widest">Attention: Commerces fermés détectés</span>
                   </div>
                 )}
-                <div className="sm:text-right">
-                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">
-                    Montant du train · {selectedIds.length} dossier{selectedIds.length > 1 ? 's' : ''} coché{selectedIds.length > 1 ? 's' : ''}
-                  </p>
-                  <p className="text-2xl font-black text-blue-700">{totalAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</p>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={handleExportExcel}
+                    disabled={exporting || selectedIds.length === 0}
+                    className="px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-500/20 active:scale-95 transition-all disabled:opacity-40 flex items-center gap-2"
+                  >
+                    {exporting ? <Loader2 className="animate-spin" size={14} /> : <FileSpreadsheet size={14} />}
+                    Export Excel
+                  </button>
+                  <div className="sm:text-right">
+                    <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">
+                      Montant du train · {selectedIds.length} dossier{selectedIds.length > 1 ? 's' : ''} coché{selectedIds.length > 1 ? 's' : ''}
+                    </p>
+                    <p className="text-2xl font-black text-blue-700">{totalAmount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</p>
+                  </div>
                 </div>
               </div>
 
