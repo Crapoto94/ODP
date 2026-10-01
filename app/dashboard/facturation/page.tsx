@@ -161,6 +161,7 @@ export default function FacturationPage() {
               nom: occ.tiers.nom,
               tiers: occ.tiers,
               anneeTaxation: annee,
+              adresse: occ.adresse || '',
               lignes: [...(occ.lignes || [])],
               montantCalcule: occ.montantCalcule || 0,
               occupationIds: [occ.id]
@@ -170,6 +171,9 @@ export default function FacturationPage() {
             g.lignes.push(...(occ.lignes || []));
             g.montantCalcule += (occ.montantCalcule || 0);
             if (isClosed) g.isClosed = true;
+            if (occ.adresse && !String(g.adresse).includes(occ.adresse)) {
+              g.adresse = g.adresse ? `${g.adresse} / ${occ.adresse}` : occ.adresse;
+            }
             g.occupationIds.push(occ.id);
           }
         });
@@ -206,65 +210,147 @@ export default function FacturationPage() {
     setExporting(true);
     try {
       const XLSX = await import('xlsx');
+      const now = new Date();
+      const EURO_FMT = '#,##0.00\\ "€"';
 
-      const rows = selected.map(d => ({
-        'Type': type,
-        'ID Dossier': d.tiers?.id ?? d.id,
-        'Dossier': d.nom || `Dossier #${d.id}`,
-        'Tiers': d.tiers?.nom || '—',
-        'Code SEDIT': d.tiers?.code_sedit || '—',
-        'État Tiers': d.tiers?.etatAdministratif || '—',
-        'Année taxation': d.anneeTaxation || '—',
-        'Adresse': d.adresse || '—',
-        'Nb articles': d.lignes?.length || 0,
-        'Montant TTC (€)': getDossierAmount(d)
+      // Mise en page : bandeau de titre, métadonnées, en-têtes, données,
+      // ligne de total calculée par Excel (SUBTOTAL) pour suivre les filtres.
+      const HEADER_ROW = 3; // ligne 0-based des en-têtes
+      const FIRST_DATA_ROW = HEADER_ROW + 1;
+      const headers = [
+        'Type', 'ID Dossier', 'Dossier', 'Tiers', 'Code SEDIT', 'État Tiers',
+        'Année', 'Adresse', 'Nb articles', 'Montant TTC'
+      ];
+
+      const summaryRows = selected.map(d => ({
+        type: type,
+        id: d.tiers?.id ?? d.id,
+        dossier: d.nom || `Dossier #${d.id}`,
+        tiers: d.tiers?.nom || '',
+        codeSedit: d.tiers?.code_sedit || '',
+        etat: d.tiers?.etatAdministratif || '',
+        annee: d.anneeTaxation ?? '',
+        adresse: d.adresse || '',
+        nbArticles: d.lignes?.length || 0,
+        montant: getDossierAmount(d)
       }));
 
-      const total = selected.reduce((sum, d) => sum + getDossierAmount(d), 0);
-      rows.push({
-        'Type': type,
-        'ID Dossier': '',
-        'Dossier': `TOTAL (${selected.length} dossier${selected.length > 1 ? 's' : ''})`,
-        'Tiers': '',
-        'Code SEDIT': '',
-        'État Tiers': '',
-        'Année taxation': '',
-        'Adresse': '',
-        'Nb articles': selected.reduce((s, d) => s + (d.lignes?.length || 0), 0),
-        'Montant TTC (€)': total
-      } as any);
+      const dataRows = summaryRows.map(r => [
+        r.type, r.id, r.dossier, r.tiers, r.codeSedit, r.etat,
+        r.annee, r.adresse, r.nbArticles, r.montant
+      ]);
 
-      const detailRows = selected.flatMap(d =>
-        (d.lignes || []).map((l: any) => ({
-          'Dossier': d.nom || `Dossier #${d.id}`,
-          'Tiers': d.tiers?.nom || '—',
-          'Année taxation': d.anneeTaxation || '—',
-          'Article': l.article?.designation || '—',
-          'N° article': l.article?.numero || '—',
-          'Quantité 1': l.quantite1 || 0,
-          'Quantité 2': l.quantite2 || 0,
-          'Montant (€)': l.montant || 0
-        }))
-      );
+      const totalRowIndex = FIRST_DATA_ROW + dataRows.length;
+      const firstExcelRow = FIRST_DATA_ROW + 1;
+      const lastExcelRow = FIRST_DATA_ROW + dataRows.length;
+
+      const aoa: (string | number)[][] = [
+        [`Train de facturation — ${type}`, '', '', '', '', '', '', '', '', ''],
+        [
+          `${selected.length} dossier${selected.length > 1 ? 's' : ''} sélectionné${selected.length > 1 ? 's' : ''} · Édité le ${format(now, 'dd/MM/yyyy à HH:mm')}`,
+          '', '', '', '', '', '', '', '', ''
+        ],
+        ['', '', '', '', '', '', '', '', '', ''],
+        headers,
+        ...dataRows,
+        [
+          'TOTAL', '', '', '', '', '', '', '', 0, 0
+        ]
+      ];
+
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+      // Colonnes numériques formatées euros
+      for (let r = FIRST_DATA_ROW; r < totalRowIndex; r++) {
+        const cell = ws[XLSX.utils.encode_cell({ r, c: 9 })];
+        if (cell) cell.z = EURO_FMT;
+      }
+
+      // Total dynamique : SUBTOTAL respecte le filtrage du tableau
+      ws[XLSX.utils.encode_cell({ r: totalRowIndex, c: 8 })] = {
+        t: 'n', f: `SUBTOTAL(109,I${firstExcelRow}:I${lastExcelRow})`
+      };
+      ws[XLSX.utils.encode_cell({ r: totalRowIndex, c: 9 })] = {
+        t: 'n', f: `SUBTOTAL(109,J${firstExcelRow}:J${lastExcelRow})`, z: EURO_FMT
+      };
+
+      ws['!cols'] = [
+        { wch: 12 }, { wch: 11 }, { wch: 34 }, { wch: 34 }, { wch: 13 },
+        { wch: 13 }, { wch: 8 }, { wch: 42 }, { wch: 11 }, { wch: 16 }
+      ];
+      ws['!merges'] = [
+        { s: { r: 0, c: 0 }, e: { r: 0, c: 9 } },
+        { s: { r: 1, c: 0 }, e: { r: 1, c: 9 } }
+      ];
+      ws['!autofilter'] = {
+        ref: XLSX.utils.encode_range({
+          s: { r: HEADER_ROW, c: 0 }, e: { r: totalRowIndex - 1, c: headers.length - 1 }
+        })
+      };
+      ws['!rows'] = [{ hpt: 26 }, { hpt: 16 }, { hpt: 6 }, { hpt: 20 }];
 
       const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(rows);
-      ws['!cols'] = [
-        { wch: 12 }, { wch: 12 }, { wch: 32 }, { wch: 32 }, { wch: 14 },
-        { wch: 14 }, { wch: 14 }, { wch: 40 }, { wch: 12 }, { wch: 18 }
-      ];
       XLSX.utils.book_append_sheet(wb, ws, 'Dossiers');
-      if (detailRows.length > 0) {
-        const wsDetail = XLSX.utils.json_to_sheet(detailRows);
+
+      // Détail article par article
+      const detailHeaders = [
+        'Dossier', 'Tiers', 'Année', 'Adresse', 'Article', 'N° article',
+        'Quantité 1', 'Quantité 2', 'Montant TTC'
+      ];
+      const detailData: (string | number)[][] = [];
+      selected.forEach(d => {
+        (d.lignes || []).forEach((l: any) => {
+          detailData.push([
+            d.nom || `Dossier #${d.id}`,
+            d.tiers?.nom || '',
+            d.anneeTaxation ?? '',
+            d.adresse || '',
+            l.article?.designation || '',
+            l.article?.numero || '',
+            l.quantite1 || 0,
+            l.quantite2 || 0,
+            l.montant || 0
+          ]);
+        });
+      });
+
+      if (detailData.length > 0) {
+        const D_FIRST = 1;
+        const D_LAST = D_FIRST + detailData.length;
+        const wsDetail = XLSX.utils.aoa_to_sheet([
+          detailHeaders,
+          ...detailData,
+          ['TOTAL', '', '', '', '', '', 0, 0, 0]
+        ]);
+
+        for (let r = D_FIRST; r < D_LAST; r++) {
+          const cell = wsDetail[XLSX.utils.encode_cell({ r, c: 8 })];
+          if (cell) cell.z = EURO_FMT;
+        }
+        wsDetail[XLSX.utils.encode_cell({ r: D_LAST, c: 6 })] = {
+          t: 'n', f: `SUBTOTAL(109,G${D_FIRST + 1}:G${D_LAST})`
+        };
+        wsDetail[XLSX.utils.encode_cell({ r: D_LAST, c: 7 })] = {
+          t: 'n', f: `SUBTOTAL(109,H${D_FIRST + 1}:H${D_LAST})`
+        };
+        wsDetail[XLSX.utils.encode_cell({ r: D_LAST, c: 8 })] = {
+          t: 'n', f: `SUBTOTAL(109,I${D_FIRST + 1}:I${D_LAST})`, z: EURO_FMT
+        };
+
         wsDetail['!cols'] = [
-          { wch: 32 }, { wch: 32 }, { wch: 14 }, { wch: 40 }, { wch: 12 },
-          { wch: 12 }, { wch: 12 }, { wch: 14 }
+          { wch: 34 }, { wch: 34 }, { wch: 8 }, { wch: 42 }, { wch: 46 },
+          { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 16 }
         ];
+        wsDetail['!autofilter'] = {
+          ref: XLSX.utils.encode_range({
+            s: { r: 0, c: 0 }, e: { r: D_LAST - 1, c: detailHeaders.length - 1 }
+          })
+        };
+        wsDetail['!rows'] = [{ hpt: 20 }];
         XLSX.utils.book_append_sheet(wb, wsDetail, 'Détail articles');
       }
 
-      const datePart = format(new Date(), 'yyyy-MM-dd');
-      XLSX.writeFile(wb, `facturation_${type}_${datePart}.xlsx`);
+      XLSX.writeFile(wb, `facturation_${type}_${format(now, 'yyyy-MM-dd')}.xlsx`);
     } catch (err: any) {
       console.error(err);
       setMissingDocsData([]);
