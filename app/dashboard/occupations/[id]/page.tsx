@@ -1,6 +1,6 @@
 "use client";
 
-import { getEnseigneSurfaceCumulee } from '@/lib/tlpe-tarifs';
+import { getSurfaceExoneration } from '@/lib/tlpe-tarifs';
 import React, { use, useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -187,7 +187,7 @@ export default function OccupationDetailPage({ params }: Props) {
                 lignes={occ.lignes || []}
                 isFactured={isFactured}
                 anneeTaxation={occ.anneeTaxation || (occ.dateDebut ? new Date(occ.dateDebut).getFullYear() : new Date().getFullYear())}
-                isEnseigneExempt={getEnseigneSurfaceCumulee(occ.lignes || []) <= tlpeExonerationThreshold}
+                isEnseigneExempt={getSurfaceExoneration(occ.lignes || []) <= tlpeExonerationThreshold}
                 onAddArticle={() => { setEditingLigne(null); setIsLigneModalOpen(true); }}
                 onEditArticle={(ligne: any) => { setEditingLigne(ligne); setIsLigneModalOpen(true); }}
                 onDeleteArticle={handleDeleteLigne}

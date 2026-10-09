@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { resizeImage } from '@/lib/image-utils';
-import { getEnseigneSurfaceCumulee, getTlpeType, calculateTlpeProrata } from '@/lib/tlpe-tarifs';
+import { getSurfaceExoneration, getTlpeType, calculateTlpeProrata } from '@/lib/tlpe-tarifs';
 
 // Meme principe que useCommerceLogic.ts, adapte au TLPE : une page par
 // TIERS (paramId = tiersId), un selecteur d'annee, un dossier par annee.
@@ -118,7 +118,7 @@ export function useTlpeLogic(paramId: string) {
     const threshold = tlpeConfig?.exoneration ?? 12;
     const lignes = currentOccupation.lignes || [];
 
-    const totalEnseigneSurface = getEnseigneSurfaceCumulee(lignes);
+    const totalEnseigneSurface = getSurfaceExoneration(lignes);
     const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
     return lignes.reduce((sum: number, l: any) => {
@@ -250,6 +250,13 @@ export function useTlpeLogic(paramId: string) {
     }
   };
 
+  // --- Adresse du dossier (Occupation.adresse), si différente de celle du tiers ---
+  const handleUpdateAdresse = async (adresse: string) => {
+    if (!currentOccupation) return;
+    await axios.patch(`/api/occupations/${currentOccupation.id}`, { adresse });
+    await refresh();
+  };
+
   // --- Annee ---
   const handleDeleteYear = async (year: number) => {
     if (!confirm(`Supprimer definitivement le dossier TLPE ${year} ?`)) return;
@@ -298,6 +305,7 @@ export function useTlpeLogic(paramId: string) {
     isUploadingFacade,
     handleUploadFacade,
     handleDeleteFacade,
+    handleUpdateAdresse,
     handleDeleteYear,
     refresh,
   };

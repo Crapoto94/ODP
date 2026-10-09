@@ -377,6 +377,7 @@ export default function TlpeTarifsModal({ isOpen, onClose, onSuccess }: TlpeTari
                             onChange={(e) => updateCatalogueArticle(art.id, 'tlpeType', e.target.value)}
                           >
                             <option value="ENSEIGNE">Enseigne</option>
+                            <option value="ENSEIGNE_SOL">Enseigne scellée au sol</option>
                             <option value="NON_NUM">Non-Numérique</option>
                             <option value="NUM">Numérique</option>
                           </select>

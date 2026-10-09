@@ -18,6 +18,8 @@ nouvelle interface optionnelle et plusieurs évolutions demandées par les instr
 
 ### TLPE
 - **Cumul des enseignes par période** : une enseigne supprimée en cours d'année (date de fin) ne s'ajoute plus à la surface cumulée des enseignes installées après sa suppression. (Backlog #48)
+- **Catégorie « Enseigne scellée au sol »** : jamais exonérée, exclue du seuil d'exonération des 12 m², mais comptée avec les enseignes pour le palier tarifaire (≤ 50 / > 50 m²). Se choisit dans le paramétrage des tarifs TLPE (type de l'article du catalogue). (Backlog #47)
+- **Adresse du dossier** modifiable lorsqu'elle diffère de celle du tiers (adresse du tiers par défaut, rétablissement en un clic), reprise dans la liste TLPE. (Backlog #46)
 - **Exonération des 12 m²** calculée sur la surface cumulée complète des enseignes (articles de référence inclus) : une enseigne ajoutée en cours d'année s'ajoute à l'existant.
 - **Photographie de la façade / du local** du redevable (comme un dossier commerce), partagée avec la fiche Commerce du même tiers. (Backlog #43)
 - **Description et capture d'écran collée (Ctrl+V)** dès la création d'un article. (Backlog #45)
@@ -45,10 +47,7 @@ nouvelle interface optionnelle et plusieurs évolutions demandées par les instr
 ### Reste au backlog (non traité dans cette version)
 #8 version mobile terrain · #9 portail usager · #10 AOT déjà signé dans le circuit de signature · #29 infobulles d'alerte ·
 #30 libellé « Adresse de l'intervention » · #34 visite terrain : cas de non-conformité · #39 adresse du tiers qui disparaît à l'import ·
-#40 retour page Chantier après création d'un commerce · #42 documents par dossier TLPE · #44 chronologie financière TLPE ·
-#47 redéfinition des catégories de dispositifs TLPE.
-
-_À vérifier : #46 (adresse du dossier TLPE modifiable) est marqué « fait » dans le backlog, mais la modification n'existe pas dans la fiche TLPE de cette version._
+#40 retour page Chantier après création d'un commerce · #42 documents par dossier TLPE · #44 chronologie financière TLPE.
 
 ## 1.0.0 — 29 septembre 2026
 Mise en production officielle, incluant le module T.L.P.E. (Taxe Locale sur la Publicité Extérieure).

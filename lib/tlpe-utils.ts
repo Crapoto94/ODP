@@ -3,6 +3,7 @@ import {
   getTlpeSlotAttendu,
   getTlpeSlotCourant,
   getEnseigneSurfaceCumulee,
+  getSurfaceExoneration,
   getTlpeType,
   isTlpeRefArticle,
   type TlpeRefTarifs,
@@ -94,7 +95,7 @@ export async function updateOccupationTotal(occupationId: number) {
     // Calculer la surface totale des ENSEIGNES pour l'exonération globale
     // Surface cumulee COMPLETE (hors lignes supprimees), non proratisee : une enseigne ajoutee en cours d'annee
     // s'ajoute a la surface existante. getTlpeType reconnait aussi les articles de reference (sans notes.tlpeType).
-    const totalEnseigneSurface = getEnseigneSurfaceCumulee(occupation.lignes);
+    const totalEnseigneSurface = getSurfaceExoneration(occupation.lignes);
 
     const isEnseigneExempt = totalEnseigneSurface <= threshold;
 

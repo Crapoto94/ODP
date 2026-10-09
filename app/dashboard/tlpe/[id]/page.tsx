@@ -14,6 +14,7 @@ import TlpeArticles from './components/TlpeArticles';
 import TlpeStepper from './components/TlpeStepper';
 import TlpeRenewModal from './components/TlpeRenewModal';
 import TlpeFacadePhoto from './components/TlpeFacadePhoto';
+import TlpeAdresseDossier from './components/TlpeAdresseDossier';
 import { useTlpeLogic } from './hooks/useTlpeLogic';
 
 interface Props {
@@ -35,7 +36,7 @@ export default function TlpeDetailPage({ params }: Props) {
     isContactModalOpen, setIsContactModalOpen, isSubmittingContact, newContact, setNewContact,
     handleAddContact, handleDeleteContact,
     isUploadingPhoto, handleUploadPhoto, handleDeletePhoto,
-    isUploadingFacade, handleUploadFacade, handleDeleteFacade,
+    isUploadingFacade, handleUploadFacade, handleDeleteFacade, handleUpdateAdresse,
     handleDeleteYear,
     refresh,
   } = logic;
@@ -78,7 +79,7 @@ export default function TlpeDetailPage({ params }: Props) {
             <div>
               <h1 className="text-3xl font-black text-slate-900 leading-tight">{tiers.nom}</h1>
               <p className="text-sm font-medium text-slate-500 mt-1">
-                {tiers.code_sedit ? `Code ${tiers.code_sedit}` : 'Dossier T.L.P.E.'}{tiers.adresse ? ` — ${tiers.adresse}` : ''}
+                {tiers.code_sedit ? `Code ${tiers.code_sedit}` : 'Dossier T.L.P.E.'}{(() => { const a = currentOccupation?.adresse; const eff = a && a.trim() && a.trim() !== 'À renseigner' ? a : tiers.adresse; return eff ? ` — ${eff}` : ''; })()}
               </p>
             </div>
           </div>
@@ -88,6 +89,16 @@ export default function TlpeDetailPage({ params }: Props) {
       <div className="max-w-7xl mx-auto w-full space-y-8 px-4">
         {/* Photographie de la façade commerciale / du local (comme un dossier Commerce) */}
         <TlpeFacadePhoto photo={tiers.photo} isUploading={isUploadingFacade} onUpload={handleUploadFacade} onDelete={handleDeleteFacade} />
+
+        {/* Adresse du dossier : celle du tiers par défaut, modifiable si l'établissement est ailleurs */}
+        {currentOccupation && (
+          <TlpeAdresseDossier
+            adresseDossier={currentOccupation.adresse}
+            adresseTiers={tiers.adresse}
+            readOnly={isReadOnly}
+            onSave={handleUpdateAdresse}
+          />
+        )}
 
         {/* Financial card */}
         {currentOccupation && (

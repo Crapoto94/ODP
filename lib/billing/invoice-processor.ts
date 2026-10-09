@@ -1,4 +1,4 @@
-import { getEnseigneSurfaceCumulee, getTlpeType, calculateTlpeProrata } from '../tlpe-tarifs';
+import { getSurfaceExoneration, getTlpeType, calculateTlpeProrata } from '../tlpe-tarifs';
 import { prisma } from '@/lib/prisma';
 import { generateInvoicePdfBuffer } from '@/lib/invoice-pdf-utils';
 import { join } from 'path';
@@ -52,7 +52,7 @@ export async function processDossier(params: {
   // 2. Calculate Totals
   const threshold = tlpeConfig?.exoneration ?? 12;
   // Surface cumulee complete des enseignes (non proratisee, articles de reference inclus) pour l'exoneration
-  const totalEnseigneSurface = getEnseigneSurfaceCumulee(occ.lignes) || 0;
+  const totalEnseigneSurface = getSurfaceExoneration(occ.lignes) || 0;
   const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
   const lineResults: any[] = [];

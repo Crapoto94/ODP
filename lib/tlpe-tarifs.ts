@@ -12,6 +12,28 @@
 
 export const TLPE_SURFACE_SEUIL_M2 = 50;
 
+/**
+ * Categories de dispositifs TLPE (Article.notes.tlpeType) :
+ *  - ENSEIGNE       : enseigne ; comptee dans le cumul ET dans le seuil d'exoneration (12 m²) ;
+ *  - ENSEIGNE_SOL   : enseigne scellee au sol ou installee directement sur le sol ; comptee dans le cumul qui fixe le palier
+ *                     tarifaire (memes tarifs que les enseignes) mais JAMAIS exoneree et exclue du seuil d'exoneration (backlog #47) ;
+ *  - NON_NUM / NUM  : dispositifs publicitaires non numeriques / numeriques (palier selon la surface de la ligne).
+ */
+export const TLPE_TYPE_LABELS: Record<string, string> = {
+  ENSEIGNE: 'Enseigne',
+  ENSEIGNE_SOL: 'Enseigne scellée au sol',
+  NON_NUM: 'Pub. non numérique',
+  NUM: 'Pub. numérique',
+};
+
+/** Vrai pour les categories qui suivent la grille « enseignes » (palier selon la surface cumulee). */
+export const isEnseigneFamille = (t: string | undefined | null) => t === 'ENSEIGNE' || t === 'ENSEIGNE_SOL';
+
+/** Surface retenue pour le SEUIL D'EXONERATION : enseignes ordinaires uniquement (hors scellees au sol), non proratisee. */
+export function getSurfaceExoneration(lignes: any[] | null | undefined): number {
+  return (lignes || []).reduce((sum, l) => (l.deletedAt || getTlpeType(l) !== 'ENSEIGNE' ? sum : sum + (Number(l.quantite1) || 0)), 0);
+}
+
 export type TlpeRefTarifs = {
   enseignes_12_50: number;
   enseignes_50_plus: number;
@@ -111,7 +133,7 @@ export function getEnseigneSurfaceCumulee(
   const cumul = (lignes || []).reduce((sum, ligne) => {
     if (ligne.deletedAt) return sum;
     if (excludeLigneId != null && ligne.id === excludeLigneId) return sum;
-    if (getTlpeType(ligne) !== 'ENSEIGNE') return sum;
+    if (!isEnseigneFamille(getTlpeType(ligne))) return sum;
     if (cible) {
       const p = periodeLigne(ligne);
       if (p.debut > cible.fin || cible.debut > p.fin) return sum; // jamais presentes en meme temps
@@ -166,7 +188,7 @@ export function getTlpeSlotAttendu(
   cumulEnseignes: number,
 ): TlpeSlot | null {
   const plus = surface > TLPE_SURFACE_SEUIL_M2;
-  if (tlpeType === 'ENSEIGNE') {
+  if (isEnseigneFamille(tlpeType)) {
     return cumulEnseignes <= TLPE_SURFACE_SEUIL_M2 ? 'enseignes_12_50' : 'enseignes_50_plus';
   }
   if (tlpeType === 'NON_NUM') {
@@ -218,7 +240,7 @@ export function getTlpeSlotCourant(
 
   const type = getTlpeType(ligne);
   const familySlots: TlpeSlot[] | null =
-    type === 'ENSEIGNE' ? ['enseignes_12_50', 'enseignes_50_plus'] :
+    isEnseigneFamille(type) ? ['enseignes_12_50', 'enseignes_50_plus'] :
     type === 'NON_NUM' ? ['pub_non_num_50_moins', 'pub_non_num_50_plus'] :
     type === 'NUM' ? ['pub_num_50_moins', 'pub_num_50_plus'] : null;
 

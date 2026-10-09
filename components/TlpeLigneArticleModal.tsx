@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Check, Save, Loader2, Euro, Upload, Image as ImageIcon, Trash2, Plus, Info, Hash, Tag, Search, Calendar, Maximize2 } from 'lucide-react';
 import axios from 'axios';
-import { getEnseigneSurfaceCumulee, resolveTlpeTarif } from '@/lib/tlpe-tarifs';
+import { getEnseigneSurfaceCumulee, isEnseigneFamille, resolveTlpeTarif } from '@/lib/tlpe-tarifs';
 import { resizeImage } from '@/lib/image-utils';
 
 function getDaysInMonth(date: Date): number {
@@ -34,7 +34,7 @@ interface Article {
   montant: number;
   meta?: {
     isCatalogue?: boolean;
-    tlpeType?: 'ENSEIGNE' | 'NUM' | 'NON_NUM';
+    tlpeType?: 'ENSEIGNE' | 'ENSEIGNE_SOL' | 'NUM' | 'NON_NUM';
   };
 }
 
@@ -162,7 +162,7 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
     // la surface de la ligne seule.
     const cumulEnseignes = getEnseigneSurfaceCumulee(lignes, {
       excludeLigneId: initialData?.id ?? null,
-      surfaceRemplacee: type === 'ENSEIGNE' ? s : 0,
+      surfaceRemplacee: isEnseigneFamille(type) ? s : 0,
       pour: { dateDebut, dateFin },
     });
 
@@ -174,7 +174,7 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
   const selectedType = catalogueArticles.find(a => a.id === selectedArticleId)?.meta?.tlpeType;
   const cumulEnseignes = getEnseigneSurfaceCumulee(lignes, {
     excludeLigneId: initialData?.id ?? null,
-    surfaceRemplacee: selectedType === 'ENSEIGNE' ? s : 0,
+    surfaceRemplacee: isEnseigneFamille(selectedType) ? s : 0,
     pour: { dateDebut, dateFin },
   });
   
@@ -428,7 +428,9 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
                    </div>
                    
                    <p className="text-[10px] font-bold text-slate-500 leading-relaxed max-w-[200px] text-left">
-                     {selectedType === 'ENSEIGNE'
+                     {selectedType === 'ENSEIGNE_SOL'
+                       ? `Enseigne scellée au sol : jamais exonérée ; tarif enseigne selon la surface cumulée du dossier (${cumulEnseignes.toLocaleString('fr-FR')} m²).`
+                       : selectedType === 'ENSEIGNE'
                        ? `Tarif enseigne appliqué sur la surface cumulée du dossier (${cumulEnseignes.toLocaleString('fr-FR')} m²).`
                        : 'Tarif appliqué automatiquement selon la zone et la surface totale.'}
                    </p>

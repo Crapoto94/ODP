@@ -31,7 +31,7 @@ export async function GET(request: Request) {
           id: tierId,
           nom: occ.tiers.nom,
           code_sedit: occ.tiers.code_sedit,
-          adresse: occ.tiers.adresse,
+          adresse: (occ.adresse && occ.adresse.trim() && occ.adresse.trim() !== 'À renseigner') ? occ.adresse : occ.tiers.adresse,
           years: [],
           byYear: {},
           lastYear: occ.anneeTaxation,

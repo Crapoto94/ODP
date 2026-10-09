@@ -1,4 +1,4 @@
-import { getEnseigneSurfaceCumulee, getTlpeType } from './tlpe-tarifs';
+import { getSurfaceExoneration, getTlpeType } from './tlpe-tarifs';
 import { prisma } from './prisma';
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
@@ -272,7 +272,7 @@ export async function generateInvoicePdfBuffer(
 
       const threshold = tlpeConfig?.exoneration ?? 12;
       // Surface cumulee complete des enseignes (non proratisee, articles de reference inclus)
-      const totalEnseigneSurface = getEnseigneSurfaceCumulee(occ.lignes) || 0;
+      const totalEnseigneSurface = getSurfaceExoneration(occ.lignes) || 0;
       const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
       let totalSum = (occ.lignes || [])

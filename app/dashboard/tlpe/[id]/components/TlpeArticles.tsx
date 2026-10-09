@@ -1,4 +1,4 @@
-import { getTlpeType } from '@/lib/tlpe-tarifs';
+import { getTlpeType, TLPE_TYPE_LABELS } from '@/lib/tlpe-tarifs';
 import { Plus, Package, Clock, Maximize2, Pencil, Trash2, Euro, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -127,7 +127,7 @@ export default function TlpeArticles({
                       <h4 className="text-lg font-black text-slate-950 tracking-tight">{ligne.article?.designation}</h4>
                       {tlpeType && (
                         <span className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-wider border border-purple-100/50">
-                          {tlpeType === 'ENSEIGNE' ? 'Enseigne' : tlpeType === 'NUM' ? 'Pub. Numérique' : 'Pub. Non-Num.'}
+                          {TLPE_TYPE_LABELS[tlpeType] || 'Pub. Non-Num.'}
                         </span>
                       )}
                       {isLineExempt && (
