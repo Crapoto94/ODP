@@ -12,11 +12,14 @@ import {
   Upload,
   FileKey,
   Image,
-  Star
+  Star,
+  ChevronDown
 } from 'lucide-react';
 import TabHeader from './TabHeader';
 import ContentBox from './ContentBox';
 import SignatoryModal from './SignatoryModal';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SField, SInput, SToggle, SButton, SIconButton, SAlert, SBadge, SModal, SLoading, SEmpty } from '@/components/v2/settings/ui';
 
 export default function SignatureConfigTab() {
   const [signatories, setSignatories] = useState<any[]>([]);
@@ -103,6 +106,122 @@ export default function SignatureConfigTab() {
     setEditingSignatory(sig);
     setShowSignatoryModal(true);
   };
+
+  const uiMode = useUiMode();
+
+  if (uiMode === 'v2') {
+    return (
+      <div className="space-y-6">
+        {message && <SAlert type={message.type === 'success' ? 'success' : 'error'}>{message.text}</SAlert>}
+
+        <SCard
+          icon={PenLine}
+          title="Signataires"
+          description="Gérez les signataires, leurs images de signature et certificats P12."
+          flush
+          actions={<SButton variant="primary" icon={Plus} onClick={() => openModal()}>Ajouter un signataire</SButton>}
+        >
+          {loadingSignatories ? (
+            <SLoading />
+          ) : signatories.length === 0 ? (
+            <SEmpty icon={Shield}>Aucun signataire configuré</SEmpty>
+          ) : (
+            <ul className="divide-y divide-slate-100">
+              {signatories.map((sig) => {
+                const open = expandedId === sig.id;
+                const imgUploading = uploading[`${sig.id}-image`];
+                const certUploading = uploading[`${sig.id}-certificate`];
+                return (
+                  <li key={sig.id}>
+                    <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 hover:bg-slate-50/60 cursor-pointer" onClick={() => setExpandedId(open ? null : sig.id)}>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="w-10 h-10 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center text-sm font-bold shrink-0">{sig.nom[0]}</span>
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-semibold text-slate-900">{sig.nom}</p>
+                            {sig.isDefault && <SBadge tone="amber"><Star size={11} /> Par défaut</SBadge>}
+                            {sig.signatureImagePath && <SBadge tone="emerald"><Image size={11} /> Image</SBadge>}
+                            {sig.signatureCertificatePath && <SBadge tone="violet"><FileKey size={11} /> P12</SBadge>}
+                          </div>
+                          <p className="text-xs text-slate-500">{sig.email} · {sig.role}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        <SIconButton title="Modifier" tone="blue" onClick={() => openModal(sig)}><PenLine size={16} /></SIconButton>
+                        <SIconButton title="Désactiver" tone="rose" onClick={() => handleDeleteSignatory(sig.id)}><Trash2 size={16} /></SIconButton>
+                        <SIconButton title={open ? 'Replier' : 'Fichiers de signature'} tone="blue" onClick={() => setExpandedId(open ? null : sig.id)}><ChevronDown size={16} className={`transition-transform ${open ? 'rotate-180' : ''}`} /></SIconButton>
+                      </div>
+                    </div>
+
+                    {open && (
+                      <div className="px-6 pb-6 pt-1 bg-slate-50/60 border-t border-slate-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
+                          {/* Image de signature */}
+                          <div className="space-y-2">
+                            <p className="text-[13px] font-semibold text-slate-700 flex items-center gap-2"><Image size={15} className="text-blue-600" /> Image de signature</p>
+                            {sig.signatureImagePath ? (
+                              <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-[#e2e8f0]">
+                                <img src={sig.signatureImagePath} alt="Signature" className="h-10 w-auto object-contain border border-slate-100 rounded" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-slate-700 truncate">{sig.signatureImagePath.split('/').pop()}</p>
+                                  <p className="text-xs text-slate-500">Image configurée</p>
+                                </div>
+                                <SIconButton title="Supprimer l'image" tone="rose" onClick={() => handleDeleteFile(sig.id, 'image')}><Trash2 size={15} /></SIconButton>
+                              </div>
+                            ) : (
+                              <label className="flex flex-col items-center gap-2 p-5 border-2 border-dashed border-slate-300 rounded-xl bg-white hover:border-blue-500 hover:bg-blue-50/40 cursor-pointer transition-colors">
+                                <input type="file" accept=".png,.svg" className="hidden" disabled={imgUploading} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(sig.id, 'image', f); }} />
+                                {imgUploading ? <Loader2 size={20} className="animate-spin text-blue-600" /> : <Upload size={20} className="text-slate-400" />}
+                                <span className="text-xs text-slate-500">{imgUploading ? 'Téléchargement…' : 'PNG ou SVG · 5 Mo maximum'}</span>
+                              </label>
+                            )}
+                          </div>
+
+                          {/* Certificat P12 */}
+                          <div className="space-y-2">
+                            <p className="text-[13px] font-semibold text-slate-700 flex items-center gap-2"><FileKey size={15} className="text-violet-600" /> Certificat P12</p>
+                            {sig.signatureCertificatePath ? (
+                              <div className="flex items-center gap-3 p-3 bg-white rounded-xl border border-[#e2e8f0]">
+                                <span className="w-9 h-9 rounded-lg bg-violet-50 text-violet-600 flex items-center justify-center shrink-0"><FileKey size={16} /></span>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-slate-700 truncate">{sig.signatureCertificatePath.split('/').pop()}</p>
+                                  <p className="text-xs text-slate-500">Certificat configuré</p>
+                                </div>
+                                <SIconButton title="Supprimer le certificat" tone="rose" onClick={() => handleDeleteFile(sig.id, 'certificate')}><Trash2 size={15} /></SIconButton>
+                              </div>
+                            ) : (
+                              <label className="flex flex-col items-center gap-2 p-5 border-2 border-dashed border-slate-300 rounded-xl bg-white hover:border-violet-500 hover:bg-violet-50/40 cursor-pointer transition-colors">
+                                <input type="file" accept=".p12,.pfx" className="hidden" disabled={certUploading} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(sig.id, 'certificate', f); }} />
+                                {certUploading ? <Loader2 size={20} className="animate-spin text-violet-600" /> : <Upload size={20} className="text-slate-400" />}
+                                <span className="text-xs text-slate-500">{certUploading ? 'Téléchargement…' : 'P12 ou PFX · 10 Mo maximum'}</span>
+                              </label>
+                            )}
+                            {sig.signatureCertificatePath && (
+                              <div className="flex gap-2">
+                                <SInput type="password" placeholder="Mot de passe du certificat" value={certPassword[sig.id] ?? ''} onChange={(e) => setCertPassword((pw) => ({ ...pw, [sig.id]: e.target.value }))} />
+                                <SButton variant="primary" onClick={() => handleSavePassword(sig.id)}>OK</SButton>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </SCard>
+
+        <SignatoryModal
+          show={showSignatoryModal}
+          onClose={() => { setShowSignatoryModal(false); setEditingSignatory(null); }}
+          editingSignatory={editingSignatory}
+          onSaved={() => { fetchSignatories(); setShowSignatoryModal(false); setEditingSignatory(null); }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

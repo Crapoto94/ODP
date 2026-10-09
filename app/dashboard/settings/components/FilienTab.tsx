@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import FilienTypeConfigs from '@/components/FilienTypeConfigs';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SGrid, SField, SInput, SSelect, SToggle, SButton, SAlert, SBadge, SSaveBar } from '@/components/v2/settings/ui';
 
 interface Props {
   settings: any;
@@ -89,6 +91,155 @@ export default function FilienTab({ settings, setSettings, handleSubmit, saving,
       setTesting(false);
     }
   };
+
+  const uiMode = useUiMode();
+  const set = (patch: any) => setSettings({ ...settings, ...patch });
+
+  if (uiMode === 'v2') {
+    const monitorOn = !!(settings as any).repoMonitorEnabled;
+    const pct = diskSpace ? diskSpace.percentFree : 0;
+    return (
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl">
+        <SCard icon={FileText} title="Paramètres de base" description="En-tête du fichier d'échange FILIEN (/##/PARAM/).">
+          <SGrid cols={3}>
+            <SField label="Code organisme">
+              <SInput type="text" maxLength={2} placeholder="01" value={settings.filienOrga || ''} onChange={(e) => set({ filienOrga: e.target.value })} />
+            </SField>
+            <SField label="Code budget">
+              <SInput type="text" maxLength={2} placeholder="BA" value={settings.filienBudget || ''} onChange={(e) => set({ filienBudget: e.target.value })} />
+            </SField>
+            <SField label="Exercice">
+              <SInput type="number" placeholder="2026" value={settings.filienExercice || ''} onChange={(e) => set({ filienExercice: parseInt(e.target.value) })} />
+            </SField>
+            <SField label="Code avancement" className="md:col-span-2 xl:col-span-3">
+              <SSelect value={settings.filienAvancement || '5'} onChange={(e) => set({ filienAvancement: e.target.value })}>
+                <option value="1">1 - Prévision</option>
+                <option value="2">2 - Pré-engagé</option>
+                <option value="3">3 - Engagé</option>
+                <option value="4">4 - Facturé</option>
+                <option value="5">5 - Pré-mandaté</option>
+              </SSelect>
+            </SField>
+          </SGrid>
+        </SCard>
+
+        <SCard icon={SettingsIcon} title="Règles de rejet" description="Contrôles budgétaires appliqués par SEDIT à l'import.">
+          <div className="divide-y divide-slate-100 -my-3">
+            {[
+              { key: 'filienRejetDispo', label: 'Rejet si dépassement du disponible', description: 'Refuse le mouvement si le crédit disponible est dépassé.' },
+              { key: 'filienRejetCA', label: 'Rejet si dépassement du C.A. maximum', description: 'Refuse le mouvement au-delà du chiffre d’affaires maximal.' },
+              { key: 'filienRejetMarche', label: 'Rejet si dépassement du marché', description: 'Refuse le mouvement si le montant du marché est dépassé.' },
+            ].map((c) => (
+              <SToggle key={c.key} label={c.label} description={c.description} checked={!!(settings as any)[c.key]} onChange={(v) => set({ [c.key]: v })} />
+            ))}
+          </div>
+        </SCard>
+
+        <SCard
+          icon={HardDrive}
+          title="Dépôt des fichiers"
+          description="Où sont copiés les factures PDF, le récapitulatif et l'export FILIEN."
+          actions={<SButton icon={RefreshCw} loading={testing} disabled={saving} onClick={handleTestRepo}>Tester le dépôt</SButton>}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            <div className="lg:col-span-3 space-y-5">
+              <SField label="Chemin du dépôt (UNC ou local)" hint="Les fichiers y sont copiés dans un sous-dossier daté.">
+                <SInput icon={FolderOpen} type="text" placeholder="\\\\serveur\\partage\\sous-dossier" value={settings.filienUncPj || ''} onChange={(e) => set({ filienUncPj: e.target.value })} />
+              </SField>
+              <SGrid>
+                <SField label="Utilisateur SMB">
+                  <SInput icon={UserIcon} type="text" placeholder="compte_de_service" value={settings.filienUncUser || ''} onChange={(e) => set({ filienUncUser: e.target.value })} />
+                </SField>
+                <SField label="Mot de passe SMB">
+                  <SInput icon={Key} type="password" placeholder="••••••••" value={settings.filienUncPass || ''} onChange={(e) => set({ filienUncPass: e.target.value })} />
+                </SField>
+                <SField label="Domaine SMB" className="md:col-span-2">
+                  <SInput icon={Server} type="text" placeholder="WORKGROUP" value={settings.filienUncDomain || ''} onChange={(e) => set({ filienUncDomain: e.target.value })} />
+                </SField>
+              </SGrid>
+              {testResult && (
+                <SAlert type={testResult.success ? 'success' : 'error'}>
+                  <p className="font-semibold">{testResult.success ? `Test réussi (${testResult.mode === 'smb' ? 'SMB/UNC' : 'local'})` : 'Test échoué'}</p>
+                  <p className="text-[13px] mt-0.5">{testResult.message}</p>
+                </SAlert>
+              )}
+            </div>
+
+            <div className="lg:col-span-2 rounded-xl border border-[#e2e8f0] bg-slate-50/70 p-5 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <p className="text-[13px] font-semibold text-slate-700 flex items-center gap-2"><HardDrive size={16} className="text-blue-600" /> Espace libre</p>
+                <button type="button" onClick={fetchDiskSpace} disabled={loadingDisk} title="Actualiser" aria-label="Actualiser" className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-600 hover:bg-white">
+                  <RefreshCw size={14} className={loadingDisk ? 'animate-spin' : ''} />
+                </button>
+              </div>
+              {loadingDisk ? (
+                <div className="flex-1 flex items-center justify-center py-6"><Loader2 size={20} className="animate-spin text-blue-600" /></div>
+              ) : diskSpace ? (
+                <>
+                  <div className="flex items-end justify-between gap-3">
+                    <div>
+                      <p className="text-2xl font-extrabold text-slate-900 leading-none tabular-nums">{diskSpace.freeHuman}</p>
+                      <p className="text-xs text-slate-500 mt-1">libres</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-slate-700 tabular-nums">/ {diskSpace.totalHuman}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{diskSpace.usedHuman} utilisés</p>
+                    </div>
+                  </div>
+                  <div className="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${pct < 10 ? 'bg-rose-500' : pct < 25 ? 'bg-amber-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min(100, Math.max(2, pct))}%` }} />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <SBadge tone={pct < 10 ? 'rose' : pct < 25 ? 'amber' : 'emerald'} dot>{pct} % libres</SBadge>
+                    <SBadge>{diskSpace.mode === 'smb' ? 'Partage SMB' : 'Système local'}</SBadge>
+                  </div>
+                  <p className="text-xs text-slate-400 break-all">{diskSpace.root}</p>
+                </>
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-center gap-1 py-6 text-slate-400">
+                  <AlertCircle size={24} />
+                  <p className="text-sm font-medium">Espace indisponible</p>
+                  <p className="text-xs">Vérifiez le chemin puis « Tester le dépôt ».</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </SCard>
+
+        <SCard icon={BellRing} title="Surveillance automatique" description="Contrôle de l'accès et de l'espace libre du dépôt, toutes les 4 heures.">
+          <SToggle label="Activer la surveillance" description="Un e-mail est envoyé à l'administrateur ODP en cas de problème d'accès ou d'espace insuffisant." checked={monitorOn} onChange={(v) => set({ repoMonitorEnabled: v })} />
+          {monitorOn && (
+            <SGrid cols={3} className="mt-4 pt-4 border-t border-slate-100">
+              <SField label="Alerte si moins de (% libres)">
+                <SInput type="number" min={1} max={99} value={(settings as any).repoMinFreePercent ?? 10} onChange={(e) => set({ repoMinFreePercent: e.target.value })} />
+              </SField>
+              <SField label="Dernier contrôle">
+                <div className="h-[42px] flex items-center gap-2 px-3.5 rounded-lg border border-[#e2e8f0] bg-slate-50">
+                  <Activity size={14} className={monitor?.state === 'failed' ? 'text-rose-500' : 'text-emerald-500'} />
+                  <span className="text-sm text-slate-700 flex-1 truncate">
+                    {monitor?.lastCheck ? `${new Date(monitor.lastCheck).toLocaleDateString('fr-FR')} ${new Date(monitor.lastCheck).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}` : 'Jamais'}
+                  </span>
+                  <SBadge tone={monitor?.state === 'failed' ? 'rose' : monitor?.state === 'ok' ? 'emerald' : 'slate'}>{monitor?.state === 'failed' ? 'Problème' : monitor?.state === 'ok' ? 'OK' : '—'}</SBadge>
+                </div>
+              </SField>
+              <SField label="Destinataire des alertes">
+                <div className="h-[42px] flex items-center px-3.5 rounded-lg border border-[#e2e8f0] bg-slate-50 text-sm text-slate-700 truncate">
+                  {(settings as any).adminEmail || <span className="text-slate-400">Non défini — onglet Général</span>}
+                </div>
+              </SField>
+            </SGrid>
+          )}
+        </SCard>
+
+        <SCard icon={LayoutGrid} title="Configurations par type de dossier" description="Paramètres FILIEN propres à chaque famille de dossiers.">
+          <FilienTypeConfigs />
+        </SCard>
+
+        {message && message.type === 'error' && <SAlert type="error">{message.text}</SAlert>}
+        <SSaveBar saving={saving} message={message} label="Enregistrer les paramètres Filien" />
+      </form>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in slide-in-from-left-4 duration-500">

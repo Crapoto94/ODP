@@ -18,6 +18,8 @@ import {
   Trash2
 } from 'lucide-react';
 import TabHeader from './TabHeader';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SGrid, SField, SInput, SButton, SAlert, SBadge, SLoading, SEmpty } from '@/components/v2/settings/ui';
 
 export default function PostgresTab() {
   const [config, setConfig] = useState({
@@ -110,6 +112,74 @@ export default function PostgresTab() {
       setSyncing(false);
     }
   };
+
+  const uiMode = useUiMode();
+
+  if (uiMode === 'v2') {
+    if (loading) return <SLoading>Chargement de la configuration…</SLoading>;
+    return (
+      <div className="space-y-6">
+        {message && <SAlert type={message.type === 'success' ? 'success' : 'error'}>{message.text}</SAlert>}
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+          <form onSubmit={handleSave}>
+            <SCard
+              icon={Database}
+              title="Connexion PostgreSQL"
+              description="Paramètres de connexion à la base distante."
+              actions={
+                <>
+                  <SButton icon={Link} loading={testing} disabled={saving} onClick={handleTest}>Tester</SButton>
+                  <SButton variant="primary" type="submit" icon={Save} loading={saving} disabled={testing}>Enregistrer</SButton>
+                </>
+              }
+            >
+              <SGrid>
+                <SField label="Hôte" className="md:col-span-1"><SInput icon={Server} placeholder="localhost ou IP" value={config.host} onChange={(e) => setConfig({ ...config, host: e.target.value })} /></SField>
+                <SField label="Port"><SInput type="number" value={config.port} onChange={(e) => setConfig({ ...config, port: parseInt(e.target.value) })} /></SField>
+                <SField label="Base de données" className="md:col-span-2"><SInput icon={Link} placeholder="nom_db" value={config.database} onChange={(e) => setConfig({ ...config, database: e.target.value })} /></SField>
+                <SField label="Schéma de production" hint="Schéma utilisé par l'application."><SInput icon={Zap} placeholder="public" value={config.schema} onChange={(e) => setConfig({ ...config, schema: e.target.value })} /></SField>
+                <SField label="Schéma de développement" hint="Copie de travail, réservée au mode DEV."><SInput icon={Code} placeholder="ODP" value={config.schemaDev} onChange={(e) => setConfig({ ...config, schemaDev: e.target.value })} /></SField>
+                <SField label="Utilisateur"><SInput icon={User} placeholder="postgres" value={config.user} onChange={(e) => setConfig({ ...config, user: e.target.value })} /></SField>
+                <SField label="Mot de passe"><SInput icon={Lock} type="password" placeholder="••••••••" value={config.password} onChange={(e) => setConfig({ ...config, password: e.target.value })} /></SField>
+              </SGrid>
+            </SCard>
+          </form>
+
+          <SCard
+            icon={Table}
+            title="Exploration du schéma"
+            description={`Tables disponibles dans « ${config.schema} »`}
+            actions={tables.length > 0 ? <SBadge tone="emerald">{tables.length} {tables.length > 1 ? 'tables' : 'table'}</SBadge> : undefined}
+            bodyClassName="p-4"
+          >
+            {tables.length > 0 ? (
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[420px] overflow-y-auto">
+                {tables.map((t) => (
+                  <li key={t} className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg border border-[#e2e8f0] bg-slate-50/60 text-sm text-slate-700">
+                    <Table size={14} className="text-slate-400 shrink-0" />
+                    <span className="truncate font-mono text-[13px]">{t}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <SEmpty icon={Table}>Aucune table détectée — testez la connexion pour les lister.</SEmpty>
+            )}
+          </SCard>
+        </div>
+
+        <SCard icon={RefreshCw} title="Synchronisation DEV" description="Remplacer le schéma DEV par une copie du schéma PROD." className="border-amber-200">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <SAlert type="warning" className="flex-1 min-w-[18rem]">
+              <p className="font-semibold">Opération destructive</p>
+              <p className="text-[13px] mt-0.5">Le schéma DEV est supprimé puis recréé à partir de PROD : toutes les données actuelles de DEV seront perdues.</p>
+            </SAlert>
+            <SButton variant="danger" icon={RefreshCw} loading={syncing} disabled={loading} onClick={handleSyncDev}>{syncing ? 'Synchronisation en cours…' : 'Synchroniser DEV depuis PROD'}</SButton>
+          </div>
+        </SCard>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

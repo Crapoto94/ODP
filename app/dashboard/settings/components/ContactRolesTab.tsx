@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Users, Plus, Trash2, Save, Loader2, Mail, MailX } from 'lucide-react';
+import { Users, Plus, Trash2, Save, Loader2, Mail, MailX, Pencil } from 'lucide-react';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SField, SInput, SButton, SIconButton, SAlert, SBadge, SToggle, SLoading, SEmpty, tableClass, thClass, tdClass } from '@/components/v2/settings/ui';
 
 interface ContactRole {
   id: number;
@@ -77,6 +79,58 @@ export default function ContactRolesTab() {
       setSaving(false);
     }
   };
+
+  const uiMode = useUiMode();
+
+  if (uiMode === 'v2') {
+    return (
+      <div className="space-y-6 max-w-3xl">
+        <SAlert type="info">Les rôles marqués « Reçoit l&apos;AOT » recevront l&apos;e-mail « Envoyer l&apos;AOT au demandeur ».</SAlert>
+
+        <SCard icon={Users} title="Types de contacts" description="Rôles utilisés dans les dossiers." flush>
+          {loading ? (
+            <SLoading />
+          ) : roles.length === 0 ? (
+            <SEmpty icon={Users}>Aucun type de contact</SEmpty>
+          ) : (
+            <ul className="divide-y divide-slate-100">
+              {roles.map((r) => (
+                <li key={r.id} className="flex flex-wrap items-center gap-3 px-6 py-3.5">
+                  {editId === r.id ? (
+                    <>
+                      <div className="flex-1 min-w-[12rem]"><SInput autoFocus value={editNom} onChange={(e) => setEditNom(e.target.value)} /></div>
+                      <SToggle checked={editSendAot} onChange={setEditSendAot} label="Reçoit l'AOT" />
+                      <SButton variant="primary" icon={Save} loading={saving} onClick={handleSaveEdit}>Enregistrer</SButton>
+                      <SButton variant="ghost" onClick={() => setEditId(null)}>Annuler</SButton>
+                    </>
+                  ) : (
+                    <>
+                      <span className="flex-1 text-sm font-semibold text-slate-900">{r.nom}</span>
+                      {r.isSendAot && <SBadge tone="blue"><Mail size={12} /> Reçoit l&apos;AOT</SBadge>}
+                      <SIconButton title="Modifier" tone="blue" onClick={() => startEdit(r)}><Pencil size={15} /></SIconButton>
+                      <SIconButton title="Supprimer" tone="rose" onClick={() => handleDelete(r.id)}><Trash2 size={15} /></SIconButton>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </SCard>
+
+        <form onSubmit={handleAdd}>
+          <SCard icon={Plus} title="Nouveau type de contact">
+            <div className="flex flex-wrap items-end gap-4">
+              <SField label="Libellé" className="flex-1 min-w-[14rem]">
+                <SInput value={newNom} onChange={(e) => setNewNom(e.target.value)} placeholder="Ex : Responsable technique" />
+              </SField>
+              <SToggle checked={newSendAot} onChange={setNewSendAot} label="Reçoit l'AOT" />
+              <SButton type="submit" variant="primary" icon={Plus} loading={saving} disabled={!newNom.trim()}>Ajouter</SButton>
+            </div>
+          </SCard>
+        </form>
+      </div>
+    );
+  }
 
   if (loading) return (
     <div className="flex items-center justify-center h-40 gap-3 text-slate-400">

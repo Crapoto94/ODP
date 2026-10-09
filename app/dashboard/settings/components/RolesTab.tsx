@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Save, Loader2, RotateCcw, ShieldCheck, Info } from 'lucide-react';
 import { ROLE_LABELS, ROLE_COLORS, type Role, type Permission } from '@/lib/permissions';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SField, SInput, SButton, SIconButton, SAlert, SBadge, SToggle, SLoading, SEmpty, tableClass, thClass, tdClass } from '@/components/v2/settings/ui';
 
 interface PermissionsMap { [role: string]: Permission[] }
 
@@ -86,6 +88,81 @@ export default function RolesTab() {
       setSaving(false);
     }
   };
+
+  const uiMode = useUiMode();
+  const ROLE_TONE: Record<string, string> = { ADMINISTRATEUR: 'violet', INSTRUCTEUR: 'blue', CONTROLEUR: 'amber', SAISIE: 'slate' };
+
+  if (uiMode === 'v2') {
+    return (
+      <div className="space-y-6">
+        <SAlert type="info">
+          Les modifications prennent effet immédiatement pour les vérifications serveur. Les éléments d&apos;interface (menu, boutons) se mettent à jour après actualisation de la page.
+        </SAlert>
+
+        <SCard icon={ShieldCheck} title="Droits par rôle" description="Cochez les actions autorisées pour chaque rôle." flush>
+          {loading ? (
+            <SLoading />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className={tableClass}>
+                <thead>
+                  <tr>
+                    <th className={`${thClass} w-48`}>Rôle</th>
+                    {allPermissions.map((perm) => (
+                      <th key={perm} className={`${thClass} text-center min-w-[110px] normal-case tracking-normal`}>
+                        <div className="flex flex-col items-center gap-1.5">
+                          <span className="w-6 h-6 rounded-md bg-slate-200 text-slate-600 text-[11px] font-bold flex items-center justify-center">{PERMISSION_LETTERS[perm]}</span>
+                          <span className="text-xs font-semibold text-slate-600 leading-tight whitespace-normal max-w-[110px]">{PERMISSION_LABELS[perm]}</span>
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {roles.map((role) => {
+                    const rolePerms = permissions[role] ?? [];
+                    return (
+                      <tr key={role} className="hover:bg-slate-50/60 transition-colors">
+                        <td className={tdClass}><SBadge tone={ROLE_TONE[role] || 'slate'}>{ROLE_LABELS[role as Role] ?? role}</SBadge></td>
+                        {allPermissions.map((perm) => {
+                          const checked = rolePerms.includes(perm);
+                          const locked = role === 'ADMINISTRATEUR' && perm === 'MANAGE_USERS';
+                          return (
+                            <td key={perm} className={`${tdClass} text-center`}>
+                              <button
+                                type="button"
+                                onClick={() => toggle(role, perm)}
+                                title={checked ? 'Retirer ce droit' : 'Accorder ce droit'}
+                                aria-pressed={checked}
+                                className={`w-7 h-7 rounded-md border-2 inline-flex items-center justify-center transition-colors ${
+                                  checked ? (locked ? 'bg-violet-600 border-violet-600 text-white cursor-default' : 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700') : 'border-slate-300 text-transparent hover:border-slate-400'
+                                }`}
+                              >
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                              </button>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </SCard>
+
+        <div className="sticky bottom-4 z-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e2e8f0] bg-white/95 backdrop-blur px-5 py-3 shadow-[0_4px_12px_rgba(15,23,42,0.08)]">
+          <SButton variant="ghost" icon={RotateCcw} onClick={handleReset} disabled={!hasChanged || saving}>Annuler les modifications</SButton>
+          <div className="flex items-center gap-3">
+            {saved && <span className="text-sm font-medium text-emerald-700">Enregistré</span>}
+            {error && <span className="text-sm font-medium text-rose-700">{error}</span>}
+            <SButton variant="primary" icon={Save} loading={saving} disabled={!hasChanged} onClick={handleSave}>Enregistrer</SButton>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

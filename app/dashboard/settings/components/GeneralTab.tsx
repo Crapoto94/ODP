@@ -14,6 +14,8 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import TabHeader from './TabHeader';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SGrid, SField, SInput, SButton, SAlert, SBadge, SSaveBar } from '@/components/v2/settings/ui';
 import FormSection from './FormSection';
 
 interface Props {
@@ -50,6 +52,108 @@ export default function GeneralTab({
       setAdminMailLoading(false);
     }
   };
+  const uiMode = useUiMode();
+  const set = (patch: any) => setSettings({ ...settings, ...patch });
+
+  if (uiMode === 'v2') {
+    return (
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl">
+        <SCard
+          icon={Globe}
+          title="Proxy API (APM)"
+          description="Passerelle centrale pour le mail, l'annuaire et les données SEDIT."
+          actions={
+            <SBadge tone={apmStatus === 'online' ? 'emerald' : apmStatus === 'offline' ? 'rose' : 'slate'} dot>
+              {apmStatus === 'online' ? 'En ligne' : apmStatus === 'offline' ? 'Injoignable' : 'Vérification…'}
+            </SBadge>
+          }
+        >
+          <SGrid>
+            <SField label="URL du point d'accès" className="md:col-span-2">
+              <SInput icon={Globe} type="url" placeholder="http://localhost:8001/api/proxy" value={settings.apmUrl || ''} onChange={(e) => set({ apmUrl: e.target.value })} />
+            </SField>
+            <SField label="Clé API (X-API-KEY)">
+              <SInput icon={Key} type="password" placeholder="••••••••••••" value={settings.apmToken || ''} onChange={(e) => set({ apmToken: e.target.value })} />
+            </SField>
+            <SField label="Domaine Active Directory">
+              <SInput type="text" placeholder="ivry.local" value={settings.adDomain || ''} onChange={(e) => set({ adDomain: e.target.value })} />
+            </SField>
+          </SGrid>
+        </SCard>
+
+        <SCard
+          icon={Mail}
+          title="Messagerie et alertes"
+          description="Destinataires des notifications et adresse publique de l'application."
+          actions={<SButton icon={Mail} onClick={handleTestMail} disabled={saving}>Tester l&apos;envoi de mail</SButton>}
+        >
+          <SGrid>
+            <SField label="E-mail des finances" hint="Plusieurs adresses possibles, séparées par un point-virgule « ; »." className="md:col-span-2">
+              <SInput icon={Mail} type="text" placeholder="nom1@fbc.fr ; nom2@ivry94.fr" value={settings.financeEmail || ''} onChange={(e) => set({ financeEmail: e.target.value })} />
+            </SField>
+            <SField label="E-mail de l'administrateur ODP" hint="Utilisée pour les alertes de surveillance du dépôt des factures. Enregistrez avant de tester.">
+              <SInput icon={ShieldCheck} type="text" placeholder="responsable@ivry94.fr" value={settings.adminEmail || ''} onChange={(e) => set({ adminEmail: e.target.value })} />
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <SButton icon={Mail} loading={adminMailLoading} disabled={saving} onClick={handleTestAdminMail} className="h-9 text-[13px]">Tester l&apos;envoi (admin)</SButton>
+                {adminMailTest && (
+                  <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${adminMailTest.type === 'success' ? 'text-emerald-700' : 'text-rose-700'}`}>
+                    {adminMailTest.type === 'success' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
+                    {adminMailTest.text}
+                  </span>
+                )}
+              </div>
+            </SField>
+            <SField label="URL de l'application" hint="Utilisée dans les liens des mails (dossiers, validation SEDIT…).">
+              <SInput icon={Globe} type="url" placeholder="http://localhost:3000" value={settings.appUrl || ''} onChange={(e) => set({ appUrl: e.target.value })} />
+            </SField>
+          </SGrid>
+        </SCard>
+
+        <SCard icon={SettingsIcon} title="Identité de l'expéditeur" description="Nom, adresse d'envoi et pied de page des e-mails envoyés par ODP.">
+          <SGrid>
+            <SField label="Nom affiché">
+              <SInput type="text" placeholder="ODP Console" value={settings.senderName || ''} onChange={(e) => set({ senderName: e.target.value })} />
+            </SField>
+            <SField label="Adresse d'envoi">
+              <SInput type="email" placeholder="dsihub@fbc.fr" value={settings.senderEmail || ''} onChange={(e) => set({ senderEmail: e.target.value })} />
+            </SField>
+            <SField label="Pied de page — ligne 1">
+              <SInput type="text" placeholder="Direction Générale des Services" value={settings.footer1 || ''} onChange={(e) => set({ footer1: e.target.value })} />
+            </SField>
+            <SField label="Pied de page — ligne 2">
+              <SInput type="text" placeholder="Mairie d'Ivry-sur-Seine" value={settings.footer2 || ''} onChange={(e) => set({ footer2: e.target.value })} />
+            </SField>
+            <SField label="Pied de page — ligne 3" className="md:col-span-2">
+              <SInput type="text" placeholder="01 49 60 20 20 — contact@mairie.fr" value={settings.footer3 || ''} onChange={(e) => set({ footer3: e.target.value })} />
+            </SField>
+            <SField label="Couleur du pied de page">
+              <div className="flex items-center gap-3">
+                <input type="color" className="w-[42px] h-[42px] p-1 rounded-lg border border-[#e2e8f0] bg-white cursor-pointer" value={settings.footerColor || '#1e40af'} onChange={(e) => set({ footerColor: e.target.value })} />
+                <SInput type="text" placeholder="#1e40af" value={settings.footerColor || ''} onChange={(e) => set({ footerColor: e.target.value })} />
+              </div>
+            </SField>
+            <SField label="Aperçu">
+              <div className="h-[42px] rounded-lg px-4 flex items-center text-xs font-medium text-white truncate" style={{ backgroundColor: settings.footerColor || '#1e40af' }}>
+                {[settings.footer1, settings.footer2, settings.footer3].filter(Boolean).join(' · ') || 'Pied de page des e-mails'}
+              </div>
+            </SField>
+          </SGrid>
+        </SCard>
+
+        <SCard icon={FileText} title="Factures et documents" description="Mentions apposées sur les documents générés.">
+          <SGrid>
+            <SField label="Filigrane" hint="Texte en travers des documents non validés (ex. BROUILLON).">
+              <SInput type="text" placeholder="BROUILLON" value={settings.watermark || ''} onChange={(e) => set({ watermark: e.target.value })} />
+            </SField>
+          </SGrid>
+        </SCard>
+
+        {message && message.type === 'error' && <SAlert type="error">{message.text}</SAlert>}
+        <SSaveBar saving={saving} message={message} label="Enregistrer les paramètres" />
+      </form>
+    );
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <TabHeader

@@ -24,6 +24,8 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import ReleaseHistory from './backlog/ReleaseHistory';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SField, SInput, SSelect, STextarea, SButton, SIconButton, SAlert, SBadge, SModal, SLoading, SEmpty, tableClass, thClass, tdClass } from '@/components/v2/settings/ui';
 
 interface BacklogComment {
   id: number;
@@ -246,6 +248,227 @@ export default function BacklogTab() {
       default: return <Lightbulb size={14} />;
     }
   };
+
+  const uiMode = useUiMode();
+
+  if (uiMode === 'v2') {
+    const PRIO: Record<string, { label: string; tone: string }> = { URGENT: { label: 'Urgente', tone: 'rose' }, HIGH: { label: 'Haute', tone: 'amber' }, MEDIUM: { label: 'Moyenne', tone: 'blue' }, LOW: { label: 'Basse', tone: 'slate' } };
+    const TYPES: Record<string, string> = { FEATURE: 'Fonctionnalité', BUG: 'Correction', IMPROVEMENT: 'Amélioration' };
+    const visible = items.filter((i) => !i.versionId || showHistory);
+    const pendingDone = items.filter((i) => i.status === 'DONE' && !i.versionId);
+
+    const openNewVersion = async () => {
+      try {
+        const latest = releases && releases.length > 0 ? releases[0] : null;
+        let next = '0.1.0';
+        if (latest && latest.versionNumber) {
+          const parts = latest.versionNumber.split('.').map(Number);
+          parts[2] = (parts[2] || 0) + 1;
+          next = parts.join('.');
+        } else {
+          const vRes = await axios.get('/api/version');
+          const parts = (vRes.data.version || '0.1.0').split('.').map(Number);
+          parts[2] = (parts[2] || 0) + 1;
+          next = parts.join('.');
+        }
+        setNewVersion({ number: next, notes: '' });
+      } catch (e) { console.error('Error calculating next version:', e); }
+      setNewVersionModal(true);
+    };
+
+    return (
+      <div className="space-y-6">
+        {showAddForm && (
+          <form onSubmit={handleSubmit}>
+            <SCard icon={Plus} title="Nouvelle demande" description="Ajoutez une évolution ou une correction au backlog.">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-5">
+                <SField label="Titre de la demande" required className="md:col-span-2"><SInput required placeholder="Ex : ajouter l'export PDF des dispositifs" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} /></SField>
+                <SField label="Type"><SSelect value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })}><option value="FEATURE">Fonctionnalité</option><option value="BUG">Bug / correction</option><option value="IMPROVEMENT">Amélioration</option></SSelect></SField>
+                <SField label="Description (optionnelle)" className="md:col-span-2"><SInput placeholder="Détails supplémentaires…" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} /></SField>
+                <SField label="Priorité"><SSelect value={formData.priority} onChange={(e) => setFormData({ ...formData, priority: e.target.value })}><option value="LOW">Basse</option><option value="MEDIUM">Moyenne</option><option value="HIGH">Haute</option><option value="URGENT">Urgente</option></SSelect></SField>
+              </div>
+              <div className="flex justify-end gap-2 mt-5">
+                <SButton variant="ghost" onClick={() => setShowAddForm(false)}>Annuler</SButton>
+                <SButton variant="primary" type="submit" loading={saving}>Enregistrer au backlog</SButton>
+              </div>
+            </SCard>
+          </form>
+        )}
+
+        <SCard
+          icon={Clock}
+          title="Backlog de développement"
+          description={`${visible.length} demande${visible.length > 1 ? 's' : ''} — gérez les demandes et suivez les corrections`}
+          flush
+          actions={
+            <>
+              <SButton icon={History} onClick={() => setShowHistory(!showHistory)}>{showHistory ? 'Masquer les réalisés' : 'Voir les réalisés'}</SButton>
+              <SButton icon={Zap} onClick={openNewVersion}>Définir une version</SButton>
+              <SButton variant="primary" icon={Plus} onClick={() => setShowAddForm(!showAddForm)}>Nouvelle demande</SButton>
+            </>
+          }
+        >
+          {loading ? (
+            <SLoading />
+          ) : visible.length === 0 ? (
+            <SEmpty icon={Clock}>Le backlog est vide</SEmpty>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className={tableClass}>
+                <thead>
+                  <tr>
+                    <th className={thClass}>Demande</th>
+                    <th className={thClass}>Priorité</th>
+                    <th className={thClass}>Statut</th>
+                    <th className={`${thClass} text-right`}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visible.map((item) => (
+                    <React.Fragment key={item.id}>
+                      <tr className={`hover:bg-slate-50/60 transition-colors ${item.status === 'REJECTED' ? 'bg-rose-50/30' : ''}`}>
+                        <td className={`${tdClass} max-w-xl`}>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <SBadge tone={item.type === 'BUG' ? 'rose' : 'slate'}>{getTypeIcon(item.type)} {TYPES[item.type] || item.type}</SBadge>
+                            <span className={`font-semibold ${item.status === 'DONE' ? 'line-through text-slate-400' : item.status === 'REJECTED' ? 'text-slate-400' : 'text-slate-900'}`}>{item.title}</span>
+                          </div>
+                          {item.description && <p className="text-[13px] text-slate-500 mt-1">{item.description}</p>}
+                          {item.comments && item.comments.length > 0 && (
+                            <div className="mt-2 space-y-1">
+                              {item.comments.slice(0, 2).map((c) => (
+                                <p key={c.id} className="text-xs bg-slate-50 border border-slate-100 rounded-md px-2.5 py-1.5"><span className="font-semibold text-slate-700">{c.author} : </span><span className="text-slate-600">{c.content}</span></p>
+                              ))}
+                              {item.comments.length > 2 && <p className="text-xs text-slate-400">+ {item.comments.length - 2} autre(s) annotation(s)</p>}
+                            </div>
+                          )}
+                          {item.requestedBy && <p className="text-xs text-blue-600 mt-1.5">Demandeur : {item.requestedBy}</p>}
+                        </td>
+                        <td className={tdClass}><SBadge tone={(PRIO[item.priority] || PRIO.LOW).tone}>{(PRIO[item.priority] || PRIO.LOW).label}</SBadge></td>
+                        <td className={tdClass}>
+                          <div className="flex items-center gap-2">
+                            <SBadge tone={item.status === 'DONE' ? 'emerald' : item.status === 'REJECTED' ? 'rose' : 'blue'} dot>{item.status === 'DONE' ? 'Fait' : item.status === 'REJECTED' ? 'Refusé' : 'En attente'}</SBadge>
+                            {item.status === 'OPEN' && (
+                              <>
+                                <SIconButton title="Marquer comme fait" tone="emerald" onClick={() => updateStatus(item, 'DONE')}><CheckCircle2 size={16} /></SIconButton>
+                                <SIconButton title="Refuser" tone="rose" onClick={() => setRejectionModal(item)}><Ban size={16} /></SIconButton>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                        <td className={`${tdClass} text-right`}>
+                          <div className="flex items-center justify-end gap-1">
+                            {item.versionId && (
+                              <SIconButton title="Détacher de la version" onClick={async () => { if (confirm('Détacher cet élément de sa version ?')) { try { await axios.patch(`/api/backlog/${item.id}`, { versionId: null }); fetchBacklog(); } catch (e) { alert('Erreur'); } } }}><Unlink size={16} /></SIconButton>
+                            )}
+                            {userRole === 'ADMIN' && <SIconButton title="Modifier (admin)" tone="blue" onClick={() => handleEditClick(item)}><Edit2 size={16} /></SIconButton>}
+                            <SIconButton title="Commentaires" tone={selectedItem?.id === item.id ? 'blue' : 'slate'} onClick={() => setSelectedItem(selectedItem?.id === item.id ? null : item)}><MessageSquare size={16} /></SIconButton>
+                            <SIconButton title="Supprimer" tone="rose" onClick={() => deleteItem(item.id)}><Trash2 size={16} /></SIconButton>
+                          </div>
+                        </td>
+                      </tr>
+                      {selectedItem?.id === item.id && (
+                        <tr className="bg-slate-50/60">
+                          <td colSpan={4} className="px-6 py-5">
+                            <div className="max-w-2xl space-y-4">
+                              <p className="text-[13px] font-semibold text-slate-700 flex items-center gap-2"><MessageSquare size={14} /> Commentaires et suivi</p>
+                              <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
+                                {(item.comments || []).length === 0 ? (
+                                  <p className="text-sm text-slate-400 italic">Aucun commentaire pour le moment.</p>
+                                ) : (
+                                  (item.comments || []).map((c) => (
+                                    <div key={c.id} className="bg-white border border-[#e2e8f0] rounded-xl px-4 py-3">
+                                      <div className="flex items-center justify-between gap-3"><span className="text-xs font-semibold text-blue-700">{c.author}</span><span className="text-xs text-slate-400">{new Date(c.created_at).toLocaleString('fr-FR')}</span></div>
+                                      <p className="text-sm text-slate-700 mt-1">{c.content}</p>
+                                    </div>
+                                  ))
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                <SInput value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder="Votre commentaire…" />
+                                <SButton variant="primary" icon={Send} onClick={() => addComment(item.id)}>Envoyer</SButton>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </SCard>
+
+        {rejectionModal && (
+          <SModal
+            icon={Ban}
+            title="Refuser la demande"
+            description="Indiquez le motif du refus."
+            size="sm"
+            onClose={() => setRejectionModal(null)}
+            footer={
+              <>
+                <SButton variant="ghost" onClick={() => setRejectionModal(null)}>Annuler</SButton>
+                <SButton variant="danger" onClick={() => { if (!rejectionReason.trim()) return alert('Raison obligatoire'); updateStatus(rejectionModal, 'REJECTED', `Refusé : ${rejectionReason}`); setRejectionReason(''); setRejectionModal(null); }}>Confirmer le refus</SButton>
+              </>
+            }
+          >
+            <STextarea rows={5} placeholder="Ex : hors périmètre / déjà couvert par une autre fonctionnalité…" value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} />
+          </SModal>
+        )}
+
+        {newVersionModal && (
+          <SModal
+            icon={Zap}
+            title="Définir une version"
+            description="Regrouper les éléments terminés."
+            size="sm"
+            onClose={() => setNewVersionModal(false)}
+            footer={
+              <>
+                <SButton variant="ghost" onClick={() => setNewVersionModal(false)}>Annuler</SButton>
+                <SButton variant="primary" icon={Save} loading={saving} disabled={pendingDone.length === 0 && !newVersion.notes} onClick={createRelease}>Publier la version</SButton>
+              </>
+            }
+          >
+            <div className="rounded-xl border border-[#e2e8f0] bg-slate-50 p-4">
+              <p className="text-[13px] font-semibold text-slate-700 mb-2">Éléments inclus ({pendingDone.length})</p>
+              <ul className="max-h-32 overflow-y-auto space-y-1.5">
+                {pendingDone.map((i) => (<li key={i.id} className="flex items-center gap-2 text-[13px] text-slate-600"><CheckCircle2 size={14} className="text-emerald-500 shrink-0" /><span className="truncate">{i.title}</span></li>))}
+                {pendingDone.length === 0 && <li className="text-[13px] text-rose-500 italic">Aucun élément terminé à publier.</li>}
+              </ul>
+            </div>
+            <SField label="Numéro de version"><SInput value={newVersion.number} onChange={(e) => setNewVersion({ ...newVersion, number: e.target.value })} className="text-base font-semibold" /></SField>
+            <SField label="Notes de mise à jour"><STextarea rows={5} placeholder="Qu'est-ce qui a changé ?" value={newVersion.notes} onChange={(e) => setNewVersion({ ...newVersion, notes: e.target.value })} /></SField>
+          </SModal>
+        )}
+
+        {editModal && (
+          <SModal
+            icon={Edit2}
+            title="Modifier la demande"
+            description="Éditer les détails de la demande."
+            onClose={() => setEditModal(null)}
+            footer={
+              <>
+                <SButton variant="ghost" onClick={() => setEditModal(null)}>Annuler</SButton>
+                <SButton variant="primary" icon={Save} loading={saving} onClick={handleEditSubmit}>Enregistrer</SButton>
+              </>
+            }
+          >
+            <SField label="Titre"><SInput value={editFormData.title} onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })} /></SField>
+            <div className="grid grid-cols-2 gap-4">
+              <SField label="Type"><SSelect value={editFormData.type} onChange={(e) => setEditFormData({ ...editFormData, type: e.target.value })}><option value="FEATURE">Fonctionnalité</option><option value="BUG">Bug / correction</option><option value="IMPROVEMENT">Amélioration</option></SSelect></SField>
+              <SField label="Priorité"><SSelect value={editFormData.priority} onChange={(e) => setEditFormData({ ...editFormData, priority: e.target.value })}><option value="LOW">Basse</option><option value="MEDIUM">Moyenne</option><option value="HIGH">Haute</option><option value="URGENT">Urgente</option></SSelect></SField>
+            </div>
+            <SField label="Description"><STextarea rows={4} placeholder="Détails supplémentaires…" value={editFormData.description} onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })} /></SField>
+          </SModal>
+        )}
+
+        <ReleaseHistory releases={releases} onRefresh={fetchBacklog} />
+      </div>
+    );
+  }
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="animate-spin text-blue-600" /></div>;
 

@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Database, Play, Table as TableIcon, AlertCircle, ChevronRight, Terminal, Search, Copy, Download, Layers } from 'lucide-react';
 import axios from 'axios';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SButton, SAlert, SBadge, SEmpty, SLoading, tableClass, thClass, tdClass } from '@/components/v2/settings/ui';
 
 interface TableSchema {
   name: string;
@@ -63,6 +65,88 @@ export default function SQLEditor() {
     setQuery(newQuery);
     handleRunQuery(newQuery);
   };
+
+  const uiMode = useUiMode();
+
+  if (uiMode === 'v2') {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Tables */}
+        <SCard icon={TableIcon} title="Tables" description={`Base ${dbType === 'main' ? 'PostgreSQL' : 'SQLite'}`} className="lg:col-span-3" bodyClassName="p-3">
+          <div className="grid grid-cols-2 gap-1 p-1 mb-3 bg-slate-100 rounded-lg">
+            {([['main', 'PostgreSQL', Database], ['local', 'SQLite', Layers]] as const).map(([k, label, I]) => (
+              <button key={k} type="button" onClick={() => setDbType(k)} className={`h-8 rounded-md text-[13px] font-semibold inline-flex items-center justify-center gap-1.5 transition-colors ${dbType === k ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                <I size={13} /> {label}
+              </button>
+            ))}
+          </div>
+          <ul className="max-h-[520px] overflow-y-auto space-y-0.5">
+            {schema.length > 0 ? schema.map((t) => (
+              <li key={t.name}>
+                <button type="button" onClick={() => handleTableClick(t.name)} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left transition-colors ${activeTable === t.name ? 'bg-blue-600 text-white' : 'text-slate-700 hover:bg-slate-50'}`}>
+                  <TableIcon size={14} className={activeTable === t.name ? 'text-blue-100' : 'text-slate-400'} />
+                  <span className="text-[13px] font-medium truncate">{t.name}</span>
+                </button>
+              </li>
+            )) : <li className="py-8 text-center text-sm text-slate-400">Aucune table</li>}
+          </ul>
+        </SCard>
+
+        <div className="lg:col-span-9 space-y-6 min-w-0">
+          {/* Éditeur */}
+          <SCard
+            icon={Terminal}
+            title="Éditeur SQL"
+            description="Exécution directe sur la base de données — à manier avec précaution."
+            actions={<SButton variant="primary" icon={Play} loading={loading} onClick={() => handleRunQuery()}>Exécuter</SButton>}
+          >
+            <textarea
+              className="w-full min-h-[150px] resize-y rounded-xl border border-slate-800 bg-slate-900 p-4 font-mono text-[13px] leading-relaxed text-slate-100 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              spellCheck={false}
+              placeholder="Saisissez votre code SQL ici…"
+            />
+          </SCard>
+
+          {error && <SAlert type="error"><p className="font-semibold">Erreur SQL</p><p className="text-[13px] mt-0.5 break-words">{error}</p></SAlert>}
+
+          {/* Résultats */}
+          <SCard
+            icon={Search}
+            title="Résultats"
+            description={results.length > 0 ? `${results.length} ligne${results.length > 1 ? 's' : ''}${results.length > 1000 ? ' (1 000 affichées)' : ''}` : undefined}
+            flush
+          >
+            {loading ? (
+              <SLoading>Traitement de la requête…</SLoading>
+            ) : results.length > 0 ? (
+              <div className="overflow-auto max-h-[520px]">
+                <table className={tableClass}>
+                  <thead className="sticky top-0 z-10">
+                    <tr>{Object.keys(results[0]).map((key) => <th key={key} className={thClass}>{key}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {results.slice(0, 1000).map((row, i) => (
+                      <tr key={i} className="hover:bg-slate-50/60 transition-colors">
+                        {Object.values(row).map((val: any, j) => (
+                          <td key={j} className={`${tdClass} whitespace-nowrap font-mono text-[13px]`}>
+                            {val === null ? <span className="text-slate-300 italic">null</span> : String(val)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : !error ? (
+              <SEmpty icon={Terminal}>En attente d&apos;une requête</SEmpty>
+            ) : null}
+          </SCard>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">

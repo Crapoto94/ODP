@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Loader2, Save, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SField, SInput, SSelect, SButton, SAlert, SLoading } from '@/components/v2/settings/ui';
 
 const TYPES_DOSSIER = ['COMMERCE', 'CHANTIER', 'TOURNAGE', 'TLPE'];
 
@@ -73,7 +75,9 @@ export default function FilienTypeConfigs() {
     }
   };
 
-  if (loading) return <div className="p-8 flex justify-center"><Loader2 className="animate-spin text-indigo-600" /></div>;
+  const uiMode = useUiMode();
+
+  if (loading) return uiMode === 'v2' ? <SLoading /> : <div className="p-8 flex justify-center"><Loader2 className="animate-spin text-indigo-600" /></div>;
 
   const currentConfig = configs[activeType] || {
     type: activeType,
@@ -89,6 +93,59 @@ export default function FilienTypeConfigs() {
     filienGestionnaire: '',
     filienPreBordereau: ''
   };
+
+  if (uiMode === 'v2') {
+    const field = (key: string, label: string, hint?: string) => (
+      <SField label={label} hint={hint}>
+        <SInput type="text" value={currentConfig[key] || ''} onChange={(e) => handleChange(key, e.target.value)} />
+      </SField>
+    );
+    return (
+      <div className="space-y-5">
+        <div role="tablist" className="inline-flex flex-wrap gap-1 p-1 rounded-lg bg-slate-100">
+          {TYPES_DOSSIER.map((t) => (
+            <button key={t} type="button" role="tab" aria-selected={activeType === t} onClick={() => setActiveType(t)} className={`h-8 px-4 rounded-md text-[13px] font-semibold transition-colors ${activeType === t ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+              {t.charAt(0) + t.slice(1).toLowerCase()}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+          <SField label="Modèle de facture">
+            <SSelect value={currentConfig.invoiceTemplateId || ''} onChange={(e) => handleChange('invoiceTemplateId', e.target.value)}>
+              <option value="">— Défaut global —</option>
+              {Array.isArray(gabarits) && gabarits.map((g) => (<option key={g.id} value={g.id.toString()}>{g.nom} {g.isDefault ? '(défaut)' : ''}</option>))}
+            </SSelect>
+          </SField>
+          <SField label="Objet du mouvement (/04/)" hint="Utilise la valeur globale si vide.">
+            <SInput type="text" maxLength={40} placeholder="Valeur globale si vide" value={currentConfig.filienObjet || ''} onChange={(e) => handleChange('filienObjet', e.target.value)} />
+          </SField>
+          <SField label="N° de pré-bordereau (/11/)" hint="Utilise la valeur globale si vide.">
+            <SInput type="text" placeholder="Valeur globale si vide" value={currentConfig.filienPreBordereau || ''} onChange={(e) => handleChange('filienPreBordereau', e.target.value)} />
+          </SField>
+        </div>
+
+        <div className="pt-5 border-t border-slate-100">
+          <h4 className="text-[13px] font-bold text-slate-900 mb-4">Ventilation analytique</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-x-6 gap-y-5">
+            {field('filienChapitre', 'Chapitre')}
+            {field('filienNature', 'Nature')}
+            {field('filienFonction', 'Fonction')}
+            {field('filienCodeInterne', 'Code interne')}
+            {field('filienTypeMouvement', 'Type de mouvement')}
+            {field('filienSens', 'Sens')}
+            {field('filienStructure', 'Structure')}
+            {field('filienGestionnaire', 'Gestionnaire (/542/)')}
+          </div>
+        </div>
+
+        {message && <SAlert type={message.type === 'success' ? 'success' : 'error'}>{message.text}</SAlert>}
+        <div className="flex justify-end">
+          <SButton icon={Save} loading={saving} onClick={handleSave as any}>Enregistrer les configurations par type</SButton>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

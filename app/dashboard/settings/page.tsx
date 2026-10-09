@@ -127,7 +127,8 @@ function SettingsPageInner() {
       {activeTab === 'messages' && <MessagesContextuelsTab />}
       {activeTab === 'backlog' && <BacklogTab />}
       {activeTab === 'mobile_logs' && <MobileLogsTab {...{mobileLogs, loadingLogs, fetchMobileLogs}} />}
-      {activeTab === 'sql' && (
+      {activeTab === 'sql' && uiMode === 'v2' && <SQLEditor />}
+      {activeTab === 'sql' && uiMode !== 'v2' && (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl overflow-hidden">
           <div className="p-8 bg-indigo-600 flex items-center gap-4 text-white">
             <Database size={24} />

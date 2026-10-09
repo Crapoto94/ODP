@@ -2,6 +2,8 @@
 import React from 'react';
 import { Trash2, Box, Calendar, ChevronRight } from 'lucide-react';
 import axios from 'axios';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SBadge, SIconButton } from '@/components/v2/settings/ui';
 
 interface Release {
   id: number;
@@ -30,7 +32,50 @@ export default function ReleaseHistory({ releases, onRefresh }: ReleaseHistoryPr
     }
   };
 
+  const uiMode = useUiMode();
   if (releases.length === 0) return null;
+
+  if (uiMode === 'v2') {
+    return (
+      <section className="space-y-4">
+        <div className="flex items-center gap-3">
+          <h3 className="text-[15px] font-bold text-slate-900">Historique des versions</h3>
+          <SBadge>{releases.length}</SBadge>
+          <div className="h-px flex-1 bg-slate-200" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {releases.map((release) => {
+            const count = release.backlogItems?.length || 0;
+            return (
+              <article key={release.id} className="bg-white border border-[#e2e8f0] rounded-2xl p-5 shadow-[0_1px_3px_rgba(15,23,42,0.05)] flex flex-col gap-3">
+                <header className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="flex items-center gap-2 text-lg font-extrabold text-slate-900 tabular-nums"><Box size={16} className="text-blue-600" /> v{release.versionNumber}</p>
+                    <p className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5"><Calendar size={12} /> {new Date(release.releasedAt).toLocaleDateString('fr-FR')}</p>
+                  </div>
+                  <SIconButton title={count > 0 ? 'La version doit être vide pour être supprimée' : 'Supprimer la version'} tone="rose" disabled={count > 0} onClick={() => deleteRelease(release.id)}><Trash2 size={16} /></SIconButton>
+                </header>
+                {release.notes && <p className="text-[13px] text-slate-600 whitespace-pre-line line-clamp-4">{release.notes}</p>}
+                {count > 0 && (
+                  <ul className="bg-slate-50 rounded-xl p-3 space-y-2 max-h-44 overflow-y-auto">
+                    {release.backlogItems?.map((item: any) => (
+                      <li key={item.id} className="flex items-start gap-2 text-[13px] text-slate-700">
+                        {item.type === 'BUG' ? <Bug size={12} className="text-rose-500 mt-1 shrink-0" /> : <ChevronRight size={12} className="text-slate-400 mt-1 shrink-0" />}
+                        <span className="leading-snug">{item.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <footer className="mt-auto pt-3 border-t border-slate-100 text-xs font-semibold">
+                  <span className={count > 0 ? 'text-emerald-700' : 'text-slate-400'}>{count} élément{count > 1 ? 's' : ''}</span>
+                </footer>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <div className="space-y-6">

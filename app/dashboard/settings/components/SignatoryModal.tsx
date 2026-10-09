@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, X, PenLine } from 'lucide-react';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SField, SInput, SToggle, SButton, SIconButton, SAlert, SBadge, SModal, SLoading, SEmpty } from '@/components/v2/settings/ui';
 
 interface Props {
   show: boolean;
@@ -61,7 +63,37 @@ export default function SignatoryModal({ show, onClose, editingSignatory, onSave
     }
   };
 
+  const uiMode = useUiMode();
   if (!show) return null;
+
+  if (uiMode === 'v2') {
+    return (
+      <SModal
+        icon={PenLine}
+        title={editingSignatory ? 'Modifier le signataire' : 'Ajouter un signataire'}
+        description="Informations de signature"
+        onClose={onClose}
+        size="sm"
+        footer={
+          <>
+            <SButton variant="ghost" onClick={onClose} disabled={loading}>Annuler</SButton>
+            <SButton variant="primary" type="submit" form="signatory-form" loading={loading}>{editingSignatory ? 'Enregistrer' : 'Créer'}</SButton>
+          </>
+        }
+      >
+        <form id="signatory-form" onSubmit={handleSubmit} className="space-y-4">
+          {error && <SAlert type="error">{error}</SAlert>}
+          <SField label="Nom complet" required><SInput required disabled={loading} placeholder="Jean Dupont" value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} /></SField>
+          <SField label="Adresse e-mail" required><SInput type="email" required disabled={loading} placeholder="jean@exemple.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></SField>
+          <SField label="Rôle" required><SInput required disabled={loading} placeholder="Maire" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} /></SField>
+          <SField label="Titre / fonction"><SInput disabled={loading} placeholder="Directeur Général Adjoint" value={form.titre} onChange={(e) => setForm({ ...form, titre: e.target.value })} /></SField>
+          <div className="rounded-xl border border-[#e2e8f0] bg-slate-50 px-4">
+            <SToggle label="Signataire par défaut" description="Proposé en premier lors d'une demande de signature." checked={form.isDefault} onChange={(v) => setForm({ ...form, isDefault: v })} disabled={loading} />
+          </div>
+        </form>
+      </SModal>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-in fade-in duration-200">

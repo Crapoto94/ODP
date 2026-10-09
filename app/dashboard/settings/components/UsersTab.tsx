@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import TabHeader from './TabHeader';
 import { ROLE_LABELS, ROLE_COLORS, type Role } from '@/lib/permissions';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SField, SInput, SSelect, SButton, SIconButton, SAlert, SBadge, SModal, SLoading, SEmpty, tableClass, thClass, tdClass } from '@/components/v2/settings/ui';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -162,6 +164,181 @@ export default function UsersTab() {
     setAdError(null);
     setAdSearchError(null);
   };
+
+  const uiMode = useUiMode();
+  const ROLE_TONE: Record<string, string> = { ADMINISTRATEUR: 'violet', INSTRUCTEUR: 'blue', CONTROLEUR: 'amber', SAISIE: 'slate' };
+  const ROLE_OPTIONS = [
+    { v: 'SAISIE', l: 'Saisie' }, { v: 'INSTRUCTEUR', l: 'Instructeur' }, { v: 'CONTROLEUR', l: 'Contrôleur' }, { v: 'ADMINISTRATEUR', l: 'Administrateur' },
+  ];
+
+  if (uiMode === 'v2') {
+    return (
+      <div className="space-y-6">
+        <SCard
+          icon={UsersIcon}
+          title="Comptes utilisateurs"
+          description={`${users.length} compte${users.length > 1 ? 's' : ''} — gestion des accès et des rôles`}
+          flush
+          actions={
+            <>
+              <SButton icon={Building2} onClick={() => setShowAdModal(true)}>Ajouter depuis l&apos;AD</SButton>
+              <SButton variant="primary" icon={Plus} onClick={() => openModal()}>Ajouter manuellement</SButton>
+            </>
+          }
+        >
+          {loading ? (
+            <SLoading>Chargement des comptes…</SLoading>
+          ) : users.length === 0 ? (
+            <SEmpty icon={UsersIcon}>Aucun utilisateur enregistré</SEmpty>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className={tableClass}>
+                <thead>
+                  <tr>
+                    <th className={thClass}>Utilisateur</th>
+                    <th className={thClass}>Identifiant</th>
+                    <th className={thClass}>Rôle</th>
+                    <th className={thClass}>Authentification</th>
+                    <th className={`${thClass} text-right`}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id} className="hover:bg-slate-50/60 transition-colors">
+                      <td className={tdClass}>
+                        <div className="flex items-center gap-3">
+                          <span className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${user.isAd ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'}`}>
+                            {user.prenom?.[0]}{user.nom?.[0]}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-slate-900 leading-tight">{user.prenom} {user.nom}</p>
+                            <p className="text-xs text-slate-500 truncate">{user.email || '—'}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className={tdClass}><span className="font-mono text-[13px] text-slate-700">{user.login}</span></td>
+                      <td className={tdClass}>
+                        <SBadge tone={ROLE_TONE[user.role] || 'slate'}>{ROLE_LABELS[user.role as Role] ?? user.role}</SBadge>
+                      </td>
+                      <td className={tdClass}>
+                        {user.isAd ? <SBadge tone="blue">Active Directory</SBadge> : <SBadge>Compte local</SBadge>}
+                      </td>
+                      <td className={`${tdClass} text-right`}>
+                        <div className="flex items-center justify-end gap-1">
+                          <SIconButton title="Modifier" tone="blue" onClick={() => openModal(user)}><Edit2 size={16} /></SIconButton>
+                          <SIconButton title="Supprimer" tone="rose" onClick={() => handleDelete(user.id)}><Trash2 size={16} /></SIconButton>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </SCard>
+
+        {showModal && (
+          <SModal
+            icon={UserIcon}
+            title={editingUser ? "Modifier l'utilisateur" : 'Nouvel utilisateur'}
+            description="Configuration du compte"
+            onClose={() => setShowModal(false)}
+            footer={
+              <>
+                <SButton variant="ghost" onClick={() => setShowModal(false)}>Annuler</SButton>
+                <SButton variant="primary" type="submit" form="user-form" icon={Save} loading={saving}>{editingUser ? 'Mettre à jour' : 'Créer le compte'}</SButton>
+              </>
+            }
+          >
+            <form id="user-form" onSubmit={handleSave} className="space-y-5">
+              {formError && <SAlert type="error">{formError}</SAlert>}
+              <div className="grid grid-cols-2 gap-4">
+                <SField label="Prénom" required><SInput required value={form.prenom} onChange={(e) => setForm({ ...form, prenom: e.target.value })} /></SField>
+                <SField label="Nom" required><SInput required value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} /></SField>
+              </div>
+              <SField label="Adresse e-mail"><SInput icon={Mail} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></SField>
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                <SField label="Identifiant" required><SInput icon={UserIcon} required value={form.login} onChange={(e) => setForm({ ...form, login: e.target.value })} /></SField>
+                <SField label={editingUser ? 'Nouveau mot de passe' : 'Mot de passe'} hint={form.isAd ? 'Ignoré : le compte utilise l’Active Directory.' : undefined} required={!editingUser && !form.isAd}>
+                  <SInput icon={Key} type="password" disabled={form.isAd} required={!editingUser && !form.isAd} placeholder={editingUser ? '••••••' : ''} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+                </SField>
+              </div>
+              <SField label="Rôle">
+                <SSelect value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+                  {ROLE_OPTIONS.map((r) => <option key={r.v} value={r.v}>{r.l}</option>)}
+                </SSelect>
+              </SField>
+              <label className="flex items-center gap-3 rounded-xl border border-[#e2e8f0] bg-slate-50 px-4 py-3 cursor-pointer">
+                <input type="checkbox" className="w-4 h-4 accent-blue-600" checked={form.isAd} onChange={(e) => setForm({ ...form, isAd: e.target.checked })} />
+                <span className="text-sm font-medium text-slate-700 flex items-center gap-2"><Building2 size={15} className="text-blue-600" /> Authentification via Active Directory</span>
+              </label>
+            </form>
+          </SModal>
+        )}
+
+        {showAdModal && (
+          <SModal
+            icon={Building2}
+            title="Ajouter depuis l'AD"
+            description="Rechercher un compte Active Directory"
+            onClose={closeAdModal}
+            size="sm"
+            footer={adSelected ? (
+              <>
+                <SButton variant="ghost" onClick={closeAdModal}>Annuler</SButton>
+                <SButton variant="primary" icon={Plus} loading={adSaving} onClick={handleAddFromAd}>Ajouter ce compte</SButton>
+              </>
+            ) : undefined}
+          >
+            {!adSelected && (
+              <div className="space-y-3">
+                <div className="relative">
+                  <SInput icon={Search} autoFocus type="text" placeholder="Nom, prénom ou identifiant…" value={adQuery} onChange={(e) => setAdQuery(e.target.value)} />
+                  {adSearching && <Loader2 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-blue-500 animate-spin" size={16} />}
+                </div>
+                {adSearchError && <p className="text-sm text-slate-500 text-center">{adSearchError}</p>}
+                {adQuery.length > 0 && adQuery.length < 2 && <p className="text-xs text-slate-400 text-center">Saisissez au moins 2 caractères.</p>}
+                {adResults.length > 0 && (
+                  <ul className="border border-[#e2e8f0] rounded-xl overflow-hidden divide-y divide-slate-100">
+                    {adResults.map((u) => (
+                      <li key={u.sam_account}>
+                        <button type="button" onClick={() => setAdSelected(u)} className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3">
+                          <span className="w-8 h-8 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0">{(u.display_name?.[0] || '?').toUpperCase()}</span>
+                          <span className="min-w-0">
+                            <span className="block text-sm font-semibold text-slate-900 truncate">{u.display_name}</span>
+                            <span className="block text-xs text-slate-500 truncate">{u.sam_account}{u.mail ? ` · ${u.mail}` : ''}</span>
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+            {adSelected && (
+              <>
+                <div className="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
+                  <span className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold shrink-0">{(adSelected.display_name?.[0] || '?').toUpperCase()}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-slate-900 truncate">{adSelected.display_name}</p>
+                    <p className="text-xs text-slate-600 truncate">{adSelected.sam_account}{adSelected.mail ? ` · ${adSelected.mail}` : ''}</p>
+                  </div>
+                  <SIconButton title="Changer de compte" onClick={() => setAdSelected(null)}><X size={16} /></SIconButton>
+                </div>
+                <SField label="Rôle dans l'application">
+                  <SSelect value={adRole} onChange={(e) => setAdRole(e.target.value)}>
+                    {ROLE_OPTIONS.map((r) => <option key={r.v} value={r.v}>{r.l}</option>)}
+                  </SSelect>
+                </SField>
+                <SAlert type="info">Ce compte utilisera ses identifiants AD pour se connecter. Aucun mot de passe local ne sera stocké.</SAlert>
+                {adError && <SAlert type="error">{adError}</SAlert>}
+              </>
+            )}
+          </SModal>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

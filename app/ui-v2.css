@@ -141,7 +141,7 @@ html[data-ui="v2"] .settings-v2 [class*="tracking-[0."] {
 }
 /* libellés de champs */
 html[data-ui="v2"] .settings-v2 label {
-  color: #64748b;
+  color: #334155;
 }
 /* champs de saisie : 42 px, bord 1 px, rayon 8 px, focus bleu de la charte */
 html[data-ui="v2"] .settings-v2 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),

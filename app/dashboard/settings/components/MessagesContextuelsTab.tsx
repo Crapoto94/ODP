@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Save, Loader2, Search, ChevronRight, Eye, Code2, Trash2, BellOff, Bell } from 'lucide-react';
 import { CONTEXTUAL_MESSAGE_DEFS } from '@/lib/contextual-messages-defs';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SField, SInput, SButton, SIconButton, SAlert, SBadge, SLoading } from '@/components/v2/settings/ui';
 
 interface DbMessage {
   cle: string;
@@ -119,6 +121,101 @@ export default function MessagesContextuelsTab() {
   const originalLabel = db?.label ?? CONTEXTUAL_MESSAGE_DEFS[selectedKey]?.label ?? '';
   const originalSubject = db?.sujet ?? CONTEXTUAL_MESSAGE_DEFS[selectedKey]?.defaultSubject ?? '';
   const hasChanged = localVal !== originalVal || localLabel !== originalLabel || localSubject !== originalSubject;
+
+  const uiMode = useUiMode();
+
+  if (uiMode === 'v2') {
+    if (loading) return <SLoading>Chargement des messages…</SLoading>;
+    return (
+      <div className="flex flex-col lg:flex-row bg-white border border-[#e2e8f0] rounded-2xl overflow-hidden shadow-[0_1px_3px_rgba(15,23,42,0.05)] lg:h-[720px]">
+        {/* Liste des modèles */}
+        <aside className="lg:w-80 shrink-0 border-b lg:border-b-0 lg:border-r border-[#e2e8f0] bg-slate-50/60 flex flex-col max-h-72 lg:max-h-none">
+          <div className="p-4 border-b border-[#e2e8f0] bg-white space-y-3">
+            <div className="flex items-center gap-2">
+              <Mail size={16} className="text-blue-600" />
+              <h3 className="text-sm font-bold text-slate-900">Modèles d&apos;e-mails</h3>
+              <span className="ml-auto text-xs text-slate-500 tabular-nums">{filteredKeys.length}</span>
+            </div>
+            <SInput icon={Search} type="text" placeholder="Rechercher un modèle…" value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <ul className="flex-1 overflow-y-auto p-2 space-y-0.5">
+            {filteredKeys.map((key) => {
+              const active = selectedKey === key;
+              const dbMsg = dbMessages[key];
+              const label = dbMsg?.label ?? CONTEXTUAL_MESSAGE_DEFS[key].label;
+              const off = dbMsg?.disabled ?? false;
+              return (
+                <li key={key}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedKey(key)}
+                    className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between gap-2 transition-colors ${active ? 'bg-blue-600 text-white' : 'hover:bg-white text-slate-700'}`}
+                  >
+                    <span className="min-w-0">
+                      <span className={`block text-[13px] font-semibold leading-tight truncate ${off && !active ? 'text-slate-400' : ''}`}>{label}</span>
+                      <span className={`block text-[11px] font-mono truncate mt-0.5 ${active ? 'text-blue-100' : 'text-slate-400'}`}>{key}</span>
+                    </span>
+                    {off ? <span className={`shrink-0 text-[11px] font-semibold ${active ? 'text-blue-100' : 'text-slate-400'}`}>Désactivé</span>
+                      : key in dbMessages ? <span className={`shrink-0 w-2 h-2 rounded-full ${active ? 'bg-white' : 'bg-emerald-500'}`} title="Personnalisé" /> : null}
+                  </button>
+                </li>
+              );
+            })}
+            {filteredKeys.length === 0 && <li className="py-10 text-center text-sm text-slate-400">Aucun résultat</li>}
+          </ul>
+        </aside>
+
+        {/* Éditeur */}
+        <section className="flex-1 min-w-0 flex flex-col">
+          {selectedKey && info ? (
+            <>
+              <header className="px-6 py-4 border-b border-[#e2e8f0] flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-blue-600">Message contextuel</p>
+                  <SInput type="text" value={localLabel} onChange={(e) => setLocalLabel(e.target.value)} placeholder="Titre du message…" className="mt-1 text-base font-semibold" />
+                  <p className="text-[13px] text-slate-500 mt-1">{info.description}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <SButton icon={isDisabled ? BellOff : Bell} variant={isDisabled ? 'danger' : 'secondary'} onClick={handleToggleDisabled} title={isDisabled ? 'Réactiver ce message' : 'Désactiver ce message (il ne sera pas envoyé)'}>{isDisabled ? 'Désactivé' : 'Actif'}</SButton>
+                  {isInDb && <SIconButton title="Revenir au modèle par défaut" tone="rose" onClick={handleReset}><Trash2 size={16} /></SIconButton>}
+                  <SButton icon={preview ? Code2 : Eye} onClick={() => setPreview((v) => !v)} disabled={isDisabled}>{preview ? 'Code' : 'Aperçu'}</SButton>
+                  <SButton variant="primary" icon={Save} loading={isSaving} disabled={!hasChanged || isDisabled} onClick={handleSave}>{savedKey === selectedKey ? 'Enregistré' : 'Enregistrer'}</SButton>
+                </div>
+              </header>
+
+              {isDisabled && <div className="px-6 pt-4"><SAlert type="warning">Ce message est désactivé : il ne sera pas envoyé.</SAlert></div>}
+
+              <div className={`flex-1 flex flex-col p-6 gap-4 min-h-0 ${isDisabled ? 'opacity-50 pointer-events-none' : ''}`}>
+                <SField label="Objet du mail">
+                  <SInput type="text" value={localSubject} onChange={(e) => setLocalSubject(e.target.value)} placeholder={CONTEXTUAL_MESSAGE_DEFS[selectedKey]?.defaultSubject || "Objet du mail…"} />
+                </SField>
+                <div>
+                  <p className="text-[13px] font-semibold text-slate-700 mb-1.5">Variables disponibles</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {info.vars.map((v) => (
+                      <button key={v} type="button" onClick={() => setLocalVal((prev) => prev + ' ' + v)} title={`Insérer ${v}`} className="px-2.5 py-1 rounded-md border border-[#e2e8f0] bg-slate-50 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 text-xs font-mono text-slate-600 transition-colors">{v}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex-1 min-h-[280px] rounded-xl border border-[#e2e8f0] overflow-hidden">
+                  {preview ? (
+                    <iframe srcDoc={localVal} className="w-full h-full min-h-[280px] bg-white" title="Aperçu du message" sandbox="allow-same-origin" />
+                  ) : (
+                    <textarea className="w-full h-full min-h-[280px] p-4 font-mono text-[13px] text-slate-800 bg-slate-50 resize-none outline-none focus:bg-white transition-colors leading-relaxed" value={localVal} onChange={(e) => setLocalVal(e.target.value)} spellCheck={false} placeholder="Saisissez le HTML du message…" />
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center gap-2 text-slate-400 py-16">
+              <Mail size={36} />
+              <p className="text-sm">Sélectionnez un modèle</p>
+            </div>
+          )}
+        </section>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

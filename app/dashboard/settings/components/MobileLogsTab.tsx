@@ -6,6 +6,8 @@ import {
   Loader2
 } from 'lucide-react';
 import TabHeader from './TabHeader';
+import { useUiMode } from '@/components/UiModeProvider';
+import { SCard, SField, SInput, SButton, SIconButton, SAlert, SBadge, SToggle, SLoading, SEmpty, tableClass, thClass, tdClass } from '@/components/v2/settings/ui';
 
 interface Props {
   mobileLogs: any[];
@@ -14,6 +16,70 @@ interface Props {
 }
 
 export default function MobileLogsTab({ mobileLogs, loadingLogs, fetchMobileLogs }: Props) {
+  const uiMode = useUiMode();
+
+  if (uiMode === 'v2') {
+    return (
+      <SCard
+        icon={Smartphone}
+        title="Activité mobile"
+        description="Derniers accès et synchronisations terrain."
+        flush
+        actions={<SButton icon={History} loading={loadingLogs} onClick={fetchMobileLogs}>Actualiser</SButton>}
+      >
+        {loadingLogs && mobileLogs.length === 0 ? (
+          <SLoading>Chargement des logs…</SLoading>
+        ) : mobileLogs.length === 0 ? (
+          <SEmpty icon={History}>Aucun log trouvé</SEmpty>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className={tableClass}>
+              <thead>
+                <tr>
+                  <th className={thClass}>Date</th>
+                  <th className={thClass}>Utilisateur</th>
+                  <th className={thClass}>Action</th>
+                  <th className={thClass}>Appareil</th>
+                  <th className={`${thClass} text-right`}>Adresse IP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mobileLogs.map((log: any) => {
+                  let deviceInfo: any = {};
+                  try { deviceInfo = typeof log.deviceInfo === 'string' ? JSON.parse(log.deviceInfo) : log.deviceInfo; } catch (e) {}
+                  deviceInfo = deviceInfo || {};
+                  return (
+                    <tr key={log.id} className="hover:bg-slate-50/60 transition-colors">
+                      <td className={`${tdClass} whitespace-nowrap`}>
+                        <p className="font-semibold text-slate-900 tabular-nums">{new Date(log.created_at).toLocaleDateString('fr-FR')}</p>
+                        <p className="text-xs text-slate-500 tabular-nums">{new Date(log.created_at).toLocaleTimeString('fr-FR')}</p>
+                      </td>
+                      <td className={tdClass}>
+                        <div className="flex items-center gap-3">
+                          <span className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center text-xs font-bold shrink-0">{log.userPrenom?.[0] || '?'}{log.userNom?.[0] || '?'}</span>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-slate-900 whitespace-nowrap">{log.userPrenom} {log.userNom}</p>
+                            <p className="text-xs text-slate-500">ID : {log.userId || 'Système'}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className={tdClass}><SBadge tone={log.action === 'LOGIN' ? 'emerald' : log.action === 'ACCESS' ? 'blue' : 'slate'}>{log.action}</SBadge></td>
+                      <td className={`${tdClass} max-w-[300px]`}>
+                        <p className="text-sm text-slate-700 truncate" title={log.userAgent}>{deviceInfo.platform || 'Inconnu'} · {deviceInfo.vendor || 'OS'}</p>
+                        {deviceInfo.screenWidth && <p className="text-xs text-slate-500 tabular-nums">{deviceInfo.screenWidth} × {deviceInfo.screenHeight}</p>}
+                      </td>
+                      <td className={`${tdClass} text-right tabular-nums text-slate-500`}>{log.ip || '0.0.0.0'}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </SCard>
+    );
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <TabHeader
