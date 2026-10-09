@@ -39,6 +39,7 @@ export default function FacturationPage() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [expandedHistory, setExpandedHistory] = useState<string | null>(null);
   const [paiements, setPaiements] = useState<Record<string, any>>({});
+  const [filtreType, setFiltreType] = useState<string>('');
   const [loadingPaiements, setLoadingPaiements] = useState(false);
   const [paiementError, setPaiementError] = useState<string | null>(null);
 
@@ -140,6 +141,13 @@ export default function FacturationPage() {
     } finally {
       setLoadingPaiements(false);
     }
+  };
+
+  const TYPE_LABELS: Record<string, { label: string; cls: string }> = {
+    CHANTIER: { label: 'Chantier', cls: 'bg-orange-50 text-orange-700' },
+    TOURNAGE: { label: 'Tournage', cls: 'bg-blue-50 text-blue-700' },
+    COMMERCE: { label: 'Commerce', cls: 'bg-emerald-50 text-emerald-700' },
+    TLPE: { label: 'TLPE', cls: 'bg-violet-50 text-violet-700' },
   };
 
   const PAIEMENT_LABELS: Record<string, { label: string; cls: string }> = {
@@ -595,6 +603,15 @@ export default function FacturationPage() {
             <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Factures</h2>
             <div className="flex items-center gap-3">
               {paiementError && <span className="text-xs font-bold text-rose-600">{paiementError}</span>}
+              <select
+                value={filtreType}
+                onChange={(e) => setFiltreType(e.target.value)}
+                className="h-9 px-3 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700"
+                aria-label="Filtrer par type de dossier"
+              >
+                <option value="">Tous les types</option>
+                {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+              </select>
               <button
                 onClick={() => fetchPaiements()}
                 disabled={loadingPaiements}
@@ -612,6 +629,7 @@ export default function FacturationPage() {
                 <thead>
                   <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
                     <th className="py-3 pr-4">Facture</th>
+                    <th className="py-3 pr-4">Type</th>
                     <th className="py-3 pr-4">Date</th>
                     <th className="py-3 pr-4">Tiers</th>
                     <th className="py-3 pr-4 text-right">Montant</th>
@@ -620,7 +638,7 @@ export default function FacturationPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {history.flatMap((run: any) => (run.invoices || []).map((inv: any) => ({ inv, date: String(run.date || '').split(/[ ,]/)[0] }))).map(({ inv, date }: any) => {
+                  {history.flatMap((run: any) => (run.invoices || []).map((inv: any) => ({ inv, date: String(run.date || '').split(/[ ,]/)[0] }))).filter(({ inv }: any) => !filtreType || inv.dossierType === filtreType).map(({ inv, date }: any) => {
                     const p = paiements[inv.numero];
                     const fr = (d?: string | null) => d ? new Date(d).toLocaleDateString('fr-FR') : '';
                     const e = p?.confiance === 'exact' ? (PAIEMENT_LABELS[p.etat] || PAIEMENT_LABELS.non_pris_en_charge) : null;
@@ -628,6 +646,11 @@ export default function FacturationPage() {
                       <tr key={inv.id ?? inv.numero} className="border-b border-slate-50 hover:bg-slate-50">
                         <td className="py-3 pr-4 font-black text-slate-900">
                           <a href={inv.pdfPath} target="_blank" className="hover:text-blue-600">{inv.numero}</a>
+                        </td>
+                        <td className="py-3 pr-4">
+                          {inv.dossierType
+                            ? <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${TYPE_LABELS[inv.dossierType]?.cls || 'bg-slate-100 text-slate-600'}`}>{TYPE_LABELS[inv.dossierType]?.label || inv.dossierType}</span>
+                            : <span className="text-slate-300">—</span>}
                         </td>
                         <td className="py-3 pr-4 text-slate-600">{date}</td>
                         <td className="py-3 pr-4 font-bold text-slate-500 uppercase truncate max-w-[220px]">{inv.tiers}</td>
@@ -637,7 +660,8 @@ export default function FacturationPage() {
                           : `n°${p.titreNumero} du ${fr(p.titreDate)}`) : ''}</td>
                         <td className="py-3">
                           {!p ? <span className="text-slate-300">{loadingPaiements ? '…' : '—'}</span>
-                            : e ? <span className="inline-flex items-center gap-1 flex-wrap"><span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${e.cls}`}>{e.label}{p.etat === 'paye' ? ` le ${fr(p.paiementLe)}` : ''}</span>{p.annule ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-rose-50 text-rose-700" title={(p.reductions || []).map((r: any) => r.motif).filter(Boolean).join(' / ')}>Titre annulé</span> : p.montantReduit > 0 ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-orange-50 text-orange-700" title={(p.reductions || []).map((r: any) => r.motif).filter(Boolean).join(' / ')}>Réduit de {p.montantReduit.toLocaleString('fr-FR')} €</span> : null}
+                            : e ? <span className="inline-flex items-center gap-1 flex-wrap"><span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${e.cls}`}>{e.label}{p.etat === 'paye' ? ` le ${fr(p.paiementLe)}` : ''}</span>{p.statutMisAJour && <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 text-slate-600" title="Statut du dossier mis à jour d'après SEDIT">Dossier {p.statutMisAJour === 'CLOS' ? 'clos' : 'titré'}</span>}
+                            {p.annule ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-rose-50 text-rose-700" title={(p.reductions || []).map((r: any) => r.motif).filter(Boolean).join(' / ')}>Titre annulé</span> : p.montantReduit > 0 ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-orange-50 text-orange-700" title={(p.reductions || []).map((r: any) => r.motif).filter(Boolean).join(' / ')}>Réduit de {p.montantReduit.toLocaleString('fr-FR')} €</span> : null}
                               {(p.reductions || []).map((r: any) => (
                                 <span key={r.roo} className="basis-full text-[10px] text-slate-500 leading-snug">
                                   <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">{p.annule ? 'Annulation' : 'Réduction'} n°{r.numero} du {fr(r.date)} ↗</a>
@@ -654,7 +678,7 @@ export default function FacturationPage() {
                   })}
                 </tbody>
               </table>
-              {history.every((r: any) => !r.invoices?.length) && <p className="py-12 text-center text-slate-400 font-bold">Aucune facture.</p>}
+              {(history.every((r: any) => !r.invoices?.length) || (filtreType && !history.some((r: any) => (r.invoices || []).some((i: any) => i.dossierType === filtreType)))) && <p className="py-12 text-center text-slate-400 font-bold">Aucune facture{filtreType ? ' pour ce type de dossier' : ''}.</p>}
             </div>
           )}
         </div>

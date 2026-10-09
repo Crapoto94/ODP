@@ -30,6 +30,18 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    // Type de dossier de chaque facture (CHANTIER / TOURNAGE / COMMERCE / TLPE), repli sur le type du train
+    try {
+      const ids = [...new Set((history as any[]).flatMap((r) => r.invoices.map((i: any) => i.dossierId)))];
+      const occs = ids.length ? await (prisma as any).occupation.findMany({ where: { id: { in: ids } }, select: { id: true, type: true } }) : [];
+      const typeById = new Map<number, string>(occs.map((o: any) => [o.id, o.type]));
+      for (const run of history as any[]) {
+        for (const inv of run.invoices) inv.dossierType = typeById.get(inv.dossierId) || run.type || '';
+      }
+    } catch (err: any) {
+      console.error('[HISTORY] Failed to resolve dossier types:', err.message);
+    }
+
     if (idFilter) {
       const filtered = history.filter((run: any) => run.id === idFilter);
       return NextResponse.json(filtered);
