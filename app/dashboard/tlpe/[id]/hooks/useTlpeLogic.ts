@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { differenceInDays, isLeapYear } from 'date-fns';
 import { resizeImage } from '@/lib/image-utils';
+import { getEnseigneSurfaceCumulee, getTlpeType, calculateTlpeProrata } from '@/lib/tlpe-tarifs';
 
 // Meme principe que useCommerceLogic.ts, adapte au TLPE : une page par
 // TIERS (paramId = tiersId), un selecteur d'annee, un dossier par annee.
@@ -111,31 +111,22 @@ export function useTlpeLogic(paramId: string) {
     };
   };
 
-  // --- Montant (regle TLPE : prorata journalier + exoneration enseignes) ---
+  // --- Montant (regle TLPE : prorata en mois pleins + exoneration enseignes) ---
   const getTotalAmount = () => {
     if (!currentOccupation) return 0;
     const threshold = tlpeConfig?.exoneration ?? 12;
     const lignes = currentOccupation.lignes || [];
 
-    const totalEnseigneSurface = lignes.reduce((sum: number, l: any) => {
-      let meta: any = {};
-      try { meta = JSON.parse(l.article?.notes || '{}'); } catch (e) {}
-      if (meta.tlpeType === 'ENSEIGNE') return sum + (l.quantite1 || 0);
-      return sum;
-    }, 0);
+    const totalEnseigneSurface = getEnseigneSurfaceCumulee(lignes);
     const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
     return lignes.reduce((sum: number, l: any) => {
-      let meta: any = {};
-      try { meta = JSON.parse(l.article?.notes || '{}'); } catch (e) {}
-      if (meta.tlpeType === 'ENSEIGNE' && isEnseigneExempt) return sum;
+      if (getTlpeType(l) === 'ENSEIGNE' && isEnseigneExempt) return sum;
 
       const d1 = new Date(l.dateDebut);
       const d2 = new Date(l.dateFin);
-      const year = selectedYear || new Date().getFullYear();
-      const daysInYear = isLeapYear(new Date(year, 0, 1)) ? 366 : 365;
-      const daysActive = differenceInDays(d2, d1) + 1;
-      const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
+      // Meme prorata (mois pleins) que la facture PDF et le montant stocke
+      const prorata = isNaN(d1.getTime()) || isNaN(d2.getTime()) ? 1 : Math.min(1, Math.max(0, calculateTlpeProrata(d1, d2).ratio));
       return sum + ((l.montant || 0) * (l.quantite1 || 0) * prorata);
     }, 0);
   };

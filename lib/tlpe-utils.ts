@@ -92,19 +92,15 @@ export async function updateOccupationTotal(occupationId: number) {
     }
 
     // Calculer la surface totale des ENSEIGNES pour l'exonération globale
-    const totalEnseigneSurface = occupation.lignes.reduce((sum: number, l: any) => {
-      let tlpeType = '';
-      try { tlpeType = JSON.parse(l.article?.notes || '{}').tlpeType; } catch(e){}
-      if (tlpeType === 'ENSEIGNE') return sum + (l.quantite1 || 0);
-      return sum;
-    }, 0);
+    // Surface cumulee COMPLETE (hors lignes supprimees), non proratisee : une enseigne ajoutee en cours d'annee
+    // s'ajoute a la surface existante. getTlpeType reconnait aussi les articles de reference (sans notes.tlpeType).
+    const totalEnseigneSurface = getEnseigneSurfaceCumulee(occupation.lignes);
 
     const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
     // Calcul du montant total Net
     const netTotal = occupation.lignes.reduce((sum: number, l: any) => {
-      let tlpeType = '';
-      try { tlpeType = JSON.parse(l.article?.notes || '{}').tlpeType; } catch(e){}
+      const tlpeType = getTlpeType(l);
 
       const d1 = new Date(l.dateDebut || `${anneeTaxation}-01-01`);
       const d2 = new Date(l.dateFin || `${anneeTaxation}-12-31`);
@@ -196,11 +192,12 @@ export async function retariferEnseignes(occupationId: number, options: { force?
     || (occupation.dateDebut ? new Date(occupation.dateDebut).getFullYear() : new Date().getFullYear());
 
   const { tarifs, articleIdBySlot } = await getTlpeGrille(anneeTaxation);
-  const cumulEnseignes = getEnseigneSurfaceCumulee(occupation.lignes);
 
   const updated: Array<{ ligneId: number; from: number; to: number }> = [];
 
   for (const ligne of occupation.lignes) {
+    // Cumul des seules enseignes presentes en meme temps que cette ligne (cf. getEnseigneSurfaceCumulee)
+    const cumulEnseignes = getEnseigneSurfaceCumulee(occupation.lignes, { pour: ligne });
     const slotAttendu = getTlpeSlotAttendu(getTlpeType(ligne), ligne.quantite1 || 0, cumulEnseignes);
     if (!slotAttendu) continue;
 

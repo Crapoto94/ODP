@@ -1,8 +1,8 @@
+import { getEnseigneSurfaceCumulee, getTlpeType, calculateTlpeProrata } from '../tlpe-tarifs';
 import { prisma } from '@/lib/prisma';
 import { generateInvoicePdfBuffer } from '@/lib/invoice-pdf-utils';
 import { join } from 'path';
 import { writeFile } from 'fs/promises';
-import { differenceInDays, isLeapYear } from 'date-fns';
 
 export interface ProcessedInvoice {
   id: number;
@@ -51,12 +51,8 @@ export async function processDossier(params: {
 
   // 2. Calculate Totals
   const threshold = tlpeConfig?.exoneration ?? 12;
-  const totalEnseigneSurface = (occ.lignes || []).reduce((sum: number, l: any) => {
-    let mt: any = {};
-    try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch (e) {}
-    if (mt.tlpeType === 'ENSEIGNE') return sum + (l.quantite1 || 0);
-    return sum;
-  }, 0) || 0;
+  // Surface cumulee complete des enseignes (non proratisee, articles de reference inclus) pour l'exoneration
+  const totalEnseigneSurface = getEnseigneSurfaceCumulee(occ.lignes) || 0;
   const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
   const lineResults: any[] = [];
@@ -66,17 +62,15 @@ export async function processDossier(params: {
     let lineVal = (l.montant || 0);
 
     if (occ.type === 'TLPE') {
-      const isExempt = mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt;
+      const isExempt = getTlpeType(l) === 'ENSEIGNE' && isEnseigneExempt;
       if (isExempt) {
         lineResults.push({ ...l, calculatedTotal: 0 });
         return sum;
       }
       const d1 = new Date(l.dateDebut);
       const d2 = new Date(l.dateFin);
-      const curYear = (occ as any).anneeTaxation || d1.getFullYear();
-      const daysInYear = isLeapYear(new Date(curYear, 0, 1)) ? 366 : 365;
-      const daysActive = differenceInDays(d2, d1) + 1;
-      const prorata = Math.min(1, Math.max(0, daysActive / daysInYear));
+      // Prorata en mois pleins : meme regle que la facture PDF (sinon le total du train differe du PDF remis au redevable)
+      const prorata = isNaN(d1.getTime()) || isNaN(d2.getTime()) ? 1 : Math.min(1, Math.max(0, calculateTlpeProrata(d1, d2).ratio));
       const pu = (l.montant || 0);
       lineVal = (pu * (l.quantite1 || 0) * prorata);
     }

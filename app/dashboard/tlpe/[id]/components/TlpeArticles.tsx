@@ -1,3 +1,4 @@
+import { getTlpeType } from '@/lib/tlpe-tarifs';
 import { Plus, Package, Clock, Maximize2, Pencil, Trash2, Euro, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -106,7 +107,7 @@ export default function TlpeArticles({
 
             const { ratio: prorata, months } = getProrata();
             const totalAnnuel = unitPrice * surface;
-            const tlpeType = ligne.article?.meta?.tlpeType;
+            const tlpeType = getTlpeType(ligne);
             
             const isLineExempt = tlpeType === 'ENSEIGNE' && isEnseigneExempt;
             const lineTotal = isLineExempt ? 0 : (totalAnnuel * prorata);

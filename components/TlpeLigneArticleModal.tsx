@@ -132,6 +132,7 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
     const cumulEnseignes = getEnseigneSurfaceCumulee(lignes, {
       excludeLigneId: initialData?.id ?? null,
       surfaceRemplacee: type === 'ENSEIGNE' ? s : 0,
+      pour: { dateDebut, dateFin },
     });
 
     return resolveTlpeTarif(type, s, cumulEnseignes, refTarifs);
@@ -143,6 +144,7 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
   const cumulEnseignes = getEnseigneSurfaceCumulee(lignes, {
     excludeLigneId: initialData?.id ?? null,
     surfaceRemplacee: selectedType === 'ENSEIGNE' ? s : 0,
+    pour: { dateDebut, dateFin },
   });
   
   // Prorata calculation based on full months

@@ -61,24 +61,61 @@ export function getTlpeType(articleOrLigne: any): string {
 }
 
 /**
+ * Prorata TLPE en MOIS PLEINS (regle de la facture PDF, du montant stocke et des lignes) :
+ * un mois entame n'est pas facture (1er du mois suivant au debut, dernier jour du mois precedent a la fin).
+ */
+export function calculateTlpeProrata(startDate: Date, endDate: Date): { months: number; ratio: number } {
+  const joursDuMois = (d: Date) => new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  let debut = new Date(startDate);
+  if (debut.getDate() !== 1) debut = new Date(debut.getFullYear(), debut.getMonth() + 1, 1);
+  let fin = new Date(endDate);
+  if (fin.getDate() !== joursDuMois(fin)) fin = new Date(fin.getFullYear(), fin.getMonth(), 0);
+  if (fin < debut) return { months: 0, ratio: 0 };
+  const months = (fin.getFullYear() - debut.getFullYear()) * 12 + (fin.getMonth() - debut.getMonth()) + 1;
+  return { months, ratio: months / 12 };
+}
+
+/** Periode d'une ligne (dates constatees prioritaires) ; null = ouvert (toute l'annee). */
+function periodeLigne(l: any): { debut: number; fin: number } {
+  const t = (d: any) => { const v = d ? new Date(d).getTime() : NaN; return Number.isNaN(v) ? null : v; };
+  return {
+    debut: t(l?.dateDebutConstatee) ?? t(l?.dateDebut) ?? -Infinity,
+    fin: t(l?.dateFinConstatee) ?? t(l?.dateFin) ?? Infinity,
+  };
+}
+
+/**
  * Surface cumulee des enseignes d'un dossier.
+ *
+ * Regle : seules les enseignes presentes EN MEME TEMPS comptent. Une enseigne
+ * supprimee en cours d'annee (date de fin) ne s'ajoute pas a la surface cumulee
+ * d'une enseigne installee apres sa suppression (ex. supprimee fin mars,
+ * remplacee en avril : pas de cumul). Sans `pour`, toutes les enseignes sont
+ * cumulees (comportement historique).
  *
  * @param lignes        Lignes du dossier (celles soft-deleted sont ignorees)
  * @param excludeLigneId  Id de la ligne en cours d'edition (remplacee par
  *                        `surfaceRemplacee` pour ne pas la compter deux fois)
  * @param surfaceRemplacee Surface de la ligne en cours d'edition, si c'est
  *                        une enseigne (sinon 0)
+ * @param pour          Periode (dateDebut/dateFin) de la ligne dont on cherche
+ *                        le tarif : seules les enseignes qui la chevauchent comptent
  */
 export function getEnseigneSurfaceCumulee(
   lignes: any[] | null | undefined,
-  options: { excludeLigneId?: number | null; surfaceRemplacee?: number } = {},
+  options: { excludeLigneId?: number | null; surfaceRemplacee?: number; pour?: { dateDebut?: any; dateFin?: any } | null } = {},
 ): number {
-  const { excludeLigneId = null, surfaceRemplacee = 0 } = options;
+  const { excludeLigneId = null, surfaceRemplacee = 0, pour = null } = options;
+  const cible = pour ? periodeLigne(pour) : null;
 
   const cumul = (lignes || []).reduce((sum, ligne) => {
     if (ligne.deletedAt) return sum;
     if (excludeLigneId != null && ligne.id === excludeLigneId) return sum;
     if (getTlpeType(ligne) !== 'ENSEIGNE') return sum;
+    if (cible) {
+      const p = periodeLigne(ligne);
+      if (p.debut > cible.fin || cible.debut > p.fin) return sum; // jamais presentes en meme temps
+    }
     return sum + (Number(ligne.quantite1) || 0);
   }, 0);
 

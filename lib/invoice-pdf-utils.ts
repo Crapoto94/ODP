@@ -1,3 +1,4 @@
+import { getEnseigneSurfaceCumulee, getTlpeType } from './tlpe-tarifs';
 import { prisma } from './prisma';
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
@@ -270,14 +271,8 @@ export async function generateInvoicePdfBuffer(
       let result = val;
 
       const threshold = tlpeConfig?.exoneration ?? 12;
-      const totalEnseigneSurface = (occ.lignes || [])
-        .filter((l: any) => !l.deletedAt)
-        .reduce((sum: number, l: any) => {
-          let mt: any = {};
-          try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
-          if (mt.tlpeType === 'ENSEIGNE') return sum + (l.quantite1 || 0);
-          return sum;
-      }, 0) || 0;
+      // Surface cumulee complete des enseignes (non proratisee, articles de reference inclus)
+      const totalEnseigneSurface = getEnseigneSurfaceCumulee(occ.lignes) || 0;
       const isEnseigneExempt = totalEnseigneSurface <= threshold;
 
       let totalSum = (occ.lignes || [])
@@ -286,7 +281,7 @@ export async function generateInvoicePdfBuffer(
           let mt: any = {};
           try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
           if (occ.type === 'TLPE') {
-              if (mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt) return sum;
+              if (getTlpeType(l) === 'ENSEIGNE' && isEnseigneExempt) return sum;
               const d1 = new Date(l.dateDebut);
               const d2 = new Date(l.dateFin);
               const { ratio: prorata } = calculateMonthlyProrata(d1, d2);
@@ -385,7 +380,7 @@ export async function generateInvoicePdfBuffer(
           replacements['{article.full_description}'] = `${ligne.article.designation}\n${details}`;
         } else if (occ.type === 'TLPE') {
           const { months, ratio: prorata } = calculateMonthlyProrata(d1, d2);
-          const isExempt = mt.tlpeType === 'ENSEIGNE' && isEnseigneExempt;
+          const isExempt = getTlpeType(ligne) === 'ENSEIGNE' && isEnseigneExempt;
           lineVal = isExempt ? 0 : (pu * (ligne.quantite1 || 0) * prorata);
           details = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (${months} mois)` : ''}${isExempt ? ' (Exonéré)' : ''}`;
           replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
