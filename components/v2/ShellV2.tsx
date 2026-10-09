@@ -59,7 +59,7 @@ function Nav({ collapsed, user, counts, onNavigate }: { collapsed: boolean; user
   const activeType = sp.get('filtre') || sp.get('type');
 
   return (
-    <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+    <nav className="v2-scroll-dark flex-1 overflow-y-auto px-3 py-4 space-y-6">
       {GROUPS.map((g) => {
         const visible = g.items.filter((i) => !i.permission || (user?.role && hasPermission(user.role, i.permission)));
         if (!visible.length) return null;

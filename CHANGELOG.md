@@ -39,6 +39,7 @@ nouvelle interface optionnelle et plusieurs évolutions demandées par les instr
 - **Liste des chantiers et tournages en cartes** avec sous-détail des articles tarifaires, alertes et pagination ; la carte s'adapte à sa propre largeur (requêtes de conteneur), sans chevauchement quand le menu latéral est déplié.
 - **Listes TLPE et Commerces en cartes dépliables** : pastille d'état et chiffres clés, et dépliage des dossiers année par année (type, statut, dispositifs, montant, accès au dossier).
 - **Paramètres refondus** : sous-menu (Configuration / Référentiels / Technique) dans le menu latéral gauche, un seul en-tête par page, et mise en forme homogène (libellés, champs, boutons, tableaux, cartes) sur tous les onglets.
+- **Harmonisation graphique de toutes les pages** (design uniquement) : échelle typographique unique, titres et sous-titres de page, boutons, cartes, ombres neutres, tuiles aplaties, champs et tableaux, pages alignées sur la même largeur, en-têtes de page adaptatifs (les actions passent sous le titre si la place manque) et barres de défilement fines et discrètes (sombres dans le menu latéral).
 - Sans l'interrupteur, l'interface historique reste strictement inchangée.
 
 ### Technique et exploitation

@@ -205,3 +205,197 @@ html[data-ui="v2"] .settings-v2 th {
 html[data-ui="v2"] .settings-v2 thead th {
   font-size: 11px;
 }
+
+/* ═════════ Harmonisation graphique globale (nouvelle interface) ═════════
+   Couche appliquée à TOUTES les pages du tableau de bord (balayage design uniquement, aucun changement fonctionnel).
+   Elle ramène les motifs hérités (micro-textes en capitales espacées, « font-black », ombres colorées, dégradés, rayons
+   hétérogènes, boutons de hauteurs variées) à la charte « Ivry ODP Civic System ». Tout est limité à html[data-ui="v2"] main. */
+
+/* — Échelle typographique : plancher 11 px (sur-libellés), graisses 600/700/800, interlettrage unifié — */
+html[data-ui="v2"] main [class*="text-[7px]"],
+html[data-ui="v2"] main [class*="text-[8px]"],
+html[data-ui="v2"] main [class*="text-[9px]"],
+html[data-ui="v2"] main [class*="text-[10px]"] {
+  font-size: 11px;
+  line-height: 16px;
+}
+html[data-ui="v2"] main .font-black { font-weight: 700; }
+html[data-ui="v2"] main .tracking-widest,
+html[data-ui="v2"] main [class*="tracking-[0."] { letter-spacing: 0.08em; }
+html[data-ui="v2"] main .tracking-tighter { letter-spacing: -0.02em; }
+
+/* — Titres de page (h1/h2 de 30 à 36 px) : même taille, graisse et casse partout — */
+html[data-ui="v2"] main :is(h1, h2).text-3xl,
+html[data-ui="v2"] main :is(h1, h2).text-4xl {
+  font-size: 30px;
+  line-height: 38px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  text-transform: none;
+  color: var(--v2-text-strong);
+}
+/* titres de section / de fenêtre (20 px) et titres majuscules trop grands → casse normale */
+html[data-ui="v2"] main :is(h2, h3).text-2xl {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--v2-text-strong);
+}
+html[data-ui="v2"] main :is(h1, h2, h3).uppercase:is(.text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl) {
+  text-transform: none;
+}
+/* sous-titres de page : phrase simple, gris charte */
+html[data-ui="v2"] main :is(h1, h2).text-3xl + p,
+html[data-ui="v2"] main :is(h1, h2).text-4xl + p {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--v2-text-muted);
+}
+
+/* — Boutons : même hauteur, libellés lisibles (fin des majuscules 10-12 px espacées) — */
+html[data-ui="v2"] main button.uppercase,
+html[data-ui="v2"] main a.uppercase {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+  font-size: 13px;
+}
+html[data-ui="v2"] main button.uppercase:is([class*="py-3"], [class*="py-4"], [class*="py-5"]) {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+html[data-ui="v2"] main button:is(.rounded-xl, .rounded-2xl, .rounded-3xl):is(.bg-blue-600, .bg-slate-900, .bg-slate-950, .bg-purple-600, .bg-emerald-600, .bg-indigo-600) {
+  border-radius: 0.625rem;
+}
+html[data-ui="v2"] main button.bg-slate-950,
+html[data-ui="v2"] main button.bg-slate-900:is(.text-white) {
+  background-color: var(--v2-text-strong);
+}
+html[data-ui="v2"] main button.bg-slate-950:hover,
+html[data-ui="v2"] main button.bg-slate-900:is(.text-white):hover {
+  background-color: #1e293b;
+}
+
+/* — Ombres : niveaux 1/2 neutres (plus de halos colorés) — */
+html[data-ui="v2"] main [class*="shadow-"][class*="/"],
+html[data-ui="v2"] main [class*="shadow-blue-"],
+html[data-ui="v2"] main [class*="shadow-purple-"],
+html[data-ui="v2"] main [class*="shadow-rose-"],
+html[data-ui="v2"] main [class*="shadow-emerald-"],
+html[data-ui="v2"] main [class*="shadow-indigo-"],
+html[data-ui="v2"] main [class*="shadow-amber-"],
+html[data-ui="v2"] main [class*="shadow-slate-"] {
+  --tw-shadow-color: rgb(15 23 42 / 0.10);
+}
+html[data-ui="v2"] main .shadow-md { box-shadow: var(--v2-shadow-2); }
+
+/* — Dégradés pleins (tuiles d'icônes, bandeaux) → aplats de la couleur de départ ; les voiles sur photos restent intacts — */
+html[data-ui="v2"] main [class*="bg-gradient-to-"][class*="to-"]:not([class*="to-transparent"]):not([class*="from-black"]):not([class*="from-slate-9"]):not([class*="via-"]) {
+  background-image: none;
+  background-color: var(--tw-gradient-from, var(--v2-primary));
+}
+
+/* — Rayons : 16 px cartes, 12 px sous-blocs, 8 px champs — */
+html[data-ui="v2"] main [class*="rounded-[1.5rem]"] { border-radius: 1rem; }
+html[data-ui="v2"] main [class*="rounded-[1.2rem]"] { border-radius: 0.75rem; }
+
+/* — Cartes, panneaux et zones de filtres : bord 1 px #e2e8f0, fond blanc, ombre niveau 1 — */
+html[data-ui="v2"] main .bg-white[class*="border-slate-100"],
+html[data-ui="v2"] main .bg-white[class*="border-slate-200"] {
+  border-color: var(--v2-border);
+}
+html[data-ui="v2"] main .bg-white.rounded-xl.border,
+html[data-ui="v2"] main .bg-white.rounded-2xl.border,
+html[data-ui="v2"] main .bg-white.rounded-3xl.border {
+  border-radius: 1rem;
+  box-shadow: var(--v2-shadow-1);
+}
+/* effets « verre » hérités : fonds opaques lisibles */
+html[data-ui="v2"] main [class*="bg-white/"][class*="backdrop-blur"] {
+  background-color: #ffffff;
+  backdrop-filter: none;
+}
+
+/* — Champs de saisie : 42 px, bord 1 px, focus bleu charte (hors cases, plages, fichiers, couleurs) — */
+html[data-ui="v2"] main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]):not([type="hidden"]),
+html[data-ui="v2"] main select {
+  min-height: 42px;
+  font-size: 14px;
+}
+html[data-ui="v2"] main input:focus,
+html[data-ui="v2"] main select:focus,
+html[data-ui="v2"] main textarea:focus {
+  border-color: var(--v2-primary);
+  box-shadow: 0 0 0 3px var(--v2-primary-soft);
+  outline: none;
+}
+
+/* — Tableaux : en-têtes « label-over » collants, cellules 13 px — */
+html[data-ui="v2"] main td { font-size: 13px; }
+html[data-ui="v2"] main thead th,
+html[data-ui="v2"] main thead td {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--v2-text-muted);
+}
+
+/* — Badges / pastilles historiques : forme pilule homogène — */
+html[data-ui="v2"] main span:is(.rounded, .rounded-md, .rounded-lg):is(.uppercase):is([class*="px-1"], [class*="px-2"], [class*="px-3"]) {
+  border-radius: 9999px;
+}
+
+/* ═════════ Barres de défilement (nouvelle interface) ═════════
+   Fines, sans flèches, discrètes : grises sur les contenus clairs, sombres dans le menu latéral. */
+html[data-ui="v2"],
+html[data-ui="v2"] * {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+html[data-ui="v2"] *::-webkit-scrollbar { width: 8px; height: 8px; }
+html[data-ui="v2"] *::-webkit-scrollbar-track { background: transparent; }
+html[data-ui="v2"] *::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; border: 2px solid transparent; background-clip: content-box; }
+html[data-ui="v2"] *::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; }
+html[data-ui="v2"] *::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+html[data-ui="v2"] *::-webkit-scrollbar-corner { background: transparent; }
+
+/* menu latéral sombre */
+html[data-ui="v2"] .v2-scroll-dark,
+html[data-ui="v2"] .v2-scroll-dark * {
+  scrollbar-color: #334155 transparent;
+}
+html[data-ui="v2"] .v2-scroll-dark::-webkit-scrollbar { width: 6px; }
+html[data-ui="v2"] .v2-scroll-dark::-webkit-scrollbar-thumb { background: #334155; background-clip: content-box; }
+html[data-ui="v2"] .v2-scroll-dark::-webkit-scrollbar-thumb:hover { background: #475569; background-clip: content-box; }
+
+/* — Alignement des pages : plus de colonnes étroites centrées (Facturation, Report d'année, fiches dossier…) ;
+     toutes les pages démarrent à gauche, sur la largeur du shell (les fenêtres modales ne sont pas concernées) — */
+html[data-ui="v2"] main > :is(.max-w-4xl, .max-w-5xl, .max-w-6xl, .max-w-7xl).mx-auto,
+html[data-ui="v2"] main > div > :is(.max-w-4xl, .max-w-5xl, .max-w-6xl, .max-w-7xl).mx-auto {
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+html[data-ui="v2"] main > div > :is(.max-w-4xl, .max-w-5xl, .max-w-6xl, .max-w-7xl).mx-auto.px-4 {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* — Zone d'en-tête de page adaptative : le titre garde une largeur minimale, les actions passent à la ligne si la place manque —
+     (cible l'en-tête « flex » dont le premier bloc contient le titre ; les en-têtes avec tuile d'icône ne sont pas concernés) */
+html[data-ui="v2"] main div.flex:has(> div:first-child > :is(h1, h2).text-3xl) {
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+}
+html[data-ui="v2"] main div.flex:has(> div:first-child > :is(h1, h2).text-3xl) > div:first-child {
+  flex: 1 1 22rem;
+  min-width: 0;
+}
+html[data-ui="v2"] main div.flex:has(> div:first-child > :is(h1, h2).text-3xl) > div:not(:first-child) {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
