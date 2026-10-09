@@ -30,7 +30,7 @@ import FilienTab from '../settings/components/FilienTab';
 import InvoiceValidationPanel from './components/InvoiceValidationPanel';
 
 export default function FacturationPage() {
-  const [view, setView] = useState<'new' | 'history' | 'config'>('new');
+  const [view, setView] = useState<'new' | 'history' | 'invoices' | 'config'>('new');
   const [settings, setSettings] = useState<any>({});
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -38,6 +38,9 @@ export default function FacturationPage() {
   const [history, setHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [expandedHistory, setExpandedHistory] = useState<string | null>(null);
+  const [paiements, setPaiements] = useState<Record<string, any>>({});
+  const [loadingPaiements, setLoadingPaiements] = useState(false);
+  const [paiementError, setPaiementError] = useState<string | null>(null);
 
   const [step, setStep] = useState(1);
   const [type, setType] = useState('');
@@ -78,6 +81,10 @@ export default function FacturationPage() {
   useEffect(() => {
     if (view === 'history') {
       fetchHistory();
+    }
+    if (view === 'invoices') {
+      fetchHistory();
+      fetchPaiements();
     }
     if (view === 'config') {
       fetchSettings();
@@ -120,6 +127,27 @@ export default function FacturationPage() {
     } finally {
       setLoadingHistory(false);
     }
+  };
+
+  const fetchPaiements = async (runId?: string) => {
+    setLoadingPaiements(true);
+    setPaiementError(null);
+    try {
+      const res = await axios.post('/api/billing/payment-status', { runId });
+      setPaiements(p => ({ ...p, ...res.data }));
+    } catch (err: any) {
+      setPaiementError(err.response?.data?.error || err.message || 'Erreur de lecture SEDIT');
+    } finally {
+      setLoadingPaiements(false);
+    }
+  };
+
+  const PAIEMENT_LABELS: Record<string, { label: string; cls: string }> = {
+    paye: { label: 'Payé', cls: 'bg-emerald-50 text-emerald-700' },
+    a_payer: { label: 'À payer', cls: 'bg-amber-50 text-amber-700' },
+    non_pris_en_charge: { label: 'Non pris en charge', cls: 'bg-slate-100 text-slate-600' },
+    rejete: { label: 'Titre rejeté', cls: 'bg-rose-50 text-rose-700' },
+    suspendu: { label: 'Suspendu', cls: 'bg-orange-50 text-orange-700' },
   };
 
   const handleDeleteRun = async (id: string) => {
@@ -547,6 +575,12 @@ export default function FacturationPage() {
             Historique des Trains
           </button>
           <button 
+             onClick={() => setView('invoices')} 
+             className={`px-5 py-2.5 font-black text-xs uppercase tracking-widest rounded-xl transition-all ${view === 'invoices' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+          >
+            Factures
+          </button>
+          <button 
              onClick={() => setView('config')} 
              className={`px-5 py-2.5 font-black text-xs uppercase tracking-widest rounded-xl transition-all ${view === 'config' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
           >
@@ -555,7 +589,65 @@ export default function FacturationPage() {
         </div>
       </div>
 
-      {view === 'history' ? (
+      {view === 'invoices' ? (
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[500px] flex flex-col p-8 md:p-12">
+          <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
+            <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Factures</h2>
+            <div className="flex items-center gap-3">
+              {paiementError && <span className="text-xs font-bold text-rose-600">{paiementError}</span>}
+              <button
+                onClick={() => fetchPaiements()}
+                disabled={loadingPaiements}
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-bold text-xs transition-colors disabled:opacity-50"
+              >
+                {loadingPaiements ? <Loader2 size={14} className="animate-spin"/> : <Euro size={14}/>} Actualiser l'état de paiement (SEDIT)
+              </button>
+            </div>
+          </div>
+          {loadingHistory ? (
+            <div className="py-20 text-center"><Loader2 className="animate-spin text-blue-600 mx-auto" size={36} /></div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                    <th className="py-3 pr-4">Facture</th>
+                    <th className="py-3 pr-4">Date</th>
+                    <th className="py-3 pr-4">Tiers</th>
+                    <th className="py-3 pr-4 text-right">Montant</th>
+                    <th className="py-3 pr-4">Titre SEDIT</th>
+                    <th className="py-3">Paiement</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {history.flatMap((run: any) => (run.invoices || []).map((inv: any) => ({ inv, date: String(run.date || '').split(/[ ,]/)[0] }))).map(({ inv, date }: any) => {
+                    const p = paiements[inv.numero];
+                    const fr = (d?: string | null) => d ? new Date(d).toLocaleDateString('fr-FR') : '';
+                    const e = p?.confiance === 'exact' ? (PAIEMENT_LABELS[p.etat] || PAIEMENT_LABELS.non_pris_en_charge) : null;
+                    return (
+                      <tr key={inv.id ?? inv.numero} className="border-b border-slate-50 hover:bg-slate-50">
+                        <td className="py-3 pr-4 font-black text-slate-900">
+                          <a href={inv.pdfPath} target="_blank" className="hover:text-blue-600">{inv.numero}</a>
+                        </td>
+                        <td className="py-3 pr-4 text-slate-600">{date}</td>
+                        <td className="py-3 pr-4 font-bold text-slate-500 uppercase truncate max-w-[220px]">{inv.tiers}</td>
+                        <td className="py-3 pr-4 text-right font-bold text-slate-700">{inv.total.toLocaleString('fr-FR')} €</td>
+                        <td className="py-3 pr-4 text-slate-500">{p?.confiance === 'exact' ? `n°${p.titreNumero} du ${fr(p.titreDate)}` : ''}</td>
+                        <td className="py-3">
+                          {!p ? <span className="text-slate-300">{loadingPaiements ? '…' : '—'}</span>
+                            : e ? <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${e.cls}`}>{e.label}{p.etat === 'paye' ? ` le ${fr(p.paiementLe)}` : ''}</span>
+                            : <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-50 text-slate-400">{p.confiance === 'ambigu' ? 'Titre ambigu' : 'Titre introuvable'}</span>}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {history.every((r: any) => !r.invoices?.length) && <p className="py-12 text-center text-slate-400 font-bold">Aucune facture.</p>}
+            </div>
+          )}
+        </div>
+      ) : view === 'history' ? (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden min-h-[500px] flex flex-col p-8 md:p-12">
           <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight mb-8">Historique des Traitements</h2>
           
@@ -619,6 +711,14 @@ export default function FacturationPage() {
                         <a href={run.filienPath} download className="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-xl font-bold text-xs transition-colors">
                           <Download size={14}/> CSV .filien généré
                         </a>
+                        <button
+                          onClick={() => fetchPaiements(run.id)}
+                          disabled={loadingPaiements}
+                          className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-bold text-xs transition-colors disabled:opacity-50"
+                        >
+                          {loadingPaiements ? <Loader2 size={14} className="animate-spin"/> : <Euro size={14}/>} Actualiser l'état de paiement (SEDIT)
+                        </button>
+                        {paiementError && <span className="text-xs font-bold text-rose-600 self-center">{paiementError}</span>}
                       </div>
                       <div className="space-y-2">
                         <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Détail des factures ({run.invoices?.length || 0})</h4>
@@ -637,6 +737,19 @@ export default function FacturationPage() {
                                   </div>
                                 </div>
                               </a>
+                              {paiements[inv.numero] && (() => {
+                                const p = paiements[inv.numero];
+                                const fr = (d?: string | null) => d ? new Date(d).toLocaleDateString('fr-FR') : '';
+                                if (p.confiance !== 'exact') {
+                                  return <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-50 text-slate-400">{p.confiance === 'ambigu' ? 'Titre ambigu' : 'Titre introuvable'}</span>;
+                                }
+                                const e = PAIEMENT_LABELS[p.etat] || PAIEMENT_LABELS.non_pris_en_charge;
+                                return (
+                                  <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${e.cls}`} title={`Titre n°${p.titreNumero} du ${fr(p.titreDate)} (bordereau ${p.bordereau || '-'})`}>
+                                    {e.label}{p.etat === 'paye' ? ` le ${fr(p.paiementLe)}` : ''} · titre {p.titreNumero}
+                                  </span>
+                                );
+                              })()}
                               <button
                                 onClick={() => setValidatingInvoiceId(inv.dossierId)}
                                 className="text-xs font-bold px-2 py-1 rounded-lg border border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-all"
