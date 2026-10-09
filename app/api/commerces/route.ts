@@ -86,8 +86,19 @@ export async function GET(request: Request) {
           count: articleCounts.get(a.nom) || 1
         }));
 
+        // Détail par année (liste en cartes dépliables) : un dossier par occupation TLPE / COMMERCE
+        const dossier = {
+          key: `${occ.type}-${occ.id}`,
+          year,
+          type: occ.type,
+          statut: occ.statut,
+          total: occ.montantCalcule || 0,
+          nbDispositifs: occ.lignes.filter((l: any) => !l.deletedAt).length,
+        };
+
         if (commercesMap.has(tierId)) {
           const commerce = commercesMap.get(tierId);
+          commerce.dossiers.push(dossier);
           if (occ.type === 'TLPE') {
             if (!commerce.tlpeYears.includes(year)) {
               commerce.tlpeYears.push(year);
@@ -150,6 +161,7 @@ export async function GET(request: Request) {
             commerceYears: commerceYears.filter(Boolean),
             tlpeCount: occ.type === 'TLPE' ? 1 : 0,
             commerceCount: occ.type === 'COMMERCE' ? 1 : 0,
+            dossiers: [dossier],
             articles: articles,
             etatAdministratif: occ.tiers.etatAdministratif,
             isReglemente: occ.tiers.isReglemente,

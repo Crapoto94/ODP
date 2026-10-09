@@ -1,0 +1,26 @@
+import {
+  LayoutGrid, Users, FileText, Smartphone, Database, Clock, Mail, UserCog, ShieldCheck,
+} from 'lucide-react';
+
+// Onglets de la page Paramètres : partagés entre la page (contenu) et le menu latéral de la nouvelle interface (sous-menu).
+export type TabType = 'general' | 'filien' | 'postgres' | 'users' | 'roles' | 'contact_roles' | 'mobile_logs' | 'backlog' | 'signature' | 'messages' | 'sql';
+
+export interface SettingsTab { id: TabType; label: string; icon: any; description: string; group: string }
+
+export const SETTINGS_TABS: SettingsTab[] = [
+  { id: 'general',        label: 'Général',            icon: LayoutGrid,  description: 'APM, mail, Filien…',            group: 'Configuration' },
+  { id: 'filien',         label: 'Filien / Dépôt',     icon: FileText,    description: 'Export & dépôt des factures',   group: 'Configuration' },
+  { id: 'signature',      label: 'Signatures',         icon: FileText,    description: 'Signataires & gabarits',        group: 'Configuration' },
+  { id: 'messages',       label: "Modèles d'emails",   icon: Mail,        description: 'Messages contextuels',          group: 'Configuration' },
+  { id: 'users',          label: 'Utilisateurs',       icon: Users,       description: 'Comptes & accès',               group: 'Référentiels' },
+  { id: 'roles',          label: 'Rôles',              icon: ShieldCheck, description: 'Droits par rôle',               group: 'Référentiels' },
+  { id: 'contact_roles',  label: 'Types de contacts',  icon: UserCog,     description: 'Rôles des contacts',            group: 'Référentiels' },
+  { id: 'postgres',       label: 'Base PostgreSQL',    icon: Database,    description: 'Connexion externe',             group: 'Technique' },
+  { id: 'sql',            label: 'Console SQL',        icon: Database,    description: 'Requêtes directes',             group: 'Technique' },
+  { id: 'backlog',        label: 'Backlog',            icon: Clock,       description: 'Suivi des évolutions',          group: 'Technique' },
+  { id: 'mobile_logs',    label: 'Logs mobiles',       icon: Smartphone,  description: 'Activité terrain',              group: 'Technique' },
+];
+
+export const SETTINGS_GROUPS = ['Configuration', 'Référentiels', 'Technique'];
+
+export const isSettingsTab = (v: string | null | undefined): v is TabType => !!v && SETTINGS_TABS.some((t) => t.id === v);

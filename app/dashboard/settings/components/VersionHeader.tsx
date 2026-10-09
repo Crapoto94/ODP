@@ -10,7 +10,7 @@ interface Release {
   backlogItems: any[];
 }
 
-export default function VersionHeader({ compact = false }: { compact?: boolean }) {
+export default function VersionHeader({ compact = false, hideTitle = false }: { compact?: boolean; hideTitle?: boolean }) {
   const [version, setVersion] = useState("...");
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function VersionHeader({ compact = false }: { compact?: boolean }
   if (compact) {
     return (
       <div className="flex items-center gap-2">
-        <p className="text-[11px] font-black text-slate-700 uppercase tracking-widest">Paramètres</p>
+        {!hideTitle && <p className="text-[11px] font-black text-slate-700 uppercase tracking-widest">Paramètres</p>}
         <span
           onClick={() => window.dispatchEvent(new CustomEvent('open-whatsnew'))}
           className="px-2 py-0.5 bg-slate-100 text-slate-400 hover:bg-blue-600 hover:text-white rounded-md text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer"

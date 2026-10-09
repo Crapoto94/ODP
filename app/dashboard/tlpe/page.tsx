@@ -6,7 +6,9 @@ import { Loader2, ShoppingBag, Plus, Search, Lock, LockOpen, X } from 'lucide-re
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLockedYear } from '@/app/dashboard/commerces/hooks/useLockedYear';
-import { getStatusConfig } from '@/lib/status-utils';
+import StatutPill, { normStatut } from '@/components/v2/StatutPill';
+import TiersCardsV2, { type TiersCardData } from '@/components/v2/TiersCardsV2';
+import { useUiMode } from '@/components/UiModeProvider';
 
 interface YearDetail { statut: string; total: number; nbDispositifs: number }
 
@@ -23,9 +25,6 @@ interface TLPEDossier {
   nbDispositifs: number;
 }
 
-// Les statuts TLPE sont stockés avec ou sans accent (« FACTURÉ » / « FACTURE ») : on les normalise.
-const normStatut = (s?: string) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().trim();
-
 // Filtre « statut » : valeurs normalisées, libellés métier (VALIDE/VERIFIE = prêt à facturer)
 const STATUT_OPTIONS: { value: string; label: string }[] = [
   { value: 'INITIALISATION', label: 'Initialisation' },
@@ -38,23 +37,9 @@ const STATUT_OPTIONS: { value: string; label: string }[] = [
   { value: 'CLOS', label: 'Clos' },
 ];
 
-// Pastille d'état (point + libellé), charte v2 : prêt = émeraude, facturé = orange, titré = violet, clos = vert foncé…
-function StatutPill({ statut }: { statut?: string }) {
-  if (!statut) return null;
-  const n = normStatut(statut);
-  const key = n === 'VERIFIE' ? 'VALIDE' : n;
-  const cfg = getStatusConfig('CHANTIER', key);
-  const label = key === 'VALIDE' ? 'Prêt à facturer' : cfg.label;
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${cfg.bg} ${cfg.color} ${cfg.border || ''}`}>
-      <span className="w-2 h-2 rounded-full bg-current" />
-      {label}
-    </span>
-  );
-}
-
 export default function TLPEPage() {
   const router = useRouter();
+  const uiMode = useUiMode();
   const [dossiers, setDossiers] = useState<TLPEDossier[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -208,7 +193,33 @@ export default function TLPEPage() {
         </div>
       </div>
 
-      {filteredDossiers.length === 0 ? (
+      {uiMode === 'v2' ? (
+        <TiersCardsV2
+          emptyLabel="Aucun dossier TLPE trouvé"
+          cards={filteredDossiers.map((d): TiersCardData => {
+            const detail = detailFor(d);
+            const years = Object.entries(d.byYear || {})
+              .map(([y, v]) => ({ key: `TLPE-${d.id}-${y}`, year: Number(y), type: 'TLPE' as const, statut: v.statut, total: v.total, nbDispositifs: v.nbDispositifs, href: `/dashboard/tlpe/${d.id}` }))
+              .sort((a, b) => b.year - a.year);
+            return {
+              id: d.id,
+              href: `/dashboard/tlpe/${d.id}`,
+              title: d.nom,
+              code: d.code_sedit,
+              adresse: d.adresse,
+              accent: 'purple',
+              badges: detail ? (
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border bg-violet-50 text-violet-700 border-violet-200">
+                  {detail.nbDispositifs} dispositif{detail.nbDispositifs !== 1 ? 's' : ''}
+                </span>
+              ) : null,
+              figures: detail ? [{ label: `Année ${detail.year}`, value: `${detail.total.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` }] : [],
+              statut: detail?.statut,
+              years,
+            };
+          })}
+        />
+      ) : filteredDossiers.length === 0 ? (
         <div className="text-center py-20">
           <ShoppingBag size={48} className="mx-auto text-slate-300 mb-4" />
           <p className="text-slate-500 font-medium">Aucun dossier TLPE trouvé</p>

@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
+import { useUiMode } from '@/components/UiModeProvider';
 
 interface TabHeaderProps {
   icon: LucideIcon;
@@ -27,6 +28,28 @@ export default function TabHeader({ icon: Icon, title, subtitle, accentColor = '
 
   const colors = accentColors[accentColor] || accentColors.blue;
   const ActionIcon = action?.icon;
+  const uiMode = useUiMode();
+
+  // Nouvelle interface : le titre et la description sont déjà dans l'en-tête de la page Paramètres ; on ne garde que l'action.
+  if (uiMode === 'v2') {
+    if (!action || !ActionIcon) return null;
+    return (
+      <div className="flex justify-end">
+        <button
+          onClick={action.onClick}
+          disabled={action.disabled}
+          className={`flex items-center gap-2 h-10 px-4 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap disabled:opacity-50 ${
+            action.variant === 'primary'
+              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+              : 'bg-white hover:bg-slate-50 text-slate-700 border border-[#e2e8f0]'
+          }`}
+        >
+          <ActionIcon size={16} />
+          {action.label}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white p-8 rounded-2xl border border-slate-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">

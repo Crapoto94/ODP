@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, LogOut, Menu, X, Zap, Loader2 } from 'lucide
 import { menuItems, type MenuItem } from '@/components/Sidebar';
 import { hasPermission } from '@/lib/permissions';
 import UiModeSwitch from '@/components/v2/UiModeSwitch';
+import { SETTINGS_TABS, SETTINGS_GROUPS, isSettingsTab } from '@/app/dashboard/settings/tabs';
 
 // Groupes de la maquette : « Exploitation & suivi » (5 premiers) puis « Gestion métier ».
 const GROUPS: { title: string; items: MenuItem[] }[] = [
@@ -22,6 +23,35 @@ const DOMAIN: Record<string, { dot: string; badge: string }> = {
   '/dashboard/commerces': { dot: 'text-emerald-400', badge: 'bg-emerald-500/15 text-emerald-300' },
   '/dashboard/tlpe': { dot: 'text-violet-400', badge: 'bg-violet-500/15 text-violet-300' },
 };
+
+// Sous-menu des Paramètres, directement dans le menu latéral (groupes Configuration / Référentiels / Technique)
+export function SettingsSubMenu({ activeTab, onNavigate }: { activeTab: string; onNavigate: () => void }) {
+  return (
+    <div className="ml-5 mt-1 mb-2 pl-3 border-l border-slate-700 space-y-3">
+      {SETTINGS_GROUPS.map((g) => (
+        <div key={g}>
+          <p className="px-2 mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">{g}</p>
+          <div className="space-y-0.5">
+            {SETTINGS_TABS.filter((t) => t.group === g).map((t) => {
+              const on = t.id === activeTab;
+              return (
+                <Link
+                  key={t.id}
+                  href={`/dashboard/settings?tab=${t.id}`}
+                  onClick={onNavigate}
+                  className={`flex items-center gap-2.5 h-8 px-2 rounded-md text-[13px] font-semibold transition-colors ${on ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'}`}
+                >
+                  <t.icon size={14} className={`shrink-0 ${on ? 'text-blue-400' : ''}`} />
+                  <span className="truncate">{t.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function Nav({ collapsed, user, counts, onNavigate }: { collapsed: boolean; user: any; counts: Record<string, number>; onNavigate: () => void }) {
   const pathname = usePathname();
@@ -42,8 +72,8 @@ function Nav({ collapsed, user, counts, onNavigate }: { collapsed: boolean; user
                 const dom = DOMAIN[item.href];
                 const count = counts[item.href];
                 return (
+                  <React.Fragment key={item.href}>
                   <Link
-                    key={item.href}
                     href={item.href}
                     onClick={onNavigate}
                     title={collapsed ? item.label : undefined}
@@ -57,6 +87,10 @@ function Nav({ collapsed, user, counts, onNavigate }: { collapsed: boolean; user
                       <span className={`text-[11px] font-bold tabular-nums px-2 py-0.5 rounded-md ${active ? 'bg-white/20 text-white' : dom?.badge || 'bg-slate-800 text-slate-300'}`}>{count}</span>
                     )}
                   </Link>
+                  {item.href === '/dashboard/settings' && pathname.startsWith('/dashboard/settings') && !collapsed && (
+                    <SettingsSubMenu activeTab={isSettingsTab(sp.get('tab')) ? sp.get('tab')! : 'general'} onNavigate={onNavigate} />
+                  )}
+                  </React.Fragment>
                 );
               })}
             </div>

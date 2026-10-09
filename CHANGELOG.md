@@ -36,7 +36,9 @@ nouvelle interface optionnelle et plusieurs évolutions demandées par les instr
 
 ### Nouvelle interface (optionnelle)
 - Interrupteur **« Nouvelle interface »** ouvert à tous les profils (préférence conservée dans le navigateur), inspiré de la maquette Stitch « Ivry ODP Civic System » : nouveau cadre (menu latéral, fil d'Ariane), tableau de bord refait, charte (couleurs, typographie, tableaux).
-- **Liste des chantiers et tournages en cartes** avec sous-détail des articles tarifaires, alertes et pagination.
+- **Liste des chantiers et tournages en cartes** avec sous-détail des articles tarifaires, alertes et pagination ; la carte s'adapte à sa propre largeur (requêtes de conteneur), sans chevauchement quand le menu latéral est déplié.
+- **Listes TLPE et Commerces en cartes dépliables** : pastille d'état et chiffres clés, et dépliage des dossiers année par année (type, statut, dispositifs, montant, accès au dossier).
+- **Paramètres refondus** : sous-menu (Configuration / Référentiels / Technique) dans le menu latéral gauche, un seul en-tête par page, et mise en forme homogène (libellés, champs, boutons, tableaux, cartes) sur tous les onglets.
 - Sans l'interrupteur, l'interface historique reste strictement inchangée.
 
 ### Technique et exploitation

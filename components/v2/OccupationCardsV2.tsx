@@ -85,10 +85,10 @@ export default function OccupationCardsV2(p: Props) {
         const nom = occ.nom || `Dossier #${occ.id}`;
 
         return (
-          <div key={occ.id} className={`bg-white rounded-2xl border ${open ? 'border-blue-200 shadow-[0_4px_12px_rgba(15,23,42,0.08)]' : 'border-[#e2e8f0] shadow-[0_1px_3px_rgba(15,23,42,0.05)]'} ${edge} overflow-hidden transition-shadow`}>
-            <div className="grid grid-cols-12 gap-x-4 gap-y-3 items-center px-5 py-4">
+          <div key={occ.id} className={`@container bg-white rounded-2xl border ${open ? 'border-blue-200 shadow-[0_4px_12px_rgba(15,23,42,0.08)]' : 'border-[#e2e8f0] shadow-[0_1px_3px_rgba(15,23,42,0.05)]'} ${edge} overflow-hidden transition-shadow`}>
+            <div className="grid grid-cols-2 @3xl:grid-cols-4 @6xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)_minmax(0,2fr)_minmax(0,1.6fr)_minmax(7.5rem,auto)_auto] gap-x-5 gap-y-3 items-center px-5 py-4">
               {/* Dossier */}
-              <div className="col-span-12 lg:col-span-3 min-w-0">
+              <div className="col-span-2 @3xl:col-span-4 @6xl:col-span-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <button onClick={() => p.onShowDetail(occ.id)} className="text-sm font-bold text-blue-600 hover:underline tabular-nums">#{occ.id}</button>
                   {alert.status !== 'none' && (
@@ -104,7 +104,7 @@ export default function OccupationCardsV2(p: Props) {
               </div>
 
               {/* Demandeur */}
-              <div className="col-span-6 lg:col-span-2 min-w-0">
+              <div className="min-w-0">
                 <p className="text-sm font-semibold text-slate-900 truncate">{occ.tiers?.nom || 'Inconnu'}</p>
                 <p className="text-xs text-slate-500 truncate">
                   {occ.tiers?.code_sedit ? <>Code tiers : <span className="tabular-nums">{occ.tiers.code_sedit}</span></> : '—'}
@@ -115,26 +115,26 @@ export default function OccupationCardsV2(p: Props) {
               </div>
 
               {/* Période */}
-              <div className="col-span-6 lg:col-span-2">
+              <div className="min-w-0">
                 <p className="text-sm font-semibold text-slate-900 tabular-nums">{dayMonth(occ.dateDebut)} → {dayMonthYear(occ.dateFin)}</p>
                 <p className="text-xs text-slate-500">{jours ? `Durée totale : ${jours} jour${jours > 1 ? 's' : ''}` : '—'}</p>
               </div>
 
               {/* Articles */}
-              <div className="col-span-6 lg:col-span-2">
+              <div className="min-w-0">
                 <p className="text-sm font-semibold text-slate-900">{lignes.length} article{lignes.length > 1 ? 's' : ''}</p>
                 <p className="text-xs text-slate-500 tabular-nums">{surface > 0 ? `${lignes.length > 1 ? 'Surface cumulée' : 'Emprise sol'} : ${surface.toLocaleString('fr-FR')} m²` : `${occ._count?.notes || 0} note${(occ._count?.notes || 0) > 1 ? 's' : ''}`}</p>
               </div>
 
               {/* Montant */}
-              <div className="col-span-6 lg:col-span-1 lg:text-right">
-                <p className="text-base font-bold text-slate-900 tabular-nums">{eur(totalAmount(occ))} €</p>
+              <div className="@6xl:text-right">
+                <p className="text-base font-bold text-slate-900 tabular-nums whitespace-nowrap">{eur(totalAmount(occ))} €</p>
                 <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-slate-400">TTC</p>
               </div>
 
               {/* Statut + actions */}
-              <div className="col-span-12 lg:col-span-2 flex flex-wrap lg:flex-nowrap items-center justify-between lg:justify-end gap-2">
-                <div className="flex flex-col items-start lg:items-end gap-1">
+              <div className="col-span-2 @3xl:col-span-4 @6xl:col-span-1 flex flex-col items-start @6xl:items-end gap-2 min-w-0">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${status.bg} ${status.color} ${status.border || ''}`}>
                     <span className="w-2 h-2 rounded-full bg-current" />{status.label || occ.statut}
                   </span>
@@ -142,7 +142,7 @@ export default function OccupationCardsV2(p: Props) {
                     <a href={occ.facturePath} target="_blank" rel="noopener noreferrer" className="text-[11px] font-semibold text-blue-600 hover:underline flex items-center gap-1"><FileText size={11} /> Facture</a>
                   )}
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center gap-1">
                   {p.view === 'ACTIVE' && !occ.isArchived && (
                     <>
                       {['EN_ATTENTE', 'EN_COURS'].includes(occ.statut) && <IconBtn title="Approuver" tone="emerald" onClick={() => p.onApprove(occ.id)}><CheckCircle2 size={16} /></IconBtn>}

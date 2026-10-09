@@ -1,21 +1,10 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import './settings.css';
 import axios from 'axios';
-import {
-  LayoutGrid,
-  Users,
-  FileText,
-  Smartphone,
-  Database,
-  Loader2,
-  Clock,
-  Mail,
-  UserCog,
-  ShieldCheck,
-  ChevronRight,
-} from 'lucide-react';
+import { Database, Loader2, ChevronRight } from 'lucide-react';
 
 import SQLEditor from '@/components/SQLEditor';
 import VersionHeader from './components/VersionHeader';
@@ -29,27 +18,28 @@ import MessagesContextuelsTab from './components/MessagesContextuelsTab';
 import ContactRolesTab from './components/ContactRolesTab';
 import RolesTab from './components/RolesTab';
 import FilienTab from './components/FilienTab';
+import { SETTINGS_TABS, SETTINGS_GROUPS, isSettingsTab, type TabType } from './tabs';
+import { useUiMode } from '@/components/UiModeProvider';
 
-type TabType = 'general' | 'filien' | 'postgres' | 'users' | 'roles' | 'contact_roles' | 'mobile_logs' | 'backlog' | 'signature' | 'messages' | 'sql';
-
-const tabs: { id: TabType; label: string; icon: any; description: string; group?: string }[] = [
-  { id: 'general',        label: 'Général',            icon: LayoutGrid, description: 'APM, mail, Filièn…',        group: 'Configuration' },
-  { id: 'filien',         label: 'Filien / Dépôt',     icon: FileText,   description: 'Export & dépôt des factures', group: 'Configuration' },
-  { id: 'signature',      label: 'Signatures',         icon: FileText,   description: 'Signataires & gabarits',    group: 'Configuration' },
-  { id: 'messages',       label: 'Modèles d\'emails',  icon: Mail,       description: 'Messages contextuels',      group: 'Configuration' },
-  { id: 'users',          label: 'Utilisateurs',       icon: Users,       description: 'Comptes & accès',           group: 'Référentiels' },
-  { id: 'roles',          label: 'Rôles',              icon: ShieldCheck, description: 'Droits par rôle',           group: 'Référentiels' },
-  { id: 'contact_roles',  label: 'Types de contacts',  icon: UserCog,    description: 'Rôles des contacts',        group: 'Référentiels' },
-  { id: 'postgres',       label: 'Base PostgreSQL',    icon: Database,   description: 'Connexion externe',         group: 'Technique' },
-  { id: 'sql',            label: 'Console SQL',        icon: Database,   description: 'Requêtes directes',         group: 'Technique' },
-  { id: 'backlog',        label: 'Backlog',            icon: Clock,      description: 'Suivi des évolutions',      group: 'Technique' },
-  { id: 'mobile_logs',    label: 'Logs Mobiles',       icon: Smartphone, description: 'Activité terrain',          group: 'Technique' },
-];
-
-const groups = ['Configuration', 'Référentiels', 'Technique'];
+const tabs = SETTINGS_TABS;
+const groups = SETTINGS_GROUPS;
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('general');
+  // useSearchParams impose une frontière Suspense
+  return (
+    <Suspense fallback={null}>
+      <SettingsPageInner />
+    </Suspense>
+  );
+}
+
+function SettingsPageInner() {
+  const uiMode = useUiMode();
+  const searchParams = useSearchParams();
+  const [tabState, setActiveTab] = useState<TabType>('general');
+  // Nouvelle interface : le sous-menu est dans le menu latéral principal, l'onglet actif vient de l'adresse (?tab=…)
+  const tabParam = searchParams.get('tab');
+  const activeTab: TabType = uiMode === 'v2' ? (isSettingsTab(tabParam) ? tabParam : 'general') : tabState;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -125,6 +115,56 @@ export default function SettingsPage() {
     );
   }
 
+  const content = (
+    <>
+      {activeTab === 'general' && <GeneralTab {...{settings, setSettings, handleSubmit, handleTestMail, saving, message, apmStatus}} />}
+      {activeTab === 'filien' && <FilienTab {...{settings, setSettings, handleSubmit, saving, message}} />}
+      {activeTab === 'postgres' && <PostgresTab />}
+      {activeTab === 'users' && <UsersTab />}
+      {activeTab === 'roles' && <RolesTab />}
+      {activeTab === 'contact_roles' && <ContactRolesTab />}
+      {activeTab === 'signature' && <SignatureConfigTab />}
+      {activeTab === 'messages' && <MessagesContextuelsTab />}
+      {activeTab === 'backlog' && <BacklogTab />}
+      {activeTab === 'mobile_logs' && <MobileLogsTab {...{mobileLogs, loadingLogs, fetchMobileLogs}} />}
+      {activeTab === 'sql' && (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl overflow-hidden">
+          <div className="p-8 bg-indigo-600 flex items-center gap-4 text-white">
+            <Database size={24} />
+            <div>
+              <h3 className="text-xl font-black tracking-tight leading-none">Console SQL</h3>
+              <p className="text-[10px] font-bold text-indigo-100 uppercase tracking-widest mt-1">Exécution directe sur la base de données</p>
+            </div>
+          </div>
+          <SQLEditor />
+        </div>
+      )}
+    </>
+  );
+
+  if (uiMode === 'v2') {
+    return (
+      <div className="settings-v2 space-y-6 animate-in fade-in duration-300">
+        {activeTabDef && (
+          <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e2e8f0] pb-5">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <activeTabDef.icon size={20} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-slate-400">Paramètres · {activeTabDef.group}</p>
+                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 leading-tight">{activeTabDef.label}</h1>
+                <p className="text-sm text-slate-500">{activeTabDef.description}</p>
+              </div>
+            </div>
+            <VersionHeader compact hideTitle />
+          </header>
+        )}
+        <div>{content}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex gap-0 h-[calc(100vh-80px)] animate-in fade-in duration-500">
 
@@ -189,30 +229,7 @@ export default function SettingsPage() {
           </div>
         )}
 
-        <div className="p-8">
-          {activeTab === 'general' && <GeneralTab {...{settings, setSettings, handleSubmit, handleTestMail, saving, message, apmStatus}} />}
-          {activeTab === 'filien' && <FilienTab {...{settings, setSettings, handleSubmit, saving, message}} />}
-          {activeTab === 'postgres' && <PostgresTab />}
-          {activeTab === 'users' && <UsersTab />}
-          {activeTab === 'roles' && <RolesTab />}
-          {activeTab === 'contact_roles' && <ContactRolesTab />}
-          {activeTab === 'signature' && <SignatureConfigTab />}
-          {activeTab === 'messages' && <MessagesContextuelsTab />}
-          {activeTab === 'backlog' && <BacklogTab />}
-          {activeTab === 'mobile_logs' && <MobileLogsTab {...{mobileLogs, loadingLogs, fetchMobileLogs}} />}
-          {activeTab === 'sql' && (
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl overflow-hidden">
-              <div className="p-8 bg-indigo-600 flex items-center gap-4 text-white">
-                <Database size={24} />
-                <div>
-                  <h3 className="text-xl font-black tracking-tight leading-none">Console SQL</h3>
-                  <p className="text-[10px] font-bold text-indigo-100 uppercase tracking-widest mt-1">Exécution directe sur la base de données</p>
-                </div>
-              </div>
-              <SQLEditor />
-            </div>
-          )}
-        </div>
+        <div className="p-8">{content}</div>
       </main>
 
     </div>

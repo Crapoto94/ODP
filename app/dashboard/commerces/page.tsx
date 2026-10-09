@@ -9,6 +9,8 @@ import { Loader2, Store, MapPin, Mail, Phone, ShoppingCart, AlertCircle, Plus, S
 import { useLockedYear } from './hooks/useLockedYear';
 import { getAvailableStatuses } from '@/lib/status-utils';
 import { checkAotAlert, getAotAlertMessage } from '@/lib/aot-alerts';
+import { useUiMode } from '@/components/UiModeProvider';
+import TiersCardsV2, { type TiersCardData } from '@/components/v2/TiersCardsV2';
 
 interface Article {
   id: number;
@@ -37,6 +39,7 @@ interface Commerce {
 
 export default function CommercesPage() {
   const router = useRouter();
+  const uiMode = useUiMode();
   const [commerces, setCommerces] = useState<Commerce[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -385,6 +388,72 @@ export default function CommercesPage() {
           <p className="text-sm font-black text-slate-300 uppercase tracking-widest italic">Aucun commerce trouvé</p>
         </div>
       ) : (
+        uiMode === 'v2' ? (
+          <TiersCardsV2
+            emptyLabel="Aucun commerce trouvé"
+            cards={sortedCommerces.map((commerce, index): TiersCardData => {
+              const c: any = commerce;
+              const p = parseAddress(commerce.adresse || '');
+              const aotAlert = c.lastAotDate ? checkAotAlert(c.lastAotDate) : null;
+              const nbDisp = commerce.articles.reduce((acc: number, a: any) => acc + (a.count || 0), 0);
+              const years = ((c.dossiers || []) as any[])
+                .map((d) => ({ key: d.key, year: d.year, type: d.type, statut: d.statut, total: d.total, nbDispositifs: d.nbDispositifs, href: d.type === 'TLPE' ? `/dashboard/tlpe/${commerce.id}` : `/dashboard/commerces/${commerce.id}` }))
+                .filter((d) => d.year)
+                .sort((x, y) => y.year - x.year || x.type.localeCompare(y.type));
+              const surf = commerce.enseigneSurface;
+              return {
+                id: commerce.id,
+                href: `/dashboard/commerces/${commerce.id}`,
+                title: commerce.nomEtablissement || commerce.nom,
+                subtitle: commerce.nomEtablissement && commerce.nomEtablissement !== commerce.nom ? `Tiers : ${commerce.nom}` : null,
+                code: c.code_sedit,
+                adresse: commerce.adresse,
+                accent: 'blue',
+                header: sortByAddress ? p.street : null,
+                leading: (
+                  <button onClick={(e) => handleToggleFavorite(commerce.id, e)} className="p-1.5 -ml-1 hover:bg-yellow-50 rounded-lg shrink-0" title={favorites.has(commerce.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'}>
+                    <Star size={18} className={favorites.has(commerce.id) ? 'fill-yellow-500 text-yellow-500' : 'text-slate-300'} />
+                  </button>
+                ),
+                badges: (
+                  <>
+                    {nbDisp > 0 && <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border bg-blue-50 text-blue-700 border-blue-200">{nbDisp} dispositif{nbDisp > 1 ? 's' : ''}</span>}
+                    {surf !== undefined && surf > 0 && (
+                      commerce.isReglemente ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold border bg-indigo-50 text-indigo-700 border-indigo-200" title="Commerce réglementé : peut être exonéré d'enseigne même au-delà du seuil (décision manuelle).">
+                          <ShieldCheck size={12} /> Enseigne {surf.toLocaleString('fr-FR')} m² · Réglementé
+                        </span>
+                      ) : commerce.isExonere ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold border bg-amber-50 text-amber-700 border-amber-200">
+                          <AlertCircle size={12} /> Enseigne {surf.toLocaleString('fr-FR')} m² · Exonéré (&lt;{commerce.threshold} m²)
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold border bg-rose-50 text-rose-700 border-rose-200" title="La surface d'enseigne dépasse le seuil d'exonération : le commerce est assujetti.">
+                          <AlertTriangle size={12} /> Enseigne {surf.toLocaleString('fr-FR')} m² · Seuil dépassé (&gt;{commerce.threshold} m²)
+                        </span>
+                      )
+                    )}
+                    {aotAlert?.hasAlert && (
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold border ${aotAlert.isExpired ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 text-amber-700 border-amber-200'}`} title={getAotAlertMessage(aotAlert)}>
+                        {aotAlert.isExpired ? <AlertTriangle size={12} /> : <AlertCircle size={12} />} AOT {aotAlert.isExpired ? `expirée (${Math.abs(aotAlert.daysUntilExpiry || 0)} j)` : `dans ${aotAlert.daysUntilExpiry} j`}
+                      </span>
+                    )}
+                    {(commerce.etatAdministratif === 'Fermée' || commerce.etatAdministratif === 'Cessée') && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border bg-rose-50 text-rose-700 border-rose-200">Fermé</span>
+                    )}
+                  </>
+                ),
+                figures: [
+                  ...(commerce.tlpeCount > 0 ? [{ label: 'TLPE', value: `${commerce.tlpeCount} (${Math.min(...commerce.tlpeYears)}–${Math.max(...commerce.tlpeYears)})` }] : []),
+                  ...(commerce.commerceCount > 0 ? [{ label: 'Commerce', value: `${commerce.commerceCount} (${Math.min(...commerce.commerceYears)}–${Math.max(...commerce.commerceYears)})` }] : []),
+                  ...(c.lastYear ? [{ label: `Dossier ${c.lastYear}`, value: `${(c.lastYearTotal || 0).toLocaleString('fr-FR')} €` }] : []),
+                ],
+                statut: commerce.lastYearStatut,
+                years,
+              };
+            })}
+          />
+        ) : (
         <div className="grid grid-cols-1 gap-4">
           {sortedCommerces.map((commerce, index) => {
             const pCurrent = parseAddress(commerce.adresse || '');
@@ -584,6 +653,7 @@ export default function CommercesPage() {
             );
           })}
         </div>
+        )
       )}
     </div>
   );

@@ -119,3 +119,89 @@ html[data-ui="v2"] .fixed.inset-0 .shadow-2xl {
 html[data-ui="v2"] main > .max-w-\[1600px\] {
   max-width: none;
 }
+
+/* ───────── Paramètres (nouvelle interface) : homogénéisation de toutes les pages ─────────
+   Les onglets historiques ont chacun leur mise en forme ; ces règles, limitées à .settings-v2, les ramènent à la charte :
+   libellés « label-over » (11 px, 700, +0,08em), champs 42 px, cartes 16 px à bord 1 px, boutons et tableaux uniformes. */
+html[data-ui="v2"] .settings-v2 {
+  --s-border: #e2e8f0;
+}
+/* plancher typographique : aucun texte sous 11 px (11 px réservé aux sur-libellés) */
+html[data-ui="v2"] .settings-v2 [class*="text-[7px]"],
+html[data-ui="v2"] .settings-v2 [class*="text-[8px]"],
+html[data-ui="v2"] .settings-v2 [class*="text-[9px]"],
+html[data-ui="v2"] .settings-v2 [class*="text-[10px]"] {
+  font-size: 11px;
+  line-height: 16px;
+}
+html[data-ui="v2"] .settings-v2 .font-black { font-weight: 700; }
+html[data-ui="v2"] .settings-v2 .tracking-widest,
+html[data-ui="v2"] .settings-v2 [class*="tracking-[0."] {
+  letter-spacing: 0.08em;
+}
+/* libellés de champs */
+html[data-ui="v2"] .settings-v2 label {
+  color: #64748b;
+}
+/* champs de saisie : 42 px, bord 1 px, rayon 8 px, focus bleu de la charte */
+html[data-ui="v2"] .settings-v2 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+html[data-ui="v2"] .settings-v2 select {
+  min-height: 42px;
+  border-radius: 0.5rem;
+  border: 1px solid var(--s-border);
+  background-color: #ffffff;
+  font-size: 14px;
+}
+html[data-ui="v2"] .settings-v2 textarea {
+  border-radius: 0.5rem;
+  border: 1px solid var(--s-border);
+  background-color: #ffffff;
+  font-size: 14px;
+}
+html[data-ui="v2"] .settings-v2 input:focus,
+html[data-ui="v2"] .settings-v2 select:focus,
+html[data-ui="v2"] .settings-v2 textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #eff6ff;
+}
+/* cartes et panneaux */
+html[data-ui="v2"] .settings-v2 .bg-white.border,
+html[data-ui="v2"] .settings-v2 .bg-white[class*="border-slate"] {
+  border-color: var(--s-border);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+html[data-ui="v2"] .settings-v2 .rounded-xl.border,
+html[data-ui="v2"] .settings-v2 .rounded-2xl.border {
+  border-radius: 1rem;
+}
+/* boutons : hauteur 40 px, libellé sentence-case lisible (fin des « MAJUSCULES 10 px ») */
+html[data-ui="v2"] .settings-v2 button:not([class*="w-8"]):not([class*="w-9"]):not([class*="w-10"]):not([class*="p-1"]):not([class*="p-2"]):not([class*="p-3"]) {
+  font-size: 13px;
+}
+html[data-ui="v2"] .settings-v2 button.uppercase,
+html[data-ui="v2"] .settings-v2 a.uppercase {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+  font-size: 13px;
+}
+html[data-ui="v2"] .settings-v2 button.bg-slate-950,
+html[data-ui="v2"] .settings-v2 button.bg-slate-900.text-white {
+  background-color: #2563eb;
+}
+html[data-ui="v2"] .settings-v2 button.bg-slate-950:hover,
+html[data-ui="v2"] .settings-v2 button.bg-slate-900.text-white:hover {
+  background-color: #1d4ed8;
+}
+/* tableaux */
+html[data-ui="v2"] .settings-v2 table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+html[data-ui="v2"] .settings-v2 td,
+html[data-ui="v2"] .settings-v2 th {
+  font-size: 13px;
+}
+html[data-ui="v2"] .settings-v2 thead th {
+  font-size: 11px;
+}
