@@ -141,6 +141,7 @@ export default function CommercesPage() {
   const filteredCommerces = commerces.filter(commerce => {
     const term = searchTerm.toLowerCase();
     const matchesSearch = commerce.nom.toLowerCase().includes(term) ||
+                         ((commerce as any).code_sedit?.toLowerCase().includes(term.trim()) ?? false) ||
                          (commerce.nomEtablissement?.toLowerCase().includes(term) ?? false) ||
                          (commerce.adresse?.toLowerCase().includes(term) ?? false);
     
@@ -251,7 +252,7 @@ export default function CommercesPage() {
           className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-black text-sm hover:bg-blue-700 transition-colors flex items-center gap-2"
         >
           <Plus size={18} />
-          Nouveau Commerce
+          Nouveau Dossier
         </button>
       </div>
 

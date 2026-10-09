@@ -13,6 +13,7 @@ import TlpeContactModal from './components/TlpeContactModal';
 import TlpeArticles from './components/TlpeArticles';
 import TlpeStepper from './components/TlpeStepper';
 import TlpeRenewModal from './components/TlpeRenewModal';
+import TlpeFacadePhoto from './components/TlpeFacadePhoto';
 import { useTlpeLogic } from './hooks/useTlpeLogic';
 
 interface Props {
@@ -34,6 +35,7 @@ export default function TlpeDetailPage({ params }: Props) {
     isContactModalOpen, setIsContactModalOpen, isSubmittingContact, newContact, setNewContact,
     handleAddContact, handleDeleteContact,
     isUploadingPhoto, handleUploadPhoto, handleDeletePhoto,
+    isUploadingFacade, handleUploadFacade, handleDeleteFacade,
     handleDeleteYear,
     refresh,
   } = logic;
@@ -84,6 +86,9 @@ export default function TlpeDetailPage({ params }: Props) {
       </div>
 
       <div className="max-w-7xl mx-auto w-full space-y-8 px-4">
+        {/* Photographie de la façade commerciale / du local (comme un dossier Commerce) */}
+        <TlpeFacadePhoto photo={tiers.photo} isUploading={isUploadingFacade} onUpload={handleUploadFacade} onDelete={handleDeleteFacade} />
+
         {/* Financial card */}
         {currentOccupation && (
           <OccupationFinancialCard

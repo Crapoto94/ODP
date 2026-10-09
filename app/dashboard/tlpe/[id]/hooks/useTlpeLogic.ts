@@ -21,6 +21,7 @@ export function useTlpeLogic(paramId: string) {
   const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
   const [isGeneratingFacture, setIsGeneratingFacture] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isUploadingFacade, setIsUploadingFacade] = useState(false);
 
   const [isLigneModalOpen, setIsLigneModalOpen] = useState(false);
   const [editingLigne, setEditingLigne] = useState<any>(null);
@@ -222,6 +223,33 @@ export function useTlpeLogic(paramId: string) {
     }
   };
 
+  // --- Photographie de la façade / du local (Tiers.photo, partagée avec la fiche Commerce) ---
+  const handleUploadFacade = useCallback(async (file: File) => {
+    setIsUploadingFacade(true);
+    try {
+      const resizedBlob = await resizeImage(file);
+      const fd = new FormData();
+      fd.append('file', resizedBlob, file.name);
+      const res = await axios.post('/api/upload', fd);
+      await axios.patch(`/api/tlpe/${tiersId}`, { photo: res.data.url });
+      setTiers((prev: any) => ({ ...prev, photo: res.data.url }));
+    } catch (err) {
+      alert("Erreur lors de l'envoi de la photo");
+    } finally {
+      setIsUploadingFacade(false);
+    }
+  }, [tiersId]);
+
+  const handleDeleteFacade = async () => {
+    if (!confirm('Supprimer la photo de la façade ?')) return;
+    try {
+      await axios.patch(`/api/tlpe/${tiersId}`, { photo: null });
+      setTiers((prev: any) => ({ ...prev, photo: null }));
+    } catch (err) {
+      alert('Erreur lors de la suppression');
+    }
+  };
+
   // --- Annee ---
   const handleDeleteYear = async (year: number) => {
     if (!confirm(`Supprimer definitivement le dossier TLPE ${year} ?`)) return;
@@ -267,6 +295,9 @@ export function useTlpeLogic(paramId: string) {
     isUploadingPhoto,
     handleUploadPhoto,
     handleDeletePhoto,
+    isUploadingFacade,
+    handleUploadFacade,
+    handleDeleteFacade,
     handleDeleteYear,
     refresh,
   };

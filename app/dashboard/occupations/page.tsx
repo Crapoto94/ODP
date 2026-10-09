@@ -50,6 +50,8 @@ import { isAlertActive, getAlertConfig } from '@/lib/alert-utils';
 import { hasPermission } from '@/lib/permissions';
 import { useLockedYear } from './hooks/useLockedYear';
 import { isMixedOccupation, getOccupationTypes } from '@/lib/mixed-occupation-utils';
+import { useUiMode } from '@/components/UiModeProvider';
+import OccupationCardsV2 from '@/components/v2/OccupationCardsV2';
 
 interface Occupation {
   id: number;
@@ -148,6 +150,7 @@ function OccupationsPageContent() {
   const [warningAction, setWarningAction] = useState<() => void>(() => {});
 
   const router = useRouter();
+  const uiMode = useUiMode();
 
   const [formData, setFormData] = useState({
     id: null as number | null,
@@ -673,6 +676,7 @@ function OccupationsPageContent() {
     if (o.type !== 'CHANTIER' && o.type !== 'TOURNAGE') return false;
 
     const matchesSearch = (o.tiers?.nom || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          ((o.tiers as any)?.code_sedit || '').toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
                           o.adresse.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'ALL' || o.type === typeFilter;
     const matchesStatus = statusFilter === 'ALL' || o.statut === statusFilter;
@@ -937,6 +941,27 @@ function OccupationsPageContent() {
               Aucun dossier trouvé
             </div>
           ) : (
+            uiMode === 'v2' ? (
+              <OccupationCardsV2
+                occupations={filtered}
+                view={view}
+                currentUser={currentUser}
+                expandedRows={expandedRows}
+                onToggleRow={toggleRow}
+                onShowDetail={handleShowDetail}
+                onEdit={handleEdit}
+                onAddLigne={(occ) => { setSelectedOccForLigne(occ as any); setEditingLigne(null); setIsLigneModalOpen(true); }}
+                onEditLigne={(occ, ligne) => { setSelectedOccForLigne(occ as any); setEditingLigne(ligne); setIsLigneModalOpen(true); }}
+                onDeleteLigne={handleDeleteLigne}
+                onApprove={handleApprove}
+                onNextStep={handleNextStep}
+                onDownloadFacture={downloadFacture}
+                onUnlock={handleUnlock}
+                onArchive={handleArchive}
+                onUnarchive={handleUnarchive}
+                onDelete={handleDelete}
+              />
+            ) : (
             <table className="w-full border-separate border-spacing-y-1">
               <thead>
                 <tr className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-left">
@@ -1192,6 +1217,7 @@ function OccupationsPageContent() {
 
               </tbody>
             </table>
+            )
           )}
         </div>
       </div>
@@ -1222,10 +1248,11 @@ function OccupationsPageContent() {
                         setFormData({...formData, type: e.target.value});
                       }}
                     >
-                      <option value="CHANTIER">Echafaudage / Chantier</option>
-                      <option value="TOURNAGE">Tournage / Événement</option>
-                      <option value="TLPE">T.L.P.E.</option>
-                      <option value="COMMERCE">Commerce</option>
+                      <option value="CHANTIER">Chantier</option>
+                      <option value="TOURNAGE">Tournage</option>
+                      {/* Commerce et TLPE ont leurs propres écrans : affichés seulement pour un dossier existant de ce type */}
+                      {formData.type === 'TLPE' && <option value="TLPE">T.L.P.E.</option>}
+                      {formData.type === 'COMMERCE' && <option value="COMMERCE">Commerce</option>}
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -1265,7 +1292,7 @@ function OccupationsPageContent() {
                             {tiers
                               .filter(t =>
                                 t.nom.toLowerCase().includes(tiersSearchQuery.toLowerCase()) ||
-                                (t as any).code_sedit?.includes(tiersSearchQuery)
+                                (t as any).code_sedit?.toLowerCase().includes(tiersSearchQuery.trim().toLowerCase())
                               )
                               .slice(0, 15)
                               .map(t => (
@@ -1297,7 +1324,7 @@ function OccupationsPageContent() {
                                   <ChevronRight size={14} className="text-slate-300" />
                                 </button>
                               ))}
-                            {tiersSearchQuery.length > 0 && tiers.filter(t => t.nom.toLowerCase().includes(tiersSearchQuery.toLowerCase()) || (t as any).code_sedit?.includes(tiersSearchQuery)).length === 0 && (
+                            {tiersSearchQuery.length > 0 && tiers.filter(t => t.nom.toLowerCase().includes(tiersSearchQuery.toLowerCase()) || (t as any).code_sedit?.toLowerCase().includes(tiersSearchQuery.trim().toLowerCase())).length === 0 && (
                               <div className="p-8 text-center text-[10px] font-black text-slate-400 uppercase italic tracking-widest">Aucun tiers trouvé</div>
                             )}
                           </div>
@@ -1410,7 +1437,7 @@ function OccupationsPageContent() {
                             {tiers
                               .filter(t =>
                                 t.nom.toLowerCase().includes(agissantPourSearchQuery.toLowerCase()) ||
-                                (t as any).code_sedit?.includes(agissantPourSearchQuery)
+                                (t as any).code_sedit?.toLowerCase().includes(agissantPourSearchQuery.trim().toLowerCase())
                               )
                               .slice(0, 15)
                               .map(t => (
@@ -1442,7 +1469,7 @@ function OccupationsPageContent() {
                                   <ChevronRight size={14} className="text-slate-300" />
                                 </button>
                               ))}
-                            {agissantPourSearchQuery.length > 0 && tiers.filter(t => t.nom.toLowerCase().includes(agissantPourSearchQuery.toLowerCase()) || (t as any).code_sedit?.includes(agissantPourSearchQuery)).length === 0 && (
+                            {agissantPourSearchQuery.length > 0 && tiers.filter(t => t.nom.toLowerCase().includes(agissantPourSearchQuery.toLowerCase()) || (t as any).code_sedit?.toLowerCase().includes(agissantPourSearchQuery.trim().toLowerCase())).length === 0 && (
                               <div className="p-8 text-center text-[10px] font-black text-slate-400 uppercase italic tracking-widest">Aucun tiers trouvé</div>
                             )}
                           </div>

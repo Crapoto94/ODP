@@ -33,6 +33,7 @@ export async function GET(request: Request) {
           code_sedit: occ.tiers.code_sedit,
           adresse: occ.tiers.adresse,
           years: [],
+          byYear: {},
           lastYear: occ.anneeTaxation,
           lastYearStatut: occ.statut,
           lastYearTotal: montant,
@@ -40,6 +41,13 @@ export async function GET(request: Request) {
         });
       }
       const entry = byTiers.get(tierId);
+      // Détail par année (statut, montant, dispositifs) : utile au filtre par année de la liste
+      if (occ.anneeTaxation) {
+        const y = entry.byYear[occ.anneeTaxation] || { statut: occ.statut, total: 0, nbDispositifs: 0 };
+        y.total += montant;
+        y.nbDispositifs += occ.lignes.length;
+        entry.byYear[occ.anneeTaxation] = y;
+      }
       if (occ.anneeTaxation && !entry.years.includes(occ.anneeTaxation)) entry.years.push(occ.anneeTaxation);
       if (occ.anneeTaxation && occ.anneeTaxation >= entry.lastYear) {
         entry.lastYear = occ.anneeTaxation;

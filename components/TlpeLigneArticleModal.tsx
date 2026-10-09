@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Check, Save, Loader2, Euro, Upload, Image as ImageIcon, Trash2, Plus, Info, Hash, Tag, Search, Calendar, Maximize2 } from 'lucide-react';
 import axios from 'axios';
 import { getEnseigneSurfaceCumulee, resolveTlpeTarif } from '@/lib/tlpe-tarifs';
+import { resizeImage } from '@/lib/image-utils';
 
 function getDaysInMonth(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -56,6 +57,7 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
+  const [note, setNote] = useState<string>(initialData?.note || '');
   
   const [selectedArticleId, setSelectedArticleId] = useState<number | null>(null);
   const [surface, setSurface] = useState<string>(initialData?.quantite1?.toString() || '');
@@ -71,12 +73,14 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
         setSelectedArticleId(initialData.articleId);
         setSurface(initialData.quantite1.toString());
         setPhotos(initialData.photos ? initialData.photos.split(',').filter(Boolean) : []);
+        setNote(initialData.note || '');
       } else {
         setSelectedArticleId(null);
         setSurface('');
         setDateDebut(`${annee}-01-01`);
         setDateFin(`${annee}-12-31`);
         setPhotos([]);
+        setNote('');
         setFilterText('');
       }
     }
@@ -102,6 +106,33 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
       setLoading(false);
     }
   };
+
+  // Capture d'écran / image collée (Ctrl+V) : ajoutée au portfolio, y compris dès la création de l'article.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onPaste = async (e: ClipboardEvent) => {
+      const items = Array.from(e.clipboardData?.items || []);
+      const img = items.find((it) => it.type.startsWith('image/'));
+      if (!img) return; // texte collé : comportement normal (description, filtre…)
+      const file = img.getAsFile();
+      if (!file) return;
+      e.preventDefault();
+      setUploading(true);
+      try {
+        const blob = await resizeImage(file);
+        const data = new FormData();
+        data.append('file', blob, file.name || 'capture.png');
+        const res = await axios.post('/api/upload', data);
+        setPhotos((prev) => [...prev, res.data.url]);
+      } catch (err) {
+        alert("Erreur lors de l'envoi de la capture");
+      } finally {
+        setUploading(false);
+      }
+    };
+    document.addEventListener('paste', onPaste);
+    return () => document.removeEventListener('paste', onPaste);
+  }, [isOpen]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -178,7 +209,8 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
         dateDebut: dateDebut,
         dateFin: dateFin,
         montant: unitPrice, 
-        photos: photos.join(',')
+        photos: photos.join(','),
+        note: note.trim()
       };
 
       if (initialData?.id) {
@@ -419,6 +451,20 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
             </div>
           )}
 
+          {/* Description du dispositif */}
+          <div className="space-y-2 pt-4">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 px-2">
+              <Info size={12} className="text-purple-500" /> Description (optionnel)
+            </label>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              rows={3}
+              placeholder="Ex : enseigne bandeau lumineuse en façade, côté rue de Paris…"
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 outline-none focus:border-purple-500 transition-all font-medium text-sm resize-y"
+            />
+          </div>
+
           {/* Photo Gallery - Premium Grid */}
           <div className="space-y-4 pt-4 text-left sm:text-left">
             <div className="flex items-center justify-between px-2">
@@ -445,6 +491,7 @@ export default function TlpeLigneArticleModal({ isOpen, onClose, onSuccess, occu
                 <span className="text-[9px] font-black uppercase tracking-tighter">Ajouter</span>
               </label>
             </div>
+            <p className="text-[10px] font-medium text-slate-400 px-2">Astuce : collez directement une capture d&apos;écran avec Ctrl+V.</p>
           </div>
 
           {/* Footer Actions */}

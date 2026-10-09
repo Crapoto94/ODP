@@ -110,9 +110,9 @@ export default function TiersModal({
                 <div className="mt-3 flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 animate-in fade-in duration-300">
                   <AlertTriangle size={16} className="text-rose-600 mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-rose-700">Tiers inactif dans la base de l'État</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-rose-700">Tiers FERMÉ dans la base de l'État</p>
                     <p className="text-xs font-bold text-rose-700 mt-0.5">
-                      État administratif : {formData.etatAdministratif}. Ce tiers n'est plus actif ; vous pouvez tout de même l'enregistrer.
+                      Établissement fermé{(formData as any).dateFermeture ? ` depuis le ${new Date((formData as any).dateFermeture).toLocaleDateString('fr-FR')}` : ''}. La création du tiers n'est probablement pas nécessaire ; une confirmation vous sera demandée.
                     </p>
                   </div>
                 </div>
@@ -121,7 +121,7 @@ export default function TiersModal({
               {formData.etatAdministratif === 'Actif' && (
                 <div className="mt-3 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 animate-in fade-in duration-300">
                   <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
-                  <p className="text-xs font-bold text-emerald-700">Tiers actif dans la base de l'État.</p>
+                  <p className="text-xs font-bold text-emerald-700">Tiers EN ACTIVITÉ dans la base de l'État.</p>
                 </div>
               )}
             </div>

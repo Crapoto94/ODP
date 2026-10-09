@@ -40,6 +40,7 @@ export async function GET(req: Request) {
     email: '',
     adresse: [info.adresse, info.code_postal, info.ville].filter(Boolean).join(' '),
     natureJuridique: info.categorie_juridique ? mapNatureJuridique(info.categorie_juridique) : '',
-    etatAdministratif: info.etat_administratif || ''
+    etatAdministratif: info.etat_administratif || '',
+    dateFermeture: info.date_fermeture || ''
   });
 }

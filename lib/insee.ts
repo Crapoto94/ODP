@@ -9,6 +9,7 @@ export interface SireneInfo {
   code_postal: string;
   activite_principale?: string;
   etat_administratif?: string;
+  date_fermeture?: string | null; // date de fermeture de l'établissement (si fermé)
   categorie_juridique?: string;
   date_creation?: string;
   latitude?: number | null;
@@ -33,16 +34,24 @@ export async function fetchSiretInfo(siret: string): Promise<SireneInfo | null> 
     if (data.results && data.results.length > 0) {
       const result = data.results[0];
       const siege = result.siege || {};
-      
+      // L'établissement visé par le SIRET saisi (le siège ou un autre établissement) : c'est SON état qui compte
+      const etab = (siege.siret === cleanSiret ? siege : null)
+        || (result.matching_etablissements || []).find((e: any) => e.siret === cleanSiret)
+        || null;
+      const ref = etab || siege;
+      // État : celui de l'établissement s'il est connu, sinon celui de l'unité légale
+      const etatCode = (etab?.etat_administratif ?? result.etat_administratif);
+
       return {
         nom: result.nom_complet || result.nom_raison_sociale,
-        enseigne: siege.enseigne || result.enseigne,
-        siret: siege.siret || cleanSiret,
-        adresse: siege.adresse || result.adresse,
-        ville: siege.libelle_commune || result.ville,
-        code_postal: siege.code_postal || result.code_postal,
+        enseigne: ref.enseigne || result.enseigne,
+        siret: ref.siret || cleanSiret,
+        adresse: ref.adresse || result.adresse,
+        ville: ref.libelle_commune || result.ville,
+        code_postal: ref.code_postal || result.code_postal,
         activite_principale: result.activite_principale,
-        etat_administratif: result.etat_administratif === 'A' ? 'Actif' : 'Cessée',
+        etat_administratif: etatCode === 'A' ? 'Actif' : 'Cessée',
+        date_fermeture: etab?.date_fermeture || (etatCode === 'A' ? null : (result.date_fermeture || null)),
         categorie_juridique: result.nature_juridique,
         date_creation: result.date_creation
       };

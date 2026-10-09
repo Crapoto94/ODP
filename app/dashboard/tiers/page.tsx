@@ -120,10 +120,12 @@ export default function TiersPage() {
         adresse: data.adresse,
         natureJuridique: data.natureJuridique || formData.natureJuridique,
         siret: data.siret,
-        etatAdministratif: data.etatAdministratif || ''
-      });
+        etatAdministratif: data.etatAdministratif || '',
+        dateFermeture: data.dateFermeture || ''
+      } as any);
       if (data.etatAdministratif && data.etatAdministratif !== 'Actif') {
-        alert(`Attention : ce tiers n'est plus actif dans la base de l'État (état administratif : ${data.etatAdministratif}).`);
+        alert(`Attention : cet établissement est FERMÉ dans la base de l'État${data.dateFermeture ? ` (depuis le ${new Date(data.dateFermeture).toLocaleDateString('fr-FR')})` : ''}.
+La création du tiers n'est probablement pas nécessaire.`);
       }
     } catch (err) {
       alert('SIRET non trouvé ou erreur INSEE');
@@ -134,6 +136,13 @@ export default function TiersPage() {
 
   const handleSubmit = async (e: React.FormEvent, isSeditRequest = false) => {
     if (e) e.preventDefault();
+    // Création d'un tiers FERMÉ : demander confirmation (évite une création inutile)
+    if (!isEditing && formData.etatAdministratif && formData.etatAdministratif !== 'Actif') {
+      const depuis = (formData as any).dateFermeture ? ` depuis le ${new Date((formData as any).dateFermeture).toLocaleDateString('fr-FR')}` : '';
+      if (!confirm(`Ce tiers est FERMÉ${depuis} dans la base de l'État.
+
+Voulez-vous vraiment le créer ?`)) return;
+    }
     setSubmitting(true);
     try {
       const payload = { ...formData, isSeditRequest };
@@ -334,7 +343,7 @@ export default function TiersPage() {
     const matchesSearch = 
       t.nom.toLowerCase().includes(searchTerm.toLowerCase()) || 
       t.siret?.includes(searchTerm) ||
-      t.code_sedit?.includes(searchTerm);
+      (t.code_sedit?.toLowerCase().includes(searchTerm.trim().toLowerCase()) ?? false);
     
     const matchesStatus = showOnlyClosed ? t.etatAdministratif === 'Cessée' : true;
     
@@ -451,7 +460,7 @@ export default function TiersPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
               type="text"
-              placeholder="Rechercher par nom, SIRET ou code SEDIT..."
+              placeholder="Rechercher par nom, code tiers ou SIRET..."
               className="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 transition-all font-semibold text-sm"
               value={searchTerm}
               onChange={(e) => {

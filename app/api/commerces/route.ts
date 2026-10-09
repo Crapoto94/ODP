@@ -140,6 +140,7 @@ export async function GET(request: Request) {
           commercesMap.set(tierId, {
             id: occ.tiers.id,
             nom: occ.tiers.nom,
+            code_sedit: occ.tiers.code_sedit ?? null,
             nomEtablissement: occ.tiers.nomEtablissement,
             adresse: occ.tiers.adresse,
             email: occ.tiers.email,

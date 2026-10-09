@@ -402,7 +402,8 @@ export default function FacturationPage() {
   const filteredDossiers = normalizedQuery
     ? dossiers.filter(d =>
         (d.nom || '').toLowerCase().includes(normalizedQuery) ||
-        (d.tiers?.nom || '').toLowerCase().includes(normalizedQuery)
+        (d.tiers?.nom || '').toLowerCase().includes(normalizedQuery) ||
+        (d.tiers?.code_sedit || '').toLowerCase().includes(normalizedQuery)
       )
     : dossiers;
 
@@ -427,7 +428,8 @@ export default function FacturationPage() {
     const matching = new Set(
       dossiers.filter(d =>
         (d.nom || '').toLowerCase().includes(q) ||
-        (d.tiers?.nom || '').toLowerCase().includes(q)
+        (d.tiers?.nom || '').toLowerCase().includes(q) ||
+        (d.tiers?.code_sedit || '').toLowerCase().includes(q)
       ).map(d => d.id)
     );
     setSelectedIds(prev => prev.filter(id => matching.has(id)));

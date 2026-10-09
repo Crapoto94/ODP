@@ -40,6 +40,7 @@ export default function FilienGenerationModal({ isOpen, onClose, occupations }: 
 
   const filtered = eligibleOccupations.filter(o => 
     (o.tiers?.nom || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+    ((o.tiers as any)?.code_sedit || '').toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
     o.adresse.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (o.nom || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
