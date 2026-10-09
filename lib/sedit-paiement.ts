@@ -24,6 +24,8 @@ export interface TitrePaiement {
   etat?: EtatPaiement;
   priseEnChargeLe?: string | null;
   paiementLe?: string | null;
+  montantReduit?: number; // réduction du titre (euros)
+  annule?: boolean; // titre réduit en totalité
 }
 
 // Fiche du titre dans SEDIT, comme dans Gestion locative : <SEDIT_URL>/<page>?<param>=<ROO>.
@@ -63,46 +65,47 @@ export async function lireEtatPaiement(factures: FactureAVerifier[]): Promise<Ti
   const roos = [...new Set([...rooParCode.values()])];
   if (!roos.length) { for (const f of cibles) out.set(f.numero, { numero: f.numero, confiance: 'introuvable' }); return factures.map((f) => out.get(f.numero)!); }
 
-  // 2. lignes de titres de recette de ces tiers, depuis la plus ancienne facture (marge 30 j)
+  // 2. lignes des titres de recette (sens R) de ces tiers : MVTLIGNE → MANDLIGNE → MANDAT.
+  //    Le montant d'ORIGINE du titre est MANDLIGNE.MONTANTTC_E ; MVTLIGNE ne porte que le net après réduction.
+  //    Une réduction est un titre à part (MANDAT.REDUCTION = 'O', MANORIGINE = ROO de l'original, autre numéro) : on l'écarte ;
+  //    le titre d'origine porte le total réduit dans MANDLIGNE.MTTCREDUIT_E.
   const depuis = new Date(Math.min(...cibles.map((f) => f.dateRef.getTime())) - 30 * 86400000).toISOString().slice(0, 10);
-  const lignes: any[] = [];
+  const rows: any[] = [];
   for (let i = 0; i < roos.length; i += 500) {
     const liste = roos.slice(i, i + 500).map((c) => `'${esc(c)}'`).join(',');
-    lignes.push(...await select(
-      `SELECT TRIM(l.TIERS) AS TIERS, l.MANDAT, TO_CHAR(l.DATMANDAT,'YYYY-MM-DD') AS DM, l.BORDEREAU, l.MONTANTTC_E AS MT
-       FROM FI.MVTLIGNE l WHERE TRIM(l.TIERS) IN (${liste}) AND l.DATMANDAT >= DATE '${depuis}'`));
+    rows.push(...await select(
+      `SELECT TRIM(l.TIERS) AS TIERS, TRIM(m.ROO_IMA_REF) AS MROO, m.MANDAT, TO_CHAR(m.DATMANDAT,'YYYY-MM-DD') AS DM, m.BORDEREAU,
+              ml.MONTANTTC_E AS MT, ml.MTTCREDUIT_E AS RED,
+              TO_CHAR(m.DATE_PRISE_EN_CHARGE,'YYYY-MM-DD') AS PEC, TO_CHAR(m.DATE_PAIEMENT,'YYYY-MM-DD') AS DP, m.REJET, m.MANDREJETE, m.SUSPENSION
+       FROM FI.MVTLIGNE l
+       JOIN FI.MANDLIGNE ml ON TRIM(ml.MVTLIGNE) = TRIM(l.ROO_IMA_REF)
+       JOIN FI.MANDAT m ON TRIM(m.ROO_IMA_REF) = TRIM(ml.MANDAT) AND m.SENSMVT = 'R' AND NVL(m.REDUCTION, 'N') <> 'O'
+       WHERE TRIM(l.TIERS) IN (${liste}) AND m.DATMANDAT >= DATE '${depuis}'`));
   }
 
-  // 3. titres (sens R) : ROO + état de paiement, clé (n°, date) car la numérotation repart à 1 chaque exercice
-  const titres = new Map<string, any>();
-  const nums = [...new Set(lignes.map((l) => l.MANDAT))];
-  for (let i = 0; i < nums.length; i += 500) {
-    const liste = nums.slice(i, i + 500).join(',');
-    for (const m of await select(
-      `SELECT TRIM(ROO_IMA_REF) AS ROO, MANDAT, TO_CHAR(DATMANDAT,'YYYY-MM-DD') AS DM, TO_CHAR(DATE_PRISE_EN_CHARGE,'YYYY-MM-DD') AS PEC, TO_CHAR(DATE_PAIEMENT,'YYYY-MM-DD') AS DP, REJET, MANDREJETE, SUSPENSION
-       FROM FI.MANDAT WHERE SENSMVT = 'R' AND DATMANDAT >= DATE '${depuis}' AND MANDAT IN (${liste})`)) { const k = `${m.MANDAT}|${m.DM}`; titres.set(k, titres.has(k) ? { ...m, ROO: null } : m); } // ROO ambigu : pas de lien
+  // 3. regroupement par titre (ROO du MANDAT) : montants additionnés par tiers, et par ligne
+  type Titre = { tiers: string; mroo: string; mandat: number; dm: string; bord: string; total: number; red: number; lignes: number[]; m: any };
+  const titres = new Map<string, Titre>();
+  for (const r of rows) {
+    const k = `${r.TIERS}|${r.MROO}`;
+    const t = titres.get(k) || { tiers: r.TIERS, mroo: r.MROO, mandat: r.MANDAT, dm: r.DM, bord: r.BORDEREAU, total: 0, red: 0, lignes: [] as number[], m: r };
+    t.total += Number(r.MT || 0); t.red += Number(r.RED || 0); t.lignes.push(Number(r.MT || 0)); titres.set(k, t);
   }
+  const originaux = [...titres.values()];
 
-  // 4. candidats : titre entier (lignes additionnées) ET ligne seule, montant TTC en EUROS
-  const groupes = new Map<string, any>();
-  for (const l of lignes) {
-    const k = `${l.TIERS}|${l.MANDAT}|${l.DM}`;
-    if (!titres.has(`${l.MANDAT}|${l.DM}`)) continue; // pas un titre de recette
-    const g = groupes.get(k) || { tiers: l.TIERS, mandat: l.MANDAT, dm: l.DM, bord: l.BORDEREAU, total: 0, lignes: [] as number[] };
-    g.total += Number(l.MT || 0); g.lignes.push(Number(l.MT || 0)); groupes.set(k, g);
-  }
+  // 4. candidats : montant d'origine du titre (total ou ligne) = total de la facture, en EUROS
   for (const f of cibles) {
     const roo = rooParCode.get(f.codeSedit!);
     const dmin = f.dateRef.getTime() - 30 * 86400000;
-    const ok = (g: any, mt: number) => g.tiers === roo && Math.abs(mt - f.total) < 0.011 && new Date(g.dm).getTime() >= dmin;
-    let cand = [...groupes.values()].filter((g) => ok(g, g.total) || g.lignes.some((mt: number) => ok(g, mt)));
-    const nonRejetes = cand.filter((g) => { const m = titres.get(`${g.mandat}|${g.dm}`); return m.REJET !== 'O' && m.MANDREJETE !== 'O'; });
+    const ok = (t: Titre, mt: number) => t.tiers === roo && Math.abs(mt - f.total) < 0.011 && new Date(t.dm).getTime() >= dmin;
+    let cand = originaux.filter((t) => ok(t, t.total) || t.lignes.some((mt) => ok(t, mt)));
+    const nonRejetes = cand.filter((t) => t.m.REJET !== 'O' && t.m.MANDREJETE !== 'O');
     if (nonRejetes.length) cand = nonRejetes;
     if (cand.length === 0) out.set(f.numero, { numero: f.numero, confiance: 'introuvable' });
     else if (cand.length > 1) out.set(f.numero, { numero: f.numero, confiance: 'ambigu' });
     else {
-      const g = cand[0]; const m = titres.get(`${g.mandat}|${g.dm}`);
-      out.set(f.numero, { numero: f.numero, confiance: 'exact', titreNumero: g.mandat, titreDate: g.dm, bordereau: g.bord, etat: etatPaiement(m), priseEnChargeLe: m.PEC, paiementLe: m.DP, titreRoo: m.ROO || null, titreUrl: m.ROO ? urlTitre(m.ROO) : null });
+      const t = cand[0];
+      out.set(f.numero, { numero: f.numero, confiance: 'exact', titreNumero: t.mandat, titreDate: t.dm, bordereau: t.bord, etat: etatPaiement(t.m), priseEnChargeLe: t.m.PEC, paiementLe: t.m.DP, titreRoo: t.mroo, titreUrl: urlTitre(t.mroo), montantReduit: t.red > 0 ? Math.round(t.red * 100) / 100 : 0, annule: t.red > 0 && Math.abs(t.red - t.total) < 0.011 });
     }
   }
   return factures.map((f) => out.get(f.numero)!);

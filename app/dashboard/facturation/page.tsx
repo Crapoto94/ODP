@@ -637,8 +637,8 @@ export default function FacturationPage() {
                           : `n°${p.titreNumero} du ${fr(p.titreDate)}`) : ''}</td>
                         <td className="py-3">
                           {!p ? <span className="text-slate-300">{loadingPaiements ? '…' : '—'}</span>
-                            : e ? <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${e.cls}`}>{e.label}{p.etat === 'paye' ? ` le ${fr(p.paiementLe)}` : ''}</span>
-                            : <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-50 text-slate-400">{p.confiance === 'ambigu' ? 'Titre ambigu' : 'Titre introuvable'}</span>}
+                            : e ? <span className="inline-flex items-center gap-1 flex-wrap"><span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${e.cls}`}>{e.label}{p.etat === 'paye' ? ` le ${fr(p.paiementLe)}` : ''}</span>{p.annule ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-rose-50 text-rose-700">Titre annulé</span> : p.montantReduit > 0 ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-orange-50 text-orange-700">Réduit de {p.montantReduit.toLocaleString('fr-FR')} €</span> : null}</span>
+                            : <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-50 text-slate-400">{p.confiance === 'ambigu' ? 'Titre ambigu' : 'Pas de titre dans SEDIT'}</span>}
                         </td>
                       </tr>
                     );
@@ -743,7 +743,7 @@ export default function FacturationPage() {
                                 const p = paiements[inv.numero];
                                 const fr = (d?: string | null) => d ? new Date(d).toLocaleDateString('fr-FR') : '';
                                 if (p.confiance !== 'exact') {
-                                  return <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-50 text-slate-400">{p.confiance === 'ambigu' ? 'Titre ambigu' : 'Titre introuvable'}</span>;
+                                  return <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-50 text-slate-400">{p.confiance === 'ambigu' ? 'Titre ambigu' : 'Pas de titre dans SEDIT'}</span>;
                                 }
                                 const e = PAIEMENT_LABELS[p.etat] || PAIEMENT_LABELS.non_pris_en_charge;
                                 return (
