@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getApmSettings } from './apm';
+import { getApmSettings, httpsAgent } from './apm';
 
 // État de paiement des titres de recette SEDIT (lecture seule, via l'API centrale APM /oracle/query, type FINANCES).
 // Même méthode que C:\dev\locatif (scripts/rapprocher-titres-sedit.js) ; documentée dans la skill « sedit-finances ».
@@ -19,16 +19,24 @@ export interface TitrePaiement {
   titreNumero?: number;
   titreDate?: string;
   bordereau?: string;
+  titreRoo?: string | null; // identifiant technique (lien vers la fiche SEDIT)
+  titreUrl?: string | null;
   etat?: EtatPaiement;
   priseEnChargeLe?: string | null;
   paiementLe?: string | null;
+}
+
+// Fiche du titre dans SEDIT, comme dans Gestion locative : <SEDIT_URL>/<page>?<param>=<ROO>.
+export function urlTitre(roo: string): string {
+  const base = (process.env.SEDIT_URL || 'https://seditgfprod.ivry.local/SeditGfSMProd').replace(/\/$/, '');
+  return `${base}/${process.env.SEDIT_URL_MANDAT_PAGE || 'FicheMandat.html'}?${process.env.SEDIT_URL_MANDAT_PARAM || 'mandatId'}=${encodeURIComponent(roo)}`;
 }
 
 const esc = (s: string) => String(s).replace(/'/g, "''");
 
 async function select(sql: string): Promise<any[]> {
   const { url, token } = await getApmSettings();
-  const res = await axios.post(`${url}/oracle/query`, { type: 'FINANCES', sql }, { headers: { 'X-API-KEY': token }, timeout: 60000 });
+  const res = await axios.post(`${url}/oracle/query`, { type: 'FINANCES', sql }, { headers: { 'X-API-KEY': token }, timeout: 60000, httpsAgent });
   return Array.isArray(res.data) ? res.data : res.data?.rows || [];
 }
 
@@ -70,8 +78,8 @@ export async function lireEtatPaiement(factures: FactureAVerifier[]): Promise<Ti
   for (let i = 0; i < nums.length; i += 500) {
     const liste = nums.slice(i, i + 500).join(',');
     for (const m of await select(
-      `SELECT MANDAT, TO_CHAR(DATMANDAT,'YYYY-MM-DD') AS DM, TO_CHAR(DATE_PRISE_EN_CHARGE,'YYYY-MM-DD') AS PEC, TO_CHAR(DATE_PAIEMENT,'YYYY-MM-DD') AS DP, REJET, MANDREJETE, SUSPENSION
-       FROM FI.MANDAT WHERE SENSMVT = 'R' AND DATMANDAT >= DATE '${depuis}' AND MANDAT IN (${liste})`)) titres.set(`${m.MANDAT}|${m.DM}`, m);
+      `SELECT TRIM(ROO_IMA_REF) AS ROO, MANDAT, TO_CHAR(DATMANDAT,'YYYY-MM-DD') AS DM, TO_CHAR(DATE_PRISE_EN_CHARGE,'YYYY-MM-DD') AS PEC, TO_CHAR(DATE_PAIEMENT,'YYYY-MM-DD') AS DP, REJET, MANDREJETE, SUSPENSION
+       FROM FI.MANDAT WHERE SENSMVT = 'R' AND DATMANDAT >= DATE '${depuis}' AND MANDAT IN (${liste})`)) { const k = `${m.MANDAT}|${m.DM}`; titres.set(k, titres.has(k) ? { ...m, ROO: null } : m); } // ROO ambigu : pas de lien
   }
 
   // 4. candidats : titre entier (lignes additionnées) ET ligne seule, montant TTC en EUROS
@@ -93,7 +101,7 @@ export async function lireEtatPaiement(factures: FactureAVerifier[]): Promise<Ti
     else if (cand.length > 1) out.set(f.numero, { numero: f.numero, confiance: 'ambigu' });
     else {
       const g = cand[0]; const m = titres.get(`${g.mandat}|${g.dm}`);
-      out.set(f.numero, { numero: f.numero, confiance: 'exact', titreNumero: g.mandat, titreDate: g.dm, bordereau: g.bord, etat: etatPaiement(m), priseEnChargeLe: m.PEC, paiementLe: m.DP });
+      out.set(f.numero, { numero: f.numero, confiance: 'exact', titreNumero: g.mandat, titreDate: g.dm, bordereau: g.bord, etat: etatPaiement(m), priseEnChargeLe: m.PEC, paiementLe: m.DP, titreRoo: m.ROO || null, titreUrl: m.ROO ? urlTitre(m.ROO) : null });
     }
   }
   return factures.map((f) => out.get(f.numero)!);

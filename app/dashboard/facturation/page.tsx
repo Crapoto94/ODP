@@ -632,7 +632,9 @@ export default function FacturationPage() {
                         <td className="py-3 pr-4 text-slate-600">{date}</td>
                         <td className="py-3 pr-4 font-bold text-slate-500 uppercase truncate max-w-[220px]">{inv.tiers}</td>
                         <td className="py-3 pr-4 text-right font-bold text-slate-700">{inv.total.toLocaleString('fr-FR')} €</td>
-                        <td className="py-3 pr-4 text-slate-500">{p?.confiance === 'exact' ? `n°${p.titreNumero} du ${fr(p.titreDate)}` : ''}</td>
+                        <td className="py-3 pr-4 text-slate-500">{p?.confiance === 'exact' ? (p.titreUrl
+                          ? <a href={p.titreUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">n°{p.titreNumero} du {fr(p.titreDate)} ↗</a>
+                          : `n°${p.titreNumero} du ${fr(p.titreDate)}`) : ''}</td>
                         <td className="py-3">
                           {!p ? <span className="text-slate-300">{loadingPaiements ? '…' : '—'}</span>
                             : e ? <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${e.cls}`}>{e.label}{p.etat === 'paye' ? ` le ${fr(p.paiementLe)}` : ''}</span>
