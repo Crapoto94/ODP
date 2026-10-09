@@ -1,6 +1,6 @@
 {
   "name": "odp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "dev": "SET NODE_OPTIONS=--openssl-legacy-provider && next dev -H 0.0.0.0",
