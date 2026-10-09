@@ -10,6 +10,8 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid,
   Bar, ComposedChart,
 } from 'recharts';
+import { useUiMode } from '@/components/UiModeProvider';
+import DashboardV2 from '@/components/v2/DashboardV2';
 import {
   HardHat, Store, ShoppingBag, Clapperboard,
   FileCheck2, FileText, Euro, Receipt, Clock, Globe,
@@ -153,7 +155,7 @@ function KpiCard({ type, kpi, year }: { type: typeof TYPES[0]; kpi: TypeKpi; yea
   );
 }
 
-export default function DashboardPage() {
+function DashboardClassic() {
   const [kpis, setKpis] = useState<KpiData | null>(null);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -287,4 +289,10 @@ export default function DashboardPage() {
       )}
     </div>
   );
+}
+
+// Interface v2 (maquette Stitch) activable par chaque utilisateur ; sinon tableau de bord historique inchangé.
+export default function DashboardPage() {
+  const mode = useUiMode();
+  return mode === 'v2' ? <DashboardV2 /> : <DashboardClassic />;
 }

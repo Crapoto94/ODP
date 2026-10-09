@@ -27,8 +27,9 @@ import {
   Loader2
 } from 'lucide-react';
 import { hasPermission, type Permission } from '@/lib/permissions';
+import UiModeSwitch from '@/components/v2/UiModeSwitch';
 
-type MenuItem = {
+export type MenuItem = {
   icon: any;
   label: string;
   href: string;
@@ -39,7 +40,7 @@ type MenuItem = {
   dossierType?: string;
 };
 
-const menuItems: MenuItem[] = [
+export const menuItems: MenuItem[] = [
   { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard' },
   { icon: HardHat, label: 'Chantiers', href: '/dashboard/occupations?filtre=CHANTIER', path: '/dashboard/occupations', dossierType: 'CHANTIER' },
   { icon: Clapperboard, label: 'Tournages', href: '/dashboard/occupations?filtre=TOURNAGE', path: '/dashboard/occupations', dossierType: 'TOURNAGE' },
@@ -248,6 +249,9 @@ export default function Sidebar() {
             )}
           </button>
         )}
+
+        {/* Nouvelle interface (v2) : ouverte à tous les profils */}
+        <UiModeSwitch collapsed={isCollapsed} />
 
         <button 
           onClick={handleLogout}

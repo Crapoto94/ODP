@@ -1,0 +1,121 @@
+/*
+ * Interface « v2 » — adaptation graphique basée sur la maquette Stitch (Ivry ODP Civic System, voir
+ * stitch_app_redesign_project/ivry_odp_civic_system/DESIGN.md).
+ *
+ * Tout est limité à html[data-ui="v2"] : sans le cookie `odp_ui=v2` (interrupteur « Nouvelle interface »,
+ * ouvert à tous les profils), RIEN de ce fichier ne s'applique et l'interface historique reste inchangée.
+ * Le nouveau shell (barre latérale + bandeau) est dans components/v2/ShellV2.tsx, le tableau de bord
+ * dans components/v2/DashboardV2.tsx ; ce fichier harmonise les écrans existants (typo, cartes, tableaux).
+ */
+
+html[data-ui="v2"] {
+  --v2-bg-app: #f8fafc;
+  --v2-surface: #ffffff;
+  --v2-border: #e2e8f0;
+  --v2-text-strong: #0f172a;
+  --v2-text-body: #334155;
+  --v2-text-muted: #64748b;
+  --v2-primary: #2563eb;
+  --v2-primary-hover: #1d4ed8;
+  --v2-primary-soft: #eff6ff;
+  --v2-shadow-1: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --v2-shadow-2: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --v2-shadow-3: 0 12px 32px rgba(15, 23, 42, 0.12);
+}
+
+/* Typographie : Geist (déjà chargée par le layout), chiffres tabulaires pour les montants et tableaux */
+html[data-ui="v2"] body {
+  background: var(--v2-bg-app);
+  color: var(--v2-text-body);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-feature-settings: "tnum" 1;
+}
+html[data-ui="v2"] table,
+html[data-ui="v2"] td,
+html[data-ui="v2"] th,
+html[data-ui="v2"] .tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cartes et panneaux : rayons 16 px, bordure 1 px, ombre ambiante légère (niveau 1) */
+html[data-ui="v2"] .rounded-3xl,
+html[data-ui="v2"] [class*="rounded-[2rem]"],
+html[data-ui="v2"] [class*="rounded-[2.5rem]"],
+html[data-ui="v2"] [class*="rounded-[3rem]"] {
+  border-radius: 1rem;
+}
+html[data-ui="v2"] .rounded-2xl {
+  border-radius: 0.75rem;
+}
+html[data-ui="v2"] .shadow-xl,
+html[data-ui="v2"] .shadow-2xl,
+html[data-ui="v2"] .shadow-lg {
+  box-shadow: var(--v2-shadow-1);
+}
+html[data-ui="v2"] .shadow-xl.border,
+html[data-ui="v2"] .shadow-2xl.border,
+html[data-ui="v2"] .shadow-lg.border,
+html[data-ui="v2"] .bg-white.border-slate-100 {
+  border-color: var(--v2-border);
+}
+
+/* Titres : moins « black », plus institutionnel (headline 800 / tracking serré) */
+html[data-ui="v2"] h1,
+html[data-ui="v2"] h2 {
+  letter-spacing: -0.02em;
+  color: var(--v2-text-strong);
+}
+html[data-ui="v2"] .font-black {
+  font-weight: 800;
+}
+
+/* Actions principales : bleu de la charte, survol plus foncé */
+html[data-ui="v2"] .bg-blue-600 {
+  background-color: var(--v2-primary);
+}
+html[data-ui="v2"] .bg-blue-600:hover,
+html[data-ui="v2"] .hover\:bg-blue-700:hover {
+  background-color: var(--v2-primary-hover);
+}
+
+/* Tableaux : en-têtes « label-over » (11 px, majuscules, +0,08em), survol discret */
+html[data-ui="v2"] thead th {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--v2-text-muted);
+  background: var(--v2-bg-app);
+}
+html[data-ui="v2"] tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Champs : hauteur et bord de la charte */
+html[data-ui="v2"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+html[data-ui="v2"] select,
+html[data-ui="v2"] textarea {
+  border-color: var(--v2-border);
+}
+html[data-ui="v2"] input:focus-visible,
+html[data-ui="v2"] select:focus-visible,
+html[data-ui="v2"] textarea:focus-visible,
+html[data-ui="v2"] button:focus-visible,
+html[data-ui="v2"] a:focus-visible {
+  outline: 2px solid var(--v2-primary);
+  outline-offset: 2px;
+}
+
+/* Fenêtres modales : niveau 3 (ombre profonde) et fond flouté */
+html[data-ui="v2"] .backdrop-blur-sm,
+html[data-ui="v2"] .backdrop-blur-md {
+  backdrop-filter: blur(4px);
+}
+html[data-ui="v2"] .fixed.inset-0 .shadow-2xl {
+  box-shadow: var(--v2-shadow-3);
+}
+
+/* Les pages historiques portent leur propre marge intérieure ; le shell v2 gère déjà celle du canvas */
+html[data-ui="v2"] main > .max-w-\[1600px\] {
+  max-width: none;
+}
