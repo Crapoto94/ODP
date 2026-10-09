@@ -643,7 +643,7 @@ export default function FacturationPage() {
                                   <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">{p.annule ? 'Annulation' : 'Réduction'} n°{r.numero} du {fr(r.date)} ↗</a>
                                   {r.motif && <> — <em>{r.motif}</em></>}
                                   {r.pieces.map((pc: any) => (
-                                    <span key={pc.nom}> · CA : <button type="button" title={`Copier le chemin réseau : ${pc.chemin}`} onClick={() => navigator.clipboard?.writeText(String(pc.chemin).split('/').join(String.fromCharCode(92)))} className="text-blue-600 hover:underline">{pc.nom}</button> (la pièce est aussi consultable depuis la fiche SEDIT)</span>
+                                    <span key={pc.nom}> · CA : <a href={`/api/billing/sedit-pj?titre=${encodeURIComponent(r.roo)}&nom=${encodeURIComponent(pc.nom)}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">{pc.nom} ↗</a></span>
                                   ))}
                                 </span>
                               ))}</span>
