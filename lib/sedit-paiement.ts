@@ -34,9 +34,10 @@ export function urlTitre(roo: string): string {
 
 const esc = (s: string) => String(s).replace(/'/g, "''");
 
+// La clé APM d'ODP (mail) doit avoir le droit /oracle/query ; sinon fournir une clé dédiée via APM_ORACLE_KEY.
 async function select(sql: string): Promise<any[]> {
   const { url, token } = await getApmSettings();
-  const res = await axios.post(`${url}/oracle/query`, { type: 'FINANCES', sql }, { headers: { 'X-API-KEY': token }, timeout: 60000, httpsAgent });
+  const res = await axios.post(`${url}/oracle/query`, { type: 'FINANCES', sql }, { headers: { 'X-API-KEY': process.env.APM_ORACLE_KEY || token }, timeout: 60000, httpsAgent });
   return Array.isArray(res.data) ? res.data : res.data?.rows || [];
 }
 
