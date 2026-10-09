@@ -637,7 +637,16 @@ export default function FacturationPage() {
                           : `n°${p.titreNumero} du ${fr(p.titreDate)}`) : ''}</td>
                         <td className="py-3">
                           {!p ? <span className="text-slate-300">{loadingPaiements ? '…' : '—'}</span>
-                            : e ? <span className="inline-flex items-center gap-1 flex-wrap"><span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${e.cls}`}>{e.label}{p.etat === 'paye' ? ` le ${fr(p.paiementLe)}` : ''}</span>{p.annule ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-rose-50 text-rose-700">Titre annulé</span> : p.montantReduit > 0 ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-orange-50 text-orange-700">Réduit de {p.montantReduit.toLocaleString('fr-FR')} €</span> : null}</span>
+                            : e ? <span className="inline-flex items-center gap-1 flex-wrap"><span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${e.cls}`}>{e.label}{p.etat === 'paye' ? ` le ${fr(p.paiementLe)}` : ''}</span>{p.annule ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-rose-50 text-rose-700" title={(p.reductions || []).map((r: any) => r.motif).filter(Boolean).join(' / ')}>Titre annulé</span> : p.montantReduit > 0 ? <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-orange-50 text-orange-700" title={(p.reductions || []).map((r: any) => r.motif).filter(Boolean).join(' / ')}>Réduit de {p.montantReduit.toLocaleString('fr-FR')} €</span> : null}
+                              {(p.reductions || []).map((r: any) => (
+                                <span key={r.roo} className="basis-full text-[10px] text-slate-500 leading-snug">
+                                  <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">{p.annule ? 'Annulation' : 'Réduction'} n°{r.numero} du {fr(r.date)} ↗</a>
+                                  {r.motif && <> — <em>{r.motif}</em></>}
+                                  {r.pieces.map((pc: any) => (
+                                    <span key={pc.nom}> · CA : <button type="button" title={`Copier le chemin réseau : ${pc.chemin}`} onClick={() => navigator.clipboard?.writeText(String(pc.chemin).split('/').join(String.fromCharCode(92)))} className="text-blue-600 hover:underline">{pc.nom}</button> (la pièce est aussi consultable depuis la fiche SEDIT)</span>
+                                  ))}
+                                </span>
+                              ))}</span>
                             : <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-50 text-slate-400">{p.confiance === 'ambigu' ? 'Titre ambigu' : 'Pas de titre dans SEDIT'}</span>}
                         </td>
                       </tr>

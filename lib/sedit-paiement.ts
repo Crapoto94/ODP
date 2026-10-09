@@ -13,6 +13,16 @@ export interface FactureAVerifier {
   dateRef: Date; // date du train de facturation
 }
 
+export interface ReductionTitre {
+  numero: number;
+  date: string;
+  roo: string;
+  url: string;
+  motif: string; // objet saisi par la comptabilité (ex. « erreur montant »)
+  libelle: string; // ex. « REDUC.PIECE 1286 BORD. 189 »
+  pieces: { nom: string; chemin: string }[]; // pièces jointes de type « Titre » (CA : certificat administratif)
+}
+
 export interface TitrePaiement {
   numero: string;
   confiance: ConfianceTitre;
@@ -26,6 +36,7 @@ export interface TitrePaiement {
   paiementLe?: string | null;
   montantReduit?: number; // réduction du titre (euros)
   annule?: boolean; // titre réduit en totalité
+  reductions?: ReductionTitre[];
 }
 
 // Fiche du titre dans SEDIT, comme dans Gestion locative : <SEDIT_URL>/<page>?<param>=<ROO>.
@@ -108,5 +119,30 @@ export async function lireEtatPaiement(factures: FactureAVerifier[]): Promise<Ti
       out.set(f.numero, { numero: f.numero, confiance: 'exact', titreNumero: t.mandat, titreDate: t.dm, bordereau: t.bord, etat: etatPaiement(t.m), priseEnChargeLe: t.m.PEC, paiementLe: t.m.DP, titreRoo: t.mroo, titreUrl: urlTitre(t.mroo), montantReduit: t.red > 0 ? Math.round(t.red * 100) / 100 : 0, annule: t.red > 0 && Math.abs(t.red - t.total) < 0.011 });
     }
   }
+  // 5. motif des réductions/annulations : titres de réduction (MANDAT.REDUCTION='O', MANORIGINE = ROO de l'original),
+  //    objet (WO_MANDOBJET.LIBELLE, saisi par la comptabilité) et pièces jointes de type « Titre » (5) = CA
+  const reduits = [...out.values()].filter((r) => r.titreRoo && r.montantReduit);
+  const origines = [...new Set(reduits.map((r) => r.titreRoo!))];
+  const parOrigine = new Map<string, ReductionTitre[]>();
+  for (let i = 0; i < origines.length; i += 200) {
+    const liste = origines.slice(i, i + 200).map((c) => `'${esc(c)}'`).join(',');
+    const reds = await select(
+      `SELECT TRIM(m.ROO_IMA_REF) AS ROO, TRIM(m.MANORIGINE) AS ORIG, m.MANDAT, TO_CHAR(m.DATMANDAT,'YYYY-MM-DD') AS DM
+       FROM FI.MANDAT m WHERE m.REDUCTION = 'O' AND TRIM(m.MANORIGINE) IN (${liste})`);
+    if (!reds.length) continue;
+    const rl = reds.map((r) => `'${esc(r.ROO)}'`).join(',');
+    const objets = await select(`SELECT TRIM(NS_SOURCE) AS S, LIBELLE FROM FI.WO_MANDOBJET WHERE TRIM(NS_SOURCE) IN (${rl})`);
+    const pjs = await select(
+      `SELECT TRIM(lnk.OBJECT_ROO) AS O, pj.NOM_PJ, pj.CHEMIN_FICHIER FROM FI.FIPES_OBJ_PJ lnk JOIN FI.PJ_PES pj ON pj.ROO_IMA_REF = lnk.PJPES_ROO
+       WHERE TRIM(lnk.OBJECT_ROO) IN (${rl}) AND pj.TYPE_PIECE_ID = 5`);
+    for (const r of reds) {
+      const lib = objets.filter((o) => o.S === r.ROO).map((o) => String(o.LIBELLE || '').trim()).filter(Boolean);
+      const libelle = lib.find((l) => /^(REDUC|ANNUL)/i.test(l)) || '';
+      const motif = lib.filter((l) => l !== libelle).join(' — ') || libelle;
+      const pieces = pjs.filter((p) => p.O === r.ROO).map((p) => ({ nom: String(p.NOM_PJ).trim(), chemin: String(p.CHEMIN_FICHIER || '').trim() }));
+      parOrigine.set(r.ORIG, [...(parOrigine.get(r.ORIG) || []), { numero: r.MANDAT, date: r.DM, roo: r.ROO, url: urlTitre(r.ROO), motif, libelle, pieces }]);
+    }
+  }
+  for (const r of reduits) r.reductions = parOrigine.get(r.titreRoo!) || [];
   return factures.map((f) => out.get(f.numero)!);
 }
