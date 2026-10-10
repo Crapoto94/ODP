@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Clapperboard, CalendarOff, KeyRound, Globe, Mail, Send, Plus, Trash2, RefreshCw, Copy } from 'lucide-react';
 import { SCard, SGrid, SField, SInput, SSelect, STextarea, SToggle, SButton, SIconButton, SAlert, SSaveBar, SLoading, SBadge } from '@/components/v2/settings/ui';
 import MessagesContextuelsTab from './MessagesContextuelsTab';
+import ServicesAvisCard from './ServicesAvisCard';
 import { premiereDatePossible, iso, type PeriodeAbsence } from '@/lib/tournage-regles';
 
 // Administration de la gestion des tournages : délai d'instruction, type de jours, périodes de fermeture, clé d'accès du site public.
@@ -167,9 +168,11 @@ export default function TournagesTab() {
       <SSaveBar saving={saving} message={message} />
     </form>
 
+    <ServicesAvisCard />
+
     <div className="pt-2">
       <h3 className="text-[15px] font-bold text-slate-900 mb-1">Modèles d&apos;e-mails</h3>
-      <p className="text-[13px] text-slate-500 mb-3">Accusé de réception, notification interne, complément, accord de principe et refus. Les variables entre {'{{ }}'} sont remplacées à l&apos;envoi.</p>
+      <p className="text-[13px] text-slate-500 mb-3">Accusé de réception, notification interne, complément, accord de principe, refus, demande d'avis, relance et avis reçu. Les variables entre {'{{ }}'} sont remplacées à l&apos;envoi.</p>
       <MessagesContextuelsTab prefix="MSG_TOURNAGE_" />
     </div>
     </div>

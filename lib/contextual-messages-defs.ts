@@ -500,4 +500,112 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   </div>
 </div></body></html>`,
   },
+  MSG_TOURNAGE_AVIS_DEMANDE: {
+    label: "Tournages — Demande d'avis à un service",
+    description: 'Envoyé aux adresses du service consulté (ou aux adresses saisies à la volée), avec le lien de réponse sans connexion.',
+    vars: ['{{REFERENCE}}', '{{TITRE}}', '{{TYPE_FILM}}', '{{SOCIETE}}', '{{DATES}}', '{{LIEU}}', '{{SERVICE}}', '{{MESSAGE}}', '{{LIEN_AVIS}}'],
+    defaultSubject: "Demande d'avis — tournage {{REFERENCE}} ({{SERVICE}})",
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#333;line-height:1.6}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#1d4ed8 0%,#1e40af 100%);color:white;padding:26px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px}
+  .content{background:#f9f9f9;padding:28px;border-radius:0 0 8px 8px}
+  .field{margin:14px 0;padding:12px 15px;background:white;border-left:4px solid #1d4ed8}
+  .field-label{font-weight:bold;color:#1d4ed8;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .field-value{margin-top:4px;font-size:15px}
+  .box{background:#eff6ff;border:1px solid #bfdbfe;padding:14px 16px;border-radius:6px;margin:18px 0}
+  .cta-button{display:inline-block;background:#1d4ed8;color:white;padding:12px 30px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0}
+  .footer{color:#666;font-size:12px;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid #ddd}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>🎬 Demande d'avis — tournage</h1></div>
+  <div class="content">
+    <p>Bonjour,</p>
+    <p>La Direction de l'action culturelle sollicite l'avis du service <strong>{{SERVICE}}</strong> sur la demande de tournage suivante.</p>
+    <div class="field"><div class="field-label">Demande</div><div class="field-value">{{REFERENCE}} — {{TITRE}} ({{TYPE_FILM}})</div></div>
+    <div class="field"><div class="field-label">Société</div><div class="field-value">{{SOCIETE}}</div></div>
+    <div class="field"><div class="field-label">Dates de tournage</div><div class="field-value">{{DATES}}</div></div>
+    <div class="field"><div class="field-label">Lieu</div><div class="field-value">{{LIEU}}</div></div>
+    <div class="box"><strong>Message de la DAC :</strong><p>{{MESSAGE}}</p></div>
+    <p>Merci de répondre en ligne, <strong>sans connexion</strong> : avis favorable ou défavorable, avec vos remarques éventuelles.</p>
+    <p><a class="cta-button" href="{{LIEN_AVIS}}">Donner mon avis</a></p>
+    <p style="font-size:12px;color:#666">Si le bouton ne fonctionne pas : {{LIEN_AVIS}}</p>
+    <div class="footer"><p>VibeODP - Gestion des tournages, Ville d'Ivry-sur-Seine</p></div>
+  </div>
+</div></body></html>`,
+  },
+  MSG_TOURNAGE_AVIS_RELANCE: {
+    label: "Tournages — Relance d'une demande d'avis",
+    description: "Envoyé quand la DAC relance un service qui n'a pas répondu.",
+    vars: ['{{REFERENCE}}', '{{TITRE}}', '{{TYPE_FILM}}', '{{SOCIETE}}', '{{DATES}}', '{{LIEU}}', '{{SERVICE}}', '{{LIEN_AVIS}}'],
+    defaultSubject: "Rappel — demande d'avis tournage {{REFERENCE}} ({{SERVICE}})",
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#333;line-height:1.6}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#1d4ed8 0%,#1e40af 100%);color:white;padding:26px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px}
+  .content{background:#f9f9f9;padding:28px;border-radius:0 0 8px 8px}
+  .field{margin:14px 0;padding:12px 15px;background:white;border-left:4px solid #1d4ed8}
+  .field-label{font-weight:bold;color:#1d4ed8;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .field-value{margin-top:4px;font-size:15px}
+  .box{background:#eff6ff;border:1px solid #bfdbfe;padding:14px 16px;border-radius:6px;margin:18px 0}
+  .cta-button{display:inline-block;background:#1d4ed8;color:white;padding:12px 30px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0}
+  .footer{color:#666;font-size:12px;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid #ddd}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>🔔 Rappel — demande d'avis</h1></div>
+  <div class="content">
+    <p>Bonjour,</p>
+    <p>Sauf erreur de notre part, nous n'avons pas encore reçu l'avis du service <strong>{{SERVICE}}</strong> sur la demande de tournage ci-dessous.</p>
+    <div class="field"><div class="field-label">Demande</div><div class="field-value">{{REFERENCE}} — {{TITRE}} ({{TYPE_FILM}})</div></div>
+    <div class="field"><div class="field-label">Société</div><div class="field-value">{{SOCIETE}}</div></div>
+    <div class="field"><div class="field-label">Dates de tournage</div><div class="field-value">{{DATES}}</div></div>
+    <div class="field"><div class="field-label">Lieu</div><div class="field-value">{{LIEU}}</div></div>
+    <p><a class="cta-button" href="{{LIEN_AVIS}}">Donner mon avis</a></p>
+    <div class="footer"><p>VibeODP - Gestion des tournages, Ville d'Ivry-sur-Seine</p></div>
+  </div>
+</div></body></html>`,
+  },
+  MSG_TOURNAGE_AVIS_REPONSE: {
+    label: 'Tournages — Avis reçu (notification interne)',
+    description: "Envoyé à l'adresse de notification interne quand un service répond.",
+    vars: ['{{REFERENCE}}', '{{TITRE}}', '{{TYPE_FILM}}', '{{SOCIETE}}', '{{DATES}}', '{{LIEU}}', '{{SERVICE}}', '{{AVIS}}', '{{COMMENTAIRE}}', '{{REPONSES}}', '{{REPONDU_PAR}}', '{{LIEN_DEMANDE}}'],
+    defaultSubject: 'Avis {{SERVICE}} reçu — tournage {{REFERENCE}}',
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#333;line-height:1.6}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#1d4ed8 0%,#1e40af 100%);color:white;padding:26px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px}
+  .content{background:#f9f9f9;padding:28px;border-radius:0 0 8px 8px}
+  .field{margin:14px 0;padding:12px 15px;background:white;border-left:4px solid #1d4ed8}
+  .field-label{font-weight:bold;color:#1d4ed8;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .field-value{margin-top:4px;font-size:15px}
+  .box{background:#eff6ff;border:1px solid #bfdbfe;padding:14px 16px;border-radius:6px;margin:18px 0}
+  .cta-button{display:inline-block;background:#1d4ed8;color:white;padding:12px 30px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0}
+  .footer{color:#666;font-size:12px;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid #ddd}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>📬 Avis reçu — tournage</h1></div>
+  <div class="content">
+    <p>Le service <strong>{{SERVICE}}</strong> a répondu à la demande d'avis.</p>
+    <div class="field"><div class="field-label">Demande</div><div class="field-value">{{REFERENCE}} — {{TITRE}} ({{TYPE_FILM}})</div></div>
+    <div class="field"><div class="field-label">Société</div><div class="field-value">{{SOCIETE}}</div></div>
+    <div class="field"><div class="field-label">Dates de tournage</div><div class="field-value">{{DATES}}</div></div>
+    <div class="field"><div class="field-label">Lieu</div><div class="field-value">{{LIEU}}</div></div>
+    <div class="field"><div class="field-label">Avis</div><div class="field-value"><strong>{{AVIS}}</strong></div></div>
+    <div class="field"><div class="field-label">Commentaire</div><div class="field-value">{{COMMENTAIRE}}</div></div>
+    <div class="field"><div class="field-label">Réponses aux questions</div><div class="field-value">{{REPONSES}}</div></div>
+    <div class="field"><div class="field-label">Répondu par</div><div class="field-value">{{REPONDU_PAR}}</div></div>
+    <p><a class="cta-button" href="{{LIEN_DEMANDE}}">Ouvrir la demande</a></p>
+    <div class="footer"><p>VibeODP - Gestion des tournages, Ville d'Ivry-sur-Seine</p></div>
+  </div>
+</div></body></html>`,
+  },
 };

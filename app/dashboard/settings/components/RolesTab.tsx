@@ -20,6 +20,7 @@ const PERMISSION_LABELS: Record<Permission, string> = {
   MANAGE_USERS:     'Attribution des droits',
   VIEW_TOURNAGES:   'Demandes de tournage et tournages en cours',
   VIEW_CARTE:       'Carte SIG',
+  MANAGE_TOURNAGES: 'Paramétrage des tournages',
 };
 
 const PERMISSION_LETTERS: Record<Permission, string> = {
@@ -34,6 +35,7 @@ const PERMISSION_LETTERS: Record<Permission, string> = {
   MANAGE_USERS:     'J',
   VIEW_TOURNAGES:   'K',
   VIEW_CARTE:       'L',
+  MANAGE_TOURNAGES: 'M',
 };
 
 export default function RolesTab() {

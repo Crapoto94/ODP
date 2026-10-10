@@ -163,6 +163,16 @@ export type DemandeTournage = $Result.DefaultSelection<Prisma.$DemandeTournagePa
  * 
  */
 export type TournageConfig = $Result.DefaultSelection<Prisma.$TournageConfigPayload>
+/**
+ * Model ServiceInstructeur
+ * 
+ */
+export type ServiceInstructeur = $Result.DefaultSelection<Prisma.$ServiceInstructeurPayload>
+/**
+ * Model AvisTournage
+ * 
+ */
+export type AvisTournage = $Result.DefaultSelection<Prisma.$AvisTournagePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -586,6 +596,26 @@ export class PrismaClient<
     * ```
     */
   get tournageConfig(): Prisma.TournageConfigDelegate<ExtArgs>;
+
+  /**
+   * `prisma.serviceInstructeur`: Exposes CRUD operations for the **ServiceInstructeur** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ServiceInstructeurs
+    * const serviceInstructeurs = await prisma.serviceInstructeur.findMany()
+    * ```
+    */
+  get serviceInstructeur(): Prisma.ServiceInstructeurDelegate<ExtArgs>;
+
+  /**
+   * `prisma.avisTournage`: Exposes CRUD operations for the **AvisTournage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AvisTournages
+    * const avisTournages = await prisma.avisTournage.findMany()
+    * ```
+    */
+  get avisTournage(): Prisma.AvisTournageDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -1056,7 +1086,9 @@ export namespace Prisma {
     SignatureRequest: 'SignatureRequest',
     AppSettings: 'AppSettings',
     DemandeTournage: 'DemandeTournage',
-    TournageConfig: 'TournageConfig'
+    TournageConfig: 'TournageConfig',
+    ServiceInstructeur: 'ServiceInstructeur',
+    AvisTournage: 'AvisTournage'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1072,7 +1104,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "autorisation" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings" | "demandeTournage" | "tournageConfig"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "autorisation" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings" | "demandeTournage" | "tournageConfig" | "serviceInstructeur" | "avisTournage"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3173,6 +3205,146 @@ export namespace Prisma {
           count: {
             args: Prisma.TournageConfigCountArgs<ExtArgs>
             result: $Utils.Optional<TournageConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      ServiceInstructeur: {
+        payload: Prisma.$ServiceInstructeurPayload<ExtArgs>
+        fields: Prisma.ServiceInstructeurFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ServiceInstructeurFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ServiceInstructeurFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload>
+          }
+          findFirst: {
+            args: Prisma.ServiceInstructeurFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ServiceInstructeurFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload>
+          }
+          findMany: {
+            args: Prisma.ServiceInstructeurFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload>[]
+          }
+          create: {
+            args: Prisma.ServiceInstructeurCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload>
+          }
+          createMany: {
+            args: Prisma.ServiceInstructeurCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ServiceInstructeurCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload>[]
+          }
+          delete: {
+            args: Prisma.ServiceInstructeurDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload>
+          }
+          update: {
+            args: Prisma.ServiceInstructeurUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload>
+          }
+          deleteMany: {
+            args: Prisma.ServiceInstructeurDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ServiceInstructeurUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ServiceInstructeurUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ServiceInstructeurPayload>
+          }
+          aggregate: {
+            args: Prisma.ServiceInstructeurAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateServiceInstructeur>
+          }
+          groupBy: {
+            args: Prisma.ServiceInstructeurGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ServiceInstructeurGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ServiceInstructeurCountArgs<ExtArgs>
+            result: $Utils.Optional<ServiceInstructeurCountAggregateOutputType> | number
+          }
+        }
+      }
+      AvisTournage: {
+        payload: Prisma.$AvisTournagePayload<ExtArgs>
+        fields: Prisma.AvisTournageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AvisTournageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AvisTournageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload>
+          }
+          findFirst: {
+            args: Prisma.AvisTournageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AvisTournageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload>
+          }
+          findMany: {
+            args: Prisma.AvisTournageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload>[]
+          }
+          create: {
+            args: Prisma.AvisTournageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload>
+          }
+          createMany: {
+            args: Prisma.AvisTournageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AvisTournageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload>[]
+          }
+          delete: {
+            args: Prisma.AvisTournageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload>
+          }
+          update: {
+            args: Prisma.AvisTournageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload>
+          }
+          deleteMany: {
+            args: Prisma.AvisTournageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AvisTournageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.AvisTournageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AvisTournagePayload>
+          }
+          aggregate: {
+            args: Prisma.AvisTournageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAvisTournage>
+          }
+          groupBy: {
+            args: Prisma.AvisTournageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AvisTournageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AvisTournageCountArgs<ExtArgs>
+            result: $Utils.Optional<AvisTournageCountAggregateOutputType> | number
           }
         }
       }
@@ -35564,6 +35736,2054 @@ export namespace Prisma {
 
 
   /**
+   * Model ServiceInstructeur
+   */
+
+  export type AggregateServiceInstructeur = {
+    _count: ServiceInstructeurCountAggregateOutputType | null
+    _avg: ServiceInstructeurAvgAggregateOutputType | null
+    _sum: ServiceInstructeurSumAggregateOutputType | null
+    _min: ServiceInstructeurMinAggregateOutputType | null
+    _max: ServiceInstructeurMaxAggregateOutputType | null
+  }
+
+  export type ServiceInstructeurAvgAggregateOutputType = {
+    id: number | null
+    ordre: number | null
+  }
+
+  export type ServiceInstructeurSumAggregateOutputType = {
+    id: number | null
+    ordre: number | null
+  }
+
+  export type ServiceInstructeurMinAggregateOutputType = {
+    id: number | null
+    code: string | null
+    nom: string | null
+    description: string | null
+    circuitPropre: boolean | null
+    actif: boolean | null
+    ordre: number | null
+    updated_at: Date | null
+  }
+
+  export type ServiceInstructeurMaxAggregateOutputType = {
+    id: number | null
+    code: string | null
+    nom: string | null
+    description: string | null
+    circuitPropre: boolean | null
+    actif: boolean | null
+    ordre: number | null
+    updated_at: Date | null
+  }
+
+  export type ServiceInstructeurCountAggregateOutputType = {
+    id: number
+    code: number
+    nom: number
+    description: number
+    emails: number
+    questions: number
+    circuitPropre: number
+    actif: number
+    ordre: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type ServiceInstructeurAvgAggregateInputType = {
+    id?: true
+    ordre?: true
+  }
+
+  export type ServiceInstructeurSumAggregateInputType = {
+    id?: true
+    ordre?: true
+  }
+
+  export type ServiceInstructeurMinAggregateInputType = {
+    id?: true
+    code?: true
+    nom?: true
+    description?: true
+    circuitPropre?: true
+    actif?: true
+    ordre?: true
+    updated_at?: true
+  }
+
+  export type ServiceInstructeurMaxAggregateInputType = {
+    id?: true
+    code?: true
+    nom?: true
+    description?: true
+    circuitPropre?: true
+    actif?: true
+    ordre?: true
+    updated_at?: true
+  }
+
+  export type ServiceInstructeurCountAggregateInputType = {
+    id?: true
+    code?: true
+    nom?: true
+    description?: true
+    emails?: true
+    questions?: true
+    circuitPropre?: true
+    actif?: true
+    ordre?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type ServiceInstructeurAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceInstructeur to aggregate.
+     */
+    where?: ServiceInstructeurWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceInstructeurs to fetch.
+     */
+    orderBy?: ServiceInstructeurOrderByWithRelationInput | ServiceInstructeurOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ServiceInstructeurWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceInstructeurs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceInstructeurs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ServiceInstructeurs
+    **/
+    _count?: true | ServiceInstructeurCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ServiceInstructeurAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ServiceInstructeurSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ServiceInstructeurMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ServiceInstructeurMaxAggregateInputType
+  }
+
+  export type GetServiceInstructeurAggregateType<T extends ServiceInstructeurAggregateArgs> = {
+        [P in keyof T & keyof AggregateServiceInstructeur]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateServiceInstructeur[P]>
+      : GetScalarType<T[P], AggregateServiceInstructeur[P]>
+  }
+
+
+
+
+  export type ServiceInstructeurGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ServiceInstructeurWhereInput
+    orderBy?: ServiceInstructeurOrderByWithAggregationInput | ServiceInstructeurOrderByWithAggregationInput[]
+    by: ServiceInstructeurScalarFieldEnum[] | ServiceInstructeurScalarFieldEnum
+    having?: ServiceInstructeurScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ServiceInstructeurCountAggregateInputType | true
+    _avg?: ServiceInstructeurAvgAggregateInputType
+    _sum?: ServiceInstructeurSumAggregateInputType
+    _min?: ServiceInstructeurMinAggregateInputType
+    _max?: ServiceInstructeurMaxAggregateInputType
+  }
+
+  export type ServiceInstructeurGroupByOutputType = {
+    id: number
+    code: string
+    nom: string
+    description: string | null
+    emails: JsonValue
+    questions: JsonValue
+    circuitPropre: boolean
+    actif: boolean
+    ordre: number
+    updated_at: Date
+    _count: ServiceInstructeurCountAggregateOutputType | null
+    _avg: ServiceInstructeurAvgAggregateOutputType | null
+    _sum: ServiceInstructeurSumAggregateOutputType | null
+    _min: ServiceInstructeurMinAggregateOutputType | null
+    _max: ServiceInstructeurMaxAggregateOutputType | null
+  }
+
+  type GetServiceInstructeurGroupByPayload<T extends ServiceInstructeurGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ServiceInstructeurGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ServiceInstructeurGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ServiceInstructeurGroupByOutputType[P]>
+            : GetScalarType<T[P], ServiceInstructeurGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ServiceInstructeurSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    nom?: boolean
+    description?: boolean
+    emails?: boolean
+    questions?: boolean
+    circuitPropre?: boolean
+    actif?: boolean
+    ordre?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["serviceInstructeur"]>
+
+  export type ServiceInstructeurSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    code?: boolean
+    nom?: boolean
+    description?: boolean
+    emails?: boolean
+    questions?: boolean
+    circuitPropre?: boolean
+    actif?: boolean
+    ordre?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["serviceInstructeur"]>
+
+  export type ServiceInstructeurSelectScalar = {
+    id?: boolean
+    code?: boolean
+    nom?: boolean
+    description?: boolean
+    emails?: boolean
+    questions?: boolean
+    circuitPropre?: boolean
+    actif?: boolean
+    ordre?: boolean
+    updated_at?: boolean
+  }
+
+
+  export type $ServiceInstructeurPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ServiceInstructeur"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      code: string
+      nom: string
+      description: string | null
+      emails: Prisma.JsonValue
+      questions: Prisma.JsonValue
+      circuitPropre: boolean
+      actif: boolean
+      ordre: number
+      updated_at: Date
+    }, ExtArgs["result"]["serviceInstructeur"]>
+    composites: {}
+  }
+
+  type ServiceInstructeurGetPayload<S extends boolean | null | undefined | ServiceInstructeurDefaultArgs> = $Result.GetResult<Prisma.$ServiceInstructeurPayload, S>
+
+  type ServiceInstructeurCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ServiceInstructeurFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ServiceInstructeurCountAggregateInputType | true
+    }
+
+  export interface ServiceInstructeurDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ServiceInstructeur'], meta: { name: 'ServiceInstructeur' } }
+    /**
+     * Find zero or one ServiceInstructeur that matches the filter.
+     * @param {ServiceInstructeurFindUniqueArgs} args - Arguments to find a ServiceInstructeur
+     * @example
+     * // Get one ServiceInstructeur
+     * const serviceInstructeur = await prisma.serviceInstructeur.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ServiceInstructeurFindUniqueArgs>(args: SelectSubset<T, ServiceInstructeurFindUniqueArgs<ExtArgs>>): Prisma__ServiceInstructeurClient<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one ServiceInstructeur that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ServiceInstructeurFindUniqueOrThrowArgs} args - Arguments to find a ServiceInstructeur
+     * @example
+     * // Get one ServiceInstructeur
+     * const serviceInstructeur = await prisma.serviceInstructeur.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ServiceInstructeurFindUniqueOrThrowArgs>(args: SelectSubset<T, ServiceInstructeurFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ServiceInstructeurClient<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first ServiceInstructeur that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceInstructeurFindFirstArgs} args - Arguments to find a ServiceInstructeur
+     * @example
+     * // Get one ServiceInstructeur
+     * const serviceInstructeur = await prisma.serviceInstructeur.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ServiceInstructeurFindFirstArgs>(args?: SelectSubset<T, ServiceInstructeurFindFirstArgs<ExtArgs>>): Prisma__ServiceInstructeurClient<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first ServiceInstructeur that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceInstructeurFindFirstOrThrowArgs} args - Arguments to find a ServiceInstructeur
+     * @example
+     * // Get one ServiceInstructeur
+     * const serviceInstructeur = await prisma.serviceInstructeur.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ServiceInstructeurFindFirstOrThrowArgs>(args?: SelectSubset<T, ServiceInstructeurFindFirstOrThrowArgs<ExtArgs>>): Prisma__ServiceInstructeurClient<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more ServiceInstructeurs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceInstructeurFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ServiceInstructeurs
+     * const serviceInstructeurs = await prisma.serviceInstructeur.findMany()
+     * 
+     * // Get first 10 ServiceInstructeurs
+     * const serviceInstructeurs = await prisma.serviceInstructeur.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const serviceInstructeurWithIdOnly = await prisma.serviceInstructeur.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ServiceInstructeurFindManyArgs>(args?: SelectSubset<T, ServiceInstructeurFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a ServiceInstructeur.
+     * @param {ServiceInstructeurCreateArgs} args - Arguments to create a ServiceInstructeur.
+     * @example
+     * // Create one ServiceInstructeur
+     * const ServiceInstructeur = await prisma.serviceInstructeur.create({
+     *   data: {
+     *     // ... data to create a ServiceInstructeur
+     *   }
+     * })
+     * 
+     */
+    create<T extends ServiceInstructeurCreateArgs>(args: SelectSubset<T, ServiceInstructeurCreateArgs<ExtArgs>>): Prisma__ServiceInstructeurClient<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many ServiceInstructeurs.
+     * @param {ServiceInstructeurCreateManyArgs} args - Arguments to create many ServiceInstructeurs.
+     * @example
+     * // Create many ServiceInstructeurs
+     * const serviceInstructeur = await prisma.serviceInstructeur.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ServiceInstructeurCreateManyArgs>(args?: SelectSubset<T, ServiceInstructeurCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ServiceInstructeurs and returns the data saved in the database.
+     * @param {ServiceInstructeurCreateManyAndReturnArgs} args - Arguments to create many ServiceInstructeurs.
+     * @example
+     * // Create many ServiceInstructeurs
+     * const serviceInstructeur = await prisma.serviceInstructeur.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ServiceInstructeurs and only return the `id`
+     * const serviceInstructeurWithIdOnly = await prisma.serviceInstructeur.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ServiceInstructeurCreateManyAndReturnArgs>(args?: SelectSubset<T, ServiceInstructeurCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a ServiceInstructeur.
+     * @param {ServiceInstructeurDeleteArgs} args - Arguments to delete one ServiceInstructeur.
+     * @example
+     * // Delete one ServiceInstructeur
+     * const ServiceInstructeur = await prisma.serviceInstructeur.delete({
+     *   where: {
+     *     // ... filter to delete one ServiceInstructeur
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ServiceInstructeurDeleteArgs>(args: SelectSubset<T, ServiceInstructeurDeleteArgs<ExtArgs>>): Prisma__ServiceInstructeurClient<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one ServiceInstructeur.
+     * @param {ServiceInstructeurUpdateArgs} args - Arguments to update one ServiceInstructeur.
+     * @example
+     * // Update one ServiceInstructeur
+     * const serviceInstructeur = await prisma.serviceInstructeur.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ServiceInstructeurUpdateArgs>(args: SelectSubset<T, ServiceInstructeurUpdateArgs<ExtArgs>>): Prisma__ServiceInstructeurClient<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more ServiceInstructeurs.
+     * @param {ServiceInstructeurDeleteManyArgs} args - Arguments to filter ServiceInstructeurs to delete.
+     * @example
+     * // Delete a few ServiceInstructeurs
+     * const { count } = await prisma.serviceInstructeur.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ServiceInstructeurDeleteManyArgs>(args?: SelectSubset<T, ServiceInstructeurDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ServiceInstructeurs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceInstructeurUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ServiceInstructeurs
+     * const serviceInstructeur = await prisma.serviceInstructeur.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ServiceInstructeurUpdateManyArgs>(args: SelectSubset<T, ServiceInstructeurUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ServiceInstructeur.
+     * @param {ServiceInstructeurUpsertArgs} args - Arguments to update or create a ServiceInstructeur.
+     * @example
+     * // Update or create a ServiceInstructeur
+     * const serviceInstructeur = await prisma.serviceInstructeur.upsert({
+     *   create: {
+     *     // ... data to create a ServiceInstructeur
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ServiceInstructeur we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ServiceInstructeurUpsertArgs>(args: SelectSubset<T, ServiceInstructeurUpsertArgs<ExtArgs>>): Prisma__ServiceInstructeurClient<$Result.GetResult<Prisma.$ServiceInstructeurPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of ServiceInstructeurs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceInstructeurCountArgs} args - Arguments to filter ServiceInstructeurs to count.
+     * @example
+     * // Count the number of ServiceInstructeurs
+     * const count = await prisma.serviceInstructeur.count({
+     *   where: {
+     *     // ... the filter for the ServiceInstructeurs we want to count
+     *   }
+     * })
+    **/
+    count<T extends ServiceInstructeurCountArgs>(
+      args?: Subset<T, ServiceInstructeurCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ServiceInstructeurCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ServiceInstructeur.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceInstructeurAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ServiceInstructeurAggregateArgs>(args: Subset<T, ServiceInstructeurAggregateArgs>): Prisma.PrismaPromise<GetServiceInstructeurAggregateType<T>>
+
+    /**
+     * Group by ServiceInstructeur.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ServiceInstructeurGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ServiceInstructeurGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ServiceInstructeurGroupByArgs['orderBy'] }
+        : { orderBy?: ServiceInstructeurGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ServiceInstructeurGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetServiceInstructeurGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ServiceInstructeur model
+   */
+  readonly fields: ServiceInstructeurFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ServiceInstructeur.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ServiceInstructeurClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ServiceInstructeur model
+   */ 
+  interface ServiceInstructeurFieldRefs {
+    readonly id: FieldRef<"ServiceInstructeur", 'Int'>
+    readonly code: FieldRef<"ServiceInstructeur", 'String'>
+    readonly nom: FieldRef<"ServiceInstructeur", 'String'>
+    readonly description: FieldRef<"ServiceInstructeur", 'String'>
+    readonly emails: FieldRef<"ServiceInstructeur", 'Json'>
+    readonly questions: FieldRef<"ServiceInstructeur", 'Json'>
+    readonly circuitPropre: FieldRef<"ServiceInstructeur", 'Boolean'>
+    readonly actif: FieldRef<"ServiceInstructeur", 'Boolean'>
+    readonly ordre: FieldRef<"ServiceInstructeur", 'Int'>
+    readonly updated_at: FieldRef<"ServiceInstructeur", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ServiceInstructeur findUnique
+   */
+  export type ServiceInstructeurFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+    /**
+     * Filter, which ServiceInstructeur to fetch.
+     */
+    where: ServiceInstructeurWhereUniqueInput
+  }
+
+  /**
+   * ServiceInstructeur findUniqueOrThrow
+   */
+  export type ServiceInstructeurFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+    /**
+     * Filter, which ServiceInstructeur to fetch.
+     */
+    where: ServiceInstructeurWhereUniqueInput
+  }
+
+  /**
+   * ServiceInstructeur findFirst
+   */
+  export type ServiceInstructeurFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+    /**
+     * Filter, which ServiceInstructeur to fetch.
+     */
+    where?: ServiceInstructeurWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceInstructeurs to fetch.
+     */
+    orderBy?: ServiceInstructeurOrderByWithRelationInput | ServiceInstructeurOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceInstructeurs.
+     */
+    cursor?: ServiceInstructeurWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceInstructeurs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceInstructeurs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceInstructeurs.
+     */
+    distinct?: ServiceInstructeurScalarFieldEnum | ServiceInstructeurScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceInstructeur findFirstOrThrow
+   */
+  export type ServiceInstructeurFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+    /**
+     * Filter, which ServiceInstructeur to fetch.
+     */
+    where?: ServiceInstructeurWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceInstructeurs to fetch.
+     */
+    orderBy?: ServiceInstructeurOrderByWithRelationInput | ServiceInstructeurOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ServiceInstructeurs.
+     */
+    cursor?: ServiceInstructeurWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceInstructeurs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceInstructeurs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ServiceInstructeurs.
+     */
+    distinct?: ServiceInstructeurScalarFieldEnum | ServiceInstructeurScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceInstructeur findMany
+   */
+  export type ServiceInstructeurFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+    /**
+     * Filter, which ServiceInstructeurs to fetch.
+     */
+    where?: ServiceInstructeurWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ServiceInstructeurs to fetch.
+     */
+    orderBy?: ServiceInstructeurOrderByWithRelationInput | ServiceInstructeurOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ServiceInstructeurs.
+     */
+    cursor?: ServiceInstructeurWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ServiceInstructeurs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ServiceInstructeurs.
+     */
+    skip?: number
+    distinct?: ServiceInstructeurScalarFieldEnum | ServiceInstructeurScalarFieldEnum[]
+  }
+
+  /**
+   * ServiceInstructeur create
+   */
+  export type ServiceInstructeurCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+    /**
+     * The data needed to create a ServiceInstructeur.
+     */
+    data: XOR<ServiceInstructeurCreateInput, ServiceInstructeurUncheckedCreateInput>
+  }
+
+  /**
+   * ServiceInstructeur createMany
+   */
+  export type ServiceInstructeurCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ServiceInstructeurs.
+     */
+    data: ServiceInstructeurCreateManyInput | ServiceInstructeurCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ServiceInstructeur createManyAndReturn
+   */
+  export type ServiceInstructeurCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many ServiceInstructeurs.
+     */
+    data: ServiceInstructeurCreateManyInput | ServiceInstructeurCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ServiceInstructeur update
+   */
+  export type ServiceInstructeurUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+    /**
+     * The data needed to update a ServiceInstructeur.
+     */
+    data: XOR<ServiceInstructeurUpdateInput, ServiceInstructeurUncheckedUpdateInput>
+    /**
+     * Choose, which ServiceInstructeur to update.
+     */
+    where: ServiceInstructeurWhereUniqueInput
+  }
+
+  /**
+   * ServiceInstructeur updateMany
+   */
+  export type ServiceInstructeurUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ServiceInstructeurs.
+     */
+    data: XOR<ServiceInstructeurUpdateManyMutationInput, ServiceInstructeurUncheckedUpdateManyInput>
+    /**
+     * Filter which ServiceInstructeurs to update
+     */
+    where?: ServiceInstructeurWhereInput
+  }
+
+  /**
+   * ServiceInstructeur upsert
+   */
+  export type ServiceInstructeurUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+    /**
+     * The filter to search for the ServiceInstructeur to update in case it exists.
+     */
+    where: ServiceInstructeurWhereUniqueInput
+    /**
+     * In case the ServiceInstructeur found by the `where` argument doesn't exist, create a new ServiceInstructeur with this data.
+     */
+    create: XOR<ServiceInstructeurCreateInput, ServiceInstructeurUncheckedCreateInput>
+    /**
+     * In case the ServiceInstructeur was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ServiceInstructeurUpdateInput, ServiceInstructeurUncheckedUpdateInput>
+  }
+
+  /**
+   * ServiceInstructeur delete
+   */
+  export type ServiceInstructeurDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+    /**
+     * Filter which ServiceInstructeur to delete.
+     */
+    where: ServiceInstructeurWhereUniqueInput
+  }
+
+  /**
+   * ServiceInstructeur deleteMany
+   */
+  export type ServiceInstructeurDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ServiceInstructeurs to delete
+     */
+    where?: ServiceInstructeurWhereInput
+  }
+
+  /**
+   * ServiceInstructeur without action
+   */
+  export type ServiceInstructeurDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ServiceInstructeur
+     */
+    select?: ServiceInstructeurSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AvisTournage
+   */
+
+  export type AggregateAvisTournage = {
+    _count: AvisTournageCountAggregateOutputType | null
+    _avg: AvisTournageAvgAggregateOutputType | null
+    _sum: AvisTournageSumAggregateOutputType | null
+    _min: AvisTournageMinAggregateOutputType | null
+    _max: AvisTournageMaxAggregateOutputType | null
+  }
+
+  export type AvisTournageAvgAggregateOutputType = {
+    id: number | null
+    demandeId: number | null
+    serviceId: number | null
+    nbRelances: number | null
+  }
+
+  export type AvisTournageSumAggregateOutputType = {
+    id: number | null
+    demandeId: number | null
+    serviceId: number | null
+    nbRelances: number | null
+  }
+
+  export type AvisTournageMinAggregateOutputType = {
+    id: number | null
+    demandeId: number | null
+    serviceId: number | null
+    serviceNom: string | null
+    libre: boolean | null
+    token: string | null
+    statut: string | null
+    message: string | null
+    reponseCommentaire: string | null
+    reponduPar: string | null
+    demandePar: string | null
+    dateDemande: Date | null
+    dateReponse: Date | null
+    derniereRelance: Date | null
+    nbRelances: number | null
+    updated_at: Date | null
+  }
+
+  export type AvisTournageMaxAggregateOutputType = {
+    id: number | null
+    demandeId: number | null
+    serviceId: number | null
+    serviceNom: string | null
+    libre: boolean | null
+    token: string | null
+    statut: string | null
+    message: string | null
+    reponseCommentaire: string | null
+    reponduPar: string | null
+    demandePar: string | null
+    dateDemande: Date | null
+    dateReponse: Date | null
+    derniereRelance: Date | null
+    nbRelances: number | null
+    updated_at: Date | null
+  }
+
+  export type AvisTournageCountAggregateOutputType = {
+    id: number
+    demandeId: number
+    serviceId: number
+    serviceNom: number
+    libre: number
+    destinataires: number
+    token: number
+    statut: number
+    message: number
+    questions: number
+    reponseCommentaire: number
+    reponseDonnees: number
+    reponduPar: number
+    demandePar: number
+    dateDemande: number
+    dateReponse: number
+    derniereRelance: number
+    nbRelances: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type AvisTournageAvgAggregateInputType = {
+    id?: true
+    demandeId?: true
+    serviceId?: true
+    nbRelances?: true
+  }
+
+  export type AvisTournageSumAggregateInputType = {
+    id?: true
+    demandeId?: true
+    serviceId?: true
+    nbRelances?: true
+  }
+
+  export type AvisTournageMinAggregateInputType = {
+    id?: true
+    demandeId?: true
+    serviceId?: true
+    serviceNom?: true
+    libre?: true
+    token?: true
+    statut?: true
+    message?: true
+    reponseCommentaire?: true
+    reponduPar?: true
+    demandePar?: true
+    dateDemande?: true
+    dateReponse?: true
+    derniereRelance?: true
+    nbRelances?: true
+    updated_at?: true
+  }
+
+  export type AvisTournageMaxAggregateInputType = {
+    id?: true
+    demandeId?: true
+    serviceId?: true
+    serviceNom?: true
+    libre?: true
+    token?: true
+    statut?: true
+    message?: true
+    reponseCommentaire?: true
+    reponduPar?: true
+    demandePar?: true
+    dateDemande?: true
+    dateReponse?: true
+    derniereRelance?: true
+    nbRelances?: true
+    updated_at?: true
+  }
+
+  export type AvisTournageCountAggregateInputType = {
+    id?: true
+    demandeId?: true
+    serviceId?: true
+    serviceNom?: true
+    libre?: true
+    destinataires?: true
+    token?: true
+    statut?: true
+    message?: true
+    questions?: true
+    reponseCommentaire?: true
+    reponseDonnees?: true
+    reponduPar?: true
+    demandePar?: true
+    dateDemande?: true
+    dateReponse?: true
+    derniereRelance?: true
+    nbRelances?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type AvisTournageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AvisTournage to aggregate.
+     */
+    where?: AvisTournageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AvisTournages to fetch.
+     */
+    orderBy?: AvisTournageOrderByWithRelationInput | AvisTournageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AvisTournageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AvisTournages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AvisTournages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AvisTournages
+    **/
+    _count?: true | AvisTournageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AvisTournageAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AvisTournageSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AvisTournageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AvisTournageMaxAggregateInputType
+  }
+
+  export type GetAvisTournageAggregateType<T extends AvisTournageAggregateArgs> = {
+        [P in keyof T & keyof AggregateAvisTournage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAvisTournage[P]>
+      : GetScalarType<T[P], AggregateAvisTournage[P]>
+  }
+
+
+
+
+  export type AvisTournageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AvisTournageWhereInput
+    orderBy?: AvisTournageOrderByWithAggregationInput | AvisTournageOrderByWithAggregationInput[]
+    by: AvisTournageScalarFieldEnum[] | AvisTournageScalarFieldEnum
+    having?: AvisTournageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AvisTournageCountAggregateInputType | true
+    _avg?: AvisTournageAvgAggregateInputType
+    _sum?: AvisTournageSumAggregateInputType
+    _min?: AvisTournageMinAggregateInputType
+    _max?: AvisTournageMaxAggregateInputType
+  }
+
+  export type AvisTournageGroupByOutputType = {
+    id: number
+    demandeId: number
+    serviceId: number | null
+    serviceNom: string
+    libre: boolean
+    destinataires: JsonValue
+    token: string
+    statut: string
+    message: string | null
+    questions: JsonValue
+    reponseCommentaire: string | null
+    reponseDonnees: JsonValue | null
+    reponduPar: string | null
+    demandePar: string | null
+    dateDemande: Date
+    dateReponse: Date | null
+    derniereRelance: Date | null
+    nbRelances: number
+    updated_at: Date
+    _count: AvisTournageCountAggregateOutputType | null
+    _avg: AvisTournageAvgAggregateOutputType | null
+    _sum: AvisTournageSumAggregateOutputType | null
+    _min: AvisTournageMinAggregateOutputType | null
+    _max: AvisTournageMaxAggregateOutputType | null
+  }
+
+  type GetAvisTournageGroupByPayload<T extends AvisTournageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AvisTournageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AvisTournageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AvisTournageGroupByOutputType[P]>
+            : GetScalarType<T[P], AvisTournageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AvisTournageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    demandeId?: boolean
+    serviceId?: boolean
+    serviceNom?: boolean
+    libre?: boolean
+    destinataires?: boolean
+    token?: boolean
+    statut?: boolean
+    message?: boolean
+    questions?: boolean
+    reponseCommentaire?: boolean
+    reponseDonnees?: boolean
+    reponduPar?: boolean
+    demandePar?: boolean
+    dateDemande?: boolean
+    dateReponse?: boolean
+    derniereRelance?: boolean
+    nbRelances?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["avisTournage"]>
+
+  export type AvisTournageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    demandeId?: boolean
+    serviceId?: boolean
+    serviceNom?: boolean
+    libre?: boolean
+    destinataires?: boolean
+    token?: boolean
+    statut?: boolean
+    message?: boolean
+    questions?: boolean
+    reponseCommentaire?: boolean
+    reponseDonnees?: boolean
+    reponduPar?: boolean
+    demandePar?: boolean
+    dateDemande?: boolean
+    dateReponse?: boolean
+    derniereRelance?: boolean
+    nbRelances?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["avisTournage"]>
+
+  export type AvisTournageSelectScalar = {
+    id?: boolean
+    demandeId?: boolean
+    serviceId?: boolean
+    serviceNom?: boolean
+    libre?: boolean
+    destinataires?: boolean
+    token?: boolean
+    statut?: boolean
+    message?: boolean
+    questions?: boolean
+    reponseCommentaire?: boolean
+    reponseDonnees?: boolean
+    reponduPar?: boolean
+    demandePar?: boolean
+    dateDemande?: boolean
+    dateReponse?: boolean
+    derniereRelance?: boolean
+    nbRelances?: boolean
+    updated_at?: boolean
+  }
+
+
+  export type $AvisTournagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AvisTournage"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      demandeId: number
+      serviceId: number | null
+      serviceNom: string
+      libre: boolean
+      destinataires: Prisma.JsonValue
+      token: string
+      statut: string
+      message: string | null
+      questions: Prisma.JsonValue
+      reponseCommentaire: string | null
+      reponseDonnees: Prisma.JsonValue | null
+      reponduPar: string | null
+      demandePar: string | null
+      dateDemande: Date
+      dateReponse: Date | null
+      derniereRelance: Date | null
+      nbRelances: number
+      updated_at: Date
+    }, ExtArgs["result"]["avisTournage"]>
+    composites: {}
+  }
+
+  type AvisTournageGetPayload<S extends boolean | null | undefined | AvisTournageDefaultArgs> = $Result.GetResult<Prisma.$AvisTournagePayload, S>
+
+  type AvisTournageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<AvisTournageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: AvisTournageCountAggregateInputType | true
+    }
+
+  export interface AvisTournageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AvisTournage'], meta: { name: 'AvisTournage' } }
+    /**
+     * Find zero or one AvisTournage that matches the filter.
+     * @param {AvisTournageFindUniqueArgs} args - Arguments to find a AvisTournage
+     * @example
+     * // Get one AvisTournage
+     * const avisTournage = await prisma.avisTournage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AvisTournageFindUniqueArgs>(args: SelectSubset<T, AvisTournageFindUniqueArgs<ExtArgs>>): Prisma__AvisTournageClient<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one AvisTournage that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {AvisTournageFindUniqueOrThrowArgs} args - Arguments to find a AvisTournage
+     * @example
+     * // Get one AvisTournage
+     * const avisTournage = await prisma.avisTournage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AvisTournageFindUniqueOrThrowArgs>(args: SelectSubset<T, AvisTournageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AvisTournageClient<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first AvisTournage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AvisTournageFindFirstArgs} args - Arguments to find a AvisTournage
+     * @example
+     * // Get one AvisTournage
+     * const avisTournage = await prisma.avisTournage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AvisTournageFindFirstArgs>(args?: SelectSubset<T, AvisTournageFindFirstArgs<ExtArgs>>): Prisma__AvisTournageClient<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first AvisTournage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AvisTournageFindFirstOrThrowArgs} args - Arguments to find a AvisTournage
+     * @example
+     * // Get one AvisTournage
+     * const avisTournage = await prisma.avisTournage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AvisTournageFindFirstOrThrowArgs>(args?: SelectSubset<T, AvisTournageFindFirstOrThrowArgs<ExtArgs>>): Prisma__AvisTournageClient<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more AvisTournages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AvisTournageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AvisTournages
+     * const avisTournages = await prisma.avisTournage.findMany()
+     * 
+     * // Get first 10 AvisTournages
+     * const avisTournages = await prisma.avisTournage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const avisTournageWithIdOnly = await prisma.avisTournage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AvisTournageFindManyArgs>(args?: SelectSubset<T, AvisTournageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a AvisTournage.
+     * @param {AvisTournageCreateArgs} args - Arguments to create a AvisTournage.
+     * @example
+     * // Create one AvisTournage
+     * const AvisTournage = await prisma.avisTournage.create({
+     *   data: {
+     *     // ... data to create a AvisTournage
+     *   }
+     * })
+     * 
+     */
+    create<T extends AvisTournageCreateArgs>(args: SelectSubset<T, AvisTournageCreateArgs<ExtArgs>>): Prisma__AvisTournageClient<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many AvisTournages.
+     * @param {AvisTournageCreateManyArgs} args - Arguments to create many AvisTournages.
+     * @example
+     * // Create many AvisTournages
+     * const avisTournage = await prisma.avisTournage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AvisTournageCreateManyArgs>(args?: SelectSubset<T, AvisTournageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AvisTournages and returns the data saved in the database.
+     * @param {AvisTournageCreateManyAndReturnArgs} args - Arguments to create many AvisTournages.
+     * @example
+     * // Create many AvisTournages
+     * const avisTournage = await prisma.avisTournage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AvisTournages and only return the `id`
+     * const avisTournageWithIdOnly = await prisma.avisTournage.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AvisTournageCreateManyAndReturnArgs>(args?: SelectSubset<T, AvisTournageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a AvisTournage.
+     * @param {AvisTournageDeleteArgs} args - Arguments to delete one AvisTournage.
+     * @example
+     * // Delete one AvisTournage
+     * const AvisTournage = await prisma.avisTournage.delete({
+     *   where: {
+     *     // ... filter to delete one AvisTournage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AvisTournageDeleteArgs>(args: SelectSubset<T, AvisTournageDeleteArgs<ExtArgs>>): Prisma__AvisTournageClient<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one AvisTournage.
+     * @param {AvisTournageUpdateArgs} args - Arguments to update one AvisTournage.
+     * @example
+     * // Update one AvisTournage
+     * const avisTournage = await prisma.avisTournage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AvisTournageUpdateArgs>(args: SelectSubset<T, AvisTournageUpdateArgs<ExtArgs>>): Prisma__AvisTournageClient<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more AvisTournages.
+     * @param {AvisTournageDeleteManyArgs} args - Arguments to filter AvisTournages to delete.
+     * @example
+     * // Delete a few AvisTournages
+     * const { count } = await prisma.avisTournage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AvisTournageDeleteManyArgs>(args?: SelectSubset<T, AvisTournageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AvisTournages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AvisTournageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AvisTournages
+     * const avisTournage = await prisma.avisTournage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AvisTournageUpdateManyArgs>(args: SelectSubset<T, AvisTournageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one AvisTournage.
+     * @param {AvisTournageUpsertArgs} args - Arguments to update or create a AvisTournage.
+     * @example
+     * // Update or create a AvisTournage
+     * const avisTournage = await prisma.avisTournage.upsert({
+     *   create: {
+     *     // ... data to create a AvisTournage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AvisTournage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AvisTournageUpsertArgs>(args: SelectSubset<T, AvisTournageUpsertArgs<ExtArgs>>): Prisma__AvisTournageClient<$Result.GetResult<Prisma.$AvisTournagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of AvisTournages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AvisTournageCountArgs} args - Arguments to filter AvisTournages to count.
+     * @example
+     * // Count the number of AvisTournages
+     * const count = await prisma.avisTournage.count({
+     *   where: {
+     *     // ... the filter for the AvisTournages we want to count
+     *   }
+     * })
+    **/
+    count<T extends AvisTournageCountArgs>(
+      args?: Subset<T, AvisTournageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AvisTournageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AvisTournage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AvisTournageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AvisTournageAggregateArgs>(args: Subset<T, AvisTournageAggregateArgs>): Prisma.PrismaPromise<GetAvisTournageAggregateType<T>>
+
+    /**
+     * Group by AvisTournage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AvisTournageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AvisTournageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AvisTournageGroupByArgs['orderBy'] }
+        : { orderBy?: AvisTournageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AvisTournageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAvisTournageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AvisTournage model
+   */
+  readonly fields: AvisTournageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AvisTournage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AvisTournageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AvisTournage model
+   */ 
+  interface AvisTournageFieldRefs {
+    readonly id: FieldRef<"AvisTournage", 'Int'>
+    readonly demandeId: FieldRef<"AvisTournage", 'Int'>
+    readonly serviceId: FieldRef<"AvisTournage", 'Int'>
+    readonly serviceNom: FieldRef<"AvisTournage", 'String'>
+    readonly libre: FieldRef<"AvisTournage", 'Boolean'>
+    readonly destinataires: FieldRef<"AvisTournage", 'Json'>
+    readonly token: FieldRef<"AvisTournage", 'String'>
+    readonly statut: FieldRef<"AvisTournage", 'String'>
+    readonly message: FieldRef<"AvisTournage", 'String'>
+    readonly questions: FieldRef<"AvisTournage", 'Json'>
+    readonly reponseCommentaire: FieldRef<"AvisTournage", 'String'>
+    readonly reponseDonnees: FieldRef<"AvisTournage", 'Json'>
+    readonly reponduPar: FieldRef<"AvisTournage", 'String'>
+    readonly demandePar: FieldRef<"AvisTournage", 'String'>
+    readonly dateDemande: FieldRef<"AvisTournage", 'DateTime'>
+    readonly dateReponse: FieldRef<"AvisTournage", 'DateTime'>
+    readonly derniereRelance: FieldRef<"AvisTournage", 'DateTime'>
+    readonly nbRelances: FieldRef<"AvisTournage", 'Int'>
+    readonly updated_at: FieldRef<"AvisTournage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AvisTournage findUnique
+   */
+  export type AvisTournageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which AvisTournage to fetch.
+     */
+    where: AvisTournageWhereUniqueInput
+  }
+
+  /**
+   * AvisTournage findUniqueOrThrow
+   */
+  export type AvisTournageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which AvisTournage to fetch.
+     */
+    where: AvisTournageWhereUniqueInput
+  }
+
+  /**
+   * AvisTournage findFirst
+   */
+  export type AvisTournageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which AvisTournage to fetch.
+     */
+    where?: AvisTournageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AvisTournages to fetch.
+     */
+    orderBy?: AvisTournageOrderByWithRelationInput | AvisTournageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AvisTournages.
+     */
+    cursor?: AvisTournageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AvisTournages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AvisTournages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AvisTournages.
+     */
+    distinct?: AvisTournageScalarFieldEnum | AvisTournageScalarFieldEnum[]
+  }
+
+  /**
+   * AvisTournage findFirstOrThrow
+   */
+  export type AvisTournageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which AvisTournage to fetch.
+     */
+    where?: AvisTournageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AvisTournages to fetch.
+     */
+    orderBy?: AvisTournageOrderByWithRelationInput | AvisTournageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AvisTournages.
+     */
+    cursor?: AvisTournageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AvisTournages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AvisTournages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AvisTournages.
+     */
+    distinct?: AvisTournageScalarFieldEnum | AvisTournageScalarFieldEnum[]
+  }
+
+  /**
+   * AvisTournage findMany
+   */
+  export type AvisTournageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which AvisTournages to fetch.
+     */
+    where?: AvisTournageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AvisTournages to fetch.
+     */
+    orderBy?: AvisTournageOrderByWithRelationInput | AvisTournageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AvisTournages.
+     */
+    cursor?: AvisTournageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AvisTournages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AvisTournages.
+     */
+    skip?: number
+    distinct?: AvisTournageScalarFieldEnum | AvisTournageScalarFieldEnum[]
+  }
+
+  /**
+   * AvisTournage create
+   */
+  export type AvisTournageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+    /**
+     * The data needed to create a AvisTournage.
+     */
+    data: XOR<AvisTournageCreateInput, AvisTournageUncheckedCreateInput>
+  }
+
+  /**
+   * AvisTournage createMany
+   */
+  export type AvisTournageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AvisTournages.
+     */
+    data: AvisTournageCreateManyInput | AvisTournageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AvisTournage createManyAndReturn
+   */
+  export type AvisTournageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many AvisTournages.
+     */
+    data: AvisTournageCreateManyInput | AvisTournageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AvisTournage update
+   */
+  export type AvisTournageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+    /**
+     * The data needed to update a AvisTournage.
+     */
+    data: XOR<AvisTournageUpdateInput, AvisTournageUncheckedUpdateInput>
+    /**
+     * Choose, which AvisTournage to update.
+     */
+    where: AvisTournageWhereUniqueInput
+  }
+
+  /**
+   * AvisTournage updateMany
+   */
+  export type AvisTournageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AvisTournages.
+     */
+    data: XOR<AvisTournageUpdateManyMutationInput, AvisTournageUncheckedUpdateManyInput>
+    /**
+     * Filter which AvisTournages to update
+     */
+    where?: AvisTournageWhereInput
+  }
+
+  /**
+   * AvisTournage upsert
+   */
+  export type AvisTournageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+    /**
+     * The filter to search for the AvisTournage to update in case it exists.
+     */
+    where: AvisTournageWhereUniqueInput
+    /**
+     * In case the AvisTournage found by the `where` argument doesn't exist, create a new AvisTournage with this data.
+     */
+    create: XOR<AvisTournageCreateInput, AvisTournageUncheckedCreateInput>
+    /**
+     * In case the AvisTournage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AvisTournageUpdateInput, AvisTournageUncheckedUpdateInput>
+  }
+
+  /**
+   * AvisTournage delete
+   */
+  export type AvisTournageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+    /**
+     * Filter which AvisTournage to delete.
+     */
+    where: AvisTournageWhereUniqueInput
+  }
+
+  /**
+   * AvisTournage deleteMany
+   */
+  export type AvisTournageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AvisTournages to delete
+     */
+    where?: AvisTournageWhereInput
+  }
+
+  /**
+   * AvisTournage without action
+   */
+  export type AvisTournageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AvisTournage
+     */
+    select?: AvisTournageSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -36126,6 +38346,47 @@ export namespace Prisma {
   export type TournageConfigScalarFieldEnum = (typeof TournageConfigScalarFieldEnum)[keyof typeof TournageConfigScalarFieldEnum]
 
 
+  export const ServiceInstructeurScalarFieldEnum: {
+    id: 'id',
+    code: 'code',
+    nom: 'nom',
+    description: 'description',
+    emails: 'emails',
+    questions: 'questions',
+    circuitPropre: 'circuitPropre',
+    actif: 'actif',
+    ordre: 'ordre',
+    updated_at: 'updated_at'
+  };
+
+  export type ServiceInstructeurScalarFieldEnum = (typeof ServiceInstructeurScalarFieldEnum)[keyof typeof ServiceInstructeurScalarFieldEnum]
+
+
+  export const AvisTournageScalarFieldEnum: {
+    id: 'id',
+    demandeId: 'demandeId',
+    serviceId: 'serviceId',
+    serviceNom: 'serviceNom',
+    libre: 'libre',
+    destinataires: 'destinataires',
+    token: 'token',
+    statut: 'statut',
+    message: 'message',
+    questions: 'questions',
+    reponseCommentaire: 'reponseCommentaire',
+    reponseDonnees: 'reponseDonnees',
+    reponduPar: 'reponduPar',
+    demandePar: 'demandePar',
+    dateDemande: 'dateDemande',
+    dateReponse: 'dateReponse',
+    derniereRelance: 'derniereRelance',
+    nbRelances: 'nbRelances',
+    updated_at: 'updated_at'
+  };
+
+  export type AvisTournageScalarFieldEnum = (typeof AvisTournageScalarFieldEnum)[keyof typeof AvisTournageScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -36139,6 +38400,14 @@ export namespace Prisma {
   };
 
   export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -39076,6 +41345,209 @@ export namespace Prisma {
     mailFooterColor?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
     frontendsAutorises?: JsonWithAggregatesFilter<"TournageConfig">
     updated_at?: DateTimeWithAggregatesFilter<"TournageConfig"> | Date | string
+  }
+
+  export type ServiceInstructeurWhereInput = {
+    AND?: ServiceInstructeurWhereInput | ServiceInstructeurWhereInput[]
+    OR?: ServiceInstructeurWhereInput[]
+    NOT?: ServiceInstructeurWhereInput | ServiceInstructeurWhereInput[]
+    id?: IntFilter<"ServiceInstructeur"> | number
+    code?: StringFilter<"ServiceInstructeur"> | string
+    nom?: StringFilter<"ServiceInstructeur"> | string
+    description?: StringNullableFilter<"ServiceInstructeur"> | string | null
+    emails?: JsonFilter<"ServiceInstructeur">
+    questions?: JsonFilter<"ServiceInstructeur">
+    circuitPropre?: BoolFilter<"ServiceInstructeur"> | boolean
+    actif?: BoolFilter<"ServiceInstructeur"> | boolean
+    ordre?: IntFilter<"ServiceInstructeur"> | number
+    updated_at?: DateTimeFilter<"ServiceInstructeur"> | Date | string
+  }
+
+  export type ServiceInstructeurOrderByWithRelationInput = {
+    id?: SortOrder
+    code?: SortOrder
+    nom?: SortOrder
+    description?: SortOrderInput | SortOrder
+    emails?: SortOrder
+    questions?: SortOrder
+    circuitPropre?: SortOrder
+    actif?: SortOrder
+    ordre?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type ServiceInstructeurWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    code?: string
+    AND?: ServiceInstructeurWhereInput | ServiceInstructeurWhereInput[]
+    OR?: ServiceInstructeurWhereInput[]
+    NOT?: ServiceInstructeurWhereInput | ServiceInstructeurWhereInput[]
+    nom?: StringFilter<"ServiceInstructeur"> | string
+    description?: StringNullableFilter<"ServiceInstructeur"> | string | null
+    emails?: JsonFilter<"ServiceInstructeur">
+    questions?: JsonFilter<"ServiceInstructeur">
+    circuitPropre?: BoolFilter<"ServiceInstructeur"> | boolean
+    actif?: BoolFilter<"ServiceInstructeur"> | boolean
+    ordre?: IntFilter<"ServiceInstructeur"> | number
+    updated_at?: DateTimeFilter<"ServiceInstructeur"> | Date | string
+  }, "id" | "code">
+
+  export type ServiceInstructeurOrderByWithAggregationInput = {
+    id?: SortOrder
+    code?: SortOrder
+    nom?: SortOrder
+    description?: SortOrderInput | SortOrder
+    emails?: SortOrder
+    questions?: SortOrder
+    circuitPropre?: SortOrder
+    actif?: SortOrder
+    ordre?: SortOrder
+    updated_at?: SortOrder
+    _count?: ServiceInstructeurCountOrderByAggregateInput
+    _avg?: ServiceInstructeurAvgOrderByAggregateInput
+    _max?: ServiceInstructeurMaxOrderByAggregateInput
+    _min?: ServiceInstructeurMinOrderByAggregateInput
+    _sum?: ServiceInstructeurSumOrderByAggregateInput
+  }
+
+  export type ServiceInstructeurScalarWhereWithAggregatesInput = {
+    AND?: ServiceInstructeurScalarWhereWithAggregatesInput | ServiceInstructeurScalarWhereWithAggregatesInput[]
+    OR?: ServiceInstructeurScalarWhereWithAggregatesInput[]
+    NOT?: ServiceInstructeurScalarWhereWithAggregatesInput | ServiceInstructeurScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ServiceInstructeur"> | number
+    code?: StringWithAggregatesFilter<"ServiceInstructeur"> | string
+    nom?: StringWithAggregatesFilter<"ServiceInstructeur"> | string
+    description?: StringNullableWithAggregatesFilter<"ServiceInstructeur"> | string | null
+    emails?: JsonWithAggregatesFilter<"ServiceInstructeur">
+    questions?: JsonWithAggregatesFilter<"ServiceInstructeur">
+    circuitPropre?: BoolWithAggregatesFilter<"ServiceInstructeur"> | boolean
+    actif?: BoolWithAggregatesFilter<"ServiceInstructeur"> | boolean
+    ordre?: IntWithAggregatesFilter<"ServiceInstructeur"> | number
+    updated_at?: DateTimeWithAggregatesFilter<"ServiceInstructeur"> | Date | string
+  }
+
+  export type AvisTournageWhereInput = {
+    AND?: AvisTournageWhereInput | AvisTournageWhereInput[]
+    OR?: AvisTournageWhereInput[]
+    NOT?: AvisTournageWhereInput | AvisTournageWhereInput[]
+    id?: IntFilter<"AvisTournage"> | number
+    demandeId?: IntFilter<"AvisTournage"> | number
+    serviceId?: IntNullableFilter<"AvisTournage"> | number | null
+    serviceNom?: StringFilter<"AvisTournage"> | string
+    libre?: BoolFilter<"AvisTournage"> | boolean
+    destinataires?: JsonFilter<"AvisTournage">
+    token?: StringFilter<"AvisTournage"> | string
+    statut?: StringFilter<"AvisTournage"> | string
+    message?: StringNullableFilter<"AvisTournage"> | string | null
+    questions?: JsonFilter<"AvisTournage">
+    reponseCommentaire?: StringNullableFilter<"AvisTournage"> | string | null
+    reponseDonnees?: JsonNullableFilter<"AvisTournage">
+    reponduPar?: StringNullableFilter<"AvisTournage"> | string | null
+    demandePar?: StringNullableFilter<"AvisTournage"> | string | null
+    dateDemande?: DateTimeFilter<"AvisTournage"> | Date | string
+    dateReponse?: DateTimeNullableFilter<"AvisTournage"> | Date | string | null
+    derniereRelance?: DateTimeNullableFilter<"AvisTournage"> | Date | string | null
+    nbRelances?: IntFilter<"AvisTournage"> | number
+    updated_at?: DateTimeFilter<"AvisTournage"> | Date | string
+  }
+
+  export type AvisTournageOrderByWithRelationInput = {
+    id?: SortOrder
+    demandeId?: SortOrder
+    serviceId?: SortOrderInput | SortOrder
+    serviceNom?: SortOrder
+    libre?: SortOrder
+    destinataires?: SortOrder
+    token?: SortOrder
+    statut?: SortOrder
+    message?: SortOrderInput | SortOrder
+    questions?: SortOrder
+    reponseCommentaire?: SortOrderInput | SortOrder
+    reponseDonnees?: SortOrderInput | SortOrder
+    reponduPar?: SortOrderInput | SortOrder
+    demandePar?: SortOrderInput | SortOrder
+    dateDemande?: SortOrder
+    dateReponse?: SortOrderInput | SortOrder
+    derniereRelance?: SortOrderInput | SortOrder
+    nbRelances?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AvisTournageWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    token?: string
+    AND?: AvisTournageWhereInput | AvisTournageWhereInput[]
+    OR?: AvisTournageWhereInput[]
+    NOT?: AvisTournageWhereInput | AvisTournageWhereInput[]
+    demandeId?: IntFilter<"AvisTournage"> | number
+    serviceId?: IntNullableFilter<"AvisTournage"> | number | null
+    serviceNom?: StringFilter<"AvisTournage"> | string
+    libre?: BoolFilter<"AvisTournage"> | boolean
+    destinataires?: JsonFilter<"AvisTournage">
+    statut?: StringFilter<"AvisTournage"> | string
+    message?: StringNullableFilter<"AvisTournage"> | string | null
+    questions?: JsonFilter<"AvisTournage">
+    reponseCommentaire?: StringNullableFilter<"AvisTournage"> | string | null
+    reponseDonnees?: JsonNullableFilter<"AvisTournage">
+    reponduPar?: StringNullableFilter<"AvisTournage"> | string | null
+    demandePar?: StringNullableFilter<"AvisTournage"> | string | null
+    dateDemande?: DateTimeFilter<"AvisTournage"> | Date | string
+    dateReponse?: DateTimeNullableFilter<"AvisTournage"> | Date | string | null
+    derniereRelance?: DateTimeNullableFilter<"AvisTournage"> | Date | string | null
+    nbRelances?: IntFilter<"AvisTournage"> | number
+    updated_at?: DateTimeFilter<"AvisTournage"> | Date | string
+  }, "id" | "token">
+
+  export type AvisTournageOrderByWithAggregationInput = {
+    id?: SortOrder
+    demandeId?: SortOrder
+    serviceId?: SortOrderInput | SortOrder
+    serviceNom?: SortOrder
+    libre?: SortOrder
+    destinataires?: SortOrder
+    token?: SortOrder
+    statut?: SortOrder
+    message?: SortOrderInput | SortOrder
+    questions?: SortOrder
+    reponseCommentaire?: SortOrderInput | SortOrder
+    reponseDonnees?: SortOrderInput | SortOrder
+    reponduPar?: SortOrderInput | SortOrder
+    demandePar?: SortOrderInput | SortOrder
+    dateDemande?: SortOrder
+    dateReponse?: SortOrderInput | SortOrder
+    derniereRelance?: SortOrderInput | SortOrder
+    nbRelances?: SortOrder
+    updated_at?: SortOrder
+    _count?: AvisTournageCountOrderByAggregateInput
+    _avg?: AvisTournageAvgOrderByAggregateInput
+    _max?: AvisTournageMaxOrderByAggregateInput
+    _min?: AvisTournageMinOrderByAggregateInput
+    _sum?: AvisTournageSumOrderByAggregateInput
+  }
+
+  export type AvisTournageScalarWhereWithAggregatesInput = {
+    AND?: AvisTournageScalarWhereWithAggregatesInput | AvisTournageScalarWhereWithAggregatesInput[]
+    OR?: AvisTournageScalarWhereWithAggregatesInput[]
+    NOT?: AvisTournageScalarWhereWithAggregatesInput | AvisTournageScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"AvisTournage"> | number
+    demandeId?: IntWithAggregatesFilter<"AvisTournage"> | number
+    serviceId?: IntNullableWithAggregatesFilter<"AvisTournage"> | number | null
+    serviceNom?: StringWithAggregatesFilter<"AvisTournage"> | string
+    libre?: BoolWithAggregatesFilter<"AvisTournage"> | boolean
+    destinataires?: JsonWithAggregatesFilter<"AvisTournage">
+    token?: StringWithAggregatesFilter<"AvisTournage"> | string
+    statut?: StringWithAggregatesFilter<"AvisTournage"> | string
+    message?: StringNullableWithAggregatesFilter<"AvisTournage"> | string | null
+    questions?: JsonWithAggregatesFilter<"AvisTournage">
+    reponseCommentaire?: StringNullableWithAggregatesFilter<"AvisTournage"> | string | null
+    reponseDonnees?: JsonNullableWithAggregatesFilter<"AvisTournage">
+    reponduPar?: StringNullableWithAggregatesFilter<"AvisTournage"> | string | null
+    demandePar?: StringNullableWithAggregatesFilter<"AvisTournage"> | string | null
+    dateDemande?: DateTimeWithAggregatesFilter<"AvisTournage"> | Date | string
+    dateReponse?: DateTimeNullableWithAggregatesFilter<"AvisTournage"> | Date | string | null
+    derniereRelance?: DateTimeNullableWithAggregatesFilter<"AvisTournage"> | Date | string | null
+    nbRelances?: IntWithAggregatesFilter<"AvisTournage"> | number
+    updated_at?: DateTimeWithAggregatesFilter<"AvisTournage"> | Date | string
   }
 
   export type TiersCreateInput = {
@@ -42270,6 +44742,245 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ServiceInstructeurCreateInput = {
+    code: string
+    nom: string
+    description?: string | null
+    emails?: JsonNullValueInput | InputJsonValue
+    questions?: JsonNullValueInput | InputJsonValue
+    circuitPropre?: boolean
+    actif?: boolean
+    ordre?: number
+    updated_at?: Date | string
+  }
+
+  export type ServiceInstructeurUncheckedCreateInput = {
+    id?: number
+    code: string
+    nom: string
+    description?: string | null
+    emails?: JsonNullValueInput | InputJsonValue
+    questions?: JsonNullValueInput | InputJsonValue
+    circuitPropre?: boolean
+    actif?: boolean
+    ordre?: number
+    updated_at?: Date | string
+  }
+
+  export type ServiceInstructeurUpdateInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    nom?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    emails?: JsonNullValueInput | InputJsonValue
+    questions?: JsonNullValueInput | InputJsonValue
+    circuitPropre?: BoolFieldUpdateOperationsInput | boolean
+    actif?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceInstructeurUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    nom?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    emails?: JsonNullValueInput | InputJsonValue
+    questions?: JsonNullValueInput | InputJsonValue
+    circuitPropre?: BoolFieldUpdateOperationsInput | boolean
+    actif?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceInstructeurCreateManyInput = {
+    id?: number
+    code: string
+    nom: string
+    description?: string | null
+    emails?: JsonNullValueInput | InputJsonValue
+    questions?: JsonNullValueInput | InputJsonValue
+    circuitPropre?: boolean
+    actif?: boolean
+    ordre?: number
+    updated_at?: Date | string
+  }
+
+  export type ServiceInstructeurUpdateManyMutationInput = {
+    code?: StringFieldUpdateOperationsInput | string
+    nom?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    emails?: JsonNullValueInput | InputJsonValue
+    questions?: JsonNullValueInput | InputJsonValue
+    circuitPropre?: BoolFieldUpdateOperationsInput | boolean
+    actif?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ServiceInstructeurUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    code?: StringFieldUpdateOperationsInput | string
+    nom?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    emails?: JsonNullValueInput | InputJsonValue
+    questions?: JsonNullValueInput | InputJsonValue
+    circuitPropre?: BoolFieldUpdateOperationsInput | boolean
+    actif?: BoolFieldUpdateOperationsInput | boolean
+    ordre?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AvisTournageCreateInput = {
+    demandeId: number
+    serviceId?: number | null
+    serviceNom: string
+    libre?: boolean
+    destinataires?: JsonNullValueInput | InputJsonValue
+    token: string
+    statut?: string
+    message?: string | null
+    questions?: JsonNullValueInput | InputJsonValue
+    reponseCommentaire?: string | null
+    reponseDonnees?: NullableJsonNullValueInput | InputJsonValue
+    reponduPar?: string | null
+    demandePar?: string | null
+    dateDemande?: Date | string
+    dateReponse?: Date | string | null
+    derniereRelance?: Date | string | null
+    nbRelances?: number
+    updated_at?: Date | string
+  }
+
+  export type AvisTournageUncheckedCreateInput = {
+    id?: number
+    demandeId: number
+    serviceId?: number | null
+    serviceNom: string
+    libre?: boolean
+    destinataires?: JsonNullValueInput | InputJsonValue
+    token: string
+    statut?: string
+    message?: string | null
+    questions?: JsonNullValueInput | InputJsonValue
+    reponseCommentaire?: string | null
+    reponseDonnees?: NullableJsonNullValueInput | InputJsonValue
+    reponduPar?: string | null
+    demandePar?: string | null
+    dateDemande?: Date | string
+    dateReponse?: Date | string | null
+    derniereRelance?: Date | string | null
+    nbRelances?: number
+    updated_at?: Date | string
+  }
+
+  export type AvisTournageUpdateInput = {
+    demandeId?: IntFieldUpdateOperationsInput | number
+    serviceId?: NullableIntFieldUpdateOperationsInput | number | null
+    serviceNom?: StringFieldUpdateOperationsInput | string
+    libre?: BoolFieldUpdateOperationsInput | boolean
+    destinataires?: JsonNullValueInput | InputJsonValue
+    token?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    questions?: JsonNullValueInput | InputJsonValue
+    reponseCommentaire?: NullableStringFieldUpdateOperationsInput | string | null
+    reponseDonnees?: NullableJsonNullValueInput | InputJsonValue
+    reponduPar?: NullableStringFieldUpdateOperationsInput | string | null
+    demandePar?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDemande?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateReponse?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    derniereRelance?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nbRelances?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AvisTournageUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    demandeId?: IntFieldUpdateOperationsInput | number
+    serviceId?: NullableIntFieldUpdateOperationsInput | number | null
+    serviceNom?: StringFieldUpdateOperationsInput | string
+    libre?: BoolFieldUpdateOperationsInput | boolean
+    destinataires?: JsonNullValueInput | InputJsonValue
+    token?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    questions?: JsonNullValueInput | InputJsonValue
+    reponseCommentaire?: NullableStringFieldUpdateOperationsInput | string | null
+    reponseDonnees?: NullableJsonNullValueInput | InputJsonValue
+    reponduPar?: NullableStringFieldUpdateOperationsInput | string | null
+    demandePar?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDemande?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateReponse?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    derniereRelance?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nbRelances?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AvisTournageCreateManyInput = {
+    id?: number
+    demandeId: number
+    serviceId?: number | null
+    serviceNom: string
+    libre?: boolean
+    destinataires?: JsonNullValueInput | InputJsonValue
+    token: string
+    statut?: string
+    message?: string | null
+    questions?: JsonNullValueInput | InputJsonValue
+    reponseCommentaire?: string | null
+    reponseDonnees?: NullableJsonNullValueInput | InputJsonValue
+    reponduPar?: string | null
+    demandePar?: string | null
+    dateDemande?: Date | string
+    dateReponse?: Date | string | null
+    derniereRelance?: Date | string | null
+    nbRelances?: number
+    updated_at?: Date | string
+  }
+
+  export type AvisTournageUpdateManyMutationInput = {
+    demandeId?: IntFieldUpdateOperationsInput | number
+    serviceId?: NullableIntFieldUpdateOperationsInput | number | null
+    serviceNom?: StringFieldUpdateOperationsInput | string
+    libre?: BoolFieldUpdateOperationsInput | boolean
+    destinataires?: JsonNullValueInput | InputJsonValue
+    token?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    questions?: JsonNullValueInput | InputJsonValue
+    reponseCommentaire?: NullableStringFieldUpdateOperationsInput | string | null
+    reponseDonnees?: NullableJsonNullValueInput | InputJsonValue
+    reponduPar?: NullableStringFieldUpdateOperationsInput | string | null
+    demandePar?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDemande?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateReponse?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    derniereRelance?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nbRelances?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AvisTournageUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    demandeId?: IntFieldUpdateOperationsInput | number
+    serviceId?: NullableIntFieldUpdateOperationsInput | number | null
+    serviceNom?: StringFieldUpdateOperationsInput | string
+    libre?: BoolFieldUpdateOperationsInput | boolean
+    destinataires?: JsonNullValueInput | InputJsonValue
+    token?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    questions?: JsonNullValueInput | InputJsonValue
+    reponseCommentaire?: NullableStringFieldUpdateOperationsInput | string | null
+    reponseDonnees?: NullableJsonNullValueInput | InputJsonValue
+    reponduPar?: NullableStringFieldUpdateOperationsInput | string | null
+    demandePar?: NullableStringFieldUpdateOperationsInput | string | null
+    dateDemande?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateReponse?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    derniereRelance?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    nbRelances?: IntFieldUpdateOperationsInput | number
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -44475,6 +47186,172 @@ export namespace Prisma {
     delaiMinimalDepot?: SortOrder
   }
 
+  export type ServiceInstructeurCountOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    nom?: SortOrder
+    description?: SortOrder
+    emails?: SortOrder
+    questions?: SortOrder
+    circuitPropre?: SortOrder
+    actif?: SortOrder
+    ordre?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type ServiceInstructeurAvgOrderByAggregateInput = {
+    id?: SortOrder
+    ordre?: SortOrder
+  }
+
+  export type ServiceInstructeurMaxOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    nom?: SortOrder
+    description?: SortOrder
+    circuitPropre?: SortOrder
+    actif?: SortOrder
+    ordre?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type ServiceInstructeurMinOrderByAggregateInput = {
+    id?: SortOrder
+    code?: SortOrder
+    nom?: SortOrder
+    description?: SortOrder
+    circuitPropre?: SortOrder
+    actif?: SortOrder
+    ordre?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type ServiceInstructeurSumOrderByAggregateInput = {
+    id?: SortOrder
+    ordre?: SortOrder
+  }
+  export type JsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type AvisTournageCountOrderByAggregateInput = {
+    id?: SortOrder
+    demandeId?: SortOrder
+    serviceId?: SortOrder
+    serviceNom?: SortOrder
+    libre?: SortOrder
+    destinataires?: SortOrder
+    token?: SortOrder
+    statut?: SortOrder
+    message?: SortOrder
+    questions?: SortOrder
+    reponseCommentaire?: SortOrder
+    reponseDonnees?: SortOrder
+    reponduPar?: SortOrder
+    demandePar?: SortOrder
+    dateDemande?: SortOrder
+    dateReponse?: SortOrder
+    derniereRelance?: SortOrder
+    nbRelances?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AvisTournageAvgOrderByAggregateInput = {
+    id?: SortOrder
+    demandeId?: SortOrder
+    serviceId?: SortOrder
+    nbRelances?: SortOrder
+  }
+
+  export type AvisTournageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    demandeId?: SortOrder
+    serviceId?: SortOrder
+    serviceNom?: SortOrder
+    libre?: SortOrder
+    token?: SortOrder
+    statut?: SortOrder
+    message?: SortOrder
+    reponseCommentaire?: SortOrder
+    reponduPar?: SortOrder
+    demandePar?: SortOrder
+    dateDemande?: SortOrder
+    dateReponse?: SortOrder
+    derniereRelance?: SortOrder
+    nbRelances?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AvisTournageMinOrderByAggregateInput = {
+    id?: SortOrder
+    demandeId?: SortOrder
+    serviceId?: SortOrder
+    serviceNom?: SortOrder
+    libre?: SortOrder
+    token?: SortOrder
+    statut?: SortOrder
+    message?: SortOrder
+    reponseCommentaire?: SortOrder
+    reponduPar?: SortOrder
+    demandePar?: SortOrder
+    dateDemande?: SortOrder
+    dateReponse?: SortOrder
+    derniereRelance?: SortOrder
+    nbRelances?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type AvisTournageSumOrderByAggregateInput = {
+    id?: SortOrder
+    demandeId?: SortOrder
+    serviceId?: SortOrder
+    nbRelances?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
   export type ContactCreateNestedManyWithoutTiersInput = {
     create?: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput> | ContactCreateWithoutTiersInput[] | ContactUncheckedCreateWithoutTiersInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutTiersInput | ContactCreateOrConnectWithoutTiersInput[]
@@ -45922,6 +48799,28 @@ export namespace Prisma {
     | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
 
   export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
     equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
     path?: string[]
     string_contains?: string | StringFieldRefInput<$PrismaModel>
@@ -50881,6 +53780,14 @@ export namespace Prisma {
      * @deprecated Use TournageConfigDefaultArgs instead
      */
     export type TournageConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TournageConfigDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use ServiceInstructeurDefaultArgs instead
+     */
+    export type ServiceInstructeurArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ServiceInstructeurDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use AvisTournageDefaultArgs instead
+     */
+    export type AvisTournageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AvisTournageDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

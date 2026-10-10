@@ -36,6 +36,8 @@ export type MenuItem = {
   label: string;
   href: string;
   permission?: Permission;
+  // Visible si l'utilisateur a AU MOINS un de ces droits (remplace `permission`)
+  permissionsAny?: Permission[];
   // Chemin de la page servant à l'état actif lorsque `href` porte une query string
   path?: string;
   // Type de dossier attendu pour l'état actif (CHANTIER / TOURNAGE)
@@ -46,7 +48,8 @@ export type MenuItem = {
 
 // Droits + restriction du rôle « Agent tournages » (uniquement tournages, demandes et carte)
 export function isItemVisible(item: MenuItem, user: any): boolean {
-  if (item.permission && !user) return false;
+  if ((item.permission || item.permissionsAny) && !user) return false;
+  if (item.permissionsAny && user?.role && !item.permissionsAny.some((p) => hasPermission(user.role, p))) return false;
   if (item.permission && user?.role && !hasPermission(user.role, item.permission)) return false;
   if (user?.role && isTournagesOnly(user.role) && !item.tournagesOk) return false;
   return true;
@@ -65,7 +68,7 @@ export const menuItems: MenuItem[] = [
   { icon: ClipboardCheck, label: 'Facturation', href: '/dashboard/facturation', permission: 'SEND_EMAILS' },
   { icon: CopyPlus, label: "Report d'année", href: '/dashboard/report', permission: 'MANAGE_TARIFS' },
   { icon: MapIcon, label: 'Carte SIG', href: '/dashboard/carte', permission: 'VIEW_CARTE', tournagesOk: true },
-  { icon: Settings, label: 'Paramètres', href: '/dashboard/settings', permission: 'MANAGE_USERS' },
+  { icon: Settings, label: 'Paramètres', href: '/dashboard/settings', permissionsAny: ['MANAGE_USERS', 'MANAGE_TOURNAGES'], tournagesOk: true },
 ];
 
 type SidebarLinksProps = {

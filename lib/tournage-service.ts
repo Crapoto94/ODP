@@ -13,6 +13,12 @@ const DDL = [
   `ALTER TABLE "TournageConfig" ADD COLUMN IF NOT EXISTS "mailFooter2" TEXT`,
   `ALTER TABLE "TournageConfig" ADD COLUMN IF NOT EXISTS "mailFooter3" TEXT`,
   `ALTER TABLE "TournageConfig" ADD COLUMN IF NOT EXISTS "mailFooterColor" TEXT`,
+  `CREATE TABLE IF NOT EXISTS "ServiceInstructeur" ("id" SERIAL NOT NULL, "code" TEXT NOT NULL, "nom" TEXT NOT NULL, "description" TEXT, "emails" JSONB NOT NULL DEFAULT '[]', "questions" JSONB NOT NULL DEFAULT '[]', "circuitPropre" BOOLEAN NOT NULL DEFAULT false, "actif" BOOLEAN NOT NULL DEFAULT true, "ordre" INTEGER NOT NULL DEFAULT 0, "updated_at" TIMESTAMP(3) NOT NULL, CONSTRAINT "ServiceInstructeur_pkey" PRIMARY KEY ("id"))`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "ServiceInstructeur_code_key" ON "ServiceInstructeur"("code")`,
+  `CREATE TABLE IF NOT EXISTS "AvisTournage" ("id" SERIAL NOT NULL, "demandeId" INTEGER NOT NULL, "serviceId" INTEGER, "serviceNom" TEXT NOT NULL, "libre" BOOLEAN NOT NULL DEFAULT false, "destinataires" JSONB NOT NULL DEFAULT '[]', "token" TEXT NOT NULL, "statut" TEXT NOT NULL DEFAULT 'EN_ATTENTE', "message" TEXT, "questions" JSONB NOT NULL DEFAULT '[]', "reponseCommentaire" TEXT, "reponseDonnees" JSONB, "reponduPar" TEXT, "demandePar" TEXT, "dateDemande" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "dateReponse" TIMESTAMP(3), "derniereRelance" TIMESTAMP(3), "nbRelances" INTEGER NOT NULL DEFAULT 0, "updated_at" TIMESTAMP(3) NOT NULL, CONSTRAINT "AvisTournage_pkey" PRIMARY KEY ("id"))`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "AvisTournage_token_key" ON "AvisTournage"("token")`,
+  `CREATE INDEX IF NOT EXISTS "AvisTournage_demandeId_idx" ON "AvisTournage"("demandeId")`,
+  `CREATE INDEX IF NOT EXISTS "AvisTournage_statut_idx" ON "AvisTournage"("statut")`,
   `CREATE UNIQUE INDEX IF NOT EXISTS "DemandeTournage_reference_key" ON "DemandeTournage"("reference")`,
   `CREATE INDEX IF NOT EXISTS "DemandeTournage_statut_idx" ON "DemandeTournage"("statut")`,
   `CREATE INDEX IF NOT EXISTS "DemandeTournage_dateDepot_idx" ON "DemandeTournage"("dateDepot")`,
@@ -23,8 +29,32 @@ export async function assurerTablesTournage() {
   const [{ s }] = await db.$queryRawUnsafe('SELECT current_schema() AS s');
   if (pretParSchema.has(s)) return;
   for (const q of DDL) await db.$executeRawUnsafe(q);
+  // Services consultés par défaut (sans adresse e-mail : à renseigner dans l'administration)
+  if ((await db.serviceInstructeur.count()) === 0) {
+    for (const [i, svc] of SERVICES_PAR_DEFAUT.entries()) await db.serviceInstructeur.create({ data: { ...svc, ordre: i } });
+  }
   pretParSchema.add(s);
 }
+
+export interface QuestionService { id: string; libelle: string; type: 'OUINON' | 'TEXTE' }
+
+// La DAC (point d'entrée unique) consulte selon les cas ces services
+export const SERVICES_PAR_DEFAUT: { code: string; nom: string; description: string; questions: QuestionService[]; circuitPropre: boolean }[] = [
+  { code: 'DEP', nom: "Direction de l'espace public", circuitPropre: true, questions: [],
+    description: "Arrêtés de stationnement et occupation de l'espace public. Circuit de signature et tarifs propres." },
+  { code: 'DSPORTS', nom: 'Direction des sports (stades)', circuitPropre: false,
+    description: 'Mise à disposition des stades et équipements sportifs.',
+    questions: [{ id: 'assos', libelle: 'Les locaux sont-ils utilisés par des associations sportives sur le créneau demandé ?', type: 'OUINON' }] },
+  { code: 'EDUC', nom: 'Éducation (écoles)', circuitPropre: false, questions: [], description: "Mise à disposition des locaux scolaires (service éducation)." },
+  { code: 'CMS', nom: 'Centre municipal de santé (CMS)', circuitPropre: false,
+    description: 'Mise à disposition des locaux du CMS.',
+    questions: [
+      { id: 'soignant', libelle: "La présence d'un médecin ou d'un infirmier dans la salle est-elle nécessaire ?", type: 'OUINON' },
+      { id: 'soignant_precisions', libelle: 'Précisions (profil, horaires…)', type: 'TEXTE' },
+    ] },
+  { code: 'SALLES', nom: 'Salles municipales', circuitPropre: false, questions: [], description: 'Mise à disposition des salles municipales.' },
+  { code: 'AUTRES', nom: 'Autres gestionnaires de locaux', circuitPropre: false, questions: [], description: 'Autres gestionnaires de locaux consultés au cas par cas.' },
+];
 
 // Config unique (id = 1), créée à la demande
 export async function lireConfigTournage() {

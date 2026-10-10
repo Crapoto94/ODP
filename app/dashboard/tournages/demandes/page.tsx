@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Clapperboard, Search, Loader2, X, FileText, Paperclip, Calendar, AlertTriangle, Save, Building2, Phone, Mail } from 'lucide-react';
 import { STATUTS_DEMANDE } from '@/lib/tournage-regles';
+import AvisServices, { AvisPastilles } from './AvisServices';
 
 const fmtDate = (v: any) => (v ? new Date(v).toLocaleDateString('fr-FR') : '—');
 const fmtIso = (s?: string) => (s ? s.split('-').reverse().join('/') : '—');
@@ -31,6 +32,7 @@ export default function DemandesTournagesPage() {
   const [erreur, setErreur] = useState<string | null>(null);
   const [q, setQ] = useState('');
   const [filtre, setFiltre] = useState('ALL');
+  const [filtreAvis, setFiltreAvis] = useState('ALL');
   const [detail, setDetail] = useState<any | null>(null);
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
@@ -68,9 +70,14 @@ export default function DemandesTournagesPage() {
 
   const filtrees = useMemo(() => rows.filter((r) => {
     if (filtre !== 'ALL' && r.statut !== filtre) return false;
+    const av: any[] = r.avis || [];
+    if (filtreAvis === 'ATTENTE' && !av.some((a) => a.statut === 'EN_ATTENTE')) return false;
+    if (filtreAvis === 'DEFAVORABLE' && !av.some((a) => a.statut === 'DEFAVORABLE')) return false;
+    if (filtreAvis === 'FAVORABLE' && !(av.length > 0 && av.every((a) => a.statut === 'FAVORABLE'))) return false;
+    if (filtreAvis === 'AUCUN' && av.length > 0) return false;
     const t = q.trim().toLowerCase();
     return !t || [r.reference, r.societe, r.demandeurNom, r.titre, r.email].some((v) => String(v || '').toLowerCase().includes(t));
-  }), [rows, q, filtre]);
+  }), [rows, q, filtre, filtreAvis]);
 
   const compte = (s: string) => rows.filter((r) => r.statut === s).length;
   const d = detail?.donnees || {};
@@ -102,6 +109,13 @@ export default function DemandesTournagesPage() {
           <option value="ALL">Tous les statuts</option>
           {Object.entries(STATUTS_DEMANDE).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
         </select>
+        <select value={filtreAvis} onChange={(e) => setFiltreAvis(e.target.value)} className="h-10 px-3 rounded-lg border border-slate-200 text-sm bg-white" title="Avis des services">
+          <option value="ALL">Avis : tous</option>
+          <option value="ATTENTE">Avis sans retour</option>
+          <option value="DEFAVORABLE">Au moins un avis défavorable</option>
+          <option value="FAVORABLE">Tous les avis favorables</option>
+          <option value="AUCUN">Aucun avis demandé</option>
+        </select>
       </div>
 
       {erreur && <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-sm text-rose-700">{erreur}</div>}
@@ -116,7 +130,7 @@ export default function DemandesTournagesPage() {
             <thead>
               <tr className="bg-slate-50 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
                 <th className="px-5 py-3">Référence</th><th className="px-5 py-3">Projet</th><th className="px-5 py-3">Société</th>
-                <th className="px-5 py-3">Dates de tournage</th><th className="px-5 py-3">Reçue le</th><th className="px-5 py-3">Réponse avant le</th><th className="px-5 py-3">Statut</th>
+                <th className="px-5 py-3">Dates de tournage</th><th className="px-5 py-3">Reçue le</th><th className="px-5 py-3">Réponse avant le</th><th className="px-5 py-3">Statut</th><th className="px-5 py-3">Avis des services</th>
               </tr>
             </thead>
             <tbody>
@@ -129,6 +143,7 @@ export default function DemandesTournagesPage() {
                   <td className="px-5 py-3.5 tabular-nums">{fmtDate(r.dateDepot)}</td>
                   <td className={`px-5 py-3.5 tabular-nums ${enRetard(r) ? 'text-rose-600 font-bold' : ''}`}>{enRetard(r) && <AlertTriangle size={13} className="inline mr-1" />}{fmtDate(r.dateLimiteReponse)}</td>
                   <td className="px-5 py-3.5"><Pastille statut={r.statut} /></td>
+                  <td className="px-5 py-3.5"><AvisPastilles avis={r.avis || []} /></td>
                 </tr>
               ))}
             </tbody>
@@ -219,6 +234,8 @@ export default function DemandesTournagesPage() {
                   <a key={i} href={p.chemin} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline"><Paperclip size={14} /> {p.libelle} <span className="text-slate-400 text-xs">— {p.nom}</span></a>
                 ))}
               </Bloc>
+
+              <AvisServices demandeId={detail.id} onChange={charger} />
 
               <Bloc titre="Notes internes">
                 <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} className="w-full rounded-lg border border-slate-200 p-3 text-sm" placeholder="Réserves, rendez-vous sur site, conditions techniques et financières…" />

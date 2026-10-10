@@ -11,7 +11,8 @@ export type Permission =
   | 'CONTROLE_TERRAIN'  // I: Contrôle terrain
   | 'MANAGE_USERS'      // J: Attribution des droits
   | 'VIEW_TOURNAGES'    // K: Demandes de tournage et tournages en cours
-  | 'VIEW_CARTE';       // L: Carte SIG
+  | 'VIEW_CARTE'        // L: Carte SIG
+  | 'MANAGE_TOURNAGES'; // M: Paramétrage de la gestion des tournages (délais, services, e-mails)
 
 export const PERMISSIONS: Permission[] = [
   'CREATE_DOSSIER',
@@ -25,6 +26,7 @@ export const PERMISSIONS: Permission[] = [
   'MANAGE_USERS',
   'VIEW_TOURNAGES',
   'VIEW_CARTE',
+  'MANAGE_TOURNAGES',
 ];
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
@@ -39,6 +41,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   MANAGE_USERS:     'Attribution des droits',
   VIEW_TOURNAGES:   'Demandes de tournage et tournages en cours',
   VIEW_CARTE:       'Carte SIG',
+  MANAGE_TOURNAGES: 'Paramétrage des tournages',
 };
 
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
@@ -67,6 +70,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   TOURNAGES: [
     'VIEW_TOURNAGES',
     'VIEW_CARTE',
+    'MANAGE_TOURNAGES',
   ],
   ADMINISTRATEUR: [
     'CREATE_DOSSIER',
@@ -80,6 +84,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'MANAGE_USERS',
     'VIEW_TOURNAGES',
     'VIEW_CARTE',
+    'MANAGE_TOURNAGES',
   ],
 };
 

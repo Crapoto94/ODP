@@ -19,10 +19,10 @@ import ContactRolesTab from './components/ContactRolesTab';
 import RolesTab from './components/RolesTab';
 import FilienTab from './components/FilienTab';
 import TournagesTab from './components/TournagesTab';
-import { SETTINGS_TABS, SETTINGS_GROUPS, isSettingsTab, type TabType } from './tabs';
+import { SETTINGS_TABS, SETTINGS_GROUPS, isSettingsTab, tabsPourDroits, type TabType } from './tabs';
+import { hasPermission } from '@/lib/permissions';
 import { useUiMode } from '@/components/UiModeProvider';
 
-const tabs = SETTINGS_TABS;
 const groups = SETTINGS_GROUPS;
 
 export default function SettingsPage() {
@@ -38,9 +38,14 @@ function SettingsPageInner() {
   const uiMode = useUiMode();
   const searchParams = useSearchParams();
   const [tabState, setActiveTab] = useState<TabType>('general');
+  // Droits : sans MANAGE_USERS (ex. agent tournages), seul l'onglet « Gestion des tournages » est proposé
+  const [role, setRole] = useState<string | null>(null);
+  useEffect(() => { axios.get('/api/auth/me').then((r) => setRole(r.data?.role || null)).catch(() => {}); }, []);
+  const restreint = !!role && !hasPermission(role, 'MANAGE_USERS');
+  const tabs = tabsPourDroits(!restreint);
   // Nouvelle interface : le sous-menu est dans le menu latéral principal, l'onglet actif vient de l'adresse (?tab=…)
   const tabParam = searchParams.get('tab');
-  const activeTab: TabType = uiMode === 'v2' ? (isSettingsTab(tabParam) ? tabParam : 'general') : tabState;
+  const activeTab: TabType = restreint ? 'tournages' : uiMode === 'v2' ? (isSettingsTab(tabParam) ? tabParam : 'general') : tabState;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);

@@ -8,7 +8,8 @@ import axios from 'axios';
 import { ChevronLeft, ChevronRight, LogOut, Menu, X, Zap, Loader2 } from 'lucide-react';
 import { menuItems, isItemVisible, type MenuItem } from '@/components/Sidebar';
 import UiModeSwitch from '@/components/v2/UiModeSwitch';
-import { SETTINGS_TABS, SETTINGS_GROUPS, isSettingsTab } from '@/app/dashboard/settings/tabs';
+import { SETTINGS_GROUPS, isSettingsTab, tabsPourDroits } from '@/app/dashboard/settings/tabs';
+import { hasPermission } from '@/lib/permissions';
 
 // Groupes de la maquette : « Exploitation & suivi » (5 premiers) puis « Gestion métier ».
 const GROUPS: { title: string; items: MenuItem[] }[] = [
@@ -25,14 +26,15 @@ const DOMAIN: Record<string, { dot: string; badge: string }> = {
 };
 
 // Sous-menu des Paramètres, directement dans le menu latéral (groupes Configuration / Référentiels / Technique)
-export function SettingsSubMenu({ activeTab, onNavigate }: { activeTab: string; onNavigate: () => void }) {
+export function SettingsSubMenu({ activeTab, onNavigate, user }: { activeTab: string; onNavigate: () => void; user?: any }) {
+  const tabs = tabsPourDroits(!user?.role || hasPermission(user.role, 'MANAGE_USERS'));
   return (
     <div className="ml-5 mt-1 mb-2 pl-3 border-l border-slate-700 space-y-3">
-      {SETTINGS_GROUPS.map((g) => (
+      {SETTINGS_GROUPS.filter((g) => tabs.some((t) => t.group === g)).map((g) => (
         <div key={g}>
           <p className="px-2 mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">{g}</p>
           <div className="space-y-0.5">
-            {SETTINGS_TABS.filter((t) => t.group === g).map((t) => {
+            {tabs.filter((t) => t.group === g).map((t) => {
               const on = t.id === activeTab;
               return (
                 <Link
@@ -88,7 +90,7 @@ function Nav({ collapsed, user, counts, onNavigate }: { collapsed: boolean; user
                     )}
                   </Link>
                   {item.href === '/dashboard/settings' && pathname.startsWith('/dashboard/settings') && !collapsed && (
-                    <SettingsSubMenu activeTab={isSettingsTab(sp.get('tab')) ? sp.get('tab')! : 'general'} onNavigate={onNavigate} />
+                    <SettingsSubMenu activeTab={isSettingsTab(sp.get('tab')) ? sp.get('tab')! : (user?.role && !hasPermission(user.role, 'MANAGE_USERS') ? 'tournages' : 'general')} onNavigate={onNavigate} user={user} />
                   )}
                   </React.Fragment>
                 );

@@ -8,7 +8,6 @@ const publicRoutes = ['/login', '/mobile/login', '/api/auth/login', '/api/auth/s
 const unprotectedDashboardRoutes = ['/dashboard/facturation/sedit-validation'];
 
 const PERMISSION_PATHS: Array<{ prefix: string; permission: Permission }> = [
-  { prefix: '/dashboard/settings', permission: 'MANAGE_USERS' },
   { prefix: '/dashboard/tarifs', permission: 'MANAGE_TARIFS' },
   { prefix: '/dashboard/gabarit', permission: 'MANAGE_TRAMES' },
   { prefix: '/dashboard/facturation', permission: 'SEND_EMAILS' },
@@ -49,8 +48,11 @@ export async function middleware(request: NextRequest) {
       if (path.startsWith('/dashboard/occupations') && path === '/dashboard/occupations' && request.nextUrl.searchParams.get('filtre') !== 'TOURNAGE') {
         return NextResponse.redirect(new URL('/dashboard/occupations?filtre=TOURNAGE', request.url));
       }
-      const ok = ['/dashboard/tournages', '/dashboard/occupations', '/dashboard/carte'].some((p) => path.startsWith(p));
+      const ok = ['/dashboard/tournages', '/dashboard/occupations', '/dashboard/carte', '/dashboard/settings'].some((p) => path.startsWith(p));
       if (!ok) return NextResponse.redirect(demandes);
+    }
+    if (path.startsWith('/dashboard/settings') && !hasPermission(role, 'MANAGE_USERS') && !hasPermission(role, 'MANAGE_TOURNAGES')) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     for (const { prefix, permission } of PERMISSION_PATHS) {
       if (path.startsWith(prefix) && !hasPermission(role, permission)) {

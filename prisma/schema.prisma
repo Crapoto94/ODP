@@ -556,3 +556,43 @@ model TournageConfig {
   frontendsAutorises Json     @default("[]") // [{ nom, ip, actif }] — IP ou CIDR des frontends autorisés à appeler l'API publique
   updated_at         DateTime @updatedAt
 }
+
+// Services consultés pour avis sur les demandes de tournage (DAC = point d'entrée, les services disent oui / non)
+model ServiceInstructeur {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  nom           String
+  description   String?
+  emails        Json     @default("[]") // adresses destinataires des demandes d'avis
+  questions     Json     @default("[]") // [{ id, libelle, type: OUINON | TEXTE }] questions propres au service
+  circuitPropre Boolean  @default(false) // service avec son propre circuit (signature, tarifs)
+  actif         Boolean  @default(true)
+  ordre         Int      @default(0)
+  updated_at    DateTime @updatedAt
+}
+
+// Demande d'avis adressée à un service (ou « libre », adresses saisies à la volée) ; réponse par lien, sans authentification
+model AvisTournage {
+  id                  Int       @id @default(autoincrement())
+  demandeId           Int
+  serviceId           Int?
+  serviceNom          String
+  libre               Boolean   @default(false)
+  destinataires       Json      @default("[]")
+  token               String    @unique
+  statut              String    @default("EN_ATTENTE") // EN_ATTENTE | FAVORABLE | DEFAVORABLE | ANNULE
+  message             String?
+  questions           Json      @default("[]")
+  reponseCommentaire  String?
+  reponseDonnees      Json?
+  reponduPar          String?
+  demandePar          String?
+  dateDemande         DateTime  @default(now())
+  dateReponse         DateTime?
+  derniereRelance     DateTime?
+  nbRelances          Int       @default(0)
+  updated_at          DateTime  @updatedAt
+
+  @@index([demandeId])
+  @@index([statut])
+}

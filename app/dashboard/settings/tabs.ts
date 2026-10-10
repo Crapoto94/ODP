@@ -24,4 +24,7 @@ export const SETTINGS_TABS: SettingsTab[] = [
 
 export const SETTINGS_GROUPS = ['Configuration', 'Référentiels', 'Technique'];
 
+// Sans le droit « Attribution des droits » (MANAGE_USERS), seul l'onglet de gestion des tournages est accessible
+export const tabsPourDroits = (peutToutGerer: boolean) => (peutToutGerer ? SETTINGS_TABS : SETTINGS_TABS.filter((t) => t.id === 'tournages'));
+
 export const isSettingsTab = (v: string | null | undefined): v is TabType => !!v && SETTINGS_TABS.some((t) => t.id === v);

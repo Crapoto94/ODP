@@ -104,3 +104,10 @@ export const STATUTS_DEMANDE: Record<string, { label: string; cls: string }> = {
   REFUSEE: { label: 'Refusée', cls: 'bg-rose-50 text-rose-700' },
   ANNULEE: { label: 'Annulée', cls: 'bg-slate-100 text-slate-600' },
 };
+
+export const STATUTS_AVIS: Record<string, { label: string; cls: string }> = {
+  EN_ATTENTE: { label: 'Pas de retour', cls: 'bg-amber-50 text-amber-700' },
+  FAVORABLE: { label: 'Favorable', cls: 'bg-emerald-50 text-emerald-700' },
+  DEFAVORABLE: { label: 'Défavorable', cls: 'bg-rose-50 text-rose-700' },
+  ANNULE: { label: 'Annulé', cls: 'bg-slate-100 text-slate-500' },
+};

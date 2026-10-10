@@ -7,7 +7,7 @@ import { lireConfigTournage } from '@/lib/tournage-service';
 
 async function admin() {
   const s = await getSession();
-  return s && hasPermissionServer(s.role, 'MANAGE_USERS') ? s : null;
+  return s && (hasPermissionServer(s.role, 'MANAGE_USERS') || hasPermissionServer(s.role, 'MANAGE_TOURNAGES')) ? s : null;
 }
 
 export async function GET() {

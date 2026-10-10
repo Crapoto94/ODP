@@ -86,10 +86,36 @@ function construire(i) {
 (async () => {
   try {
     for (const q of DDL) await prisma.$executeRawUnsafe(q);
+    await prisma.avisTournage.deleteMany({ where: { demandePar: 'Démo' } });
     const sup = await prisma.demandeTournage.deleteMany({ where: { reference: { startsWith: 'TOU-DEMO-' } } });
     console.log(`Exemples supprimés : ${sup.count}`);
     if (process.argv.includes('--purge')) return;
     for (let i = 0; i < 30; i++) await prisma.demandeTournage.create({ data: construire(i) });
+    // Avis des services (exemples) : mélange de favorables, défavorables et sans retour
+    await prisma.avisTournage.deleteMany({ where: { demandePar: 'Démo' } });
+    const services = await prisma.serviceInstructeur.findMany({ orderBy: { id: 'asc' } });
+    const demos = await prisma.demandeTournage.findMany({ where: { reference: { startsWith: 'TOU-DEMO-' } }, orderBy: { reference: 'asc' } });
+    let nbAvis = 0;
+    for (const [i, d] of demos.entries()) {
+      if (d.statut === 'NOUVELLE' && i % 3 !== 0) continue; // certaines nouvelles demandes n'ont pas encore d'avis demandé
+      const nb = 1 + (i % 3);
+      for (let k = 0; k < nb && services.length; k++) {
+        const sv = services[(i + k) % services.length];
+        const r = (i * 7 + k * 3) % 5; // 0 favorable, 1 défavorable, 2-4 sans retour
+        const statut = r === 0 ? 'FAVORABLE' : r === 1 ? 'DEFAVORABLE' : 'EN_ATTENTE';
+        const demande = new Date(d.dateDepot.getTime() + 86400000 * (k + 1));
+        await prisma.avisTournage.create({ data: {
+          demandeId: d.id, serviceId: sv.id, serviceNom: sv.nom, destinataires: ['service.exemple@ivry94.fr'],
+          token: require('crypto').randomBytes(24).toString('hex'), statut, message: k === 0 ? 'Merci de nous indiquer si la mise à disposition est possible.' : null,
+          questions: sv.questions, demandePar: 'Démo', dateDemande: demande,
+          reponseCommentaire: statut === 'FAVORABLE' ? "Pas d'objection, sous réserve du respect des horaires." : statut === 'DEFAVORABLE' ? 'Créneau incompatible avec les activités programmées.' : null,
+          reponseDonnees: statut !== 'EN_ATTENTE' && Array.isArray(sv.questions) && sv.questions[0] ? { [sv.questions[0].id]: sv.questions[0].type === 'OUINON' ? i % 2 === 0 : "Précisions d'exemple" } : null,
+          reponduPar: statut !== 'EN_ATTENTE' ? 'Responsable du service' : null, dateReponse: statut !== 'EN_ATTENTE' ? new Date(demande.getTime() + 86400000 * 2) : null,
+        } });
+        nbAvis++;
+      }
+    }
+    console.log(`Avis d'exemple créés : ${nbAvis}`);
     const par = await prisma.demandeTournage.groupBy({ by: ['statut'], _count: true, where: { reference: { startsWith: 'TOU-DEMO-' } } });
     console.log('Exemples créés : 30 —', par.map((p) => `${p.statut}: ${p._count}`).join(', '));
   } finally { await prisma.$disconnect(); }

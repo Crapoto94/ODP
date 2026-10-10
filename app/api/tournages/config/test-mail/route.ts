@@ -7,7 +7,7 @@ import { envoyerMailTest } from '@/lib/tournage-mail';
 // Envoie le modèle « accusé de réception » (données fictives) pour contrôler expéditeur et pied de page
 export async function POST(req: Request) {
   const s = await getSession();
-  if (!s || !hasPermissionServer(s.role, 'MANAGE_USERS')) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
+  if (!s || !(hasPermissionServer(s.role, 'MANAGE_USERS') || hasPermissionServer(s.role, 'MANAGE_TOURNAGES'))) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
   try {
     const { to } = await req.json();
     if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(to))) return NextResponse.json({ error: 'Adresse invalide' }, { status: 400 });
