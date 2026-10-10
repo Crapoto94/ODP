@@ -40,7 +40,6 @@ export default function DemandeForm() {
   const [plan, setPlan] = useState<Record<string, { lieu: string; heures: string; materiel: string }>>({});
   const [pers, setPers] = useState({ equipe: '', comediens: '', figurants: '', autres: '', autresPrecision: '' });
   const [veh, setVeh] = useState({ description: '', nbPlaces: '', localisation: '' });
-  const [blocage, setBlocage] = useState(false);
   const [etudiant, setEtudiant] = useState(false);
   const [ecole, setEcole] = useState({ nom: '', contact: '', telephone: '', email: '' });
   const [cas, setCas] = useState({ drone: false, passerelle: false, cormailles: false });
@@ -66,6 +65,7 @@ export default function DemandeForm() {
 
   const min = cfg?.premiereDatePossible || '';
   const ouvres = cfg?.typeJours === 'OUVRES';
+  const stationne = lieu.emplacements.includes('Places de stationnement');
   // Copie un jour (horaires + ligne du plan de tournage) sur le lendemain, juste après lui
   const dupliquerJour = (i: number) => {
     const src = jours[i];
@@ -119,7 +119,7 @@ export default function DemandeForm() {
         demandeur: dem, ...projet, violence, armesFactices: armes, jours,
         lieu, plan: datesPlan.map((d) => ({ date: d, ...plan[d] })),
         personnes: { equipe: Number(pers.equipe) || 0, comediens: Number(pers.comediens) || 0, figurants: Number(pers.figurants) || 0, autres: Number(pers.autres) || 0, autresPrecision: pers.autresPrecision.trim() },
-        vehicules: { description: veh.description, blocagePlaces: blocage, nbPlaces: blocage && veh.nbPlaces !== '' ? Number(veh.nbPlaces) : null, localisation: blocage ? veh.localisation : '' },
+        vehicules: { description: veh.description, blocagePlaces: lieu.emplacements.includes('Places de stationnement'), nbPlaces: stationne && veh.nbPlaces !== '' ? Number(veh.nbPlaces) : null, localisation: stationne ? veh.localisation : '' },
         etudiant, ecole: etudiant ? ecole : null, cas, accepte,
       };
       const fd = new FormData();
@@ -296,15 +296,10 @@ export default function DemandeForm() {
           </div>
           <div className="grid">
             <div className="span2"><label className="f">Véhicules et matériel à stationner <span className="muted">(facultatif)</span></label><textarea style={{ minHeight: 70 }} placeholder="Camions, camions-loge, camion-cantine, groupe électrogène…" value={veh.description} onChange={(e) => setVeh({ ...veh, description: e.target.value })} /></div>
-            <div className="span2">
-              <label style={{ display: 'inline-flex', gap: 8, cursor: 'pointer', fontWeight: 600 }}>
-                <input type="checkbox" checked={blocage} onChange={(e) => setBlocage(e.target.checked)} /> Blocage de places de stationnement
-              </label>
-            </div>
-            {blocage && (
+            {lieu.emplacements.includes('Places de stationnement') && (
               <>
                 <div><label className="f">Nombre de places de stationnement occupées <span className="muted">(facultatif)</span></label><input type="number" min={0} value={veh.nbPlaces} onChange={(e) => setVeh({ ...veh, nbPlaces: e.target.value })} /></div>
-                <div><label className="f">Localisation <span className="muted">(facultatif)</span></label><input type="text" placeholder="du n° 10 au n° 18 de la rue …" value={veh.localisation} onChange={(e) => setVeh({ ...veh, localisation: e.target.value })} /></div>
+                <div><label className="f">Localisation des places <span className="muted">(facultatif)</span></label><input type="text" placeholder="du n° 10 au n° 18 de la rue …" value={veh.localisation} onChange={(e) => setVeh({ ...veh, localisation: e.target.value })} /></div>
               </>
             )}
           </div>

@@ -174,9 +174,8 @@ export default function DemandesTournagesPage() {
                 <L k="Adresse" v={d.lieu?.adresse} />
                 {d.lieu?.precisions && <L k="Précisions" v={d.lieu.precisions} />}
                 <L k="Véhicules / matériel" v={d.vehicules?.description} />
-                <L k="Blocage de places de stationnement" v={d.vehicules?.blocagePlaces ? 'Oui' : 'Non'} />
-                {d.vehicules?.blocagePlaces && <L k="Places occupées" v={d.vehicules?.nbPlaces} />}
-                {d.vehicules?.blocagePlaces && <L k="Localisation" v={d.vehicules?.localisation} />}
+                {(d.vehicules?.nbPlaces != null || d.vehicules?.localisation) && <L k="Places de stationnement occupées" v={d.vehicules?.nbPlaces} />}
+                {d.vehicules?.localisation && <L k="Localisation des places" v={d.vehicules?.localisation} />}
                 <L k="Personnes mobilisées" v={`${d.personnes?.equipe || 0} équipe · ${d.personnes?.comediens || 0} comédiens · ${d.personnes?.figurants || 0} figurants${d.personnes?.autres ? ` · ${d.personnes.autres} autres${d.personnes.autresPrecision ? ` (${d.personnes.autresPrecision})` : ''}` : ''}`} />
               </Bloc>
 
