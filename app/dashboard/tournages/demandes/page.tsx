@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Clapperboard, Search, Loader2, X, FileText, Paperclip, Calendar, AlertTriangle, Save, Building2, Phone, Mail } from 'lucide-react';
 import { STATUTS_DEMANDE } from '@/lib/tournage-regles';
 import AvisServices, { AvisPastilles } from './AvisServices';
+import DossierLien from './DossierLien';
 
 const fmtDate = (v: any) => (v ? new Date(v).toLocaleDateString('fr-FR') : '—');
 const fmtIso = (s?: string) => (s ? s.split('-').reverse().join('/') : '—');
@@ -136,7 +137,7 @@ export default function DemandesTournagesPage() {
             <tbody>
               {filtrees.map((r) => (
                 <tr key={r.id} onClick={() => ouvrir(r.id)} className="border-t border-slate-100 hover:bg-slate-50 cursor-pointer">
-                  <td className="px-5 py-3.5 font-bold text-slate-900 tabular-nums">{r.reference}</td>
+                  <td className="px-5 py-3.5 font-bold text-slate-900 tabular-nums">{r.reference}{r.occupationId ? <span title={`Dossier ODP #${r.occupationId}`} className="ml-2 px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-bold">Dossier #{r.occupationId}</span> : null}</td>
                   <td className="px-5 py-3.5"><p className="font-semibold text-slate-900">{r.titre}</p><p className="text-xs text-slate-500">{r.typeFilm}</p></td>
                   <td className="px-5 py-3.5"><p>{r.societe}</p><p className="text-xs text-slate-500">{r.demandeurNom}</p></td>
                   <td className="px-5 py-3.5 tabular-nums">{fmtDate(r.premiereDate)}{r.derniereDate && r.derniereDate !== r.premiereDate ? ` → ${fmtDate(r.derniereDate)}` : ''}</td>
@@ -236,6 +237,8 @@ export default function DemandesTournagesPage() {
               </Bloc>
 
               <AvisServices demandeId={detail.id} onChange={charger} />
+
+              <DossierLien demande={detail} onChange={() => { charger(); ouvrir(detail.id); }} />
 
               <Bloc titre="Notes internes">
                 <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={4} className="w-full rounded-lg border border-slate-200 p-3 text-sm" placeholder="Réserves, rendez-vous sur site, conditions techniques et financières…" />

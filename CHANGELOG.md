@@ -12,6 +12,12 @@ les éléments rattachés à chaque version viennent du backlog.
 - **Menu Gestion métier › Demandes de tournages** : liste filtrable, fiche détaillée, pièces jointes, statuts (nouvelle, en instruction, complément, accord de principe, refusée, annulée), notes internes, alerte de dépassement du délai de réponse.
 - **Nouveau rôle « Agent tournages »** : ne voit que les demandes de tournage, les tournages en cours et la carte (droits `VIEW_TOURNAGES` / `VIEW_CARTE`, modifiables dans Paramètres › Rôles).
 
+### Instruction par les services et dossier ODP
+- **Demandes d'avis aux services** (direction de l'espace public, sports, éducation, CMS, salles municipales, autres gestionnaires) : services et adresses e-mail paramétrables, questions propres à chaque service (ex. présence d'un médecin / infirmier au CMS, usage par les associations sportives), avis « libres » avec adresses à la volée, relance, annulation. Réponse favorable / défavorable **sans authentification** par un lien reçu par e-mail ; suivi dans la liste et la fiche des demandes.
+- **Droit « Paramétrage des tournages »** : l'agent tournages accède à l'onglet Gestion des tournages des paramètres.
+- **Création du dossier de tournage ODP depuis une demande** : tiers existant ou nouveau tiers provisoire, contact, dates, lieu, résumé complet et avis des services repris dans le dossier.
+- **Pièces jointes protégées** : stockées hors du dossier public (`data/tournages`, volume Docker) et servies uniquement aux utilisateurs ayant accès aux demandes.
+
 ### Divers
 - Produit renommé **VibeODP**.
 - **Logo de la ville** téléversable dans Paramètres › Général, affiché en haut à gauche.

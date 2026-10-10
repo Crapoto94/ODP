@@ -3,6 +3,7 @@ import { join } from 'path';
 import { mkdir, writeFile } from 'fs/promises';
 import { randomUUID } from 'crypto';
 import { prisma } from '@/lib/prisma';
+import { dirTournages, urlPiece } from '@/lib/tournage-fichiers';
 import { searchAddress } from '@/lib/geocoding';
 import { envoyerMailTournage } from '@/lib/tournage-mail';
 import { lireConfigTournage, reglesDe, validerDemande, verifierCleApi } from '@/lib/tournage-service';
@@ -47,14 +48,14 @@ export async function POST(req: Request) {
     const n = (await (prisma as any).demandeTournage.count({ where: { reference: { startsWith: `TOU-${annee}-` } } })) + 1;
     const reference = `TOU-${annee}-${String(n).padStart(4, '0')}`;
 
-    const dossier = join(process.cwd(), 'public', 'uploads', 'tournages', reference);
+    const dossier = join(dirTournages(), reference); // hors dossier public : servi par une route contrôlée
     await mkdir(dossier, { recursive: true });
     const pieces: any[] = [];
     for (const f of fichiers) {
       const ext = (f.file.name.split('.').pop() || 'pdf').toLowerCase();
       const nom = `${randomUUID()}.${ext}`;
       await writeFile(join(dossier, nom), Buffer.from(await f.file.arrayBuffer()));
-      pieces.push({ kind: f.kind, libelle: f.libelle, nom: f.file.name, chemin: `/uploads/tournages/${reference}/${nom}`, taille: f.file.size });
+      pieces.push({ kind: f.kind, libelle: f.libelle, nom: f.file.name, chemin: urlPiece(reference, nom), taille: f.file.size });
     }
 
     // Position de l'adresse pour la carte (échec toléré : géocodé plus tard à l'affichage de la carte)

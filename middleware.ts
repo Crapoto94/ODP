@@ -26,6 +26,12 @@ export async function middleware(request: NextRequest) {
   const cookie = request.cookies.get('session')?.value;
   const session = cookie ? await decrypt(cookie) : null;
 
+  // Anciennes pièces jointes de tournage (déposées avant la route contrôlée) : plus d'accès public direct
+  if (path.startsWith('/uploads/tournages/')) {
+    if (!session || !hasPermission(session.role as string, 'VIEW_TOURNAGES')) return new NextResponse('Accès refusé', { status: 403 });
+    return NextResponse.rewrite(new URL(`/api/tournages/pieces/${path.split('/').slice(3).join('/')}`, request.url));
+  }
+
   // 1. Redirect to login if accessing protected route without session
   if (isProtectedRoute && !session) {
     const dest = path.startsWith('/mobile') ? '/mobile/login' : '/login';

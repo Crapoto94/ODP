@@ -48,3 +48,6 @@ DIP/
 
 # deploiement local (pulldocker.ini contient des identifiants serveur)
 pulldocker.ini
+
+# pièces jointes des demandes de tournage (volume Docker)
+/data/
