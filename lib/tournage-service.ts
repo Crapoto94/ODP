@@ -2,9 +2,28 @@ import { timingSafeEqual, randomBytes } from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { normaliserConfig, premiereDatePossible, iso, parseIso, type ConfigRegles } from '@/lib/tournage-regles';
 
+// Crée les tables du module si la migration Prisma n'a pas (encore) été appliquée sur le schéma courant (idempotent).
+const DDL = [
+  `CREATE TABLE IF NOT EXISTS "DemandeTournage" ("id" SERIAL NOT NULL, "reference" TEXT NOT NULL, "statut" TEXT NOT NULL DEFAULT 'NOUVELLE', "dateDepot" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "dateLimiteReponse" TIMESTAMP(3), "premiereDate" TIMESTAMP(3), "derniereDate" TIMESTAMP(3), "societe" TEXT NOT NULL, "demandeurNom" TEXT NOT NULL, "email" TEXT NOT NULL, "telephone" TEXT, "titre" TEXT NOT NULL, "typeFilm" TEXT NOT NULL, "donnees" JSONB NOT NULL, "pieces" JSONB NOT NULL DEFAULT '[]', "notesInternes" TEXT, "occupationId" INTEGER, "traiteePar" TEXT, "updated_at" TIMESTAMP(3) NOT NULL, CONSTRAINT "DemandeTournage_pkey" PRIMARY KEY ("id"))`,
+  `CREATE TABLE IF NOT EXISTS "TournageConfig" ("id" INTEGER NOT NULL DEFAULT 1, "actif" BOOLEAN NOT NULL DEFAULT true, "delaiInstruction" INTEGER NOT NULL DEFAULT 15, "typeJours" TEXT NOT NULL DEFAULT 'OUVRES', "exclureFeries" BOOLEAN NOT NULL DEFAULT true, "delaiMinimalDepot" INTEGER NOT NULL DEFAULT 0, "periodesAbsence" JSONB NOT NULL DEFAULT '[]', "messageAccueil" TEXT, "emailNotification" TEXT, "apiKey" TEXT, "frontendsAutorises" JSONB NOT NULL DEFAULT '[]', "updated_at" TIMESTAMP(3) NOT NULL, CONSTRAINT "TournageConfig_pkey" PRIMARY KEY ("id"))`,
+  `ALTER TABLE "TournageConfig" ADD COLUMN IF NOT EXISTS "frontendsAutorises" JSONB NOT NULL DEFAULT '[]'`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS "DemandeTournage_reference_key" ON "DemandeTournage"("reference")`,
+  `CREATE INDEX IF NOT EXISTS "DemandeTournage_statut_idx" ON "DemandeTournage"("statut")`,
+  `CREATE INDEX IF NOT EXISTS "DemandeTournage_dateDepot_idx" ON "DemandeTournage"("dateDepot")`,
+];
+const pretParSchema = new Set<string>();
+export async function assurerTablesTournage() {
+  const db = prisma as any;
+  const [{ s }] = await db.$queryRawUnsafe('SELECT current_schema() AS s');
+  if (pretParSchema.has(s)) return;
+  for (const q of DDL) await db.$executeRawUnsafe(q);
+  pretParSchema.add(s);
+}
+
 // Config unique (id = 1), créée à la demande
 export async function lireConfigTournage() {
   const db = prisma as any;
+  await assurerTablesTournage();
   let row = await db.tournageConfig.findUnique({ where: { id: 1 } });
   if (!row) row = await db.tournageConfig.create({ data: { id: 1, apiKey: randomBytes(24).toString('hex') } });
   return row;
