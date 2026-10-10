@@ -44,6 +44,11 @@ export default function DemandesTournagesPage() {
       .catch((e) => setErreur(e.response?.data?.error || e.message)).finally(() => setLoading(false));
   };
   useEffect(charger, []);
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (id) ouvrir(Number(id)).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const ouvrir = async (id: number) => {
     const r = await axios.get(`/api/tournages/demandes/${id}`);

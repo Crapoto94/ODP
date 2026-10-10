@@ -3,6 +3,7 @@ import { join } from 'path';
 import { mkdir, writeFile } from 'fs/promises';
 import { randomUUID } from 'crypto';
 import { prisma } from '@/lib/prisma';
+import { searchAddress } from '@/lib/geocoding';
 import { envoyerMailTournage } from '@/lib/tournage-mail';
 import { lireConfigTournage, reglesDe, validerDemande, verifierCleApi } from '@/lib/tournage-service';
 import { dateLimiteReponse, parseIso } from '@/lib/tournage-regles';
@@ -55,6 +56,12 @@ export async function POST(req: Request) {
       await writeFile(join(dossier, nom), Buffer.from(await f.file.arrayBuffer()));
       pieces.push({ kind: f.kind, libelle: f.libelle, nom: f.file.name, chemin: `/uploads/tournages/${reference}/${nom}`, taille: f.file.size });
     }
+
+    // Position de l'adresse pour la carte (échec toléré : géocodé plus tard à l'affichage de la carte)
+    try {
+      const g = (await searchAddress(String(donnees.lieu.adresse)))[0];
+      if (g) donnees.lieu = { ...donnees.lieu, latitude: g.latitude, longitude: g.longitude };
+    } catch { /* ignoré */ }
 
     const dem = donnees.demandeur;
     const creee = await (prisma as any).demandeTournage.create({

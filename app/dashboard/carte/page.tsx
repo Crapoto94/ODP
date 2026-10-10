@@ -3,7 +3,8 @@
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Layers, Map as MapIcon, Loader2, Package, MapPin, Info } from 'lucide-react';
+import { Layers, Map as MapIcon, Loader2, Package, MapPin, Info, Clapperboard } from 'lucide-react';
+import { hasPermission, isTournagesOnly } from '@/lib/permissions';
 
 const SigMap = dynamic(() => import('@/components/Map'), { 
   ssr: false,
@@ -15,7 +16,14 @@ const SigMap = dynamic(() => import('@/components/Map'), {
   )
 });
 
+const TournagesMap = dynamic(() => import('@/components/TournagesMap'), { ssr: false });
+
 export default function CartePage() {
+  const [user, setUser] = useState<any>(null);
+  const [vue, setVue] = useState<'GENERALE' | 'TOURNAGES'>('GENERALE');
+  useEffect(() => { axios.get('/api/auth/me').then((r) => { setUser(r.data); if (isTournagesOnly(r.data?.role)) setVue('TOURNAGES'); }).catch(() => {}); }, []);
+  const seulTournages = isTournagesOnly(user?.role);
+  const peutVoirTournages = !!user?.role && hasPermission(user.role, 'VIEW_TOURNAGES');
   const [occupations, setOccupations] = useState<any[]>([]);
   const [tiers, setTiers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,10 +47,16 @@ export default function CartePage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight">Carte SIG Live</h2>
-          <p className="text-slate-500 font-medium tracking-wide">Visualisation géographique des occupations</p>
+          <p className="text-slate-500 font-medium tracking-wide">{vue === 'TOURNAGES' ? 'Tournages en cours, à venir, passés et demandes' : 'Visualisation géographique des occupations'}</p>
         </div>
         <div className="flex gap-4">
-           {!loading && (
+           {peutVoirTournages && !seulTournages && (
+             <div className="flex rounded-xl border border-slate-200 overflow-hidden bg-white text-xs font-bold">
+               <button onClick={() => setVue('GENERALE')} className={`px-4 py-2 ${vue === 'GENERALE' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>Vue générale</button>
+               <button onClick={() => setVue('TOURNAGES')} className={`px-4 py-2 flex items-center gap-2 ${vue === 'TOURNAGES' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50'}`}><Clapperboard size={14} /> Tournages & demandes</button>
+             </div>
+           )}
+           {!loading && vue === 'GENERALE' && (
              <div className="flex items-center gap-3">
                <button
                  onClick={() => setShowTiers(!showTiers)}
@@ -86,14 +100,17 @@ export default function CartePage() {
                })}
              </div>
            )}
+          {vue === 'GENERALE' && (
           <button className="bg-white border border-slate-200 text-slate-600 px-4 py-3 rounded-xl font-bold text-xs flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm">
             <Layers size={16} /> Couches
-          </button>
+          </button>)}
         </div>
       </div>
 
       <div className="flex-1 min-h-[500px] bg-white rounded-[3rem] shadow-2xl relative overflow-hidden border border-slate-100">
-        {loading ? (
+        {vue === 'TOURNAGES' ? (
+          <TournagesMap />
+        ) : loading ? (
              <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 gap-4">
                <Loader2 className="animate-spin text-blue-600" size={40} />
                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Initialisation SIG...</p>
