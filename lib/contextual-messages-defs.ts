@@ -41,7 +41,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
     <p style="text-align:center"><a href="{{LIEN_SIGNATURE}}" class="cta-button">Consulter et Signer</a></p>
     <div class="expiration"><p>⏰ <strong>Attention :</strong> Ce lien sera valide jusqu'au <strong>{{DATE_EXPIRATION}}</strong>.</p></div>
     <p>Si vous n'avez pas demandé cette signature ou si vous avez des questions, veuillez contacter l'administrateur du système.</p>
-    <div class="footer"><p>ODP Console - Domaine Public</p><p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p></div>
+    <div class="footer"><p>VibeODP - Domaine Public</p><p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p></div>
   </div>
 </div></body></html>`,
   },
@@ -76,7 +76,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
     <div class="field"><div class="field-label">Commentaire du signataire</div><div class="comment-box">"{{COMMENTAIRE}}"</div></div>
     <p style="color:#dc2626;font-weight:bold">⚠️ Action Requise</p>
     <p>Veuillez adresser les points mentionnés et resoumettre le document pour signature.</p>
-    <div class="footer"><p>ODP Console - Domaine Public</p><p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p></div>
+    <div class="footer"><p>VibeODP - Domaine Public</p><p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p></div>
   </div>
 </div></body></html>`,
   },
@@ -110,7 +110,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
     <div class="field"><div class="field-label">Tiers</div><div class="field-value">{{TIERS}}</div></div>
     <div class="field"><div class="field-label">Signé le</div><div class="field-value">{{DATE_SIGNATURE}}</div></div>
     <p style="text-align:center"><a href="{{LIEN_DOSSIER}}" class="cta-button">Consulter le dossier</a></p>
-    <div class="footer"><p>ODP Console - Domaine Public</p><p>Ce message a été généré automatiquement.</p></div>
+    <div class="footer"><p>VibeODP - Domaine Public</p><p>Ce message a été généré automatiquement.</p></div>
   </div>
 </div></body></html>`,
   },
@@ -147,7 +147,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
     <div class="field"><div class="field-label">Motif</div><div class="comment-box">"{{COMMENTAIRE}}"</div></div>
     <p style="text-align:center"><a href="{{LIEN_DOSSIER}}" class="cta-button">Consulter le dossier</a></p>
     <p style="color:#d97706;font-weight:bold">⚠️ Veuillez corriger le document et relancer la procédure de signature.</p>
-    <div class="footer"><p>ODP Console - Domaine Public</p><p>Ce message a été généré automatiquement.</p></div>
+    <div class="footer"><p>VibeODP - Domaine Public</p><p>Ce message a été généré automatiquement.</p></div>
   </div>
 </div></body></html>`,
   },
@@ -271,7 +271,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
     <p style="background:#e8f4f8;padding:15px;border-left:4px solid #0284c7;border-radius:4px;font-size:14px">
       <strong>ℹ️ Information :</strong> En cliquant sur le bouton ci-dessus, vous confirmerez que le train de facturation a été intégré avec succès dans SEDIT.
     </p>
-    <div class="footer"><p>ODP Console - Domaine Public Ivry-sur-Seine</p><p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p></div>
+    <div class="footer"><p>VibeODP - Domaine Public Ivry-sur-Seine</p><p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p></div>
   </div>
 </div></body></html>`,
   },
@@ -311,7 +311,7 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
       <strong><span class="checkmark">✓</span> Récapitulatif :</strong>
       <ul style="margin:10px 0 0 0;padding-left:20px"><li>Tous les dossiers ont été facturés</li><li>Le fichier FILIEN a été généré</li><li>L'intégration SEDIT est confirmée</li><li>Les dossiers sont maintenant à l'état Titré</li></ul>
     </p>
-    <div class="footer"><p>ODP Console - Domaine Public Ivry-sur-Seine</p><p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p></div>
+    <div class="footer"><p>VibeODP - Domaine Public Ivry-sur-Seine</p><p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p></div>
   </div>
 </div></body></html>`,
   },

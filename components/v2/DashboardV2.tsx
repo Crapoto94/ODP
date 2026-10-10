@@ -85,7 +85,7 @@ const SHORTCUTS: { label: string; hint: string; href: string; icon: any; permiss
   { label: 'Facturation', hint: 'Trains, factures et état de paiement', href: '/dashboard/facturation', icon: ClipboardCheck, permission: 'SEND_EMAILS' },
   { label: 'Tarifs & articles', hint: 'Grille tarifaire de l\'année', href: '/dashboard/tarifs', icon: Euro, permission: 'MANAGE_TARIFS' },
   { label: "Report d'année", hint: 'Reconduire les dossiers', href: '/dashboard/report', icon: CopyPlus, permission: 'MANAGE_TARIFS' },
-  { label: 'Carte SIG', hint: 'Occupations sur le terrain', href: '/dashboard/carte', icon: MapIcon, permission: 'CONTROLE_TERRAIN' },
+  { label: 'Carte SIG', hint: 'Occupations sur le terrain', href: '/dashboard/carte', icon: MapIcon, permission: 'VIEW_CARTE' },
 ];
 
 export default function DashboardV2() {

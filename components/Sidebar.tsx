@@ -22,11 +22,13 @@ import {
   ShoppingBag,
   HardHat,
   Clapperboard,
+  FileVideo,
   Database,
   Zap,
   Loader2
 } from 'lucide-react';
-import { hasPermission, type Permission } from '@/lib/permissions';
+import { hasPermission, isTournagesOnly, type Permission } from '@/lib/permissions';
+import CityLogo from '@/components/CityLogo';
 import UiModeSwitch from '@/components/v2/UiModeSwitch';
 
 export type MenuItem = {
@@ -38,20 +40,31 @@ export type MenuItem = {
   path?: string;
   // Type de dossier attendu pour l'état actif (CHANTIER / TOURNAGE)
   dossierType?: string;
+  // Visible pour le rôle restreint « Agent tournages »
+  tournagesOk?: boolean;
 };
+
+// Droits + restriction du rôle « Agent tournages » (uniquement tournages, demandes et carte)
+export function isItemVisible(item: MenuItem, user: any): boolean {
+  if (item.permission && !user) return false;
+  if (item.permission && user?.role && !hasPermission(user.role, item.permission)) return false;
+  if (user?.role && isTournagesOnly(user.role) && !item.tournagesOk) return false;
+  return true;
+}
 
 export const menuItems: MenuItem[] = [
   { icon: LayoutDashboard, label: 'Tableau de bord', href: '/dashboard' },
   { icon: HardHat, label: 'Chantiers', href: '/dashboard/occupations?filtre=CHANTIER', path: '/dashboard/occupations', dossierType: 'CHANTIER' },
-  { icon: Clapperboard, label: 'Tournages', href: '/dashboard/occupations?filtre=TOURNAGE', path: '/dashboard/occupations', dossierType: 'TOURNAGE' },
+  { icon: Clapperboard, label: 'Tournages', href: '/dashboard/occupations?filtre=TOURNAGE', path: '/dashboard/occupations', dossierType: 'TOURNAGE', tournagesOk: true },
   { icon: Store, label: 'Commerces', href: '/dashboard/commerces' },
   { icon: ShoppingBag, label: 'T.L.P.E.', href: '/dashboard/tlpe' },
+  { icon: FileVideo, label: 'Demandes de tournages', href: '/dashboard/tournages/demandes', permission: 'VIEW_TOURNAGES', tournagesOk: true },
   { icon: Users, label: 'Gestion des Tiers', href: '/dashboard/tiers' },
   { icon: Euro, label: 'Tarifs & Articles', href: '/dashboard/tarifs', permission: 'MANAGE_TARIFS' },
   { icon: LayoutTemplate, label: 'Gabarits', href: '/dashboard/gabarit', permission: 'MANAGE_TRAMES' },
   { icon: ClipboardCheck, label: 'Facturation', href: '/dashboard/facturation', permission: 'SEND_EMAILS' },
   { icon: CopyPlus, label: "Report d'année", href: '/dashboard/report', permission: 'MANAGE_TARIFS' },
-  { icon: MapIcon, label: 'Carte SIG', href: '/dashboard/carte', permission: 'CONTROLE_TERRAIN' },
+  { icon: MapIcon, label: 'Carte SIG', href: '/dashboard/carte', permission: 'VIEW_CARTE', tournagesOk: true },
   { icon: Settings, label: 'Paramètres', href: '/dashboard/settings', permission: 'MANAGE_USERS' },
 ];
 
@@ -69,8 +82,7 @@ function SidebarLinks({ isCollapsed, user, activePath, activeDossierType }: Side
         const isActive = item.dossierType && activeDossierType
           ? activePath === item.path && item.dossierType === activeDossierType
           : activePath === item.href;
-        if (item.permission && user?.role && !hasPermission(user.role, item.permission)) return null;
-        if (item.permission && !user) return null;
+        if (!isItemVisible(item, user)) return null;
 
         return (
           <Link
@@ -185,10 +197,10 @@ export default function Sidebar() {
         {!isCollapsed && (
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-800 rounded-xl overflow-hidden border border-slate-700 flex items-center justify-center shadow-lg">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+              <CityLogo className="w-full h-full object-contain" />
             </div>
             <div className="animate-in fade-in slide-in-from-left-4 duration-500">
-              <h1 className="text-base font-black tracking-tighter text-white leading-none">Domaine Public</h1>
+              <h1 className="text-base font-black tracking-tighter text-white leading-none">VibeODP</h1>
               <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">Ville d'Ivry</p>
             </div>
           </div>

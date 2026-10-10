@@ -18,6 +18,7 @@ import MessagesContextuelsTab from './components/MessagesContextuelsTab';
 import ContactRolesTab from './components/ContactRolesTab';
 import RolesTab from './components/RolesTab';
 import FilienTab from './components/FilienTab';
+import TournagesTab from './components/TournagesTab';
 import { SETTINGS_TABS, SETTINGS_GROUPS, isSettingsTab, type TabType } from './tabs';
 import { useUiMode } from '@/components/UiModeProvider';
 
@@ -120,6 +121,7 @@ function SettingsPageInner() {
       {activeTab === 'general' && <GeneralTab {...{settings, setSettings, handleSubmit, handleTestMail, saving, message, apmStatus}} />}
       {activeTab === 'filien' && <FilienTab {...{settings, setSettings, handleSubmit, saving, message}} />}
       {activeTab === 'postgres' && <PostgresTab />}
+      {activeTab === 'tournages' && <TournagesTab />}
       {activeTab === 'users' && <UsersTab />}
       {activeTab === 'roles' && <RolesTab />}
       {activeTab === 'contact_roles' && <ContactRolesTab />}

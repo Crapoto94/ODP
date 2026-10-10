@@ -36,7 +36,7 @@ export function generateBillingNotificationEmail(context: BillingNotificationCon
     timestamp,
     validationLink,
     folderPath,
-    appName = 'ODP Console',
+    appName = 'VibeODP',
   } = context;
 
   const typesList = Object.entries(dossierTypes)
@@ -139,7 +139,7 @@ export function generateSeditIntegrationConfirmationEmail(context: SeditIntegrat
     dossiersCount,
     dossierTypes,
     validatedAt,
-    appName = 'ODP Console',
+    appName = 'VibeODP',
   } = context;
 
   const typesList = Object.entries(dossierTypes)

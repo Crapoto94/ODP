@@ -16,7 +16,10 @@ export function loadPermissions(): PermissionsMap {
   if (_cache && now - _cacheTime < CACHE_TTL) return _cache;
   try {
     if (fs.existsSync(CONFIG_PATH)) {
-      _cache = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+      const saved = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
+      // Les rôles absents du fichier (ajoutés depuis) reprennent leurs droits par défaut
+      for (const r of ROLES) if (!saved[r]) saved[r] = DEFAULT_PERMISSIONS[r];
+      _cache = saved;
       _cacheTime = now;
       return _cache!;
     }

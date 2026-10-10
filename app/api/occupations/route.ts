@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
+import { isTournagesOnly } from '@/lib/permissions';
 
 export async function GET(req: Request) {
   try {
@@ -34,6 +36,9 @@ export async function GET(req: Request) {
     }
 
     if (type) where.type = type;
+    // Rôle « Agent tournages » : uniquement les dossiers de tournage
+    const session = await getSession();
+    if (session && isTournagesOnly(session.role)) where.type = 'TOURNAGE';
     if (anneeTaxation) where.anneeTaxation = parseInt(anneeTaxation);
     if (tiersId) where.tiersId = parseInt(tiersId);
 

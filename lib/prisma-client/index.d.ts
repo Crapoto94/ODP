@@ -153,6 +153,16 @@ export type SignatureRequest = $Result.DefaultSelection<Prisma.$SignatureRequest
  * 
  */
 export type AppSettings = $Result.DefaultSelection<Prisma.$AppSettingsPayload>
+/**
+ * Model DemandeTournage
+ * 
+ */
+export type DemandeTournage = $Result.DefaultSelection<Prisma.$DemandeTournagePayload>
+/**
+ * Model TournageConfig
+ * 
+ */
+export type TournageConfig = $Result.DefaultSelection<Prisma.$TournageConfigPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -556,6 +566,26 @@ export class PrismaClient<
     * ```
     */
   get appSettings(): Prisma.AppSettingsDelegate<ExtArgs>;
+
+  /**
+   * `prisma.demandeTournage`: Exposes CRUD operations for the **DemandeTournage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DemandeTournages
+    * const demandeTournages = await prisma.demandeTournage.findMany()
+    * ```
+    */
+  get demandeTournage(): Prisma.DemandeTournageDelegate<ExtArgs>;
+
+  /**
+   * `prisma.tournageConfig`: Exposes CRUD operations for the **TournageConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TournageConfigs
+    * const tournageConfigs = await prisma.tournageConfig.findMany()
+    * ```
+    */
+  get tournageConfig(): Prisma.TournageConfigDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -1024,7 +1054,9 @@ export namespace Prisma {
     BillingRunInvoice: 'BillingRunInvoice',
     Signatory: 'Signatory',
     SignatureRequest: 'SignatureRequest',
-    AppSettings: 'AppSettings'
+    AppSettings: 'AppSettings',
+    DemandeTournage: 'DemandeTournage',
+    TournageConfig: 'TournageConfig'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1040,7 +1072,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "autorisation" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "autorisation" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings" | "demandeTournage" | "tournageConfig"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3001,6 +3033,146 @@ export namespace Prisma {
           count: {
             args: Prisma.AppSettingsCountArgs<ExtArgs>
             result: $Utils.Optional<AppSettingsCountAggregateOutputType> | number
+          }
+        }
+      }
+      DemandeTournage: {
+        payload: Prisma.$DemandeTournagePayload<ExtArgs>
+        fields: Prisma.DemandeTournageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DemandeTournageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DemandeTournageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload>
+          }
+          findFirst: {
+            args: Prisma.DemandeTournageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DemandeTournageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload>
+          }
+          findMany: {
+            args: Prisma.DemandeTournageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload>[]
+          }
+          create: {
+            args: Prisma.DemandeTournageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload>
+          }
+          createMany: {
+            args: Prisma.DemandeTournageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DemandeTournageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload>[]
+          }
+          delete: {
+            args: Prisma.DemandeTournageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload>
+          }
+          update: {
+            args: Prisma.DemandeTournageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload>
+          }
+          deleteMany: {
+            args: Prisma.DemandeTournageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DemandeTournageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.DemandeTournageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DemandeTournagePayload>
+          }
+          aggregate: {
+            args: Prisma.DemandeTournageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDemandeTournage>
+          }
+          groupBy: {
+            args: Prisma.DemandeTournageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DemandeTournageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DemandeTournageCountArgs<ExtArgs>
+            result: $Utils.Optional<DemandeTournageCountAggregateOutputType> | number
+          }
+        }
+      }
+      TournageConfig: {
+        payload: Prisma.$TournageConfigPayload<ExtArgs>
+        fields: Prisma.TournageConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TournageConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TournageConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.TournageConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TournageConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload>
+          }
+          findMany: {
+            args: Prisma.TournageConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload>[]
+          }
+          create: {
+            args: Prisma.TournageConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload>
+          }
+          createMany: {
+            args: Prisma.TournageConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TournageConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.TournageConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload>
+          }
+          update: {
+            args: Prisma.TournageConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.TournageConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TournageConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.TournageConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TournageConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.TournageConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTournageConfig>
+          }
+          groupBy: {
+            args: Prisma.TournageConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TournageConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TournageConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<TournageConfigCountAggregateOutputType> | number
           }
         }
       }
@@ -33248,6 +33420,2070 @@ export namespace Prisma {
 
 
   /**
+   * Model DemandeTournage
+   */
+
+  export type AggregateDemandeTournage = {
+    _count: DemandeTournageCountAggregateOutputType | null
+    _avg: DemandeTournageAvgAggregateOutputType | null
+    _sum: DemandeTournageSumAggregateOutputType | null
+    _min: DemandeTournageMinAggregateOutputType | null
+    _max: DemandeTournageMaxAggregateOutputType | null
+  }
+
+  export type DemandeTournageAvgAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+  }
+
+  export type DemandeTournageSumAggregateOutputType = {
+    id: number | null
+    occupationId: number | null
+  }
+
+  export type DemandeTournageMinAggregateOutputType = {
+    id: number | null
+    reference: string | null
+    statut: string | null
+    dateDepot: Date | null
+    dateLimiteReponse: Date | null
+    premiereDate: Date | null
+    derniereDate: Date | null
+    societe: string | null
+    demandeurNom: string | null
+    email: string | null
+    telephone: string | null
+    titre: string | null
+    typeFilm: string | null
+    notesInternes: string | null
+    occupationId: number | null
+    traiteePar: string | null
+    updated_at: Date | null
+  }
+
+  export type DemandeTournageMaxAggregateOutputType = {
+    id: number | null
+    reference: string | null
+    statut: string | null
+    dateDepot: Date | null
+    dateLimiteReponse: Date | null
+    premiereDate: Date | null
+    derniereDate: Date | null
+    societe: string | null
+    demandeurNom: string | null
+    email: string | null
+    telephone: string | null
+    titre: string | null
+    typeFilm: string | null
+    notesInternes: string | null
+    occupationId: number | null
+    traiteePar: string | null
+    updated_at: Date | null
+  }
+
+  export type DemandeTournageCountAggregateOutputType = {
+    id: number
+    reference: number
+    statut: number
+    dateDepot: number
+    dateLimiteReponse: number
+    premiereDate: number
+    derniereDate: number
+    societe: number
+    demandeurNom: number
+    email: number
+    telephone: number
+    titre: number
+    typeFilm: number
+    donnees: number
+    pieces: number
+    notesInternes: number
+    occupationId: number
+    traiteePar: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type DemandeTournageAvgAggregateInputType = {
+    id?: true
+    occupationId?: true
+  }
+
+  export type DemandeTournageSumAggregateInputType = {
+    id?: true
+    occupationId?: true
+  }
+
+  export type DemandeTournageMinAggregateInputType = {
+    id?: true
+    reference?: true
+    statut?: true
+    dateDepot?: true
+    dateLimiteReponse?: true
+    premiereDate?: true
+    derniereDate?: true
+    societe?: true
+    demandeurNom?: true
+    email?: true
+    telephone?: true
+    titre?: true
+    typeFilm?: true
+    notesInternes?: true
+    occupationId?: true
+    traiteePar?: true
+    updated_at?: true
+  }
+
+  export type DemandeTournageMaxAggregateInputType = {
+    id?: true
+    reference?: true
+    statut?: true
+    dateDepot?: true
+    dateLimiteReponse?: true
+    premiereDate?: true
+    derniereDate?: true
+    societe?: true
+    demandeurNom?: true
+    email?: true
+    telephone?: true
+    titre?: true
+    typeFilm?: true
+    notesInternes?: true
+    occupationId?: true
+    traiteePar?: true
+    updated_at?: true
+  }
+
+  export type DemandeTournageCountAggregateInputType = {
+    id?: true
+    reference?: true
+    statut?: true
+    dateDepot?: true
+    dateLimiteReponse?: true
+    premiereDate?: true
+    derniereDate?: true
+    societe?: true
+    demandeurNom?: true
+    email?: true
+    telephone?: true
+    titre?: true
+    typeFilm?: true
+    donnees?: true
+    pieces?: true
+    notesInternes?: true
+    occupationId?: true
+    traiteePar?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type DemandeTournageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DemandeTournage to aggregate.
+     */
+    where?: DemandeTournageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DemandeTournages to fetch.
+     */
+    orderBy?: DemandeTournageOrderByWithRelationInput | DemandeTournageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DemandeTournageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DemandeTournages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DemandeTournages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DemandeTournages
+    **/
+    _count?: true | DemandeTournageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: DemandeTournageAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: DemandeTournageSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DemandeTournageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DemandeTournageMaxAggregateInputType
+  }
+
+  export type GetDemandeTournageAggregateType<T extends DemandeTournageAggregateArgs> = {
+        [P in keyof T & keyof AggregateDemandeTournage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDemandeTournage[P]>
+      : GetScalarType<T[P], AggregateDemandeTournage[P]>
+  }
+
+
+
+
+  export type DemandeTournageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DemandeTournageWhereInput
+    orderBy?: DemandeTournageOrderByWithAggregationInput | DemandeTournageOrderByWithAggregationInput[]
+    by: DemandeTournageScalarFieldEnum[] | DemandeTournageScalarFieldEnum
+    having?: DemandeTournageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DemandeTournageCountAggregateInputType | true
+    _avg?: DemandeTournageAvgAggregateInputType
+    _sum?: DemandeTournageSumAggregateInputType
+    _min?: DemandeTournageMinAggregateInputType
+    _max?: DemandeTournageMaxAggregateInputType
+  }
+
+  export type DemandeTournageGroupByOutputType = {
+    id: number
+    reference: string
+    statut: string
+    dateDepot: Date
+    dateLimiteReponse: Date | null
+    premiereDate: Date | null
+    derniereDate: Date | null
+    societe: string
+    demandeurNom: string
+    email: string
+    telephone: string | null
+    titre: string
+    typeFilm: string
+    donnees: JsonValue
+    pieces: JsonValue
+    notesInternes: string | null
+    occupationId: number | null
+    traiteePar: string | null
+    updated_at: Date
+    _count: DemandeTournageCountAggregateOutputType | null
+    _avg: DemandeTournageAvgAggregateOutputType | null
+    _sum: DemandeTournageSumAggregateOutputType | null
+    _min: DemandeTournageMinAggregateOutputType | null
+    _max: DemandeTournageMaxAggregateOutputType | null
+  }
+
+  type GetDemandeTournageGroupByPayload<T extends DemandeTournageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DemandeTournageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DemandeTournageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DemandeTournageGroupByOutputType[P]>
+            : GetScalarType<T[P], DemandeTournageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DemandeTournageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reference?: boolean
+    statut?: boolean
+    dateDepot?: boolean
+    dateLimiteReponse?: boolean
+    premiereDate?: boolean
+    derniereDate?: boolean
+    societe?: boolean
+    demandeurNom?: boolean
+    email?: boolean
+    telephone?: boolean
+    titre?: boolean
+    typeFilm?: boolean
+    donnees?: boolean
+    pieces?: boolean
+    notesInternes?: boolean
+    occupationId?: boolean
+    traiteePar?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["demandeTournage"]>
+
+  export type DemandeTournageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reference?: boolean
+    statut?: boolean
+    dateDepot?: boolean
+    dateLimiteReponse?: boolean
+    premiereDate?: boolean
+    derniereDate?: boolean
+    societe?: boolean
+    demandeurNom?: boolean
+    email?: boolean
+    telephone?: boolean
+    titre?: boolean
+    typeFilm?: boolean
+    donnees?: boolean
+    pieces?: boolean
+    notesInternes?: boolean
+    occupationId?: boolean
+    traiteePar?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["demandeTournage"]>
+
+  export type DemandeTournageSelectScalar = {
+    id?: boolean
+    reference?: boolean
+    statut?: boolean
+    dateDepot?: boolean
+    dateLimiteReponse?: boolean
+    premiereDate?: boolean
+    derniereDate?: boolean
+    societe?: boolean
+    demandeurNom?: boolean
+    email?: boolean
+    telephone?: boolean
+    titre?: boolean
+    typeFilm?: boolean
+    donnees?: boolean
+    pieces?: boolean
+    notesInternes?: boolean
+    occupationId?: boolean
+    traiteePar?: boolean
+    updated_at?: boolean
+  }
+
+
+  export type $DemandeTournagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DemandeTournage"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      reference: string
+      statut: string
+      dateDepot: Date
+      dateLimiteReponse: Date | null
+      premiereDate: Date | null
+      derniereDate: Date | null
+      societe: string
+      demandeurNom: string
+      email: string
+      telephone: string | null
+      titre: string
+      typeFilm: string
+      donnees: Prisma.JsonValue
+      pieces: Prisma.JsonValue
+      notesInternes: string | null
+      occupationId: number | null
+      traiteePar: string | null
+      updated_at: Date
+    }, ExtArgs["result"]["demandeTournage"]>
+    composites: {}
+  }
+
+  type DemandeTournageGetPayload<S extends boolean | null | undefined | DemandeTournageDefaultArgs> = $Result.GetResult<Prisma.$DemandeTournagePayload, S>
+
+  type DemandeTournageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<DemandeTournageFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: DemandeTournageCountAggregateInputType | true
+    }
+
+  export interface DemandeTournageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DemandeTournage'], meta: { name: 'DemandeTournage' } }
+    /**
+     * Find zero or one DemandeTournage that matches the filter.
+     * @param {DemandeTournageFindUniqueArgs} args - Arguments to find a DemandeTournage
+     * @example
+     * // Get one DemandeTournage
+     * const demandeTournage = await prisma.demandeTournage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DemandeTournageFindUniqueArgs>(args: SelectSubset<T, DemandeTournageFindUniqueArgs<ExtArgs>>): Prisma__DemandeTournageClient<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one DemandeTournage that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {DemandeTournageFindUniqueOrThrowArgs} args - Arguments to find a DemandeTournage
+     * @example
+     * // Get one DemandeTournage
+     * const demandeTournage = await prisma.demandeTournage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DemandeTournageFindUniqueOrThrowArgs>(args: SelectSubset<T, DemandeTournageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DemandeTournageClient<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first DemandeTournage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DemandeTournageFindFirstArgs} args - Arguments to find a DemandeTournage
+     * @example
+     * // Get one DemandeTournage
+     * const demandeTournage = await prisma.demandeTournage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DemandeTournageFindFirstArgs>(args?: SelectSubset<T, DemandeTournageFindFirstArgs<ExtArgs>>): Prisma__DemandeTournageClient<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first DemandeTournage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DemandeTournageFindFirstOrThrowArgs} args - Arguments to find a DemandeTournage
+     * @example
+     * // Get one DemandeTournage
+     * const demandeTournage = await prisma.demandeTournage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DemandeTournageFindFirstOrThrowArgs>(args?: SelectSubset<T, DemandeTournageFindFirstOrThrowArgs<ExtArgs>>): Prisma__DemandeTournageClient<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more DemandeTournages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DemandeTournageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DemandeTournages
+     * const demandeTournages = await prisma.demandeTournage.findMany()
+     * 
+     * // Get first 10 DemandeTournages
+     * const demandeTournages = await prisma.demandeTournage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const demandeTournageWithIdOnly = await prisma.demandeTournage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DemandeTournageFindManyArgs>(args?: SelectSubset<T, DemandeTournageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a DemandeTournage.
+     * @param {DemandeTournageCreateArgs} args - Arguments to create a DemandeTournage.
+     * @example
+     * // Create one DemandeTournage
+     * const DemandeTournage = await prisma.demandeTournage.create({
+     *   data: {
+     *     // ... data to create a DemandeTournage
+     *   }
+     * })
+     * 
+     */
+    create<T extends DemandeTournageCreateArgs>(args: SelectSubset<T, DemandeTournageCreateArgs<ExtArgs>>): Prisma__DemandeTournageClient<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many DemandeTournages.
+     * @param {DemandeTournageCreateManyArgs} args - Arguments to create many DemandeTournages.
+     * @example
+     * // Create many DemandeTournages
+     * const demandeTournage = await prisma.demandeTournage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DemandeTournageCreateManyArgs>(args?: SelectSubset<T, DemandeTournageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DemandeTournages and returns the data saved in the database.
+     * @param {DemandeTournageCreateManyAndReturnArgs} args - Arguments to create many DemandeTournages.
+     * @example
+     * // Create many DemandeTournages
+     * const demandeTournage = await prisma.demandeTournage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DemandeTournages and only return the `id`
+     * const demandeTournageWithIdOnly = await prisma.demandeTournage.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DemandeTournageCreateManyAndReturnArgs>(args?: SelectSubset<T, DemandeTournageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a DemandeTournage.
+     * @param {DemandeTournageDeleteArgs} args - Arguments to delete one DemandeTournage.
+     * @example
+     * // Delete one DemandeTournage
+     * const DemandeTournage = await prisma.demandeTournage.delete({
+     *   where: {
+     *     // ... filter to delete one DemandeTournage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DemandeTournageDeleteArgs>(args: SelectSubset<T, DemandeTournageDeleteArgs<ExtArgs>>): Prisma__DemandeTournageClient<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one DemandeTournage.
+     * @param {DemandeTournageUpdateArgs} args - Arguments to update one DemandeTournage.
+     * @example
+     * // Update one DemandeTournage
+     * const demandeTournage = await prisma.demandeTournage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DemandeTournageUpdateArgs>(args: SelectSubset<T, DemandeTournageUpdateArgs<ExtArgs>>): Prisma__DemandeTournageClient<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more DemandeTournages.
+     * @param {DemandeTournageDeleteManyArgs} args - Arguments to filter DemandeTournages to delete.
+     * @example
+     * // Delete a few DemandeTournages
+     * const { count } = await prisma.demandeTournage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DemandeTournageDeleteManyArgs>(args?: SelectSubset<T, DemandeTournageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DemandeTournages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DemandeTournageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DemandeTournages
+     * const demandeTournage = await prisma.demandeTournage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DemandeTournageUpdateManyArgs>(args: SelectSubset<T, DemandeTournageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one DemandeTournage.
+     * @param {DemandeTournageUpsertArgs} args - Arguments to update or create a DemandeTournage.
+     * @example
+     * // Update or create a DemandeTournage
+     * const demandeTournage = await prisma.demandeTournage.upsert({
+     *   create: {
+     *     // ... data to create a DemandeTournage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DemandeTournage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DemandeTournageUpsertArgs>(args: SelectSubset<T, DemandeTournageUpsertArgs<ExtArgs>>): Prisma__DemandeTournageClient<$Result.GetResult<Prisma.$DemandeTournagePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of DemandeTournages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DemandeTournageCountArgs} args - Arguments to filter DemandeTournages to count.
+     * @example
+     * // Count the number of DemandeTournages
+     * const count = await prisma.demandeTournage.count({
+     *   where: {
+     *     // ... the filter for the DemandeTournages we want to count
+     *   }
+     * })
+    **/
+    count<T extends DemandeTournageCountArgs>(
+      args?: Subset<T, DemandeTournageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DemandeTournageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DemandeTournage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DemandeTournageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DemandeTournageAggregateArgs>(args: Subset<T, DemandeTournageAggregateArgs>): Prisma.PrismaPromise<GetDemandeTournageAggregateType<T>>
+
+    /**
+     * Group by DemandeTournage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DemandeTournageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DemandeTournageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DemandeTournageGroupByArgs['orderBy'] }
+        : { orderBy?: DemandeTournageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DemandeTournageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDemandeTournageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DemandeTournage model
+   */
+  readonly fields: DemandeTournageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DemandeTournage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DemandeTournageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DemandeTournage model
+   */ 
+  interface DemandeTournageFieldRefs {
+    readonly id: FieldRef<"DemandeTournage", 'Int'>
+    readonly reference: FieldRef<"DemandeTournage", 'String'>
+    readonly statut: FieldRef<"DemandeTournage", 'String'>
+    readonly dateDepot: FieldRef<"DemandeTournage", 'DateTime'>
+    readonly dateLimiteReponse: FieldRef<"DemandeTournage", 'DateTime'>
+    readonly premiereDate: FieldRef<"DemandeTournage", 'DateTime'>
+    readonly derniereDate: FieldRef<"DemandeTournage", 'DateTime'>
+    readonly societe: FieldRef<"DemandeTournage", 'String'>
+    readonly demandeurNom: FieldRef<"DemandeTournage", 'String'>
+    readonly email: FieldRef<"DemandeTournage", 'String'>
+    readonly telephone: FieldRef<"DemandeTournage", 'String'>
+    readonly titre: FieldRef<"DemandeTournage", 'String'>
+    readonly typeFilm: FieldRef<"DemandeTournage", 'String'>
+    readonly donnees: FieldRef<"DemandeTournage", 'Json'>
+    readonly pieces: FieldRef<"DemandeTournage", 'Json'>
+    readonly notesInternes: FieldRef<"DemandeTournage", 'String'>
+    readonly occupationId: FieldRef<"DemandeTournage", 'Int'>
+    readonly traiteePar: FieldRef<"DemandeTournage", 'String'>
+    readonly updated_at: FieldRef<"DemandeTournage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DemandeTournage findUnique
+   */
+  export type DemandeTournageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which DemandeTournage to fetch.
+     */
+    where: DemandeTournageWhereUniqueInput
+  }
+
+  /**
+   * DemandeTournage findUniqueOrThrow
+   */
+  export type DemandeTournageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which DemandeTournage to fetch.
+     */
+    where: DemandeTournageWhereUniqueInput
+  }
+
+  /**
+   * DemandeTournage findFirst
+   */
+  export type DemandeTournageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which DemandeTournage to fetch.
+     */
+    where?: DemandeTournageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DemandeTournages to fetch.
+     */
+    orderBy?: DemandeTournageOrderByWithRelationInput | DemandeTournageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DemandeTournages.
+     */
+    cursor?: DemandeTournageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DemandeTournages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DemandeTournages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DemandeTournages.
+     */
+    distinct?: DemandeTournageScalarFieldEnum | DemandeTournageScalarFieldEnum[]
+  }
+
+  /**
+   * DemandeTournage findFirstOrThrow
+   */
+  export type DemandeTournageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which DemandeTournage to fetch.
+     */
+    where?: DemandeTournageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DemandeTournages to fetch.
+     */
+    orderBy?: DemandeTournageOrderByWithRelationInput | DemandeTournageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DemandeTournages.
+     */
+    cursor?: DemandeTournageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DemandeTournages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DemandeTournages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DemandeTournages.
+     */
+    distinct?: DemandeTournageScalarFieldEnum | DemandeTournageScalarFieldEnum[]
+  }
+
+  /**
+   * DemandeTournage findMany
+   */
+  export type DemandeTournageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+    /**
+     * Filter, which DemandeTournages to fetch.
+     */
+    where?: DemandeTournageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DemandeTournages to fetch.
+     */
+    orderBy?: DemandeTournageOrderByWithRelationInput | DemandeTournageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DemandeTournages.
+     */
+    cursor?: DemandeTournageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DemandeTournages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DemandeTournages.
+     */
+    skip?: number
+    distinct?: DemandeTournageScalarFieldEnum | DemandeTournageScalarFieldEnum[]
+  }
+
+  /**
+   * DemandeTournage create
+   */
+  export type DemandeTournageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+    /**
+     * The data needed to create a DemandeTournage.
+     */
+    data: XOR<DemandeTournageCreateInput, DemandeTournageUncheckedCreateInput>
+  }
+
+  /**
+   * DemandeTournage createMany
+   */
+  export type DemandeTournageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DemandeTournages.
+     */
+    data: DemandeTournageCreateManyInput | DemandeTournageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DemandeTournage createManyAndReturn
+   */
+  export type DemandeTournageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many DemandeTournages.
+     */
+    data: DemandeTournageCreateManyInput | DemandeTournageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DemandeTournage update
+   */
+  export type DemandeTournageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+    /**
+     * The data needed to update a DemandeTournage.
+     */
+    data: XOR<DemandeTournageUpdateInput, DemandeTournageUncheckedUpdateInput>
+    /**
+     * Choose, which DemandeTournage to update.
+     */
+    where: DemandeTournageWhereUniqueInput
+  }
+
+  /**
+   * DemandeTournage updateMany
+   */
+  export type DemandeTournageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DemandeTournages.
+     */
+    data: XOR<DemandeTournageUpdateManyMutationInput, DemandeTournageUncheckedUpdateManyInput>
+    /**
+     * Filter which DemandeTournages to update
+     */
+    where?: DemandeTournageWhereInput
+  }
+
+  /**
+   * DemandeTournage upsert
+   */
+  export type DemandeTournageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+    /**
+     * The filter to search for the DemandeTournage to update in case it exists.
+     */
+    where: DemandeTournageWhereUniqueInput
+    /**
+     * In case the DemandeTournage found by the `where` argument doesn't exist, create a new DemandeTournage with this data.
+     */
+    create: XOR<DemandeTournageCreateInput, DemandeTournageUncheckedCreateInput>
+    /**
+     * In case the DemandeTournage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DemandeTournageUpdateInput, DemandeTournageUncheckedUpdateInput>
+  }
+
+  /**
+   * DemandeTournage delete
+   */
+  export type DemandeTournageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+    /**
+     * Filter which DemandeTournage to delete.
+     */
+    where: DemandeTournageWhereUniqueInput
+  }
+
+  /**
+   * DemandeTournage deleteMany
+   */
+  export type DemandeTournageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DemandeTournages to delete
+     */
+    where?: DemandeTournageWhereInput
+  }
+
+  /**
+   * DemandeTournage without action
+   */
+  export type DemandeTournageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DemandeTournage
+     */
+    select?: DemandeTournageSelect<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TournageConfig
+   */
+
+  export type AggregateTournageConfig = {
+    _count: TournageConfigCountAggregateOutputType | null
+    _avg: TournageConfigAvgAggregateOutputType | null
+    _sum: TournageConfigSumAggregateOutputType | null
+    _min: TournageConfigMinAggregateOutputType | null
+    _max: TournageConfigMaxAggregateOutputType | null
+  }
+
+  export type TournageConfigAvgAggregateOutputType = {
+    id: number | null
+    delaiInstruction: number | null
+    delaiMinimalDepot: number | null
+  }
+
+  export type TournageConfigSumAggregateOutputType = {
+    id: number | null
+    delaiInstruction: number | null
+    delaiMinimalDepot: number | null
+  }
+
+  export type TournageConfigMinAggregateOutputType = {
+    id: number | null
+    actif: boolean | null
+    delaiInstruction: number | null
+    typeJours: string | null
+    exclureFeries: boolean | null
+    delaiMinimalDepot: number | null
+    messageAccueil: string | null
+    emailNotification: string | null
+    apiKey: string | null
+    updated_at: Date | null
+  }
+
+  export type TournageConfigMaxAggregateOutputType = {
+    id: number | null
+    actif: boolean | null
+    delaiInstruction: number | null
+    typeJours: string | null
+    exclureFeries: boolean | null
+    delaiMinimalDepot: number | null
+    messageAccueil: string | null
+    emailNotification: string | null
+    apiKey: string | null
+    updated_at: Date | null
+  }
+
+  export type TournageConfigCountAggregateOutputType = {
+    id: number
+    actif: number
+    delaiInstruction: number
+    typeJours: number
+    exclureFeries: number
+    delaiMinimalDepot: number
+    periodesAbsence: number
+    messageAccueil: number
+    emailNotification: number
+    apiKey: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type TournageConfigAvgAggregateInputType = {
+    id?: true
+    delaiInstruction?: true
+    delaiMinimalDepot?: true
+  }
+
+  export type TournageConfigSumAggregateInputType = {
+    id?: true
+    delaiInstruction?: true
+    delaiMinimalDepot?: true
+  }
+
+  export type TournageConfigMinAggregateInputType = {
+    id?: true
+    actif?: true
+    delaiInstruction?: true
+    typeJours?: true
+    exclureFeries?: true
+    delaiMinimalDepot?: true
+    messageAccueil?: true
+    emailNotification?: true
+    apiKey?: true
+    updated_at?: true
+  }
+
+  export type TournageConfigMaxAggregateInputType = {
+    id?: true
+    actif?: true
+    delaiInstruction?: true
+    typeJours?: true
+    exclureFeries?: true
+    delaiMinimalDepot?: true
+    messageAccueil?: true
+    emailNotification?: true
+    apiKey?: true
+    updated_at?: true
+  }
+
+  export type TournageConfigCountAggregateInputType = {
+    id?: true
+    actif?: true
+    delaiInstruction?: true
+    typeJours?: true
+    exclureFeries?: true
+    delaiMinimalDepot?: true
+    periodesAbsence?: true
+    messageAccueil?: true
+    emailNotification?: true
+    apiKey?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type TournageConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TournageConfig to aggregate.
+     */
+    where?: TournageConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TournageConfigs to fetch.
+     */
+    orderBy?: TournageConfigOrderByWithRelationInput | TournageConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TournageConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TournageConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TournageConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TournageConfigs
+    **/
+    _count?: true | TournageConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TournageConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TournageConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TournageConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TournageConfigMaxAggregateInputType
+  }
+
+  export type GetTournageConfigAggregateType<T extends TournageConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateTournageConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTournageConfig[P]>
+      : GetScalarType<T[P], AggregateTournageConfig[P]>
+  }
+
+
+
+
+  export type TournageConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TournageConfigWhereInput
+    orderBy?: TournageConfigOrderByWithAggregationInput | TournageConfigOrderByWithAggregationInput[]
+    by: TournageConfigScalarFieldEnum[] | TournageConfigScalarFieldEnum
+    having?: TournageConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TournageConfigCountAggregateInputType | true
+    _avg?: TournageConfigAvgAggregateInputType
+    _sum?: TournageConfigSumAggregateInputType
+    _min?: TournageConfigMinAggregateInputType
+    _max?: TournageConfigMaxAggregateInputType
+  }
+
+  export type TournageConfigGroupByOutputType = {
+    id: number
+    actif: boolean
+    delaiInstruction: number
+    typeJours: string
+    exclureFeries: boolean
+    delaiMinimalDepot: number
+    periodesAbsence: JsonValue
+    messageAccueil: string | null
+    emailNotification: string | null
+    apiKey: string | null
+    updated_at: Date
+    _count: TournageConfigCountAggregateOutputType | null
+    _avg: TournageConfigAvgAggregateOutputType | null
+    _sum: TournageConfigSumAggregateOutputType | null
+    _min: TournageConfigMinAggregateOutputType | null
+    _max: TournageConfigMaxAggregateOutputType | null
+  }
+
+  type GetTournageConfigGroupByPayload<T extends TournageConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TournageConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TournageConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TournageConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], TournageConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TournageConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    actif?: boolean
+    delaiInstruction?: boolean
+    typeJours?: boolean
+    exclureFeries?: boolean
+    delaiMinimalDepot?: boolean
+    periodesAbsence?: boolean
+    messageAccueil?: boolean
+    emailNotification?: boolean
+    apiKey?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["tournageConfig"]>
+
+  export type TournageConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    actif?: boolean
+    delaiInstruction?: boolean
+    typeJours?: boolean
+    exclureFeries?: boolean
+    delaiMinimalDepot?: boolean
+    periodesAbsence?: boolean
+    messageAccueil?: boolean
+    emailNotification?: boolean
+    apiKey?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["tournageConfig"]>
+
+  export type TournageConfigSelectScalar = {
+    id?: boolean
+    actif?: boolean
+    delaiInstruction?: boolean
+    typeJours?: boolean
+    exclureFeries?: boolean
+    delaiMinimalDepot?: boolean
+    periodesAbsence?: boolean
+    messageAccueil?: boolean
+    emailNotification?: boolean
+    apiKey?: boolean
+    updated_at?: boolean
+  }
+
+
+  export type $TournageConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TournageConfig"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      actif: boolean
+      delaiInstruction: number
+      typeJours: string
+      exclureFeries: boolean
+      delaiMinimalDepot: number
+      periodesAbsence: Prisma.JsonValue
+      messageAccueil: string | null
+      emailNotification: string | null
+      apiKey: string | null
+      updated_at: Date
+    }, ExtArgs["result"]["tournageConfig"]>
+    composites: {}
+  }
+
+  type TournageConfigGetPayload<S extends boolean | null | undefined | TournageConfigDefaultArgs> = $Result.GetResult<Prisma.$TournageConfigPayload, S>
+
+  type TournageConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<TournageConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: TournageConfigCountAggregateInputType | true
+    }
+
+  export interface TournageConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TournageConfig'], meta: { name: 'TournageConfig' } }
+    /**
+     * Find zero or one TournageConfig that matches the filter.
+     * @param {TournageConfigFindUniqueArgs} args - Arguments to find a TournageConfig
+     * @example
+     * // Get one TournageConfig
+     * const tournageConfig = await prisma.tournageConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TournageConfigFindUniqueArgs>(args: SelectSubset<T, TournageConfigFindUniqueArgs<ExtArgs>>): Prisma__TournageConfigClient<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one TournageConfig that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {TournageConfigFindUniqueOrThrowArgs} args - Arguments to find a TournageConfig
+     * @example
+     * // Get one TournageConfig
+     * const tournageConfig = await prisma.tournageConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TournageConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, TournageConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TournageConfigClient<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first TournageConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournageConfigFindFirstArgs} args - Arguments to find a TournageConfig
+     * @example
+     * // Get one TournageConfig
+     * const tournageConfig = await prisma.tournageConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TournageConfigFindFirstArgs>(args?: SelectSubset<T, TournageConfigFindFirstArgs<ExtArgs>>): Prisma__TournageConfigClient<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first TournageConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournageConfigFindFirstOrThrowArgs} args - Arguments to find a TournageConfig
+     * @example
+     * // Get one TournageConfig
+     * const tournageConfig = await prisma.tournageConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TournageConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, TournageConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__TournageConfigClient<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more TournageConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournageConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TournageConfigs
+     * const tournageConfigs = await prisma.tournageConfig.findMany()
+     * 
+     * // Get first 10 TournageConfigs
+     * const tournageConfigs = await prisma.tournageConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tournageConfigWithIdOnly = await prisma.tournageConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TournageConfigFindManyArgs>(args?: SelectSubset<T, TournageConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a TournageConfig.
+     * @param {TournageConfigCreateArgs} args - Arguments to create a TournageConfig.
+     * @example
+     * // Create one TournageConfig
+     * const TournageConfig = await prisma.tournageConfig.create({
+     *   data: {
+     *     // ... data to create a TournageConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends TournageConfigCreateArgs>(args: SelectSubset<T, TournageConfigCreateArgs<ExtArgs>>): Prisma__TournageConfigClient<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many TournageConfigs.
+     * @param {TournageConfigCreateManyArgs} args - Arguments to create many TournageConfigs.
+     * @example
+     * // Create many TournageConfigs
+     * const tournageConfig = await prisma.tournageConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TournageConfigCreateManyArgs>(args?: SelectSubset<T, TournageConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TournageConfigs and returns the data saved in the database.
+     * @param {TournageConfigCreateManyAndReturnArgs} args - Arguments to create many TournageConfigs.
+     * @example
+     * // Create many TournageConfigs
+     * const tournageConfig = await prisma.tournageConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TournageConfigs and only return the `id`
+     * const tournageConfigWithIdOnly = await prisma.tournageConfig.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TournageConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, TournageConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a TournageConfig.
+     * @param {TournageConfigDeleteArgs} args - Arguments to delete one TournageConfig.
+     * @example
+     * // Delete one TournageConfig
+     * const TournageConfig = await prisma.tournageConfig.delete({
+     *   where: {
+     *     // ... filter to delete one TournageConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TournageConfigDeleteArgs>(args: SelectSubset<T, TournageConfigDeleteArgs<ExtArgs>>): Prisma__TournageConfigClient<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one TournageConfig.
+     * @param {TournageConfigUpdateArgs} args - Arguments to update one TournageConfig.
+     * @example
+     * // Update one TournageConfig
+     * const tournageConfig = await prisma.tournageConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TournageConfigUpdateArgs>(args: SelectSubset<T, TournageConfigUpdateArgs<ExtArgs>>): Prisma__TournageConfigClient<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more TournageConfigs.
+     * @param {TournageConfigDeleteManyArgs} args - Arguments to filter TournageConfigs to delete.
+     * @example
+     * // Delete a few TournageConfigs
+     * const { count } = await prisma.tournageConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TournageConfigDeleteManyArgs>(args?: SelectSubset<T, TournageConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TournageConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournageConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TournageConfigs
+     * const tournageConfig = await prisma.tournageConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TournageConfigUpdateManyArgs>(args: SelectSubset<T, TournageConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one TournageConfig.
+     * @param {TournageConfigUpsertArgs} args - Arguments to update or create a TournageConfig.
+     * @example
+     * // Update or create a TournageConfig
+     * const tournageConfig = await prisma.tournageConfig.upsert({
+     *   create: {
+     *     // ... data to create a TournageConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TournageConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TournageConfigUpsertArgs>(args: SelectSubset<T, TournageConfigUpsertArgs<ExtArgs>>): Prisma__TournageConfigClient<$Result.GetResult<Prisma.$TournageConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of TournageConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournageConfigCountArgs} args - Arguments to filter TournageConfigs to count.
+     * @example
+     * // Count the number of TournageConfigs
+     * const count = await prisma.tournageConfig.count({
+     *   where: {
+     *     // ... the filter for the TournageConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends TournageConfigCountArgs>(
+      args?: Subset<T, TournageConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TournageConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TournageConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournageConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TournageConfigAggregateArgs>(args: Subset<T, TournageConfigAggregateArgs>): Prisma.PrismaPromise<GetTournageConfigAggregateType<T>>
+
+    /**
+     * Group by TournageConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TournageConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TournageConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TournageConfigGroupByArgs['orderBy'] }
+        : { orderBy?: TournageConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TournageConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTournageConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TournageConfig model
+   */
+  readonly fields: TournageConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TournageConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TournageConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TournageConfig model
+   */ 
+  interface TournageConfigFieldRefs {
+    readonly id: FieldRef<"TournageConfig", 'Int'>
+    readonly actif: FieldRef<"TournageConfig", 'Boolean'>
+    readonly delaiInstruction: FieldRef<"TournageConfig", 'Int'>
+    readonly typeJours: FieldRef<"TournageConfig", 'String'>
+    readonly exclureFeries: FieldRef<"TournageConfig", 'Boolean'>
+    readonly delaiMinimalDepot: FieldRef<"TournageConfig", 'Int'>
+    readonly periodesAbsence: FieldRef<"TournageConfig", 'Json'>
+    readonly messageAccueil: FieldRef<"TournageConfig", 'String'>
+    readonly emailNotification: FieldRef<"TournageConfig", 'String'>
+    readonly apiKey: FieldRef<"TournageConfig", 'String'>
+    readonly updated_at: FieldRef<"TournageConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TournageConfig findUnique
+   */
+  export type TournageConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which TournageConfig to fetch.
+     */
+    where: TournageConfigWhereUniqueInput
+  }
+
+  /**
+   * TournageConfig findUniqueOrThrow
+   */
+  export type TournageConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which TournageConfig to fetch.
+     */
+    where: TournageConfigWhereUniqueInput
+  }
+
+  /**
+   * TournageConfig findFirst
+   */
+  export type TournageConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which TournageConfig to fetch.
+     */
+    where?: TournageConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TournageConfigs to fetch.
+     */
+    orderBy?: TournageConfigOrderByWithRelationInput | TournageConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TournageConfigs.
+     */
+    cursor?: TournageConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TournageConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TournageConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TournageConfigs.
+     */
+    distinct?: TournageConfigScalarFieldEnum | TournageConfigScalarFieldEnum[]
+  }
+
+  /**
+   * TournageConfig findFirstOrThrow
+   */
+  export type TournageConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which TournageConfig to fetch.
+     */
+    where?: TournageConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TournageConfigs to fetch.
+     */
+    orderBy?: TournageConfigOrderByWithRelationInput | TournageConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TournageConfigs.
+     */
+    cursor?: TournageConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TournageConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TournageConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TournageConfigs.
+     */
+    distinct?: TournageConfigScalarFieldEnum | TournageConfigScalarFieldEnum[]
+  }
+
+  /**
+   * TournageConfig findMany
+   */
+  export type TournageConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+    /**
+     * Filter, which TournageConfigs to fetch.
+     */
+    where?: TournageConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TournageConfigs to fetch.
+     */
+    orderBy?: TournageConfigOrderByWithRelationInput | TournageConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TournageConfigs.
+     */
+    cursor?: TournageConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TournageConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TournageConfigs.
+     */
+    skip?: number
+    distinct?: TournageConfigScalarFieldEnum | TournageConfigScalarFieldEnum[]
+  }
+
+  /**
+   * TournageConfig create
+   */
+  export type TournageConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to create a TournageConfig.
+     */
+    data: XOR<TournageConfigCreateInput, TournageConfigUncheckedCreateInput>
+  }
+
+  /**
+   * TournageConfig createMany
+   */
+  export type TournageConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TournageConfigs.
+     */
+    data: TournageConfigCreateManyInput | TournageConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TournageConfig createManyAndReturn
+   */
+  export type TournageConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many TournageConfigs.
+     */
+    data: TournageConfigCreateManyInput | TournageConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TournageConfig update
+   */
+  export type TournageConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+    /**
+     * The data needed to update a TournageConfig.
+     */
+    data: XOR<TournageConfigUpdateInput, TournageConfigUncheckedUpdateInput>
+    /**
+     * Choose, which TournageConfig to update.
+     */
+    where: TournageConfigWhereUniqueInput
+  }
+
+  /**
+   * TournageConfig updateMany
+   */
+  export type TournageConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TournageConfigs.
+     */
+    data: XOR<TournageConfigUpdateManyMutationInput, TournageConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which TournageConfigs to update
+     */
+    where?: TournageConfigWhereInput
+  }
+
+  /**
+   * TournageConfig upsert
+   */
+  export type TournageConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+    /**
+     * The filter to search for the TournageConfig to update in case it exists.
+     */
+    where: TournageConfigWhereUniqueInput
+    /**
+     * In case the TournageConfig found by the `where` argument doesn't exist, create a new TournageConfig with this data.
+     */
+    create: XOR<TournageConfigCreateInput, TournageConfigUncheckedCreateInput>
+    /**
+     * In case the TournageConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TournageConfigUpdateInput, TournageConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * TournageConfig delete
+   */
+  export type TournageConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+    /**
+     * Filter which TournageConfig to delete.
+     */
+    where: TournageConfigWhereUniqueInput
+  }
+
+  /**
+   * TournageConfig deleteMany
+   */
+  export type TournageConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TournageConfigs to delete
+     */
+    where?: TournageConfigWhereInput
+  }
+
+  /**
+   * TournageConfig without action
+   */
+  export type TournageConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TournageConfig
+     */
+    select?: TournageConfigSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -33761,12 +35997,61 @@ export namespace Prisma {
   export type AppSettingsScalarFieldEnum = (typeof AppSettingsScalarFieldEnum)[keyof typeof AppSettingsScalarFieldEnum]
 
 
+  export const DemandeTournageScalarFieldEnum: {
+    id: 'id',
+    reference: 'reference',
+    statut: 'statut',
+    dateDepot: 'dateDepot',
+    dateLimiteReponse: 'dateLimiteReponse',
+    premiereDate: 'premiereDate',
+    derniereDate: 'derniereDate',
+    societe: 'societe',
+    demandeurNom: 'demandeurNom',
+    email: 'email',
+    telephone: 'telephone',
+    titre: 'titre',
+    typeFilm: 'typeFilm',
+    donnees: 'donnees',
+    pieces: 'pieces',
+    notesInternes: 'notesInternes',
+    occupationId: 'occupationId',
+    traiteePar: 'traiteePar',
+    updated_at: 'updated_at'
+  };
+
+  export type DemandeTournageScalarFieldEnum = (typeof DemandeTournageScalarFieldEnum)[keyof typeof DemandeTournageScalarFieldEnum]
+
+
+  export const TournageConfigScalarFieldEnum: {
+    id: 'id',
+    actif: 'actif',
+    delaiInstruction: 'delaiInstruction',
+    typeJours: 'typeJours',
+    exclureFeries: 'exclureFeries',
+    delaiMinimalDepot: 'delaiMinimalDepot',
+    periodesAbsence: 'periodesAbsence',
+    messageAccueil: 'messageAccueil',
+    emailNotification: 'emailNotification',
+    apiKey: 'apiKey',
+    updated_at: 'updated_at'
+  };
+
+  export type TournageConfigScalarFieldEnum = (typeof TournageConfigScalarFieldEnum)[keyof typeof TournageConfigScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
   export const QueryMode: {
@@ -33783,6 +36068,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -33850,6 +36144,13 @@ export namespace Prisma {
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
   /**
    * Deep Input Types
@@ -36445,6 +38746,214 @@ export namespace Prisma {
     repoMonitorState?: StringNullableWithAggregatesFilter<"AppSettings"> | string | null
     repoMonitorLastCheck?: DateTimeNullableWithAggregatesFilter<"AppSettings"> | Date | string | null
     repoMonitorLastAlertAt?: DateTimeNullableWithAggregatesFilter<"AppSettings"> | Date | string | null
+  }
+
+  export type DemandeTournageWhereInput = {
+    AND?: DemandeTournageWhereInput | DemandeTournageWhereInput[]
+    OR?: DemandeTournageWhereInput[]
+    NOT?: DemandeTournageWhereInput | DemandeTournageWhereInput[]
+    id?: IntFilter<"DemandeTournage"> | number
+    reference?: StringFilter<"DemandeTournage"> | string
+    statut?: StringFilter<"DemandeTournage"> | string
+    dateDepot?: DateTimeFilter<"DemandeTournage"> | Date | string
+    dateLimiteReponse?: DateTimeNullableFilter<"DemandeTournage"> | Date | string | null
+    premiereDate?: DateTimeNullableFilter<"DemandeTournage"> | Date | string | null
+    derniereDate?: DateTimeNullableFilter<"DemandeTournage"> | Date | string | null
+    societe?: StringFilter<"DemandeTournage"> | string
+    demandeurNom?: StringFilter<"DemandeTournage"> | string
+    email?: StringFilter<"DemandeTournage"> | string
+    telephone?: StringNullableFilter<"DemandeTournage"> | string | null
+    titre?: StringFilter<"DemandeTournage"> | string
+    typeFilm?: StringFilter<"DemandeTournage"> | string
+    donnees?: JsonFilter<"DemandeTournage">
+    pieces?: JsonFilter<"DemandeTournage">
+    notesInternes?: StringNullableFilter<"DemandeTournage"> | string | null
+    occupationId?: IntNullableFilter<"DemandeTournage"> | number | null
+    traiteePar?: StringNullableFilter<"DemandeTournage"> | string | null
+    updated_at?: DateTimeFilter<"DemandeTournage"> | Date | string
+  }
+
+  export type DemandeTournageOrderByWithRelationInput = {
+    id?: SortOrder
+    reference?: SortOrder
+    statut?: SortOrder
+    dateDepot?: SortOrder
+    dateLimiteReponse?: SortOrderInput | SortOrder
+    premiereDate?: SortOrderInput | SortOrder
+    derniereDate?: SortOrderInput | SortOrder
+    societe?: SortOrder
+    demandeurNom?: SortOrder
+    email?: SortOrder
+    telephone?: SortOrderInput | SortOrder
+    titre?: SortOrder
+    typeFilm?: SortOrder
+    donnees?: SortOrder
+    pieces?: SortOrder
+    notesInternes?: SortOrderInput | SortOrder
+    occupationId?: SortOrderInput | SortOrder
+    traiteePar?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type DemandeTournageWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    reference?: string
+    AND?: DemandeTournageWhereInput | DemandeTournageWhereInput[]
+    OR?: DemandeTournageWhereInput[]
+    NOT?: DemandeTournageWhereInput | DemandeTournageWhereInput[]
+    statut?: StringFilter<"DemandeTournage"> | string
+    dateDepot?: DateTimeFilter<"DemandeTournage"> | Date | string
+    dateLimiteReponse?: DateTimeNullableFilter<"DemandeTournage"> | Date | string | null
+    premiereDate?: DateTimeNullableFilter<"DemandeTournage"> | Date | string | null
+    derniereDate?: DateTimeNullableFilter<"DemandeTournage"> | Date | string | null
+    societe?: StringFilter<"DemandeTournage"> | string
+    demandeurNom?: StringFilter<"DemandeTournage"> | string
+    email?: StringFilter<"DemandeTournage"> | string
+    telephone?: StringNullableFilter<"DemandeTournage"> | string | null
+    titre?: StringFilter<"DemandeTournage"> | string
+    typeFilm?: StringFilter<"DemandeTournage"> | string
+    donnees?: JsonFilter<"DemandeTournage">
+    pieces?: JsonFilter<"DemandeTournage">
+    notesInternes?: StringNullableFilter<"DemandeTournage"> | string | null
+    occupationId?: IntNullableFilter<"DemandeTournage"> | number | null
+    traiteePar?: StringNullableFilter<"DemandeTournage"> | string | null
+    updated_at?: DateTimeFilter<"DemandeTournage"> | Date | string
+  }, "id" | "reference">
+
+  export type DemandeTournageOrderByWithAggregationInput = {
+    id?: SortOrder
+    reference?: SortOrder
+    statut?: SortOrder
+    dateDepot?: SortOrder
+    dateLimiteReponse?: SortOrderInput | SortOrder
+    premiereDate?: SortOrderInput | SortOrder
+    derniereDate?: SortOrderInput | SortOrder
+    societe?: SortOrder
+    demandeurNom?: SortOrder
+    email?: SortOrder
+    telephone?: SortOrderInput | SortOrder
+    titre?: SortOrder
+    typeFilm?: SortOrder
+    donnees?: SortOrder
+    pieces?: SortOrder
+    notesInternes?: SortOrderInput | SortOrder
+    occupationId?: SortOrderInput | SortOrder
+    traiteePar?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+    _count?: DemandeTournageCountOrderByAggregateInput
+    _avg?: DemandeTournageAvgOrderByAggregateInput
+    _max?: DemandeTournageMaxOrderByAggregateInput
+    _min?: DemandeTournageMinOrderByAggregateInput
+    _sum?: DemandeTournageSumOrderByAggregateInput
+  }
+
+  export type DemandeTournageScalarWhereWithAggregatesInput = {
+    AND?: DemandeTournageScalarWhereWithAggregatesInput | DemandeTournageScalarWhereWithAggregatesInput[]
+    OR?: DemandeTournageScalarWhereWithAggregatesInput[]
+    NOT?: DemandeTournageScalarWhereWithAggregatesInput | DemandeTournageScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"DemandeTournage"> | number
+    reference?: StringWithAggregatesFilter<"DemandeTournage"> | string
+    statut?: StringWithAggregatesFilter<"DemandeTournage"> | string
+    dateDepot?: DateTimeWithAggregatesFilter<"DemandeTournage"> | Date | string
+    dateLimiteReponse?: DateTimeNullableWithAggregatesFilter<"DemandeTournage"> | Date | string | null
+    premiereDate?: DateTimeNullableWithAggregatesFilter<"DemandeTournage"> | Date | string | null
+    derniereDate?: DateTimeNullableWithAggregatesFilter<"DemandeTournage"> | Date | string | null
+    societe?: StringWithAggregatesFilter<"DemandeTournage"> | string
+    demandeurNom?: StringWithAggregatesFilter<"DemandeTournage"> | string
+    email?: StringWithAggregatesFilter<"DemandeTournage"> | string
+    telephone?: StringNullableWithAggregatesFilter<"DemandeTournage"> | string | null
+    titre?: StringWithAggregatesFilter<"DemandeTournage"> | string
+    typeFilm?: StringWithAggregatesFilter<"DemandeTournage"> | string
+    donnees?: JsonWithAggregatesFilter<"DemandeTournage">
+    pieces?: JsonWithAggregatesFilter<"DemandeTournage">
+    notesInternes?: StringNullableWithAggregatesFilter<"DemandeTournage"> | string | null
+    occupationId?: IntNullableWithAggregatesFilter<"DemandeTournage"> | number | null
+    traiteePar?: StringNullableWithAggregatesFilter<"DemandeTournage"> | string | null
+    updated_at?: DateTimeWithAggregatesFilter<"DemandeTournage"> | Date | string
+  }
+
+  export type TournageConfigWhereInput = {
+    AND?: TournageConfigWhereInput | TournageConfigWhereInput[]
+    OR?: TournageConfigWhereInput[]
+    NOT?: TournageConfigWhereInput | TournageConfigWhereInput[]
+    id?: IntFilter<"TournageConfig"> | number
+    actif?: BoolFilter<"TournageConfig"> | boolean
+    delaiInstruction?: IntFilter<"TournageConfig"> | number
+    typeJours?: StringFilter<"TournageConfig"> | string
+    exclureFeries?: BoolFilter<"TournageConfig"> | boolean
+    delaiMinimalDepot?: IntFilter<"TournageConfig"> | number
+    periodesAbsence?: JsonFilter<"TournageConfig">
+    messageAccueil?: StringNullableFilter<"TournageConfig"> | string | null
+    emailNotification?: StringNullableFilter<"TournageConfig"> | string | null
+    apiKey?: StringNullableFilter<"TournageConfig"> | string | null
+    updated_at?: DateTimeFilter<"TournageConfig"> | Date | string
+  }
+
+  export type TournageConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    actif?: SortOrder
+    delaiInstruction?: SortOrder
+    typeJours?: SortOrder
+    exclureFeries?: SortOrder
+    delaiMinimalDepot?: SortOrder
+    periodesAbsence?: SortOrder
+    messageAccueil?: SortOrderInput | SortOrder
+    emailNotification?: SortOrderInput | SortOrder
+    apiKey?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type TournageConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: TournageConfigWhereInput | TournageConfigWhereInput[]
+    OR?: TournageConfigWhereInput[]
+    NOT?: TournageConfigWhereInput | TournageConfigWhereInput[]
+    actif?: BoolFilter<"TournageConfig"> | boolean
+    delaiInstruction?: IntFilter<"TournageConfig"> | number
+    typeJours?: StringFilter<"TournageConfig"> | string
+    exclureFeries?: BoolFilter<"TournageConfig"> | boolean
+    delaiMinimalDepot?: IntFilter<"TournageConfig"> | number
+    periodesAbsence?: JsonFilter<"TournageConfig">
+    messageAccueil?: StringNullableFilter<"TournageConfig"> | string | null
+    emailNotification?: StringNullableFilter<"TournageConfig"> | string | null
+    apiKey?: StringNullableFilter<"TournageConfig"> | string | null
+    updated_at?: DateTimeFilter<"TournageConfig"> | Date | string
+  }, "id">
+
+  export type TournageConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    actif?: SortOrder
+    delaiInstruction?: SortOrder
+    typeJours?: SortOrder
+    exclureFeries?: SortOrder
+    delaiMinimalDepot?: SortOrder
+    periodesAbsence?: SortOrder
+    messageAccueil?: SortOrderInput | SortOrder
+    emailNotification?: SortOrderInput | SortOrder
+    apiKey?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+    _count?: TournageConfigCountOrderByAggregateInput
+    _avg?: TournageConfigAvgOrderByAggregateInput
+    _max?: TournageConfigMaxOrderByAggregateInput
+    _min?: TournageConfigMinOrderByAggregateInput
+    _sum?: TournageConfigSumOrderByAggregateInput
+  }
+
+  export type TournageConfigScalarWhereWithAggregatesInput = {
+    AND?: TournageConfigScalarWhereWithAggregatesInput | TournageConfigScalarWhereWithAggregatesInput[]
+    OR?: TournageConfigScalarWhereWithAggregatesInput[]
+    NOT?: TournageConfigScalarWhereWithAggregatesInput | TournageConfigScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"TournageConfig"> | number
+    actif?: BoolWithAggregatesFilter<"TournageConfig"> | boolean
+    delaiInstruction?: IntWithAggregatesFilter<"TournageConfig"> | number
+    typeJours?: StringWithAggregatesFilter<"TournageConfig"> | string
+    exclureFeries?: BoolWithAggregatesFilter<"TournageConfig"> | boolean
+    delaiMinimalDepot?: IntWithAggregatesFilter<"TournageConfig"> | number
+    periodesAbsence?: JsonWithAggregatesFilter<"TournageConfig">
+    messageAccueil?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    emailNotification?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    apiKey?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    updated_at?: DateTimeWithAggregatesFilter<"TournageConfig"> | Date | string
   }
 
   export type TiersCreateInput = {
@@ -39341,6 +41850,255 @@ export namespace Prisma {
     repoMonitorLastAlertAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type DemandeTournageCreateInput = {
+    reference: string
+    statut?: string
+    dateDepot?: Date | string
+    dateLimiteReponse?: Date | string | null
+    premiereDate?: Date | string | null
+    derniereDate?: Date | string | null
+    societe: string
+    demandeurNom: string
+    email: string
+    telephone?: string | null
+    titre: string
+    typeFilm: string
+    donnees: JsonNullValueInput | InputJsonValue
+    pieces?: JsonNullValueInput | InputJsonValue
+    notesInternes?: string | null
+    occupationId?: number | null
+    traiteePar?: string | null
+    updated_at?: Date | string
+  }
+
+  export type DemandeTournageUncheckedCreateInput = {
+    id?: number
+    reference: string
+    statut?: string
+    dateDepot?: Date | string
+    dateLimiteReponse?: Date | string | null
+    premiereDate?: Date | string | null
+    derniereDate?: Date | string | null
+    societe: string
+    demandeurNom: string
+    email: string
+    telephone?: string | null
+    titre: string
+    typeFilm: string
+    donnees: JsonNullValueInput | InputJsonValue
+    pieces?: JsonNullValueInput | InputJsonValue
+    notesInternes?: string | null
+    occupationId?: number | null
+    traiteePar?: string | null
+    updated_at?: Date | string
+  }
+
+  export type DemandeTournageUpdateInput = {
+    reference?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDepot?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateLimiteReponse?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    premiereDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    derniereDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    societe?: StringFieldUpdateOperationsInput | string
+    demandeurNom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    telephone?: NullableStringFieldUpdateOperationsInput | string | null
+    titre?: StringFieldUpdateOperationsInput | string
+    typeFilm?: StringFieldUpdateOperationsInput | string
+    donnees?: JsonNullValueInput | InputJsonValue
+    pieces?: JsonNullValueInput | InputJsonValue
+    notesInternes?: NullableStringFieldUpdateOperationsInput | string | null
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    traiteePar?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DemandeTournageUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reference?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDepot?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateLimiteReponse?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    premiereDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    derniereDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    societe?: StringFieldUpdateOperationsInput | string
+    demandeurNom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    telephone?: NullableStringFieldUpdateOperationsInput | string | null
+    titre?: StringFieldUpdateOperationsInput | string
+    typeFilm?: StringFieldUpdateOperationsInput | string
+    donnees?: JsonNullValueInput | InputJsonValue
+    pieces?: JsonNullValueInput | InputJsonValue
+    notesInternes?: NullableStringFieldUpdateOperationsInput | string | null
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    traiteePar?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DemandeTournageCreateManyInput = {
+    id?: number
+    reference: string
+    statut?: string
+    dateDepot?: Date | string
+    dateLimiteReponse?: Date | string | null
+    premiereDate?: Date | string | null
+    derniereDate?: Date | string | null
+    societe: string
+    demandeurNom: string
+    email: string
+    telephone?: string | null
+    titre: string
+    typeFilm: string
+    donnees: JsonNullValueInput | InputJsonValue
+    pieces?: JsonNullValueInput | InputJsonValue
+    notesInternes?: string | null
+    occupationId?: number | null
+    traiteePar?: string | null
+    updated_at?: Date | string
+  }
+
+  export type DemandeTournageUpdateManyMutationInput = {
+    reference?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDepot?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateLimiteReponse?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    premiereDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    derniereDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    societe?: StringFieldUpdateOperationsInput | string
+    demandeurNom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    telephone?: NullableStringFieldUpdateOperationsInput | string | null
+    titre?: StringFieldUpdateOperationsInput | string
+    typeFilm?: StringFieldUpdateOperationsInput | string
+    donnees?: JsonNullValueInput | InputJsonValue
+    pieces?: JsonNullValueInput | InputJsonValue
+    notesInternes?: NullableStringFieldUpdateOperationsInput | string | null
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    traiteePar?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DemandeTournageUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    reference?: StringFieldUpdateOperationsInput | string
+    statut?: StringFieldUpdateOperationsInput | string
+    dateDepot?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateLimiteReponse?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    premiereDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    derniereDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    societe?: StringFieldUpdateOperationsInput | string
+    demandeurNom?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    telephone?: NullableStringFieldUpdateOperationsInput | string | null
+    titre?: StringFieldUpdateOperationsInput | string
+    typeFilm?: StringFieldUpdateOperationsInput | string
+    donnees?: JsonNullValueInput | InputJsonValue
+    pieces?: JsonNullValueInput | InputJsonValue
+    notesInternes?: NullableStringFieldUpdateOperationsInput | string | null
+    occupationId?: NullableIntFieldUpdateOperationsInput | number | null
+    traiteePar?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournageConfigCreateInput = {
+    id?: number
+    actif?: boolean
+    delaiInstruction?: number
+    typeJours?: string
+    exclureFeries?: boolean
+    delaiMinimalDepot?: number
+    periodesAbsence?: JsonNullValueInput | InputJsonValue
+    messageAccueil?: string | null
+    emailNotification?: string | null
+    apiKey?: string | null
+    updated_at?: Date | string
+  }
+
+  export type TournageConfigUncheckedCreateInput = {
+    id?: number
+    actif?: boolean
+    delaiInstruction?: number
+    typeJours?: string
+    exclureFeries?: boolean
+    delaiMinimalDepot?: number
+    periodesAbsence?: JsonNullValueInput | InputJsonValue
+    messageAccueil?: string | null
+    emailNotification?: string | null
+    apiKey?: string | null
+    updated_at?: Date | string
+  }
+
+  export type TournageConfigUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    actif?: BoolFieldUpdateOperationsInput | boolean
+    delaiInstruction?: IntFieldUpdateOperationsInput | number
+    typeJours?: StringFieldUpdateOperationsInput | string
+    exclureFeries?: BoolFieldUpdateOperationsInput | boolean
+    delaiMinimalDepot?: IntFieldUpdateOperationsInput | number
+    periodesAbsence?: JsonNullValueInput | InputJsonValue
+    messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
+    emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
+    apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournageConfigUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    actif?: BoolFieldUpdateOperationsInput | boolean
+    delaiInstruction?: IntFieldUpdateOperationsInput | number
+    typeJours?: StringFieldUpdateOperationsInput | string
+    exclureFeries?: BoolFieldUpdateOperationsInput | boolean
+    delaiMinimalDepot?: IntFieldUpdateOperationsInput | number
+    periodesAbsence?: JsonNullValueInput | InputJsonValue
+    messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
+    emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
+    apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournageConfigCreateManyInput = {
+    id?: number
+    actif?: boolean
+    delaiInstruction?: number
+    typeJours?: string
+    exclureFeries?: boolean
+    delaiMinimalDepot?: number
+    periodesAbsence?: JsonNullValueInput | InputJsonValue
+    messageAccueil?: string | null
+    emailNotification?: string | null
+    apiKey?: string | null
+    updated_at?: Date | string
+  }
+
+  export type TournageConfigUpdateManyMutationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    actif?: BoolFieldUpdateOperationsInput | boolean
+    delaiInstruction?: IntFieldUpdateOperationsInput | number
+    typeJours?: StringFieldUpdateOperationsInput | string
+    exclureFeries?: BoolFieldUpdateOperationsInput | boolean
+    delaiMinimalDepot?: IntFieldUpdateOperationsInput | number
+    periodesAbsence?: JsonNullValueInput | InputJsonValue
+    messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
+    emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
+    apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TournageConfigUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    actif?: BoolFieldUpdateOperationsInput | boolean
+    delaiInstruction?: IntFieldUpdateOperationsInput | number
+    typeJours?: StringFieldUpdateOperationsInput | string
+    exclureFeries?: BoolFieldUpdateOperationsInput | boolean
+    delaiMinimalDepot?: IntFieldUpdateOperationsInput | number
+    periodesAbsence?: JsonNullValueInput | InputJsonValue
+    messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
+    emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
+    apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -41355,6 +44113,177 @@ export namespace Prisma {
     _min?: NestedBoolNullableFilter<$PrismaModel>
     _max?: NestedBoolNullableFilter<$PrismaModel>
   }
+  export type JsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type DemandeTournageCountOrderByAggregateInput = {
+    id?: SortOrder
+    reference?: SortOrder
+    statut?: SortOrder
+    dateDepot?: SortOrder
+    dateLimiteReponse?: SortOrder
+    premiereDate?: SortOrder
+    derniereDate?: SortOrder
+    societe?: SortOrder
+    demandeurNom?: SortOrder
+    email?: SortOrder
+    telephone?: SortOrder
+    titre?: SortOrder
+    typeFilm?: SortOrder
+    donnees?: SortOrder
+    pieces?: SortOrder
+    notesInternes?: SortOrder
+    occupationId?: SortOrder
+    traiteePar?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type DemandeTournageAvgOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+  }
+
+  export type DemandeTournageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    reference?: SortOrder
+    statut?: SortOrder
+    dateDepot?: SortOrder
+    dateLimiteReponse?: SortOrder
+    premiereDate?: SortOrder
+    derniereDate?: SortOrder
+    societe?: SortOrder
+    demandeurNom?: SortOrder
+    email?: SortOrder
+    telephone?: SortOrder
+    titre?: SortOrder
+    typeFilm?: SortOrder
+    notesInternes?: SortOrder
+    occupationId?: SortOrder
+    traiteePar?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type DemandeTournageMinOrderByAggregateInput = {
+    id?: SortOrder
+    reference?: SortOrder
+    statut?: SortOrder
+    dateDepot?: SortOrder
+    dateLimiteReponse?: SortOrder
+    premiereDate?: SortOrder
+    derniereDate?: SortOrder
+    societe?: SortOrder
+    demandeurNom?: SortOrder
+    email?: SortOrder
+    telephone?: SortOrder
+    titre?: SortOrder
+    typeFilm?: SortOrder
+    notesInternes?: SortOrder
+    occupationId?: SortOrder
+    traiteePar?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type DemandeTournageSumOrderByAggregateInput = {
+    id?: SortOrder
+    occupationId?: SortOrder
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
+  }
+
+  export type TournageConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    actif?: SortOrder
+    delaiInstruction?: SortOrder
+    typeJours?: SortOrder
+    exclureFeries?: SortOrder
+    delaiMinimalDepot?: SortOrder
+    periodesAbsence?: SortOrder
+    messageAccueil?: SortOrder
+    emailNotification?: SortOrder
+    apiKey?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type TournageConfigAvgOrderByAggregateInput = {
+    id?: SortOrder
+    delaiInstruction?: SortOrder
+    delaiMinimalDepot?: SortOrder
+  }
+
+  export type TournageConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    actif?: SortOrder
+    delaiInstruction?: SortOrder
+    typeJours?: SortOrder
+    exclureFeries?: SortOrder
+    delaiMinimalDepot?: SortOrder
+    messageAccueil?: SortOrder
+    emailNotification?: SortOrder
+    apiKey?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type TournageConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    actif?: SortOrder
+    delaiInstruction?: SortOrder
+    typeJours?: SortOrder
+    exclureFeries?: SortOrder
+    delaiMinimalDepot?: SortOrder
+    messageAccueil?: SortOrder
+    emailNotification?: SortOrder
+    apiKey?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type TournageConfigSumOrderByAggregateInput = {
+    id?: SortOrder
+    delaiInstruction?: SortOrder
+    delaiMinimalDepot?: SortOrder
+  }
 
   export type ContactCreateNestedManyWithoutTiersInput = {
     create?: XOR<ContactCreateWithoutTiersInput, ContactUncheckedCreateWithoutTiersInput> | ContactCreateWithoutTiersInput[] | ContactUncheckedCreateWithoutTiersInput[]
@@ -42794,6 +45723,28 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedBoolNullableFilter<$PrismaModel>
     _max?: NestedBoolNullableFilter<$PrismaModel>
+  }
+  export type NestedJsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type ContactCreateWithoutTiersInput = {
@@ -47732,6 +50683,14 @@ export namespace Prisma {
      * @deprecated Use AppSettingsDefaultArgs instead
      */
     export type AppSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AppSettingsDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use DemandeTournageDefaultArgs instead
+     */
+    export type DemandeTournageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = DemandeTournageDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use TournageConfigDefaultArgs instead
+     */
+    export type TournageConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TournageConfigDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

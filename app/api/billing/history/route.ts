@@ -18,15 +18,21 @@ export async function GET(req: NextRequest) {
       date: run.date ? new Date(run.date).toLocaleString('fr-FR') : 'Date inconnue'
     }));
 
-    // Fetch invoices separately with error handling
-    for (const run of history as any[]) {
-      try {
-        run.invoices = await (prisma as any).billingRunInvoice.findMany({
-          where: { billingRunId: run.id }
-        });
-      } catch (err: any) {
-        console.error(`[HISTORY] Failed to fetch invoices for run ${run.id}:`, err.message);
-        run.invoices = [];
+    // Une seule requête pour toutes les factures (au lieu d'une par train) ; repli train par train si la lecture groupée échoue
+    try {
+      const all = await (prisma as any).billingRunInvoice.findMany({ where: { billingRunId: { in: history.map((r: any) => r.id) } } });
+      const byRun = new Map<string, any[]>();
+      for (const inv of all) { const l = byRun.get(inv.billingRunId) || []; l.push(inv); byRun.set(inv.billingRunId, l); }
+      for (const run of history as any[]) run.invoices = byRun.get(run.id) || [];
+    } catch (err: any) {
+      console.error('[HISTORY] Lecture groupée des factures impossible, repli par train:', err.message);
+      for (const run of history as any[]) {
+        try {
+          run.invoices = await (prisma as any).billingRunInvoice.findMany({ where: { billingRunId: run.id } });
+        } catch (e: any) {
+          console.error(`[HISTORY] Failed to fetch invoices for run ${run.id}:`, e.message);
+          run.invoices = [];
+        }
       }
     }
 

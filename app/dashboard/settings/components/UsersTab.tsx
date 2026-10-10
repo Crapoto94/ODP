@@ -166,9 +166,9 @@ export default function UsersTab() {
   };
 
   const uiMode = useUiMode();
-  const ROLE_TONE: Record<string, string> = { ADMINISTRATEUR: 'violet', INSTRUCTEUR: 'blue', CONTROLEUR: 'amber', SAISIE: 'slate' };
+  const ROLE_TONE: Record<string, string> = { ADMINISTRATEUR: 'violet', INSTRUCTEUR: 'blue', CONTROLEUR: 'amber', TOURNAGES: 'rose', SAISIE: 'slate' };
   const ROLE_OPTIONS = [
-    { v: 'SAISIE', l: 'Saisie' }, { v: 'INSTRUCTEUR', l: 'Instructeur' }, { v: 'CONTROLEUR', l: 'Contrôleur' }, { v: 'ADMINISTRATEUR', l: 'Administrateur' },
+    { v: 'SAISIE', l: 'Saisie' }, { v: 'INSTRUCTEUR', l: 'Instructeur' }, { v: 'CONTROLEUR', l: 'Contrôleur' }, { v: 'TOURNAGES', l: 'Agent tournages' }, { v: 'ADMINISTRATEUR', l: 'Administrateur' },
   ];
 
   if (uiMode === 'v2') {
@@ -522,6 +522,7 @@ export default function UsersTab() {
                     <option value="SAISIE">Saisie</option>
                     <option value="INSTRUCTEUR">Instructeur</option>
                     <option value="CONTROLEUR">Contrôleur</option>
+                    <option value="TOURNAGES">Agent tournages</option>
                     <option value="ADMINISTRATEUR">Administrateur</option>
                   </select>
                 </div>
@@ -644,6 +645,7 @@ export default function UsersTab() {
                         <option value="SAISIE">Saisie</option>
                         <option value="INSTRUCTEUR">Instructeur</option>
                         <option value="CONTROLEUR">Contrôleur</option>
+                    <option value="TOURNAGES">Agent tournages</option>
                         <option value="ADMINISTRATEUR">Administrateur</option>
                       </select>
                     </div>

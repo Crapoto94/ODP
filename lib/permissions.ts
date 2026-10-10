@@ -1,4 +1,4 @@
-export type Role = 'SAISIE' | 'INSTRUCTEUR' | 'CONTROLEUR' | 'ADMINISTRATEUR';
+export type Role = 'SAISIE' | 'INSTRUCTEUR' | 'CONTROLEUR' | 'TOURNAGES' | 'ADMINISTRATEUR';
 
 export type Permission =
   | 'CREATE_DOSSIER'    // B: Création dossier / Ajout dispositif / Création tiers
@@ -9,7 +9,9 @@ export type Permission =
   | 'SEND_EMAILS'       // G: Envoi des mails et factures aux demandeurs et redevables
   | 'SEND_FILIEN'       // H: Envoi du filien
   | 'CONTROLE_TERRAIN'  // I: Contrôle terrain
-  | 'MANAGE_USERS';     // J: Attribution des droits
+  | 'MANAGE_USERS'      // J: Attribution des droits
+  | 'VIEW_TOURNAGES'    // K: Demandes de tournage et tournages en cours
+  | 'VIEW_CARTE';       // L: Carte SIG
 
 export const PERMISSIONS: Permission[] = [
   'CREATE_DOSSIER',
@@ -21,6 +23,8 @@ export const PERMISSIONS: Permission[] = [
   'SEND_FILIEN',
   'CONTROLE_TERRAIN',
   'MANAGE_USERS',
+  'VIEW_TOURNAGES',
+  'VIEW_CARTE',
 ];
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
@@ -33,6 +37,8 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   SEND_FILIEN:      'Envoi du filien',
   CONTROLE_TERRAIN: 'Contrôle terrain',
   MANAGE_USERS:     'Attribution des droits',
+  VIEW_TOURNAGES:   'Demandes de tournage et tournages en cours',
+  VIEW_CARTE:       'Carte SIG',
 };
 
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
@@ -49,10 +55,18 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'SEND_EMAILS',
     'SEND_FILIEN',
     'CONTROLE_TERRAIN',
+    'VIEW_TOURNAGES',
+    'VIEW_CARTE',
   ],
   CONTROLEUR: [
     'CREATE_DOSSIER',
     'CONTROLE_TERRAIN',
+    'VIEW_CARTE',
+  ],
+  // Rôle restreint : uniquement les demandes de tournage, les tournages en cours et la carte
+  TOURNAGES: [
+    'VIEW_TOURNAGES',
+    'VIEW_CARTE',
   ],
   ADMINISTRATEUR: [
     'CREATE_DOSSIER',
@@ -64,6 +78,8 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'SEND_FILIEN',
     'CONTROLE_TERRAIN',
     'MANAGE_USERS',
+    'VIEW_TOURNAGES',
+    'VIEW_CARTE',
   ],
 };
 
@@ -73,12 +89,17 @@ export function hasPermission(role: string, permission: Permission): boolean {
   return permissions.includes(permission);
 }
 
-export const ROLES: Role[] = ['SAISIE', 'INSTRUCTEUR', 'CONTROLEUR', 'ADMINISTRATEUR'];
+export const ROLES: Role[] = ['SAISIE', 'INSTRUCTEUR', 'CONTROLEUR', 'TOURNAGES', 'ADMINISTRATEUR'];
+
+// Rôles dont l'accès est limité aux tournages (demandes, tournages en cours) et à la carte
+export const TOURNAGES_ONLY_ROLES: string[] = ['TOURNAGES'];
+export const isTournagesOnly = (role?: string | null) => !!role && TOURNAGES_ONLY_ROLES.includes(role);
 
 export const ROLE_LABELS: Record<Role, string> = {
   SAISIE: 'Saisie',
   INSTRUCTEUR: 'Instructeur',
   CONTROLEUR: 'Contrôleur',
+  TOURNAGES: 'Agent tournages',
   ADMINISTRATEUR: 'Administrateur',
 };
 
@@ -86,5 +107,6 @@ export const ROLE_COLORS: Record<Role, string> = {
   SAISIE: 'bg-slate-100 text-slate-600',
   INSTRUCTEUR: 'bg-blue-100 text-blue-700',
   CONTROLEUR: 'bg-amber-100 text-amber-700',
+  TOURNAGES: 'bg-rose-100 text-rose-700',
   ADMINISTRATEUR: 'bg-indigo-100 text-indigo-700',
 };

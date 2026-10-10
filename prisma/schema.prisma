@@ -508,3 +508,44 @@ model AppSettings {
   repoMonitorLastCheck      DateTime?
   repoMonitorLastAlertAt    DateTime?
 }
+
+// Demandes d'autorisation de tournage, déposées depuis le site public (frontend-web, en DMZ)
+model DemandeTournage {
+  id                Int       @id @default(autoincrement())
+  reference         String    @unique
+  statut            String    @default("NOUVELLE") // NOUVELLE | EN_INSTRUCTION | COMPLEMENT | ACCORD | REFUSEE | ANNULEE
+  dateDepot         DateTime  @default(now())
+  dateLimiteReponse DateTime?
+  premiereDate      DateTime?
+  derniereDate      DateTime?
+  societe           String
+  demandeurNom      String
+  email             String
+  telephone         String?
+  titre             String
+  typeFilm          String
+  donnees           Json      // contenu complet du formulaire
+  pieces            Json      @default("[]") // [{ kind, nom, chemin, taille }]
+  notesInternes     String?
+  occupationId      Int?
+  traiteePar        String?
+  updated_at        DateTime  @updatedAt
+
+  @@index([statut])
+  @@index([dateDepot])
+}
+
+// Paramétrage de la gestion des tournages (ligne unique, id = 1)
+model TournageConfig {
+  id                 Int      @id @default(1)
+  actif              Boolean  @default(true)
+  delaiInstruction   Int      @default(15)
+  typeJours          String   @default("OUVRES") // OUVRES (lundi-vendredi) | CALENDAIRES
+  exclureFeries      Boolean  @default(true)
+  delaiMinimalDepot  Int      @default(0) // jours d'avance minimum en plus du délai d'instruction
+  periodesAbsence    Json     @default("[]") // [{ debut, fin, reprise, motif }]
+  messageAccueil     String?
+  emailNotification  String?
+  apiKey             String?
+  updated_at         DateTime @updatedAt
+}

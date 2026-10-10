@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { decrypt } from '@/lib/auth';
-import { hasPermission, type Permission } from '@/lib/permissions';
+import { hasPermission, isTournagesOnly, type Permission } from '@/lib/permissions';
 
 const protectedRoutes = ['/dashboard', '/mobile'];
 const publicRoutes = ['/login', '/mobile/login', '/api/auth/login', '/api/auth/setup'];
@@ -13,7 +13,8 @@ const PERMISSION_PATHS: Array<{ prefix: string; permission: Permission }> = [
   { prefix: '/dashboard/gabarit', permission: 'MANAGE_TRAMES' },
   { prefix: '/dashboard/facturation', permission: 'SEND_EMAILS' },
   { prefix: '/dashboard/report', permission: 'MANAGE_TARIFS' },
-  { prefix: '/dashboard/carte', permission: 'CONTROLE_TERRAIN' },
+  { prefix: '/dashboard/carte', permission: 'VIEW_CARTE' },
+  { prefix: '/dashboard/tournages', permission: 'VIEW_TOURNAGES' },
 ];
 
 export async function middleware(request: NextRequest) {
@@ -41,6 +42,16 @@ export async function middleware(request: NextRequest) {
   // 3. Permission-based Access Control (dashboard only)
   if (session && path.startsWith('/dashboard')) {
     const role = session.role as string;
+    // Rôle « Agent tournages » : uniquement les demandes, les tournages (liste + fiche) et la carte
+    if (isTournagesOnly(role)) {
+      const demandes = new URL('/dashboard/tournages/demandes', request.url);
+      if (path === '/dashboard' || path === '/dashboard/') return NextResponse.redirect(demandes);
+      if (path.startsWith('/dashboard/occupations') && path === '/dashboard/occupations' && request.nextUrl.searchParams.get('filtre') !== 'TOURNAGE') {
+        return NextResponse.redirect(new URL('/dashboard/occupations?filtre=TOURNAGE', request.url));
+      }
+      const ok = ['/dashboard/tournages', '/dashboard/occupations', '/dashboard/carte'].some((p) => path.startsWith(p));
+      if (!ok) return NextResponse.redirect(demandes);
+    }
     for (const { prefix, permission } of PERMISSION_PATHS) {
       if (path.startsWith(prefix) && !hasPermission(role, permission)) {
         return NextResponse.redirect(new URL('/dashboard', request.url));

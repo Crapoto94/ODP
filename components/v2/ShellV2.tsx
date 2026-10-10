@@ -1,12 +1,12 @@
 "use client";
 
+import CityLogo from '@/components/CityLogo';
 import React, { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { ChevronLeft, ChevronRight, LogOut, Menu, X, Zap, Loader2 } from 'lucide-react';
-import { menuItems, type MenuItem } from '@/components/Sidebar';
-import { hasPermission } from '@/lib/permissions';
+import { menuItems, isItemVisible, type MenuItem } from '@/components/Sidebar';
 import UiModeSwitch from '@/components/v2/UiModeSwitch';
 import { SETTINGS_TABS, SETTINGS_GROUPS, isSettingsTab } from '@/app/dashboard/settings/tabs';
 
@@ -61,7 +61,7 @@ function Nav({ collapsed, user, counts, onNavigate }: { collapsed: boolean; user
   return (
     <nav className="v2-scroll-dark flex-1 overflow-y-auto px-3 py-4 space-y-6">
       {GROUPS.map((g) => {
-        const visible = g.items.filter((i) => !i.permission || (user?.role && hasPermission(user.role, i.permission)));
+        const visible = g.items.filter((i) => isItemVisible(i, user));
         if (!visible.length) return null;
         return (
           <div key={g.title}>
@@ -110,7 +110,7 @@ function Breadcrumb() {
     [...menuItems].sort((a, b) => b.href.length - a.href.length).find((i) => i.href.split('?')[0] !== '/dashboard' && pathname.startsWith(i.href.split('?')[0]));
   return (
     <div className="flex items-center gap-2 text-sm">
-      <span className="text-slate-500">ODP Ivry</span>
+      <span className="text-slate-500">VibeODP</span>
       <ChevronRight size={14} className="text-slate-300" />
       <span className="font-semibold text-slate-900">{current?.label || 'Tableau de bord'}</span>
     </div>
@@ -167,11 +167,11 @@ export default function ShellV2({ children }: { children: React.ReactNode }) {
       <div className={`h-16 px-4 flex items-center border-b border-slate-800 ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 rounded-lg bg-blue-600 overflow-hidden flex items-center justify-center shrink-0">
-            <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+            <CityLogo className="w-full h-full object-contain" />
           </div>
           {!isCollapsed && (
             <div className="min-w-0">
-              <p className="text-sm font-bold text-white leading-tight">ODP Manager</p>
+              <p className="text-sm font-bold text-white leading-tight">VibeODP</p>
               <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500 truncate">Ville d&apos;Ivry-sur-Seine</p>
             </div>
           )}

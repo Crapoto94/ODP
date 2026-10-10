@@ -17,6 +17,7 @@ import TabHeader from './TabHeader';
 import { useUiMode } from '@/components/UiModeProvider';
 import { SCard, SGrid, SField, SInput, SButton, SAlert, SBadge, SSaveBar } from '@/components/v2/settings/ui';
 import FormSection from './FormSection';
+import LogoVilleCard from './LogoVilleCard';
 
 interface Props {
   settings: any;
@@ -58,6 +59,7 @@ export default function GeneralTab({
   if (uiMode === 'v2') {
     return (
       <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl">
+        <LogoVilleCard />
         <SCard
           icon={Globe}
           title="Proxy API (APM)"
@@ -159,7 +161,7 @@ export default function GeneralTab({
       <TabHeader
         icon={SettingsIcon}
         title="Paramètres Généraux"
-        subtitle="Configuration globale de l'application ODP"
+        subtitle="Configuration globale de VibeODP"
         accentColor="blue"
         action={{
           label: 'Tester l\'envoi de mail',
@@ -169,6 +171,8 @@ export default function GeneralTab({
           variant: 'outline'
         }}
       />
+
+      <LogoVilleCard />
 
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <form onSubmit={handleSubmit} className="p-10 space-y-10">

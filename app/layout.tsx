@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Domaine Public",
+  title: "VibeODP",
   description: "Gestion de l'Occupation du Domaine Public",
   icons: {
     icon: "/logo.png",

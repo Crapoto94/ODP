@@ -39,7 +39,7 @@ export default function LoginPage() {
               D
             </div>
             <div>
-              <h1 className="text-2xl font-black tracking-tighter text-slate-900">OPD Manager</h1>
+              <h1 className="text-2xl font-black tracking-tighter text-slate-900">VibeODP</h1>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Ville d'Ivry-sur-Seine</p>
             </div>
           </div>

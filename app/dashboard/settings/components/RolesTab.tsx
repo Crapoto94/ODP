@@ -18,6 +18,8 @@ const PERMISSION_LABELS: Record<Permission, string> = {
   SEND_FILIEN:      'Envoi du filien',
   CONTROLE_TERRAIN: 'Contrôle terrain',
   MANAGE_USERS:     'Attribution des droits',
+  VIEW_TOURNAGES:   'Demandes de tournage et tournages en cours',
+  VIEW_CARTE:       'Carte SIG',
 };
 
 const PERMISSION_LETTERS: Record<Permission, string> = {
@@ -30,6 +32,8 @@ const PERMISSION_LETTERS: Record<Permission, string> = {
   SEND_FILIEN:      'H',
   CONTROLE_TERRAIN: 'I',
   MANAGE_USERS:     'J',
+  VIEW_TOURNAGES:   'K',
+  VIEW_CARTE:       'L',
 };
 
 export default function RolesTab() {

@@ -79,6 +79,16 @@ export default function FacturationPage() {
     }
   }, [step, type, view]);
 
+  // Affichage immédiat depuis le dernier résultat connu (sessionStorage), puis rafraîchissement en arrière-plan
+  useEffect(() => {
+    try {
+      const h = sessionStorage.getItem('odp_fact_history');
+      if (h) { setHistory(JSON.parse(h)); setLoadingHistory(false); }
+      const p = sessionStorage.getItem('odp_fact_paiements');
+      if (p) setPaiements(JSON.parse(p));
+    } catch {}
+  }, []);
+
   useEffect(() => {
     if (view === 'history') {
       fetchHistory();
@@ -123,6 +133,7 @@ export default function FacturationPage() {
     try {
       const res = await axios.get('/api/billing/history');
       setHistory(res.data);
+      try { sessionStorage.setItem('odp_fact_history', JSON.stringify(res.data)); } catch {}
     } catch (err) {
       console.error(err);
     } finally {
@@ -130,12 +141,16 @@ export default function FacturationPage() {
     }
   };
 
-  const fetchPaiements = async (runId?: string) => {
+  const fetchPaiements = async (runId?: string, refresh = false) => {
     setLoadingPaiements(true);
     setPaiementError(null);
     try {
-      const res = await axios.post('/api/billing/payment-status', { runId });
-      setPaiements(p => ({ ...p, ...res.data }));
+      const res = await axios.post('/api/billing/payment-status', { runId, refresh });
+      setPaiements(p => {
+        const n = { ...p, ...res.data };
+        try { sessionStorage.setItem('odp_fact_paiements', JSON.stringify(n)); } catch {}
+        return n;
+      });
     } catch (err: any) {
       setPaiementError(err.response?.data?.error || err.message || 'Erreur de lecture SEDIT');
     } finally {
@@ -615,7 +630,7 @@ export default function FacturationPage() {
                 {Object.entries(TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
               </select>
               <button
-                onClick={() => fetchPaiements()}
+                onClick={() => fetchPaiements(undefined, true)}
                 disabled={loadingPaiements}
                 className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-bold text-xs transition-colors disabled:opacity-50"
               >
@@ -749,7 +764,7 @@ export default function FacturationPage() {
                           <Download size={14}/> CSV .filien généré
                         </a>
                         <button
-                          onClick={() => fetchPaiements(run.id)}
+                          onClick={() => fetchPaiements(run.id, true)}
                           disabled={loadingPaiements}
                           className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-bold text-xs transition-colors disabled:opacity-50"
                         >

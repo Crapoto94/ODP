@@ -3,6 +3,20 @@
 Le détail fonctionnel visible des utilisateurs est aussi dans l'application (menu « Version » → journal des versions) ;
 les éléments rattachés à chaque version viennent du backlog.
 
+## À venir — non publié
+
+### Gestion des tournages (nouveau module)
+- **Site public de dépôt** (`frontend-web/`, à héberger en DMZ, intégré en iframe, page blanche) : formulaire complet de demande d'autorisation (jours et horaires équipe / véhicules techniques, lieu, type de film, synopsis, scènes, violence / armes factices, plan de tournage par date, personnes mobilisées, véhicules et stationnement, pièces jointes, cas étudiants).
+- **Règles bloquantes** : dates de tournage antérieures au délai d'instruction refusées, attestation d'assurance et plan de localisation obligatoires ; règles rejouées côté serveur. Informations sur le rendez-vous sur site, l'accord de principe, l'avis aux riverains, et marche à suivre pour les drones (Cerfa 15476*02), la passerelle aux câbles et le Parc des Cormailles.
+- **Paramétrage** (Paramètres › Gestion des tournages) : délai d'instruction (15 jours ouvrés lundi-vendredi par défaut, hors jours fériés ; ou jours calendaires), périodes d'absence du service (demandes non traitées, tournages acceptés à compter d'une date de reprise), message d'accueil, e-mail de notification, clé d'accès du site public.
+- **Menu Gestion métier › Demandes de tournages** : liste filtrable, fiche détaillée, pièces jointes, statuts (nouvelle, en instruction, complément, accord de principe, refusée, annulée), notes internes, alerte de dépassement du délai de réponse.
+- **Nouveau rôle « Agent tournages »** : ne voit que les demandes de tournage, les tournages en cours et la carte (droits `VIEW_TOURNAGES` / `VIEW_CARTE`, modifiables dans Paramètres › Rôles).
+
+### Divers
+- Produit renommé **VibeODP**.
+- **Logo de la ville** téléversable dans Paramètres › Général, affiché en haut à gauche.
+- **Page Facturation plus rapide** : lecture groupée des factures, cache de l'état de paiement SEDIT (5 min côté serveur, affichage immédiat des derniers résultats côté navigateur ; le bouton d'actualisation force la relecture).
+
 ## 1.1.0 — 9 octobre 2026
 
 Version issue de la mise en production TLPE (1.0.0) : suivi du paiement des titres SEDIT, règles TLPE corrigées,

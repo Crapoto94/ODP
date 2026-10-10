@@ -38,7 +38,7 @@ export function generateSignatureRequestEmail(context: SignatureEmailContext): s
     occupationType,
     signatureLink,
     expirationDate,
-    appName = 'ODP Console',
+    appName = 'VibeODP',
   } = context;
 
   return `
@@ -171,7 +171,7 @@ export function generateSignatureAcceptanceEmail(
       <p>Le processus de signature est maintenant terminé. Le document peut être archivé ou transmis selon vos procédures.</p>
 
       <div class="footer">
-        <p>ODP Console - Domaine Public Ivry-sur-Seine</p>
+        <p>VibeODP - Domaine Public Ivry-sur-Seine</p>
         <p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p>
       </div>
     </div>
@@ -251,7 +251,7 @@ export function generateSignatureRejectionEmail(
       <p>Veuillez adresser les concerns mentionnées et resoumettez le document pour signature.</p>
 
       <div class="footer">
-        <p>ODP Console - Domaine Public Ivry-sur-Seine</p>
+        <p>VibeODP - Domaine Public Ivry-sur-Seine</p>
         <p>Ce document a été généré automatiquement. Veuillez ne pas répondre à cet email.</p>
       </div>
     </div>
