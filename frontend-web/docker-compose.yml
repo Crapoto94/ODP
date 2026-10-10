@@ -1,0 +1,20 @@
+# Lancement autonome du frontend public dans la DMZ (indépendant du docker-compose de VibeODP)
+#   cp .env.example .env   (renseigner BACK_URL, TOURNAGE_API_KEY, FRAME_ANCESTORS)
+#   docker compose up -d --build
+services:
+  frontend-web:
+    build: .
+    container_name: vibeodp-frontend-web
+    ports:
+      - "5002:5002"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=5002
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5002/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

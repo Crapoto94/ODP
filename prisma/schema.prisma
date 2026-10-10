@@ -547,5 +547,6 @@ model TournageConfig {
   messageAccueil     String?
   emailNotification  String?
   apiKey             String?
+  frontendsAutorises Json     @default("[]") // [{ nom, ip, actif }] — IP ou CIDR des frontends autorisés à appeler l'API publique
   updated_at         DateTime @updatedAt
 }

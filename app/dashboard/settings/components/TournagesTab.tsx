@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Clapperboard, CalendarOff, KeyRound, Plus, Trash2, RefreshCw, Copy } from 'lucide-react';
+import { Clapperboard, CalendarOff, KeyRound, Globe, Plus, Trash2, RefreshCw, Copy } from 'lucide-react';
 import { SCard, SGrid, SField, SInput, SSelect, STextarea, SToggle, SButton, SIconButton, SAlert, SSaveBar, SLoading, SBadge } from '@/components/v2/settings/ui';
 import { premiereDatePossible, iso, type PeriodeAbsence } from '@/lib/tournage-regles';
 
@@ -20,6 +20,9 @@ export default function TournagesTab() {
   const set = (patch: any) => setCfg({ ...cfg, ...patch });
   const periodes: PeriodeAbsence[] = Array.isArray(cfg.periodesAbsence) ? cfg.periodesAbsence : [];
   const majPeriode = (i: number, patch: Partial<PeriodeAbsence>) => set({ periodesAbsence: periodes.map((p, k) => (k === i ? { ...p, ...patch } : p)) });
+
+  const frontends: any[] = Array.isArray(cfg.frontendsAutorises) ? cfg.frontendsAutorises : [];
+  const majFront = (i: number, patch: any) => set({ frontendsAutorises: frontends.map((f, k) => (k === i ? { ...f, ...patch } : f)) });
 
   const sauver = async (e?: React.FormEvent, extra: any = {}) => {
     e?.preventDefault();
@@ -100,6 +103,24 @@ export default function TournagesTab() {
           <SButton icon={Copy} onClick={() => { navigator.clipboard?.writeText(cfg.apiKey || ''); setCopie(true); setTimeout(() => setCopie(false), 1500); }}>{copie ? 'Copié' : 'Copier'}</SButton>
           <SButton variant="danger" icon={RefreshCw} onClick={() => { if (confirm('Régénérer la clé ? Le site public cessera de fonctionner tant que la nouvelle clé n\'y est pas renseignée.')) sauver(undefined, { regenererCle: true }); }}>Régénérer</SButton>
         </div>
+      </SCard>
+
+      <SCard icon={Globe} title="Frontends autorisés (IP)" description="Seuls les serveurs listés peuvent appeler l'API publique (en plus de la clé). Adresse IP exacte ou plage CIDR IPv4 (ex. 10.20.0.0/24)."
+        actions={<SButton icon={Plus} onClick={() => set({ frontendsAutorises: [...frontends, { nom: '', ip: '', actif: true }] })}>Ajouter un frontend</SButton>}>
+        {frontends.length === 0 ? (
+          <SAlert type="warning">Aucun frontend listé : l&apos;API n&apos;est protégée que par la clé. Ajoutez l&apos;IP du serveur de la DMZ pour restreindre l&apos;accès.</SAlert>
+        ) : (
+          <div className="space-y-3">
+            {frontends.map((f: any, i: number) => (
+              <div key={i} className="grid grid-cols-1 md:grid-cols-[1.2fr_1.2fr_auto_auto] gap-3 items-end p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <SField label="Nom"><SInput type="text" placeholder="Site de la ville (DMZ)" value={f.nom || ''} onChange={(e) => majFront(i, { nom: e.target.value })} /></SField>
+                <SField label="IP ou plage CIDR"><SInput type="text" placeholder="10.20.0.15" value={f.ip || ''} onChange={(e) => majFront(i, { ip: e.target.value })} /></SField>
+                <SToggle checked={f.actif !== false} onChange={(v) => majFront(i, { actif: v })} label="Actif" />
+                <SIconButton title="Supprimer" tone="rose" onClick={() => set({ frontendsAutorises: frontends.filter((_: any, k: number) => k !== i) })}><Trash2 size={16} /></SIconButton>
+              </div>
+            ))}
+          </div>
+        )}
       </SCard>
 
       <SSaveBar saving={saving} message={message} />

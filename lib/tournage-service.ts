@@ -12,12 +12,42 @@ export async function lireConfigTournage() {
 
 export const reglesDe = (row: any): ConfigRegles => normaliserConfig(row);
 
+// IP de l'appelant (le frontend de la DMZ) : en-têtes posés par Next / le reverse proxy
+export function ipClient(req: Request): string {
+  const brut = (req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '').split(',')[0].trim();
+  return brut.replace(/^::ffff:/, '');
+}
+
+const versEntier = (ip: string) => ip.split('.').reduce((n, o) => n * 256 + (parseInt(o, 10) || 0), 0);
+const estIpv4 = (s: string) => /^\d{1,3}(\.\d{1,3}){3}$/.test(s);
+
+// Liste vide = aucun filtrage par IP (seule la clé API protège). Sinon : IP exacte ou plage CIDR IPv4 (ex. 10.20.0.0/24).
+export function ipAutorisee(ip: string, liste: any): boolean {
+  const actifs = (Array.isArray(liste) ? liste : []).filter((f: any) => f && f.actif !== false && f.ip);
+  if (!actifs.length) return true;
+  if (!ip) return false;
+  const loc = (x: string) => (x === '::1' ? '127.0.0.1' : x);
+  const cible = loc(ip);
+  return actifs.some((f: any) => {
+    const motif = loc(String(f.ip).trim());
+    if (motif.includes('/') && estIpv4(cible)) {
+      const [base, bits] = motif.split('/');
+      const b = parseInt(bits, 10);
+      if (!estIpv4(base) || !(b >= 0 && b <= 32)) return false;
+      const masque = b === 0 ? 0 : (0xffffffff << (32 - b)) >>> 0;
+      return ((versEntier(cible) & masque) >>> 0) === ((versEntier(base) & masque) >>> 0);
+    }
+    return motif === cible;
+  });
+}
+
 // Authentifie le frontend public (DMZ) : en-tête x-api-key = clé de la config (ou variable TOURNAGE_API_KEY)
 export async function verifierCleApi(req: Request): Promise<boolean> {
   const fournie = req.headers.get('x-api-key') || '';
   const row = await lireConfigTournage();
   const attendue = process.env.TOURNAGE_API_KEY || row.apiKey || '';
   if (!fournie || !attendue) return false;
+  if (!ipAutorisee(ipClient(req), row.frontendsAutorises)) return false;
   const a = Buffer.from(fournie), b = Buffer.from(attendue);
   return a.length === b.length && timingSafeEqual(a, b);
 }

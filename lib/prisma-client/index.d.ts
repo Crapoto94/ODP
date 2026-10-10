@@ -34556,6 +34556,7 @@ export namespace Prisma {
     messageAccueil: number
     emailNotification: number
     apiKey: number
+    frontendsAutorises: number
     updated_at: number
     _all: number
   }
@@ -34610,6 +34611,7 @@ export namespace Prisma {
     messageAccueil?: true
     emailNotification?: true
     apiKey?: true
+    frontendsAutorises?: true
     updated_at?: true
     _all?: true
   }
@@ -34711,6 +34713,7 @@ export namespace Prisma {
     messageAccueil: string | null
     emailNotification: string | null
     apiKey: string | null
+    frontendsAutorises: JsonValue
     updated_at: Date
     _count: TournageConfigCountAggregateOutputType | null
     _avg: TournageConfigAvgAggregateOutputType | null
@@ -34744,6 +34747,7 @@ export namespace Prisma {
     messageAccueil?: boolean
     emailNotification?: boolean
     apiKey?: boolean
+    frontendsAutorises?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["tournageConfig"]>
 
@@ -34758,6 +34762,7 @@ export namespace Prisma {
     messageAccueil?: boolean
     emailNotification?: boolean
     apiKey?: boolean
+    frontendsAutorises?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["tournageConfig"]>
 
@@ -34772,6 +34777,7 @@ export namespace Prisma {
     messageAccueil?: boolean
     emailNotification?: boolean
     apiKey?: boolean
+    frontendsAutorises?: boolean
     updated_at?: boolean
   }
 
@@ -34790,6 +34796,7 @@ export namespace Prisma {
       messageAccueil: string | null
       emailNotification: string | null
       apiKey: string | null
+      frontendsAutorises: Prisma.JsonValue
       updated_at: Date
     }, ExtArgs["result"]["tournageConfig"]>
     composites: {}
@@ -35194,6 +35201,7 @@ export namespace Prisma {
     readonly messageAccueil: FieldRef<"TournageConfig", 'String'>
     readonly emailNotification: FieldRef<"TournageConfig", 'String'>
     readonly apiKey: FieldRef<"TournageConfig", 'String'>
+    readonly frontendsAutorises: FieldRef<"TournageConfig", 'Json'>
     readonly updated_at: FieldRef<"TournageConfig", 'DateTime'>
   }
     
@@ -36033,6 +36041,7 @@ export namespace Prisma {
     messageAccueil: 'messageAccueil',
     emailNotification: 'emailNotification',
     apiKey: 'apiKey',
+    frontendsAutorises: 'frontendsAutorises',
     updated_at: 'updated_at'
   };
 
@@ -38886,6 +38895,7 @@ export namespace Prisma {
     messageAccueil?: StringNullableFilter<"TournageConfig"> | string | null
     emailNotification?: StringNullableFilter<"TournageConfig"> | string | null
     apiKey?: StringNullableFilter<"TournageConfig"> | string | null
+    frontendsAutorises?: JsonFilter<"TournageConfig">
     updated_at?: DateTimeFilter<"TournageConfig"> | Date | string
   }
 
@@ -38900,6 +38910,7 @@ export namespace Prisma {
     messageAccueil?: SortOrderInput | SortOrder
     emailNotification?: SortOrderInput | SortOrder
     apiKey?: SortOrderInput | SortOrder
+    frontendsAutorises?: SortOrder
     updated_at?: SortOrder
   }
 
@@ -38917,6 +38928,7 @@ export namespace Prisma {
     messageAccueil?: StringNullableFilter<"TournageConfig"> | string | null
     emailNotification?: StringNullableFilter<"TournageConfig"> | string | null
     apiKey?: StringNullableFilter<"TournageConfig"> | string | null
+    frontendsAutorises?: JsonFilter<"TournageConfig">
     updated_at?: DateTimeFilter<"TournageConfig"> | Date | string
   }, "id">
 
@@ -38931,6 +38943,7 @@ export namespace Prisma {
     messageAccueil?: SortOrderInput | SortOrder
     emailNotification?: SortOrderInput | SortOrder
     apiKey?: SortOrderInput | SortOrder
+    frontendsAutorises?: SortOrder
     updated_at?: SortOrder
     _count?: TournageConfigCountOrderByAggregateInput
     _avg?: TournageConfigAvgOrderByAggregateInput
@@ -38953,6 +38966,7 @@ export namespace Prisma {
     messageAccueil?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
     emailNotification?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
     apiKey?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    frontendsAutorises?: JsonWithAggregatesFilter<"TournageConfig">
     updated_at?: DateTimeWithAggregatesFilter<"TournageConfig"> | Date | string
   }
 
@@ -42012,6 +42026,7 @@ export namespace Prisma {
     messageAccueil?: string | null
     emailNotification?: string | null
     apiKey?: string | null
+    frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: Date | string
   }
 
@@ -42026,6 +42041,7 @@ export namespace Prisma {
     messageAccueil?: string | null
     emailNotification?: string | null
     apiKey?: string | null
+    frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: Date | string
   }
 
@@ -42040,6 +42056,7 @@ export namespace Prisma {
     messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
     emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
     apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -42054,6 +42071,7 @@ export namespace Prisma {
     messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
     emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
     apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -42068,6 +42086,7 @@ export namespace Prisma {
     messageAccueil?: string | null
     emailNotification?: string | null
     apiKey?: string | null
+    frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: Date | string
   }
 
@@ -42082,6 +42101,7 @@ export namespace Prisma {
     messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
     emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
     apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -42096,6 +42116,7 @@ export namespace Prisma {
     messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
     emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
     apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -44244,6 +44265,7 @@ export namespace Prisma {
     messageAccueil?: SortOrder
     emailNotification?: SortOrder
     apiKey?: SortOrder
+    frontendsAutorises?: SortOrder
     updated_at?: SortOrder
   }
 

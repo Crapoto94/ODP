@@ -34,6 +34,11 @@ export async function PATCH(req: Request) {
         .filter((p: any) => p?.debut && p?.fin && p?.reprise)
         .map((p: any) => ({ debut: p.debut, fin: p.fin, reprise: p.reprise, motif: p.motif || '' }));
     }
+    if (Array.isArray(b.frontendsAutorises)) {
+      data.frontendsAutorises = b.frontendsAutorises
+        .filter((f: any) => f?.ip && String(f.ip).trim())
+        .map((f: any) => ({ nom: String(f.nom || '').trim(), ip: String(f.ip).trim(), actif: f.actif !== false }));
+    }
     if (b.regenererCle) data.apiKey = randomBytes(24).toString('hex');
     return NextResponse.json(await (prisma as any).tournageConfig.update({ where: { id: 1 }, data }));
   } catch (e: any) {
