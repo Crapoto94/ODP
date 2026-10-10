@@ -46,13 +46,14 @@ function construire(i) {
   const jours = Array.from({ length: nbJours }, (_, k) => {
     const dj = ajoutJours(debut, k * (1 + (i % 2)));
     const h0 = 6 + (i % 5);
-    return { date: iso(dj), equipeArrivee: `${pad(h0)}:00`, equipeDepart: `${pad(h0 + 9 + (k % 3))}:30`, vehiculesArrivee: `${pad(h0 - 1 < 5 ? 5 : h0 - 1)}:30`, vehiculesDepart: `${pad(h0 + 10 + (k % 3))}:30` };
+    return { date: iso(dj), equipeArrivee: `${pad(h0)}:00`, equipeDepart: `${pad(h0 + 9 + (k % 3))}:30`, vehiculesArrivee: i % 4 === 1 ? '' : `${pad(h0 - 1 < 5 ? 5 : h0 - 1)}:30`, vehiculesDepart: i % 4 === 1 ? '' : `${pad(h0 + 10 + (k % 3))}:30` };
   });
   const [rue, numeros] = pick(RUES, i * 3 + 1);
   const societe = pick(SOCIETES, i);
   const nom = pick(NOMS, i * 7 + 3);
   const mail = nom.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]+/g, '.');
   const domaine = societe.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '').slice(0, 14);
+  const blocage = i % 3 !== 0;
   const drone = i % 7 === 3, passerelle = i % 11 === 5, cormailles = i % 9 === 4;
   const violence = i % 8 === 6, armes = i % 13 === 6;
   const donnees = {
@@ -64,7 +65,7 @@ function construire(i) {
     lieu: { emplacements: pick(EMPL, i * 2 + 1), adresse: `${rue}, Ivry-sur-Seine`, precisions: i % 3 === 0 ? 'Accès pompiers à conserver' : '' },
     plan: jours.map((j, k) => ({ date: j.date, lieu: `${rue} (${numeros})`, heures: `${j.equipeArrivee.replace(':00', 'h').replace(':30', 'h30')} – ${j.equipeDepart.replace(':00', 'h').replace(':30', 'h30')}`, materiel: pick(MATERIEL, i + k) })),
     personnes: { equipe: 4 + ((i * 3) % 30), comediens: i % 6, figurants: (i % 5) * 4, autres: i % 4 === 0 ? 2 + (i % 5) : 0, autresPrecision: i % 4 === 0 ? 'agents de sécurité' : '' },
-    vehicules: { description: pick(VEHICULES, i * 2), nbPlaces: 1 + ((i * 5) % 12), localisation: `${rue}, du n° ${numeros.replace(' au ', ' au n° ')}` },
+    vehicules: { description: i % 5 === 2 ? '' : pick(VEHICULES, i * 2), blocagePlaces: blocage, nbPlaces: blocage && i % 4 !== 0 ? 1 + ((i * 5) % 12) : null, localisation: blocage && i % 4 !== 0 ? `${rue}, du n° ${numeros.replace(' au ', ' au n° ')}` : '' },
     etudiant, ecole: etudiant ? { nom: societe, contact: 'Secrétariat pédagogique', telephone: '01 44 12 34 56', email: 'scolarite@ecole-exemple.fr' } : null,
     cas: { drone, passerelle, cormailles }, accepte: true,
   };

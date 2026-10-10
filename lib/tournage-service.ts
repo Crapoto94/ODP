@@ -106,9 +106,14 @@ export function validerDemande(d: any, regles: ConfigRegles, aujourdhui = new Da
     if (parseIso(j.date) < minimale) {
       erreurs.push(`${n} : le ${j.date.split('-').reverse().join('/')} est trop proche — les tournages ne peuvent débuter qu'à partir du ${iso(minimale).split('-').reverse().join('/')}${periode ? ' (période de fermeture du service)' : ''}.`);
     }
-    for (const [champ, lib] of [['equipeArrivee', "arrivée de l'équipe"], ['equipeDepart', "départ de l'équipe"], ['vehiculesArrivee', 'arrivée des véhicules techniques'], ['vehiculesDepart', 'départ des véhicules techniques']] as const) {
-      if (!RE_HEURE.test(txt((j as any)[champ]))) erreurs.push(`${n} : heure de ${lib} invalide (HH:MM).`);
+    // Horaires par pas de 15 minutes ; véhicules techniques facultatifs (arrivée et départ ensemble)
+    const heureOk = (h: string) => RE_HEURE.test(h) && Number(h.split(':')[1]) % 15 === 0;
+    for (const [champ, lib] of [['equipeArrivee', "arrivée de l'équipe"], ['equipeDepart', "départ de l'équipe"]] as const) {
+      if (!heureOk(txt((j as any)[champ]))) erreurs.push(`${n} : heure de ${lib} invalide (HH:MM, par pas de 15 minutes).`);
     }
+    const va = txt(j.vehiculesArrivee), vd = txt(j.vehiculesDepart);
+    if (!!va !== !!vd) erreurs.push(`${n} : indiquez l'arrivée et le départ des véhicules techniques (ou aucun des deux).`);
+    else if (va && (!heureOk(va) || !heureOk(vd))) erreurs.push(`${n} : horaires des véhicules techniques invalides (HH:MM, par pas de 15 minutes).`);
   });
 
   const lieu = d?.lieu || {};
@@ -125,9 +130,6 @@ export function validerDemande(d: any, regles: ConfigRegles, aujourdhui = new Da
   if (nbPers < 1) erreurs.push('Indiquez le nombre de personnes mobilisées (équipe, comédiens, figurants…).');
 
   const veh = d?.vehicules || {};
-  if (!txt(veh.description)) erreurs.push('Décrivez les véhicules et le matériel à stationner (camions, camions-loge, camion-cantine…).');
-  if (!(Number(veh.nbPlaces) >= 0) || veh.nbPlaces === '' || veh.nbPlaces == null) erreurs.push('Indiquez le nombre de places de stationnement occupées.');
-  if (!txt(veh.localisation)) erreurs.push('Précisez la localisation (ex. du n° 10 au n° 18 de la rue …).');
   if (!pieces.plan) erreurs.push('Le plan de localisation du matériel et des véhicules (1/100e ou 1/200e) est obligatoire.');
   if (!pieces.assurance) erreurs.push('L\'attestation d\'assurance est obligatoire : sans elle, la demande ne peut pas être déposée.');
 

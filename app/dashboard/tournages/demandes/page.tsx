@@ -164,7 +164,7 @@ export default function DemandesTournagesPage() {
                 <table className="w-full text-xs">
                   <thead><tr className="text-left text-slate-500"><th className="py-1">Date</th><th>Équipe</th><th>Véhicules techniques</th></tr></thead>
                   <tbody>{(d.jours || []).map((j: any) => (
-                    <tr key={j.date} className="border-t border-slate-100"><td className="py-1.5 font-semibold">{fmtIso(j.date)}</td><td>{j.equipeArrivee} → {j.equipeDepart}</td><td>{j.vehiculesArrivee} → {j.vehiculesDepart}</td></tr>
+                    <tr key={j.date} className="border-t border-slate-100"><td className="py-1.5 font-semibold">{fmtIso(j.date)}</td><td>{j.equipeArrivee} → {j.equipeDepart}</td><td>{j.vehiculesArrivee ? `${j.vehiculesArrivee} → ${j.vehiculesDepart}` : '—'}</td></tr>
                   ))}</tbody>
                 </table>
               </Bloc>
@@ -174,8 +174,9 @@ export default function DemandesTournagesPage() {
                 <L k="Adresse" v={d.lieu?.adresse} />
                 {d.lieu?.precisions && <L k="Précisions" v={d.lieu.precisions} />}
                 <L k="Véhicules / matériel" v={d.vehicules?.description} />
-                <L k="Places de stationnement" v={d.vehicules?.nbPlaces} />
-                <L k="Localisation" v={d.vehicules?.localisation} />
+                <L k="Blocage de places de stationnement" v={d.vehicules?.blocagePlaces ? 'Oui' : 'Non'} />
+                {d.vehicules?.blocagePlaces && <L k="Places occupées" v={d.vehicules?.nbPlaces} />}
+                {d.vehicules?.blocagePlaces && <L k="Localisation" v={d.vehicules?.localisation} />}
                 <L k="Personnes mobilisées" v={`${d.personnes?.equipe || 0} équipe · ${d.personnes?.comediens || 0} comédiens · ${d.personnes?.figurants || 0} figurants${d.personnes?.autres ? ` · ${d.personnes.autres} autres${d.personnes.autresPrecision ? ` (${d.personnes.autresPrecision})` : ''}` : ''}`} />
               </Bloc>
 

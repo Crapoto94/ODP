@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import FileDrop from '@/components/FileDrop';
+import TimeSelect from '@/components/TimeSelect';
 
 interface Config {
   actif: boolean;
@@ -39,6 +40,7 @@ export default function DemandeForm() {
   const [plan, setPlan] = useState<Record<string, { lieu: string; heures: string; materiel: string }>>({});
   const [pers, setPers] = useState({ equipe: '', comediens: '', figurants: '', autres: '', autresPrecision: '' });
   const [veh, setVeh] = useState({ description: '', nbPlaces: '', localisation: '' });
+  const [blocage, setBlocage] = useState(false);
   const [etudiant, setEtudiant] = useState(false);
   const [ecole, setEcole] = useState({ nom: '', contact: '', telephone: '', email: '' });
   const [cas, setCas] = useState({ drone: false, passerelle: false, cormailles: false });
@@ -64,6 +66,19 @@ export default function DemandeForm() {
 
   const min = cfg?.premiereDatePossible || '';
   const ouvres = cfg?.typeJours === 'OUVRES';
+  // Copie un jour (horaires + ligne du plan de tournage) sur le lendemain, juste après lui
+  const dupliquerJour = (i: number) => {
+    const src = jours[i];
+    let date = '';
+    if (src.date) {
+      const [y, m, d] = src.date.split('-').map(Number);
+      const n = new Date(y, m - 1, d + 1);
+      const cand = `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
+      if (!jours.some((j) => j.date === cand)) date = cand;
+    }
+    setJours([...jours.slice(0, i + 1), { ...src, date }, ...jours.slice(i + 1)]);
+    if (date && plan[src.date]) setPlan({ ...plan, [date]: { ...plan[src.date] } });
+  };
   const majJour = (i: number, p: Partial<Jour>) => setJours((js) => js.map((j, k) => (k === i ? { ...j, ...p } : j)));
   const datesPlan = jours.map((j) => j.date).filter(Boolean);
 
@@ -77,12 +92,12 @@ export default function DemandeForm() {
     jours.forEach((j, i) => {
       if (!j.date) e.push(`Jour ${i + 1} : date manquante.`);
       else if (j.date < min) e.push(`Jour ${i + 1} : le ${fr(j.date)} est trop proche. Les tournages ne peuvent débuter qu'à partir du ${fr(min)}.`);
-      if (!j.equipeArrivee || !j.equipeDepart || !j.vehiculesArrivee || !j.vehiculesDepart) e.push(`Jour ${i + 1} : renseignez les 4 horaires (équipe et véhicules techniques).`);
+      if (!j.equipeArrivee || !j.equipeDepart) e.push(`Jour ${i + 1} : renseignez les horaires d'arrivée et de départ de l'équipe.`);
+      if (!!j.vehiculesArrivee !== !!j.vehiculesDepart) e.push(`Jour ${i + 1} : renseignez à la fois l'arrivée et le départ des véhicules techniques (ou aucun des deux).`);
     });
     if (!lieu.emplacements.length || !lieu.adresse.trim()) e.push('Indiquez le lieu envisagé (type d\'emplacement et adresse).');
     if (datesPlan.some((d) => { const p = plan[d]; return !p || !p.lieu.trim() || !p.heures.trim() || !p.materiel.trim(); })) e.push('Le plan de tournage doit préciser, pour chaque date, le lieu, les heures et le matériel employé.');
     if (!(Number(pers.equipe) + Number(pers.comediens) + Number(pers.figurants) + Number(pers.autres) > 0)) e.push('Indiquez le nombre de personnes mobilisées.');
-    if (!veh.description.trim() || veh.nbPlaces === '' || !veh.localisation.trim()) e.push('Décrivez les véhicules et le matériel, le nombre de places de stationnement occupées et leur localisation.');
     if (!fPlan) e.push('Le plan de localisation du matériel et des véhicules (1/100e ou 1/200e) est obligatoire.');
     if (!fAssurance) e.push('L\'attestation d\'assurance est obligatoire : sans elle, la demande ne peut pas être déposée.');
     if (etudiant) {
@@ -104,7 +119,7 @@ export default function DemandeForm() {
         demandeur: dem, ...projet, violence, armesFactices: armes, jours,
         lieu, plan: datesPlan.map((d) => ({ date: d, ...plan[d] })),
         personnes: { equipe: Number(pers.equipe) || 0, comediens: Number(pers.comediens) || 0, figurants: Number(pers.figurants) || 0, autres: Number(pers.autres) || 0, autresPrecision: pers.autresPrecision.trim() },
-        vehicules: { description: veh.description, nbPlaces: Number(veh.nbPlaces), localisation: veh.localisation },
+        vehicules: { description: veh.description, blocagePlaces: blocage, nbPlaces: blocage && veh.nbPlaces !== '' ? Number(veh.nbPlaces) : null, localisation: blocage ? veh.localisation : '' },
         etudiant, ecole: etudiant ? ecole : null, cas, accepte,
       };
       const fd = new FormData();
@@ -222,14 +237,17 @@ export default function DemandeForm() {
             <div className="day" key={i}>
               <div className="day-head">
                 <span>Jour {i + 1}</span>
-                {jours.length > 1 && <button type="button" className="btn link" onClick={() => setJours(jours.filter((_, k) => k !== i))}>Supprimer</button>}
+                <span style={{ display: 'inline-flex', gap: 4 }}>
+                  <button type="button" className="btn link" style={{ color: 'var(--accent)' }} onClick={() => dupliquerJour(i)}>Copier ce jour</button>
+                  {jours.length > 1 && <button type="button" className="btn link" onClick={() => setJours(jours.filter((_, k) => k !== i))}>Supprimer</button>}
+                </span>
               </div>
               <div className="grid five">
                 <div><label className="f">Date <span className="req">*</span></label><input type="date" min={min} value={j.date} onChange={(e) => majJour(i, { date: e.target.value })} /></div>
-                <div><label className="f">Équipe : arrivée</label><input type="time" value={j.equipeArrivee} onChange={(e) => majJour(i, { equipeArrivee: e.target.value })} /></div>
-                <div><label className="f">Équipe : départ</label><input type="time" value={j.equipeDepart} onChange={(e) => majJour(i, { equipeDepart: e.target.value })} /></div>
-                <div><label className="f">Véhicules techniques : arrivée</label><input type="time" value={j.vehiculesArrivee} onChange={(e) => majJour(i, { vehiculesArrivee: e.target.value })} /></div>
-                <div><label className="f">Véhicules techniques : départ</label><input type="time" value={j.vehiculesDepart} onChange={(e) => majJour(i, { vehiculesDepart: e.target.value })} /></div>
+                <div><label className="f">Équipe : arrivée <span className="req">*</span></label><TimeSelect value={j.equipeArrivee} onChange={(v) => majJour(i, { equipeArrivee: v })} /></div>
+                <div><label className="f">Équipe : départ <span className="req">*</span></label><TimeSelect value={j.equipeDepart} onChange={(v) => majJour(i, { equipeDepart: v })} /></div>
+                <div><label className="f">Véhicules techniques : arrivée <span className="muted">(facultatif)</span></label><TimeSelect value={j.vehiculesArrivee} onChange={(v) => majJour(i, { vehiculesArrivee: v })} /></div>
+                <div><label className="f">Véhicules techniques : départ <span className="muted">(facultatif)</span></label><TimeSelect value={j.vehiculesDepart} onChange={(v) => majJour(i, { vehiculesDepart: v })} /></div>
               </div>
             </div>
           ))}
@@ -277,9 +295,18 @@ export default function DemandeForm() {
             <div className="span2"><label className="f">Autres : précisez</label><input type="text" placeholder="ex. sécurité, régisseurs, public…" value={pers.autresPrecision} onChange={(e) => setPers({ ...pers, autresPrecision: e.target.value })} /></div>
           </div>
           <div className="grid">
-            <div className="span2"><label className="f">Véhicules et matériel à stationner <span className="req">*</span></label><textarea style={{ minHeight: 70 }} placeholder="Camions, camions-loge, camion-cantine, groupe électrogène…" value={veh.description} onChange={(e) => setVeh({ ...veh, description: e.target.value })} /></div>
-            <div><label className="f">Nombre de places de stationnement occupées <span className="req">*</span></label><input type="number" min={0} value={veh.nbPlaces} onChange={(e) => setVeh({ ...veh, nbPlaces: e.target.value })} /></div>
-            <div><label className="f">Localisation <span className="req">*</span></label><input type="text" placeholder="du n° 10 au n° 18 de la rue …" value={veh.localisation} onChange={(e) => setVeh({ ...veh, localisation: e.target.value })} /></div>
+            <div className="span2"><label className="f">Véhicules et matériel à stationner <span className="muted">(facultatif)</span></label><textarea style={{ minHeight: 70 }} placeholder="Camions, camions-loge, camion-cantine, groupe électrogène…" value={veh.description} onChange={(e) => setVeh({ ...veh, description: e.target.value })} /></div>
+            <div className="span2">
+              <label style={{ display: 'inline-flex', gap: 8, cursor: 'pointer', fontWeight: 600 }}>
+                <input type="checkbox" checked={blocage} onChange={(e) => setBlocage(e.target.checked)} /> Blocage de places de stationnement
+              </label>
+            </div>
+            {blocage && (
+              <>
+                <div><label className="f">Nombre de places de stationnement occupées <span className="muted">(facultatif)</span></label><input type="number" min={0} value={veh.nbPlaces} onChange={(e) => setVeh({ ...veh, nbPlaces: e.target.value })} /></div>
+                <div><label className="f">Localisation <span className="muted">(facultatif)</span></label><input type="text" placeholder="du n° 10 au n° 18 de la rue …" value={veh.localisation} onChange={(e) => setVeh({ ...veh, localisation: e.target.value })} /></div>
+              </>
+            )}
           </div>
         </div>
 
