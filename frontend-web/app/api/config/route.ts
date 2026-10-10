@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 
 // Proxy vers le back : la clé API reste côté serveur (jamais exposée au navigateur).
+// Back en HTTPS avec certificat interne / auto-signé : BACK_TLS_INSECURE=true (ou, mieux, NODE_EXTRA_CA_CERTS=/chemin/ca.pem)
+if (process.env.BACK_TLS_INSECURE === 'true') process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 export const dynamic = 'force-dynamic';
 
 export async function GET() {

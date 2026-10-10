@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+// Back en HTTPS avec certificat interne / auto-signé : BACK_TLS_INSECURE=true (ou, mieux, NODE_EXTRA_CA_CERTS=/chemin/ca.pem)
+if (process.env.BACK_TLS_INSECURE === 'true') process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 export const dynamic = 'force-dynamic';
 
 // Transmet la demande (multipart) au back avec la clé API. Limite simple de débit par IP.
