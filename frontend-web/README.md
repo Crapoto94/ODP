@@ -22,11 +22,11 @@ Flux réseau à ouvrir : DMZ → VibeODP (TCP 3000), uniquement vers `/api/publi
 
 ```bash
 npm install
-npm run dev          # http://localhost:5002
+npm run dev          # http://localhost:5001
 npm run build && npm start
 ```
 
-Docker : `docker build -t vibeodp-frontend-web . && docker run -p 5002:5002 --env-file .env vibeodp-frontend-web`
+Docker : `docker build -t vibeodp-frontend-web . && docker run -p 5001:5001 --env-file .env vibeodp-frontend-web`
 
 ## Intégration dans le site de la ville
 
@@ -55,6 +55,6 @@ cp .env.example .env     # BACK_URL, TOURNAGE_API_KEY, FRAME_ANCESTORS
 docker compose up -d --build
 ```
 
-Port exposé : **5002**. Côté VibeODP, l'IP du serveur de la DMZ doit être déclarée dans
+Port exposé : **5001**. Côté VibeODP, l'IP du serveur de la DMZ doit être déclarée dans
 Paramètres › Gestion des tournages › Frontends autorisés (IP) ; plusieurs frontends peuvent être listés.
 Derrière un reverse proxy, celui-ci doit transmettre `X-Forwarded-For`.
