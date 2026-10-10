@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { Clapperboard, Search, Loader2, X, FileText, Paperclip, Calendar, AlertTriangle, Save, Building2, Phone, Mail } from 'lucide-react';
+import { Clapperboard, Search, Loader2, X, FileText, Paperclip, Calendar, AlertTriangle, Save, Building2, Phone, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
 import { STATUTS_DEMANDE } from '@/lib/tournage-regles';
 import AvisServices, { AvisPastilles } from './AvisServices';
 import DossierLien from './DossierLien';
@@ -35,6 +35,8 @@ export default function DemandesTournagesPage() {
   const [q, setQ] = useState('');
   const [filtre, setFiltre] = useState('ALL');
   const [filtreAvis, setFiltreAvis] = useState('ALL');
+  const [page, setPage] = useState(1);
+  const [parPage, setParPage] = useState(15);
   const [detail, setDetail] = useState<any | null>(null);
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
@@ -80,6 +82,13 @@ export default function DemandesTournagesPage() {
     const t = q.trim().toLowerCase();
     return !t || [r.reference, r.societe, r.demandeurNom, r.titre, r.email].some((v) => String(v || '').toLowerCase().includes(t));
   }), [rows, q, filtre, filtreAvis]);
+
+  // Pagination : retour à la première page quand la recherche, un filtre ou la taille de page change
+  useEffect(() => { setPage(1); }, [q, filtre, filtreAvis, parPage]);
+  const nbPages = Math.max(1, Math.ceil(filtrees.length / parPage));
+  const pageCourante = Math.min(page, nbPages);
+  const debut = (pageCourante - 1) * parPage;
+  const visibles = filtrees.slice(debut, debut + parPage);
 
   const compte = (s: string) => rows.filter((r) => r.statut === s).length;
   const d = detail?.donnees || {};
@@ -136,7 +145,7 @@ export default function DemandesTournagesPage() {
               </tr>
             </thead>
             <tbody>
-              {filtrees.map((r) => (
+              {visibles.map((r) => (
                 <tr key={r.id} onClick={() => ouvrir(r.id)} className="border-t border-slate-100 hover:bg-slate-50 cursor-pointer">
                   <td className="px-5 py-3.5 font-bold text-slate-900 tabular-nums">{r.reference}{r.occupationId ? <span title={`Dossier ODP #${r.occupationId}`} className="ml-2 px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-bold">Dossier #{r.occupationId}</span> : null}</td>
                   <td className="px-5 py-3.5"><p className="font-semibold text-slate-900">{r.titre}</p><p className="text-xs text-slate-500">{r.typeFilm}</p></td>
@@ -150,6 +159,26 @@ export default function DemandesTournagesPage() {
               ))}
             </tbody>
           </table>
+          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 border-t border-slate-100 text-sm text-slate-500">
+            <div className="flex flex-wrap items-center gap-3">
+              <span>Affichage de <b className="text-slate-800 tabular-nums">{debut + 1} - {Math.min(debut + parPage, filtrees.length)}</b> sur <b className="text-slate-800 tabular-nums">{filtrees.length}</b> demande{filtrees.length > 1 ? 's' : ''}{filtrees.length !== rows.length ? <span className="text-slate-400"> (filtrées sur {rows.length})</span> : null}</span>
+              <label className="flex items-center gap-2">Afficher :
+                <select value={parPage} onChange={(e) => setParPage(Number(e.target.value))} className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-slate-700">
+                  {[15, 25, 50, 100].map((n) => <option key={n} value={n}>{n} par page</option>)}
+                </select>
+              </label>
+            </div>
+            <div className="flex items-center gap-1">
+              <button disabled={pageCourante <= 1} onClick={() => setPage(pageCourante - 1)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white disabled:opacity-40"><ChevronLeft size={14} /> Précédent</button>
+              {Array.from({ length: nbPages }, (_, i) => i + 1).filter((n) => n === 1 || n === nbPages || Math.abs(n - pageCourante) <= 1).map((n, i, arr) => (
+                <React.Fragment key={n}>
+                  {i > 0 && n - arr[i - 1] > 1 && <span className="px-1">…</span>}
+                  <button onClick={() => setPage(n)} className={`w-9 h-9 rounded-lg text-sm font-semibold tabular-nums ${n === pageCourante ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'}`}>{n}</button>
+                </React.Fragment>
+              ))}
+              <button disabled={pageCourante >= nbPages} onClick={() => setPage(pageCourante + 1)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white disabled:opacity-40">Suivant <ChevronRight size={14} /></button>
+            </div>
+          </div>
         </div>
       )}
 

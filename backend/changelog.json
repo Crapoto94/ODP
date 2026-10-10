@@ -1,6 +1,11 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "changes": [
+    {
+      "date": "2026-10-10",
+      "version": "1.2.0",
+      "description": "Produit renommé VibeODP. Nouveau module de gestion des tournages : site public de dépôt des demandes (DMZ, iframe) avec règles bloquantes, liste paginée des demandes, avis des services par lien sans authentification, rôle Agent tournages, carte SIG des tournages et demandes, mails paramétrables, création du dossier ODP depuis la demande. Tarification : barèmes bâtiments publics et équipements sportifs, simulation financière par demande et lignes de facturation générées. Nouvelle page de règles métier de facturation (TLPE, commerces, chantiers, tournages), débrayables et paramétrables. Logo de la ville téléversable, page Facturation plus rapide. Détail : CHANGELOG.md."
+    },
     {
       "date": "2026-10-09",
       "version": "1.1.0",

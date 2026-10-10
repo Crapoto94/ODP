@@ -3,41 +3,62 @@
 Le détail fonctionnel visible des utilisateurs est aussi dans l'application (menu « Version » → journal des versions) ;
 les éléments rattachés à chaque version viennent du backlog.
 
-## À venir — non publié
+## 1.2.0 — 10 octobre 2026
 
-### Gestion des tournages (nouveau module)
-- **Site public de dépôt** (`frontend-web/`, à héberger en DMZ, intégré en iframe, page blanche) : formulaire complet de demande d'autorisation (jours et horaires équipe / véhicules techniques, lieu, type de film, synopsis, scènes, violence / armes factices, plan de tournage par date, personnes mobilisées, véhicules et stationnement, pièces jointes, cas étudiants).
-- **Règles bloquantes** : dates de tournage antérieures au délai d'instruction refusées, attestation d'assurance et plan de localisation obligatoires ; règles rejouées côté serveur. Informations sur le rendez-vous sur site, l'accord de principe, l'avis aux riverains, et marche à suivre pour les drones (Cerfa 15476*02), la passerelle aux câbles et le Parc des Cormailles.
-- **Paramétrage** (Paramètres › Gestion des tournages) : délai d'instruction (15 jours ouvrés lundi-vendredi par défaut, hors jours fériés ; ou jours calendaires), périodes d'absence du service (demandes non traitées, tournages acceptés à compter d'une date de reprise), message d'accueil, e-mail de notification, clé d'accès du site public.
-- **Menu Gestion métier › Demandes de tournages** : liste filtrable, fiche détaillée, pièces jointes, statuts (nouvelle, en instruction, complément, accord de principe, refusée, annulée), notes internes, alerte de dépassement du délai de réponse.
-- **Nouveau rôle « Agent tournages »** : ne voit que les demandes de tournage, les tournages en cours et la carte (droits `VIEW_TOURNAGES` / `VIEW_CARTE`, modifiables dans Paramètres › Rôles).
+Version du produit **VibeODP** : nouveau module de **gestion des tournages** (de la demande en ligne jusqu'au dossier et à la facturation),
+**instruction par les services**, **tarification et simulation financière** des tournages, et page des **règles métier de facturation**
+(débrayables et paramétrables) pour la TLPE, les commerces, les chantiers et les tournages.
 
-### Instruction par les services et dossier ODP
-- **Demandes d'avis aux services** (direction de l'espace public, sports, éducation, CMS, salles municipales, autres gestionnaires) : services et adresses e-mail paramétrables, questions propres à chaque service (ex. présence d'un médecin / infirmier au CMS, usage par les associations sportives), avis « libres » avec adresses à la volée, relance, annulation. Réponse favorable / défavorable **sans authentification** par un lien reçu par e-mail ; suivi dans la liste et la fiche des demandes.
-- **Droit « Paramétrage des tournages »** : l'agent tournages accède à l'onglet Gestion des tournages des paramètres.
+### Gestion des tournages — demande en ligne
+- **Site public de dépôt** (`frontend-web/`) : application autonome à héberger en **DMZ**, en **page blanche** pour être intégrée en iframe dans le site de la ville. Docker Compose dédié (port **5001**), variables `BACK_URL`, `TOURNAGE_API_KEY`, `FRAME_ANCESTORS`. La clé d'accès ne quitte jamais le serveur du site.
+- **Formulaire complet** : demandeur ; projet (titre, type de film, synopsis, scènes en extérieur, scènes de violence, armes factices, durée du film, aide financière) ; **jours** (copiables) avec horaires d'arrivée et de départ de l'équipe et des véhicules techniques (facultatifs), **par pas de 15 minutes** ; lieu (voie publique, espace vert, bâtiment municipal, équipement sportif), emplacements, surface et câbles ; plan de tournage par date ; personnes mobilisées (équipe, comédiens, figurants, autres) ; véhicules et places de stationnement (détail affiché si « places de stationnement » est coché) ; cas étudiants (attestation de l'école et contact).
+- **Pièces jointes** par zones de dépôt (glisser-déposer, liste, suppression) : plan de localisation au 1/100e ou 1/200e, attestation d'assurance, attestation de l'école, autres pièces.
+- **Règles bloquantes** rejouées côté serveur : dates antérieures au délai d'instruction refusées (**15 jours ouvrés lundi-vendredi**, hors jours fériés, paramétrable), **périodes d'absence du service** (demandes non traitées, tournages acceptés à compter d'une date de reprise), attestation d'assurance obligatoire.
+- **Informations au demandeur** : rendez-vous sur site, accord de principe, avis aux riverains ; marche à suivre pour les **drones** (Cerfa 15476*02), la **passerelle aux câbles** (Ville de Paris) et le **Parc des Cormailles** (Département).
+- **Sécurité de l'API publique** : clé d'accès et **liste des IP de frontends autorisés** (IP ou plages CIDR, plusieurs frontends possibles), limitation de débit, champ anti-robot.
+
+### Gestion des tournages — traitement des demandes
+- **Menu Gestion métier › Demandes de tournages** : liste avec recherche, filtres par statut et par avis, **pagination** (15, 25, 50 ou 100 par page), alerte de dépassement du délai de réponse, indication du dossier ODP lié.
+- **Fiche d'une demande** : tout le contenu du formulaire, pièces jointes, statuts (nouvelle, en instruction, complément demandé, accord de principe, refusée, annulée), notes internes, **mail au demandeur** à l'accord, au complément ou au refus (message libre).
+- **Pièces jointes protégées** : stockées hors du dossier public (`data/tournages`, volume Docker) et servies seulement aux utilisateurs ayant accès aux demandes.
+- **Rôle « Agent tournages »** : ne voit que les demandes de tournage, les tournages (liste et fiches), la carte et le paramétrage des tournages (droits `VIEW_TOURNAGES`, `VIEW_CARTE`, `MANAGE_TOURNAGES`, modifiables dans Paramètres › Rôles).
+- **Carte SIG des tournages** : tournages **en cours, à venir et passés** et **demandes**, avec infobulles détaillées au survol ; vue exclusive pour l'agent tournages, bascule « Tournages & demandes » pour les autres profils.
 - **Création du dossier de tournage ODP depuis une demande** : tiers existant ou nouveau tiers provisoire, contact, dates, lieu, résumé complet et avis des services repris dans le dossier.
-- **Pièces jointes protégées** : stockées hors du dossier public (`data/tournages`, volume Docker) et servies uniquement aux utilisateurs ayant accès aux demandes.
+
+### Instruction par les services
+- **Demandes d'avis** aux services consultés par la DAC (point d'entrée unique) : direction de l'espace public, direction des sports (stades), éducation (écoles), CMS, salles municipales, autres gestionnaires de locaux.
+- **Services paramétrables** (Paramètres › Gestion des tournages) : un ou plusieurs e-mails par service, questions propres (présence d'un médecin ou d'un infirmier au CMS, usage par les associations sportives…), indicateur « circuit propre » (signature et tarifs distincts), activation.
+- **Avis « libres »** : demande à des adresses saisies à la volée, relance, annulation, copie du lien.
+- **Réponse sans authentification** par un lien personnel reçu par e-mail : avis favorable ou défavorable (motif obligatoire), commentaire, réponses aux questions du service ; notification interne à l'adresse paramétrée.
+- Suivi visible dans la liste (pastilles ✔ favorable, ✖ défavorable, ⏳ pas de retour) et dans la fiche de chaque demande.
+
+### E-mails des tournages
+- **Expéditeur, pied de page (3 lignes et couleur), adresse de notification interne** propres aux tournages, avec repli sur les réglages généraux ; **mail de test**.
+- **8 modèles éditables avec variables** : accusé de réception, notification interne, complément, accord de principe, refus, demande d'avis, relance, avis reçu.
 
 ### Tarification des tournages
 - **Barèmes importés dans Tarifs & Articles** (2025 et 2026) : bâtiments publics (délibération du 13/02/2025) et équipements sportifs (tournages et prises de vues 2025/2026). Le barème voirie 2026 y figurait déjà.
-- **Simulation financière dans chaque demande** : calcul automatique selon le type de lieu (voie publique, espace vert, bâtiment municipal, équipement sportif), l'équipe, les jours, les tournages de nuit, le stationnement, la surface et les câbles ; abattement de 50 % des courts-métrages (hors publicité) et projets aidés, exonération des projets d'écoles. Paramètres ajustables par demande.
-- **Options réglables** (Paramètres › Gestion des tournages › Tarification) pour les points non précisés par les barèmes : périmètre de l'abattement, unité des tarifs sportifs, règles d'abattement des équipements sportifs, heures d'instruction, seuil du supplément de nuit…
-- **Lignes de facturation générées** à la création du dossier ODP depuis la demande (option), avec abattement et exonération appliqués.
-- Formulaire public : type de lieu, équipement sportif, surface occupée, câbles, durée du film et aide financière.
+- **Simulation financière dans chaque demande** : calcul selon le type de lieu, l'équipe, les jours, les tournages de nuit, le stationnement, la surface et les câbles ; abattement de 50 % des courts-métrages (hors publicité) et des projets aidés, exonération des projets d'écoles. Lieu, équipement, surface, câbles, abattement et exonération ajustables par demande.
+- **Lignes de facturation générées** à la création du dossier ODP (option), avec abattement et exonération appliqués ; plus de double minoration court-métrage.
+- **Options réglables** pour les points non précisés par les barèmes : périmètre de l'abattement, unité des tarifs sportifs, règles d'abattement des équipements sportifs, heures d'instruction, seuil du supplément de nuit, demi-journée, aide de la Ville, gratuité des écoles, signalisation.
 
 ### Règles métier de facturation (Paramètres › Règles de facturation)
-- **Page des règles** pour la T.L.P.E., les commerces, les chantiers, les tournages et les règles transversales : chaque règle est affichée avec sa description métier, sa source, son effet, et est **débrayable** (interrupteur) ou **paramétrable** (valeur, choix), avec retour à la valeur par défaut.
+- **Page des règles** pour la **T.L.P.E.**, les **commerces**, les **chantiers**, les **tournages** et les règles transversales : description métier, source, effet ; chaque règle est **débrayable** (interrupteur) ou **paramétrable** (valeur, choix), avec retour à la valeur par défaut.
 - **TLPE** : prorata (mois pleins, mois entamés, au jour, année pleine), exonération des enseignes et son seuil, enseignes scellées au sol, cumul des enseignes (et seulement celles présentes en même temps), seuil de palier, re-tarification automatique.
 - **Chantiers et tournages** : jour de début et de fin inclus, durée d'un mois, tranche de 10 jours, dates constatées prioritaires, recalcul automatique de la durée.
-- **Commerces** : reconduction au tarif de l'année cible, dégrèvements.
-- **Tous dossiers** : majoration des occupations non autorisées (et son taux), minoration court-métrage, statuts Clos / Titré depuis SEDIT, alerte quotidienne aux instructeurs.
-- Les calculs (totaux, factures, trains de facturation) et l'affichage utilisent les mêmes règles ; le prorata TLPE n'existe plus qu'en un seul endroit.
-- Correction : un dossier créé depuis une demande de tournage n'applique plus deux fois l'abattement court-métrage.
+- **Commerces** : reconduction au tarif de l'année cible, dégrèvements autorisés.
+- **Tous dossiers** : majoration des occupations non autorisées (et son taux), minoration court-métrage (et son taux), statuts Clos / Titré depuis SEDIT, alerte quotidienne aux instructeurs.
+- Calculs, factures, trains de facturation et affichage utilisent les **mêmes règles** ; le prorata TLPE n'existe plus qu'en un seul endroit. Valeurs par défaut identiques au comportement précédent.
 
 ### Divers
 - Produit renommé **VibeODP**.
 - **Logo de la ville** téléversable dans Paramètres › Général, affiché en haut à gauche.
 - **Page Facturation plus rapide** : lecture groupée des factures, cache de l'état de paiement SEDIT (5 min côté serveur, affichage immédiat des derniers résultats côté navigateur ; le bouton d'actualisation force la relecture).
+
+### Mise en service
+- Côté VibeODP : `pulldocker`. Les tables des tournages, des services, des avis et des règles se créent d'elles-mêmes si la migration n'a pas été appliquée. Le `docker-compose.yml` monte un nouveau volume `./data:/app/data` (pièces jointes des demandes).
+- Frontend de la DMZ : `cp .env.example .env`, renseigner `BACK_URL`, `TOURNAGE_API_KEY` (Paramètres › Gestion des tournages › Accès du site public) et `FRAME_ANCESTORS`, puis `docker compose up -d --build` ; déclarer l'IP du serveur dans « Frontends autorisés ».
+- Données d'exemple : 30 demandes `TOU-DEMO-*` (`scripts/seed-demandes-tournage.js`, option `--purge` pour les supprimer). Import des barèmes : `scripts/import-tarifs-tournage.js` (déjà exécuté, sans effet s'il est relancé).
 
 ## 1.1.0 — 9 octobre 2026
 
