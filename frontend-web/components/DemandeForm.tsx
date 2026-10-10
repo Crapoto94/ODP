@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
+import FileDrop from '@/components/FileDrop';
 
 interface Config {
   actif: boolean;
@@ -19,24 +20,6 @@ interface PlanLigne { date: string; lieu: string; heures: string; materiel: stri
 const EMPLACEMENTS = ['Trottoir', 'Chaussée', 'Places de stationnement', 'Espace vert', 'Place / parvis', 'Autre'];
 const fr = (iso: string) => iso.split('-').reverse().join('/');
 const jourVide = (date = ''): Jour => ({ date, equipeArrivee: '', equipeDepart: '', vehiculesArrivee: '', vehiculesDepart: '' });
-
-// Fichier avec contrôle de format et de taille côté navigateur (le back revérifie)
-function FichierInput({ label, requis, onChange, fichier, hint }: { label: string; requis?: boolean; fichier: File | null; onChange: (f: File | null) => void; hint?: string }) {
-  const [err, setErr] = useState('');
-  return (
-    <div>
-      <label className="f">{label}{requis && <span className="req"> *</span>}</label>
-      <input type="file" accept=".pdf,.png,.jpg,.jpeg" onChange={(e) => {
-        const f = e.target.files?.[0] || null;
-        if (f && f.size > 10 * 1024 * 1024) { setErr('Fichier trop volumineux (10 Mo maximum).'); e.target.value = ''; onChange(null); return; }
-        setErr(''); onChange(f);
-      }} />
-      {fichier && <div className="hint">{fichier.name} ({Math.round(fichier.size / 1024)} Ko)</div>}
-      {hint && !err && <div className="hint">{hint}</div>}
-      {err && <div className="hint" style={{ color: 'var(--danger)' }}>{err}</div>}
-    </div>
-  );
-}
 
 export default function DemandeForm() {
   const [cfg, setCfg] = useState<Config | null>(null);
@@ -303,12 +286,11 @@ export default function DemandeForm() {
         <div className="card">
           <h2>7. Pièces à joindre</h2>
           <div className="grid">
-            <FichierInput label="Plan de localisation du matériel et des véhicules" requis fichier={fPlan} onChange={setFPlan} hint="Plan précis au 1/100e ou 1/200e. PDF, PNG ou JPG — 10 Mo max." />
-            <FichierInput label="Attestation d'assurance garantissant le tournage" requis fichier={fAssurance} onChange={setFAssurance} hint="Sans attestation, la demande ne peut pas être déposée." />
+            <FileDrop label="Plan de localisation du matériel et des véhicules" requis files={fPlan ? [fPlan] : []} onChange={(f) => setFPlan(f[0] || null)} hint="Plan précis au 1/100e ou 1/200e. PDF, PNG ou JPG — 10 Mo max." />
+            <FileDrop label="Attestation d'assurance garantissant le tournage" requis files={fAssurance ? [fAssurance] : []} onChange={(f) => setFAssurance(f[0] || null)} hint="Sans attestation, la demande ne peut pas être déposée." />
           </div>
           <div style={{ marginTop: 14 }}>
-            <label className="f">Autres pièces (facultatif)</label>
-            <input type="file" multiple accept=".pdf,.png,.jpg,.jpeg" onChange={(e) => setFAutres(Array.from(e.target.files || []).filter((f) => f.size <= 10 * 1024 * 1024))} />
+            <FileDrop label="Autres pièces (facultatif)" multiple files={fAutres} onChange={setFAutres} hint="Plusieurs fichiers possibles. PDF, PNG ou JPG — 10 Mo max chacun." />
           </div>
         </div>
 
@@ -324,7 +306,7 @@ export default function DemandeForm() {
                 <div><label className="f">Contact (nom) <span className="req">*</span></label><input type="text" value={ecole.contact} onChange={(e) => setEcole({ ...ecole, contact: e.target.value })} /></div>
                 <div><label className="f">Téléphone <span className="req">*</span></label><input type="tel" value={ecole.telephone} onChange={(e) => setEcole({ ...ecole, telephone: e.target.value })} /></div>
                 <div><label className="f">E-mail <span className="req">*</span></label><input type="email" value={ecole.email} onChange={(e) => setEcole({ ...ecole, email: e.target.value })} /></div>
-                <div className="span2"><FichierInput label="Attestation de l'école relative au projet" requis fichier={fEcole} onChange={setFEcole} /></div>
+                <div className="span2"><FileDrop label="Attestation de l'école relative au projet" requis files={fEcole ? [fEcole] : []} onChange={(f) => setFEcole(f[0] || null)} /></div>
               </div>
             </div>
           )}

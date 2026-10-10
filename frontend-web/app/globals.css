@@ -52,3 +52,21 @@ button { font: inherit; cursor: pointer; }
 .cas { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
 .cas p { margin: 6px 0 0 26px; font-size: 0.85rem; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Zone de dépôt de fichiers */
+.drop { border: 2px dashed #cbd5e1; border-radius: 12px; background: var(--bg-soft); padding: 14px; transition: border-color .15s, background .15s; }
+.drop.over { border-color: var(--accent); background: #eff6ff; }
+.drop.filled { border-style: solid; border-color: #bfdbfe; background: #fff; }
+.drop-empty { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; color: var(--muted); font-size: 0.9rem; text-align: center; }
+.drop-empty svg { color: var(--accent); }
+.drop-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.drop-list li { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+.drop-list .nom { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.drop-list .badge { font-size: 0.68rem; font-weight: 800; letter-spacing: .04em; padding: 3px 7px; border-radius: 6px; }
+.drop-list .badge.pdf { background: #fee2e2; color: #b91c1c; }
+.drop-list .badge.img { background: #dbeafe; color: #1d4ed8; }
+.drop-list .x { border: 0; background: #f1f5f9; color: #475569; width: 26px; height: 26px; border-radius: 50%; font-size: 1.1rem; line-height: 1; }
+.drop-list .x:hover { background: #fee2e2; color: #b91c1c; }
+.drop-list .add { padding-top: 4px; }
+.btn.ghost { transition: background .15s; }
+.btn.ghost:hover { background: #eff6ff; }
