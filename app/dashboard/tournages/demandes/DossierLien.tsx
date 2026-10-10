@@ -11,15 +11,18 @@ export default function DossierLien({ demande, onChange }: { demande: any; onCha
   const [ouvert, setOuvert] = useState(false);
   const [choix, setChoix] = useState<string>('NOUVEAU');
   const [busy, setBusy] = useState(false);
+  const [creerLignes, setCreerLignes] = useState(true);
+  const [simTotal, setSimTotal] = useState<number | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
 
   const charger = () => axios.get(`/api/tournages/demandes/${demande.id}/dossier`).then((r) => { setInfo(r.data); if (r.data.candidats?.length) setChoix(String(r.data.candidats[0].id)); }).catch(() => setInfo({ dossier: null, candidats: [] }));
+  useEffect(() => { axios.get(`/api/tournages/demandes/${demande.id}/simulation`).then((r) => setSimTotal(r.data.simulation?.total ?? null)).catch(() => {}); }, [demande.id, ouvert]);
   useEffect(() => { setInfo(null); charger(); /* eslint-disable-next-line */ }, [demande.id, demande.occupationId]);
 
   const creer = async () => {
     setBusy(true); setErreur(null);
     try {
-      await axios.post(`/api/tournages/demandes/${demande.id}/dossier`, choix === 'NOUVEAU' ? { creerTiers: true } : { tiersId: Number(choix) });
+      await axios.post(`/api/tournages/demandes/${demande.id}/dossier`, { ...(choix === 'NOUVEAU' ? { creerTiers: true } : { tiersId: Number(choix) }), creerLignes });
       setOuvert(false); await charger(); onChange?.();
     } catch (e: any) { setErreur(e.response?.data?.error || e.message); }
     finally { setBusy(false); }
@@ -63,6 +66,10 @@ export default function DossierLien({ demande, onChange }: { demande: any; onCha
                   <span className="text-sm"><b>Créer un nouveau tiers « {demande.societe} »</b><span className="block text-xs text-slate-500">Tiers provisoire : à compléter (SIRET, code SEDIT) dans Gestion des tiers avant facturation.</span></span>
                 </label>
               </div>
+              <label className="flex items-start gap-2 rounded-lg bg-slate-50 border border-slate-200 p-3 text-sm cursor-pointer">
+                <input type="checkbox" className="mt-1" checked={creerLignes} onChange={(e) => setCreerLignes(e.target.checked)} />
+                <span><b>Créer les lignes de facturation</b> depuis la simulation financière{simTotal != null ? <> (total estimé <b>{simTotal.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €</b>)</> : null}.<span className="block text-xs text-slate-500">Articles du module Tarifs, abattements et exonérations appliqués ; à contrôler dans le dossier avant facturation.</span></span>
+              </label>
               {erreur && <p className="text-sm text-rose-600 font-semibold">{erreur}</p>}
               <div className="flex justify-end gap-2">
                 <button onClick={() => setOuvert(false)} className="h-9 px-4 rounded-lg border border-slate-200 text-sm font-semibold text-slate-700">Annuler</button>

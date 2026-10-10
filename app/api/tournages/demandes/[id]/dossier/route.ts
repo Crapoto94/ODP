@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { hasPermissionServer } from '@/lib/permissions-server';
 import { resumeReponses } from '@/lib/tournage-avis';
+import { lireConfigTournage } from '@/lib/tournage-service';
+import { simulerDemande } from '@/lib/tournage-simulation-db';
+import { updateOccupationTotal } from '@/lib/tlpe-utils';
 
 async function autorise() {
   const s = await getSession();
@@ -92,8 +95,29 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const lignesAvis = avis.map((a: any) => `- ${a.serviceNom} : ${a.statut === 'FAVORABLE' ? 'favorable' : a.statut === 'DEFAVORABLE' ? 'défavorable' : 'pas de retour'}${a.reponseCommentaire ? ` — ${a.reponseCommentaire}` : ''}${a.reponseDonnees && a.statut !== 'EN_ATTENTE' ? ` [${resumeReponses(a.questions, a.reponseDonnees).replace(/<br>/g, ' ; ')}]` : ''}`).join('\n');
     await db.note.create({ data: { occupationId: occ.id, author: auteur, origin: 'desktop', content: `📥 Dossier créé depuis la demande de tournage ${d.reference}.${tiersCree ? ' Tiers créé (provisoire) : à compléter et valider.' : ''}${lignesAvis ? `\nAvis des services :\n${lignesAvis}` : ''}${d.notesInternes ? `\nNotes de la demande : ${d.notesInternes}` : ''}` } });
 
+    // 4. Lignes de facturation issues de la simulation financière (option) : articles du module Tarifs, abattement / exonération appliqués ligne à ligne
+    let lignesCreees = 0;
+    const avertissements: string[] = [];
+    if (body.creerLignes) {
+      const cfg = await lireConfigTournage();
+      const { simulation: sim, options } = await simulerDemande(d, cfg.simulation);
+      for (const l of sim.lignes) {
+        if (!l.articleId) { avertissements.push(`Article introuvable pour « ${l.designation} » : ligne non créée`); continue; }
+        let montant = l.montant; let note = l.detail || '';
+        if (sim.gratuit) { montant = 0; note = `${note ? note + ' — ' : ''}${sim.gratuit.motif}`; }
+        else if (sim.abattement && (options.abattementSur === 'TOUT' || l.droits)) {
+          montant = Math.round(l.montant * (100 - sim.abattement.taux)) / 100;
+          note = `${note ? note + ' — ' : ''}abattement ${sim.abattement.taux} % (${sim.abattement.libelle})`;
+        }
+        await db.ligneOccupation.create({ data: { occupationId: occ.id, articleId: l.articleId, quantite1: l.quantite1, quantite2: l.quantite2, montant, dateDebut: debut, dateFin: fin, photos: '', note: `[Simulation ${d.reference}] ${note}`.trim() } });
+        lignesCreees++;
+      }
+      await updateOccupationTotal(occ.id);
+      await db.note.create({ data: { occupationId: occ.id, author: auteur, origin: 'desktop', content: `💶 ${lignesCreees} ligne(s) de facturation créées depuis la simulation financière de la demande ${d.reference} : total ${sim.total.toFixed(2)} €${sim.abattement ? ` (abattement ${sim.abattement.taux} % : ${sim.abattement.libelle})` : ''}${sim.gratuit ? ` (${sim.gratuit.motif})` : ''}. À contrôler avant facturation.` } });
+    }
+
     await db.demandeTournage.update({ where: { id: d.id }, data: { occupationId: occ.id, traiteePar: auteur } });
-    return NextResponse.json({ occupationId: occ.id, tiersId, tiersCree });
+    return NextResponse.json({ occupationId: occ.id, tiersId, tiersCree, lignesCreees, avertissements });
   } catch (e: any) {
     console.error('[TOURNAGE DOSSIER]', e);
     return NextResponse.json({ error: e.message }, { status: 500 });

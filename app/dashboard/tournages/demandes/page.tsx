@@ -6,6 +6,7 @@ import { Clapperboard, Search, Loader2, X, FileText, Paperclip, Calendar, AlertT
 import { STATUTS_DEMANDE } from '@/lib/tournage-regles';
 import AvisServices, { AvisPastilles } from './AvisServices';
 import DossierLien from './DossierLien';
+import SimulationFinanciere from './SimulationFinanciere';
 
 const fmtDate = (v: any) => (v ? new Date(v).toLocaleDateString('fr-FR') : '—');
 const fmtIso = (s?: string) => (s ? s.split('-').reverse().join('/') : '—');
@@ -235,6 +236,8 @@ export default function DemandesTournagesPage() {
                   <a key={i} href={p.chemin} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-blue-600 hover:underline"><Paperclip size={14} /> {p.libelle} <span className="text-slate-400 text-xs">— {p.nom}</span></a>
                 ))}
               </Bloc>
+
+              <SimulationFinanciere demandeId={detail.id} />
 
               <AvisServices demandeId={detail.id} onChange={charger} />
 

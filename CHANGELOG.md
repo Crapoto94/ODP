@@ -18,6 +18,13 @@ les éléments rattachés à chaque version viennent du backlog.
 - **Création du dossier de tournage ODP depuis une demande** : tiers existant ou nouveau tiers provisoire, contact, dates, lieu, résumé complet et avis des services repris dans le dossier.
 - **Pièces jointes protégées** : stockées hors du dossier public (`data/tournages`, volume Docker) et servies uniquement aux utilisateurs ayant accès aux demandes.
 
+### Tarification des tournages
+- **Barèmes importés dans Tarifs & Articles** (2025 et 2026) : bâtiments publics (délibération du 13/02/2025) et équipements sportifs (tournages et prises de vues 2025/2026). Le barème voirie 2026 y figurait déjà.
+- **Simulation financière dans chaque demande** : calcul automatique selon le type de lieu (voie publique, espace vert, bâtiment municipal, équipement sportif), l'équipe, les jours, les tournages de nuit, le stationnement, la surface et les câbles ; abattement de 50 % des courts-métrages (hors publicité) et projets aidés, exonération des projets d'écoles. Paramètres ajustables par demande.
+- **Options réglables** (Paramètres › Gestion des tournages › Tarification) pour les points non précisés par les barèmes : périmètre de l'abattement, unité des tarifs sportifs, règles d'abattement des équipements sportifs, heures d'instruction, seuil du supplément de nuit…
+- **Lignes de facturation générées** à la création du dossier ODP depuis la demande (option), avec abattement et exonération appliqués.
+- Formulaire public : type de lieu, équipement sportif, surface occupée, câbles, durée du film et aide financière.
+
 ### Divers
 - Produit renommé **VibeODP**.
 - **Logo de la ville** téléversable dans Paramètres › Général, affiché en haut à gauche.

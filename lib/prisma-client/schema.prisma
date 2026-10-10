@@ -551,6 +551,7 @@ model TournageConfig {
   mailFooter2         String?
   mailFooter3         String?
   mailFooterColor     String?
+  simulation          Json? // options de la simulation financière (voir lib/tournage-simulation.ts)
   frontendsAutorises  Json     @default("[]") // [{ nom, ip, actif }] — IP ou CIDR des frontends autorisés à appeler l'API publique
   updated_at          DateTime @updatedAt
 }

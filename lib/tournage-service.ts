@@ -7,6 +7,7 @@ const DDL = [
   `CREATE TABLE IF NOT EXISTS "DemandeTournage" ("id" SERIAL NOT NULL, "reference" TEXT NOT NULL, "statut" TEXT NOT NULL DEFAULT 'NOUVELLE', "dateDepot" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "dateLimiteReponse" TIMESTAMP(3), "premiereDate" TIMESTAMP(3), "derniereDate" TIMESTAMP(3), "societe" TEXT NOT NULL, "demandeurNom" TEXT NOT NULL, "email" TEXT NOT NULL, "telephone" TEXT, "titre" TEXT NOT NULL, "typeFilm" TEXT NOT NULL, "donnees" JSONB NOT NULL, "pieces" JSONB NOT NULL DEFAULT '[]', "notesInternes" TEXT, "occupationId" INTEGER, "traiteePar" TEXT, "updated_at" TIMESTAMP(3) NOT NULL, CONSTRAINT "DemandeTournage_pkey" PRIMARY KEY ("id"))`,
   `CREATE TABLE IF NOT EXISTS "TournageConfig" ("id" INTEGER NOT NULL DEFAULT 1, "actif" BOOLEAN NOT NULL DEFAULT true, "delaiInstruction" INTEGER NOT NULL DEFAULT 15, "typeJours" TEXT NOT NULL DEFAULT 'OUVRES', "exclureFeries" BOOLEAN NOT NULL DEFAULT true, "delaiMinimalDepot" INTEGER NOT NULL DEFAULT 0, "periodesAbsence" JSONB NOT NULL DEFAULT '[]', "messageAccueil" TEXT, "emailNotification" TEXT, "apiKey" TEXT, "frontendsAutorises" JSONB NOT NULL DEFAULT '[]', "updated_at" TIMESTAMP(3) NOT NULL, CONSTRAINT "TournageConfig_pkey" PRIMARY KEY ("id"))`,
   `ALTER TABLE "TournageConfig" ADD COLUMN IF NOT EXISTS "frontendsAutorises" JSONB NOT NULL DEFAULT '[]'`,
+  `ALTER TABLE "TournageConfig" ADD COLUMN IF NOT EXISTS "simulation" JSONB`,
   `ALTER TABLE "TournageConfig" ADD COLUMN IF NOT EXISTS "mailExpediteurNom" TEXT`,
   `ALTER TABLE "TournageConfig" ADD COLUMN IF NOT EXISTS "mailExpediteurEmail" TEXT`,
   `ALTER TABLE "TournageConfig" ADD COLUMN IF NOT EXISTS "mailFooter1" TEXT`,
@@ -153,7 +154,10 @@ export function validerDemande(d: any, regles: ConfigRegles, aujourdhui = new Da
   });
 
   const lieu = d?.lieu || {};
-  if (!Array.isArray(lieu.emplacements) || !lieu.emplacements.length) erreurs.push('Indiquez le lieu envisagé (trottoir, chaussée, stationnement…).');
+  const typeLieu = lieu.typeLieu || 'VOIE';
+  if (!['VOIE', 'ESPACE_VERT', 'BATIMENT', 'SPORT'].includes(typeLieu)) erreurs.push('Type de lieu invalide.');
+  if ((typeLieu === 'VOIE' || typeLieu === 'ESPACE_VERT') && (!Array.isArray(lieu.emplacements) || !lieu.emplacements.length)) erreurs.push('Indiquez le lieu envisagé (trottoir, chaussée, stationnement…).');
+  if (typeLieu === 'SPORT' && !lieu.equipement) erreurs.push("Précisez l'équipement sportif concerné.");
   if (!txt(lieu.adresse)) erreurs.push('L\'adresse du lieu de tournage est obligatoire.');
 
   const plan = Array.isArray(d?.plan) ? d.plan : [];

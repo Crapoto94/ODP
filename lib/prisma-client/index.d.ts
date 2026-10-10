@@ -34746,6 +34746,7 @@ export namespace Prisma {
     mailFooter2: number
     mailFooter3: number
     mailFooterColor: number
+    simulation: number
     frontendsAutorises: number
     updated_at: number
     _all: number
@@ -34819,6 +34820,7 @@ export namespace Prisma {
     mailFooter2?: true
     mailFooter3?: true
     mailFooterColor?: true
+    simulation?: true
     frontendsAutorises?: true
     updated_at?: true
     _all?: true
@@ -34927,6 +34929,7 @@ export namespace Prisma {
     mailFooter2: string | null
     mailFooter3: string | null
     mailFooterColor: string | null
+    simulation: JsonValue | null
     frontendsAutorises: JsonValue
     updated_at: Date
     _count: TournageConfigCountAggregateOutputType | null
@@ -34967,6 +34970,7 @@ export namespace Prisma {
     mailFooter2?: boolean
     mailFooter3?: boolean
     mailFooterColor?: boolean
+    simulation?: boolean
     frontendsAutorises?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["tournageConfig"]>
@@ -34988,6 +34992,7 @@ export namespace Prisma {
     mailFooter2?: boolean
     mailFooter3?: boolean
     mailFooterColor?: boolean
+    simulation?: boolean
     frontendsAutorises?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["tournageConfig"]>
@@ -35009,6 +35014,7 @@ export namespace Prisma {
     mailFooter2?: boolean
     mailFooter3?: boolean
     mailFooterColor?: boolean
+    simulation?: boolean
     frontendsAutorises?: boolean
     updated_at?: boolean
   }
@@ -35034,6 +35040,7 @@ export namespace Prisma {
       mailFooter2: string | null
       mailFooter3: string | null
       mailFooterColor: string | null
+      simulation: Prisma.JsonValue | null
       frontendsAutorises: Prisma.JsonValue
       updated_at: Date
     }, ExtArgs["result"]["tournageConfig"]>
@@ -35445,6 +35452,7 @@ export namespace Prisma {
     readonly mailFooter2: FieldRef<"TournageConfig", 'String'>
     readonly mailFooter3: FieldRef<"TournageConfig", 'String'>
     readonly mailFooterColor: FieldRef<"TournageConfig", 'String'>
+    readonly simulation: FieldRef<"TournageConfig", 'Json'>
     readonly frontendsAutorises: FieldRef<"TournageConfig", 'Json'>
     readonly updated_at: FieldRef<"TournageConfig", 'DateTime'>
   }
@@ -38339,6 +38347,7 @@ export namespace Prisma {
     mailFooter2: 'mailFooter2',
     mailFooter3: 'mailFooter3',
     mailFooterColor: 'mailFooterColor',
+    simulation: 'simulation',
     frontendsAutorises: 'frontendsAutorises',
     updated_at: 'updated_at'
   };
@@ -41248,6 +41257,7 @@ export namespace Prisma {
     mailFooter2?: StringNullableFilter<"TournageConfig"> | string | null
     mailFooter3?: StringNullableFilter<"TournageConfig"> | string | null
     mailFooterColor?: StringNullableFilter<"TournageConfig"> | string | null
+    simulation?: JsonNullableFilter<"TournageConfig">
     frontendsAutorises?: JsonFilter<"TournageConfig">
     updated_at?: DateTimeFilter<"TournageConfig"> | Date | string
   }
@@ -41269,6 +41279,7 @@ export namespace Prisma {
     mailFooter2?: SortOrderInput | SortOrder
     mailFooter3?: SortOrderInput | SortOrder
     mailFooterColor?: SortOrderInput | SortOrder
+    simulation?: SortOrderInput | SortOrder
     frontendsAutorises?: SortOrder
     updated_at?: SortOrder
   }
@@ -41293,6 +41304,7 @@ export namespace Prisma {
     mailFooter2?: StringNullableFilter<"TournageConfig"> | string | null
     mailFooter3?: StringNullableFilter<"TournageConfig"> | string | null
     mailFooterColor?: StringNullableFilter<"TournageConfig"> | string | null
+    simulation?: JsonNullableFilter<"TournageConfig">
     frontendsAutorises?: JsonFilter<"TournageConfig">
     updated_at?: DateTimeFilter<"TournageConfig"> | Date | string
   }, "id">
@@ -41314,6 +41326,7 @@ export namespace Prisma {
     mailFooter2?: SortOrderInput | SortOrder
     mailFooter3?: SortOrderInput | SortOrder
     mailFooterColor?: SortOrderInput | SortOrder
+    simulation?: SortOrderInput | SortOrder
     frontendsAutorises?: SortOrder
     updated_at?: SortOrder
     _count?: TournageConfigCountOrderByAggregateInput
@@ -41343,6 +41356,7 @@ export namespace Prisma {
     mailFooter2?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
     mailFooter3?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
     mailFooterColor?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    simulation?: JsonNullableWithAggregatesFilter<"TournageConfig">
     frontendsAutorises?: JsonWithAggregatesFilter<"TournageConfig">
     updated_at?: DateTimeWithAggregatesFilter<"TournageConfig"> | Date | string
   }
@@ -44612,6 +44626,7 @@ export namespace Prisma {
     mailFooter2?: string | null
     mailFooter3?: string | null
     mailFooterColor?: string | null
+    simulation?: NullableJsonNullValueInput | InputJsonValue
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: Date | string
   }
@@ -44633,6 +44648,7 @@ export namespace Prisma {
     mailFooter2?: string | null
     mailFooter3?: string | null
     mailFooterColor?: string | null
+    simulation?: NullableJsonNullValueInput | InputJsonValue
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: Date | string
   }
@@ -44654,6 +44670,7 @@ export namespace Prisma {
     mailFooter2?: NullableStringFieldUpdateOperationsInput | string | null
     mailFooter3?: NullableStringFieldUpdateOperationsInput | string | null
     mailFooterColor?: NullableStringFieldUpdateOperationsInput | string | null
+    simulation?: NullableJsonNullValueInput | InputJsonValue
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -44675,6 +44692,7 @@ export namespace Prisma {
     mailFooter2?: NullableStringFieldUpdateOperationsInput | string | null
     mailFooter3?: NullableStringFieldUpdateOperationsInput | string | null
     mailFooterColor?: NullableStringFieldUpdateOperationsInput | string | null
+    simulation?: NullableJsonNullValueInput | InputJsonValue
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -44696,6 +44714,7 @@ export namespace Prisma {
     mailFooter2?: string | null
     mailFooter3?: string | null
     mailFooterColor?: string | null
+    simulation?: NullableJsonNullValueInput | InputJsonValue
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: Date | string
   }
@@ -44717,6 +44736,7 @@ export namespace Prisma {
     mailFooter2?: NullableStringFieldUpdateOperationsInput | string | null
     mailFooter3?: NullableStringFieldUpdateOperationsInput | string | null
     mailFooterColor?: NullableStringFieldUpdateOperationsInput | string | null
+    simulation?: NullableJsonNullValueInput | InputJsonValue
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -44738,6 +44758,7 @@ export namespace Prisma {
     mailFooter2?: NullableStringFieldUpdateOperationsInput | string | null
     mailFooter3?: NullableStringFieldUpdateOperationsInput | string | null
     mailFooterColor?: NullableStringFieldUpdateOperationsInput | string | null
+    simulation?: NullableJsonNullValueInput | InputJsonValue
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -47114,6 +47135,28 @@ export namespace Prisma {
     _min?: NestedJsonFilter<$PrismaModel>
     _max?: NestedJsonFilter<$PrismaModel>
   }
+  export type JsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type TournageConfigCountOrderByAggregateInput = {
     id?: SortOrder
@@ -47132,6 +47175,7 @@ export namespace Prisma {
     mailFooter2?: SortOrder
     mailFooter3?: SortOrder
     mailFooterColor?: SortOrder
+    simulation?: SortOrder
     frontendsAutorises?: SortOrder
     updated_at?: SortOrder
   }
@@ -47185,6 +47229,31 @@ export namespace Prisma {
     delaiInstruction?: SortOrder
     delaiMinimalDepot?: SortOrder
   }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
 
   export type ServiceInstructeurCountOrderByAggregateInput = {
     id?: SortOrder
@@ -47229,28 +47298,6 @@ export namespace Prisma {
   export type ServiceInstructeurSumOrderByAggregateInput = {
     id?: SortOrder
     ordre?: SortOrder
-  }
-  export type JsonNullableFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type AvisTournageCountOrderByAggregateInput = {
@@ -47325,31 +47372,6 @@ export namespace Prisma {
     demandeId?: SortOrder
     serviceId?: SortOrder
     nbRelances?: SortOrder
-  }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type ContactCreateNestedManyWithoutTiersInput = {

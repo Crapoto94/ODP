@@ -18,6 +18,20 @@ interface Config {
 interface Jour { date: string; equipeArrivee: string; equipeDepart: string; vehiculesArrivee: string; vehiculesDepart: string }
 interface PlanLigne { date: string; lieu: string; heures: string; materiel: string }
 
+const TYPES_LIEU = [
+  ['VOIE', 'Voie publique (trottoir, chaussée, stationnement…)'],
+  ['ESPACE_VERT', 'Espace vert'],
+  ['BATIMENT', 'Bâtiment municipal (salle, école, CMS…)'],
+  ['SPORT', 'Équipement sportif (stade, gymnase, piscine…)'],
+];
+const EQUIPEMENTS = [
+  ['piscine', 'Piscine municipale'],
+  ['gymnase', "Gymnase, salle d'escrime, tennis de table, bulle de tennis"],
+  ['salle_sport', 'Salle de sport, de combat, gymnase scolaire, salle de musculation'],
+  ['stade', "Stade (terrain engazonné / synthétique, piste d'athlétisme)"],
+  ['tennis', 'Court de tennis municipal'],
+  ['plateau', "Plateau d'évolution"],
+];
 const EMPLACEMENTS = ['Trottoir', 'Chaussée', 'Places de stationnement', 'Espace vert', 'Place / parvis', 'Autre'];
 const fr = (iso: string) => iso.split('-').reverse().join('/');
 const jourVide = (date = ''): Jour => ({ date, equipeArrivee: '', equipeDepart: '', vehiculesArrivee: '', vehiculesDepart: '' });
@@ -36,7 +50,9 @@ export default function DemandeForm() {
   const [violence, setViolence] = useState<boolean | null>(null);
   const [armes, setArmes] = useState<boolean | null>(null);
   const [jours, setJours] = useState<Jour[]>([jourVide()]);
-  const [lieu, setLieu] = useState<{ emplacements: string[]; adresse: string; precisions: string }>({ emplacements: [], adresse: '', precisions: '' });
+  const [lieu, setLieu] = useState<{ emplacements: string[]; adresse: string; precisions: string; typeLieu: string; equipement: string; surfaceM2: string; cablesM: string }>({ emplacements: [], adresse: '', precisions: '', typeLieu: 'VOIE', equipement: '', surfaceM2: '', cablesM: '' });
+  const [duree, setDuree] = useState('');
+  const [aide, setAide] = useState('');
   const [plan, setPlan] = useState<Record<string, { lieu: string; heures: string; materiel: string }>>({});
   const [pers, setPers] = useState({ equipe: '', comediens: '', figurants: '', autres: '', autresPrecision: '' });
   const [veh, setVeh] = useState({ description: '', nbPlaces: '', localisation: '' });
@@ -65,7 +81,8 @@ export default function DemandeForm() {
 
   const min = cfg?.premiereDatePossible || '';
   const ouvres = cfg?.typeJours === 'OUVRES';
-  const stationne = lieu.emplacements.includes('Places de stationnement');
+  const voirie = lieu.typeLieu === 'VOIE' || lieu.typeLieu === 'ESPACE_VERT';
+  const stationne = voirie && lieu.emplacements.includes('Places de stationnement');
   // Copie un jour (horaires + ligne du plan de tournage) sur le lendemain, juste après lui
   const dupliquerJour = (i: number) => {
     const src = jours[i];
@@ -95,7 +112,9 @@ export default function DemandeForm() {
       if (!j.equipeArrivee || !j.equipeDepart) e.push(`Jour ${i + 1} : renseignez les horaires d'arrivée et de départ de l'équipe.`);
       if (!!j.vehiculesArrivee !== !!j.vehiculesDepart) e.push(`Jour ${i + 1} : renseignez à la fois l'arrivée et le départ des véhicules techniques (ou aucun des deux).`);
     });
-    if (!lieu.emplacements.length || !lieu.adresse.trim()) e.push('Indiquez le lieu envisagé (type d\'emplacement et adresse).');
+    if (voirie && !lieu.emplacements.length) e.push('Indiquez l\'emplacement occupé (trottoir, chaussée, stationnement…).');
+    if (lieu.typeLieu === 'SPORT' && !lieu.equipement) e.push('Précisez l\'équipement sportif concerné.');
+    if (!lieu.adresse.trim()) e.push('Indiquez l\'adresse ou le nom du lieu de tournage.');
     if (datesPlan.some((d) => { const p = plan[d]; return !p || !p.lieu.trim() || !p.heures.trim() || !p.materiel.trim(); })) e.push('Le plan de tournage doit préciser, pour chaque date, le lieu, les heures et le matériel employé.');
     if (!(Number(pers.equipe) + Number(pers.comediens) + Number(pers.figurants) + Number(pers.autres) > 0)) e.push('Indiquez le nombre de personnes mobilisées.');
     if (!fPlan) e.push('Le plan de localisation du matériel et des véhicules (1/100e ou 1/200e) est obligatoire.');
@@ -117,9 +136,11 @@ export default function DemandeForm() {
     try {
       const donnees = {
         demandeur: dem, ...projet, violence, armesFactices: armes, jours,
-        lieu, plan: datesPlan.map((d) => ({ date: d, ...plan[d] })),
+        lieu: { ...lieu, emplacements: voirie ? lieu.emplacements : [], equipement: lieu.typeLieu === 'SPORT' ? lieu.equipement : '', surfaceM2: voirie && lieu.surfaceM2 !== '' ? Number(lieu.surfaceM2) : null, cablesM: voirie && lieu.cablesM !== '' ? Number(lieu.cablesM) : null },
+        dureeMinutes: duree !== '' ? Number(duree) : null, aide,
+        plan: datesPlan.map((d) => ({ date: d, ...plan[d] })),
         personnes: { equipe: Number(pers.equipe) || 0, comediens: Number(pers.comediens) || 0, figurants: Number(pers.figurants) || 0, autres: Number(pers.autres) || 0, autresPrecision: pers.autresPrecision.trim() },
-        vehicules: { description: veh.description, blocagePlaces: lieu.emplacements.includes('Places de stationnement'), nbPlaces: stationne && veh.nbPlaces !== '' ? Number(veh.nbPlaces) : null, localisation: stationne ? veh.localisation : '' },
+        vehicules: { description: veh.description, blocagePlaces: stationne, nbPlaces: stationne && veh.nbPlaces !== '' ? Number(veh.nbPlaces) : null, localisation: stationne ? veh.localisation : '' },
         etudiant, ecole: etudiant ? ecole : null, cas, accepte,
       };
       const fd = new FormData();
@@ -213,6 +234,13 @@ export default function DemandeForm() {
             </div>
             <div className="span2"><label className="f">Synopsis du film ou téléfilm, ou sujet du reportage photo <span className="req">*</span></label><textarea value={projet.synopsis} onChange={(e) => setProjet({ ...projet, synopsis: e.target.value })} /></div>
             <div className="span2"><label className="f">Descriptif des scènes à tourner en extérieur <span className="req">*</span></label><textarea value={projet.scenes} onChange={(e) => setProjet({ ...projet, scenes: e.target.value })} /></div>
+            <div><label className="f">Durée du film en minutes <span className="muted">(facultatif)</span></label><input type="number" min={0} placeholder="ex. 25" value={duree} onChange={(e) => setDuree(e.target.value)} /><div className="hint">Les courts-métrages (59 minutes ou moins, hors publicité) bénéficient d&apos;un abattement.</div></div>
+            <div><label className="f">Projet aidé financièrement <span className="muted">(facultatif)</span></label>
+              <select value={aide} onChange={(e) => setAide(e.target.value)}>
+                <option value="">Non</option><option value="VILLE">Oui : aide de la Ville (Coup de pouce, COREUS)</option>
+                <option value="DEPARTEMENT">Oui : aide du Conseil départemental</option><option value="REGION">Oui : aide de la Région Île-de-France</option>
+              </select>
+            </div>
             <div>
               <label className="f">Y a-t-il des scènes de violence ? <span className="req">*</span></label>
               <div className="radios">
@@ -256,15 +284,33 @@ export default function DemandeForm() {
 
         <div className="card">
           <h2>4. Lieu envisagé</h2>
-          <label className="f">Emplacement occupé <span className="req">*</span></label>
-          <div className="checks" style={{ marginBottom: 12 }}>
+          <div className="grid" style={{ marginBottom: 12 }}>
+            <div className={lieu.typeLieu === 'SPORT' ? '' : 'span2'}>
+              <label className="f">Type de lieu <span className="req">*</span></label>
+              <select value={lieu.typeLieu} onChange={(e) => setLieu({ ...lieu, typeLieu: e.target.value, emplacements: [], equipement: '' })}>
+                {TYPES_LIEU.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              </select>
+            </div>
+            {lieu.typeLieu === 'SPORT' && (
+              <div><label className="f">Équipement concerné <span className="req">*</span></label>
+                <select value={lieu.equipement} onChange={(e) => setLieu({ ...lieu, equipement: e.target.value })}>
+                  <option value="">— Choisir —</option>
+                  {EQUIPEMENTS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                </select>
+              </div>
+            )}
+          </div>
+          {voirie && <label className="f">Emplacement occupé <span className="req">*</span></label>}
+          {voirie && <div className="checks" style={{ marginBottom: 12 }}>
             {EMPLACEMENTS.map((x) => (
               <label key={x}><input type="checkbox" checked={lieu.emplacements.includes(x)} onChange={(e) => setLieu({ ...lieu, emplacements: e.target.checked ? [...lieu.emplacements, x] : lieu.emplacements.filter((y) => y !== x) })} /> {x}</label>
             ))}
-          </div>
+          </div>}
           <div className="grid">
-            <div><label className="f">Adresse / rue <span className="req">*</span></label><input type="text" value={lieu.adresse} onChange={(e) => setLieu({ ...lieu, adresse: e.target.value })} /></div>
+            <div><label className="f">{voirie ? 'Adresse / rue' : 'Adresse ou nom du lieu'} <span className="req">*</span></label><input type="text" value={lieu.adresse} onChange={(e) => setLieu({ ...lieu, adresse: e.target.value })} /></div>
             <div><label className="f">Précisions</label><input type="text" value={lieu.precisions} onChange={(e) => setLieu({ ...lieu, precisions: e.target.value })} /></div>
+            {voirie && <div><label className="f">Surface occupée en m² <span className="muted">(facultatif)</span></label><input type="number" min={0} value={lieu.surfaceM2} onChange={(e) => setLieu({ ...lieu, surfaceM2: e.target.value })} /></div>}
+            {voirie && <div><label className="f">Câbles électriques au sol, en mètres <span className="muted">(facultatif)</span></label><input type="number" min={0} value={lieu.cablesM} onChange={(e) => setLieu({ ...lieu, cablesM: e.target.value })} /></div>}
           </div>
         </div>
 

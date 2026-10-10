@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Clapperboard, CalendarOff, KeyRound, Globe, Mail, Send, Plus, Trash2, RefreshCw, Copy } from 'lucide-react';
+import { Clapperboard, CalendarOff, KeyRound, Globe, Mail, Send, Calculator, Plus, Trash2, RefreshCw, Copy } from 'lucide-react';
 import { SCard, SGrid, SField, SInput, SSelect, STextarea, SToggle, SButton, SIconButton, SAlert, SSaveBar, SLoading, SBadge } from '@/components/v2/settings/ui';
 import MessagesContextuelsTab from './MessagesContextuelsTab';
 import ServicesAvisCard from './ServicesAvisCard';
+import { normaliserOptions } from '@/lib/tournage-simulation';
 import { premiereDatePossible, iso, type PeriodeAbsence } from '@/lib/tournage-regles';
 
 // Administration de la gestion des tournages : délai d'instruction, type de jours, périodes de fermeture, clé d'accès du site public.
@@ -37,6 +38,8 @@ export default function TournagesTab() {
     } finally { setTesting(false); }
   };
 
+  const sim = normaliserOptions(cfg.simulation);
+  const setSim = (patch: any) => set({ simulation: { ...sim, ...patch } });
   const frontends: any[] = Array.isArray(cfg.frontendsAutorises) ? cfg.frontendsAutorises : [];
   const majFront = (i: number, patch: any) => set({ frontendsAutorises: frontends.map((f, k) => (k === i ? { ...f, ...patch } : f)) });
 
@@ -85,6 +88,34 @@ export default function TournagesTab() {
             Une demande déposée aujourd&apos;hui permettrait des tournages à partir du <b>{iso(apercu.date).split('-').reverse().join('/')}</b>
             {apercu.periode ? ' (période de fermeture en cours)' : ''}.
           </SAlert>
+        </div>
+      </SCard>
+
+      <SCard icon={Calculator} title="Tarification : simulation financière" description="Hypothèses de la simulation affichée dans chaque demande. Les prix viennent du module Tarifs & Articles ; les choix ci-dessous couvrent les points que les barèmes ne précisent pas.">
+        <div className="space-y-5">
+          <SGrid cols={3}>
+            <SField label="Abattement courts-métrages (%)" hint="50 % dans les barèmes (courts-métrages ≤ 59 min hors publicité, projets aidés par la Ville sur la voirie)."><SInput type="number" min={0} max={100} value={sim.abattementTaux} onChange={(e) => setSim({ abattementTaux: Number(e.target.value) })} /></SField>
+            <SField label="L'abattement porte sur" hint="« Tout le barème » ou seulement les droits (équipe, stationnement, occupation), pas l'instruction ni les autorisations.">
+              <SSelect value={sim.abattementSur} onChange={(e) => setSim({ abattementSur: e.target.value })}><option value="TOUT">Tout le barème</option><option value="DROITS">Les droits seulement</option></SSelect>
+            </SField>
+            <SField label="Heures d'instruction estimées" hint="« Mise en œuvre technicien » (33,70 €/h) comptée par demande."><SInput type="number" min={0} step={0.5} value={sim.instructionHeures} onChange={(e) => setSim({ instructionHeures: Number(e.target.value) })} /></SField>
+            <SField label="Instruction et autorisations pour" hint="Le barème voirie les prévoit ; la délibération bâtiments et le tarif sports n'en parlent pas.">
+              <SSelect value={sim.instructionAutorisationPour} onChange={(e) => setSim({ instructionAutorisationPour: e.target.value })}><option value="VOIE">La voirie seulement</option><option value="TOUS">Tous les lieux</option></SSelect>
+            </SField>
+            <SField label="Supplément de nuit dès (heures entre 20 h et 8 h)" hint="Nombre d'heures de tournage de nuit déclenchant le supplément."><SInput type="number" min={0} step={0.5} value={sim.nuitSeuilHeures} onChange={(e) => setSim({ nuitSeuilHeures: Number(e.target.value) })} /></SField>
+            <SField label="Demi-journée (bâtiments) jusqu'à (h)" hint="Au-delà : journée complète."><SInput type="number" min={1} step={0.5} value={sim.demiJourneeMaxHeures} onChange={(e) => setSim({ demiJourneeMaxHeures: Number(e.target.value) })} /></SField>
+            <SField label="Gymnases, salles, piscine, tennis facturés" hint="Les tarifs sportifs ne précisent pas l'unité : à l'heure d'occupation (hypothèse retenue) ou une fois par jour.">
+              <SSelect value={sim.sportUnite} onChange={(e) => setSim({ sportUnite: e.target.value })}><option value="HEURE">À l'heure</option><option value="JOUR">Par jour</option></SSelect>
+            </SField>
+            <SField label="Abattements pour les équipements sportifs" hint="Non précisés dans leur tarif : appliquer les règles de la voirie, des bâtiments, ou aucune.">
+              <SSelect value={sim.reglesSport} onChange={(e) => setSim({ reglesSport: e.target.value })}><option value="VOIRIE">Comme la voirie</option><option value="BATIMENTS">Comme les bâtiments publics</option><option value="AUCUNE">Aucun</option></SSelect>
+            </SField>
+            <SField label="Projet aidé par la Ville (voirie)" hint="Le barème voirie prévoit un abattement de 50 % ; la délibération bâtiments, une exonération.">
+              <SSelect value={sim.aideVille} onChange={(e) => setSim({ aideVille: e.target.value })}><option value="ABATTEMENT">Abattement</option><option value="EXONERATION">Exonération</option></SSelect>
+            </SField>
+          </SGrid>
+          <SToggle checked={sim.exoneratEcoles} onChange={(v) => setSim({ exoneratEcoles: v })} label="Gratuité des projets d'écoles" description="Sur présentation de l'attestation de l'école (projets étudiants)." />
+          <SToggle checked={sim.signalisation} onChange={(v) => setSim({ signalisation: v })} label="Ajouter la signalisation verticale" description="Quand des places de stationnement sont neutralisées (59,55 € par jour et par lieu)." />
         </div>
       </SCard>
 

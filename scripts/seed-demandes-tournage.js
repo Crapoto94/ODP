@@ -62,7 +62,15 @@ function construire(i) {
     synopsis: pick(SYNOPSIS, i), scenes: pick(SCENES, i * 5 + 1),
     violence, armesFactices: armes,
     jours,
-    lieu: { emplacements: pick(EMPL, i * 2 + 1), adresse: `${rue}, Ivry-sur-Seine`, precisions: i % 3 === 0 ? 'Accès pompiers à conserver' : '' },
+    lieu: (() => {
+      const typeLieu = ['VOIE', 'VOIE', 'BATIMENT', 'SPORT', 'VOIE', 'ESPACE_VERT'][i % 6];
+      const EQUIP = ['gymnase', 'stade', 'salle_sport', 'piscine', 'plateau', 'tennis'];
+      const voirie = typeLieu === 'VOIE' || typeLieu === 'ESPACE_VERT';
+      const base = { typeLieu, adresse: typeLieu === 'BATIMENT' ? `Salle municipale, ${rue}, Ivry-sur-Seine` : typeLieu === 'SPORT' ? `Équipement sportif, ${rue}, Ivry-sur-Seine` : `${rue}, Ivry-sur-Seine`, precisions: i % 3 === 0 ? 'Accès pompiers à conserver' : '' };
+      return voirie ? { ...base, emplacements: pick(EMPL, i * 2 + 1), surfaceM2: i % 4 === 0 ? null : 10 + (i * 7) % 90, cablesM: i % 5 === 0 ? 20 + i : null }
+        : { ...base, emplacements: [], equipement: typeLieu === 'SPORT' ? EQUIP[i % EQUIP.length] : '' };
+    })(),
+    dureeMinutes: i % 7 === 2 ? 20 + i : null, aide: i % 9 === 4 ? 'VILLE' : i % 11 === 5 ? 'REGION' : '',
     plan: jours.map((j, k) => ({ date: j.date, lieu: `${rue} (${numeros})`, heures: `${j.equipeArrivee.replace(':00', 'h').replace(':30', 'h30')} – ${j.equipeDepart.replace(':00', 'h').replace(':30', 'h30')}`, materiel: pick(MATERIEL, i + k) })),
     personnes: { equipe: 4 + ((i * 3) % 30), comediens: i % 6, figurants: (i % 5) * 4, autres: i % 4 === 0 ? 2 + (i % 5) : 0, autresPrecision: i % 4 === 0 ? 'agents de sécurité' : '' },
     vehicules: { description: i % 5 === 2 ? '' : pick(VEHICULES, i * 2), blocagePlaces: blocage, nbPlaces: blocage && i % 4 !== 0 ? 1 + ((i * 5) % 12) : null, localisation: blocage && i % 4 !== 0 ? `${rue}, du n° ${numeros.replace(' au ', ' au n° ')}` : '' },
