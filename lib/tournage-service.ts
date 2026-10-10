@@ -121,7 +121,7 @@ export function validerDemande(d: any, regles: ConfigRegles, aujourdhui = new Da
   }
 
   const pers = d?.personnes || {};
-  const nbPers = ['equipe', 'comediens', 'figurants'].reduce((s, k) => s + (Number(pers[k]) || 0), 0);
+  const nbPers = ['equipe', 'comediens', 'figurants', 'autres'].reduce((s, k) => s + (Number(pers[k]) || 0), 0);
   if (nbPers < 1) erreurs.push('Indiquez le nombre de personnes mobilisées (équipe, comédiens, figurants…).');
 
   const veh = d?.vehicules || {};

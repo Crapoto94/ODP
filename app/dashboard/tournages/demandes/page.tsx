@@ -176,7 +176,7 @@ export default function DemandesTournagesPage() {
                 <L k="Véhicules / matériel" v={d.vehicules?.description} />
                 <L k="Places de stationnement" v={d.vehicules?.nbPlaces} />
                 <L k="Localisation" v={d.vehicules?.localisation} />
-                <L k="Personnes mobilisées" v={`${d.personnes?.equipe || 0} équipe · ${d.personnes?.comediens || 0} comédiens · ${d.personnes?.figurants || 0} figurants`} />
+                <L k="Personnes mobilisées" v={`${d.personnes?.equipe || 0} équipe · ${d.personnes?.comediens || 0} comédiens · ${d.personnes?.figurants || 0} figurants${d.personnes?.autres ? ` · ${d.personnes.autres} autres${d.personnes.autresPrecision ? ` (${d.personnes.autresPrecision})` : ''}` : ''}`} />
               </Bloc>
 
               <Bloc titre="Plan de tournage">

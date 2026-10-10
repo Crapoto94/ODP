@@ -54,7 +54,7 @@ export default function DemandeForm() {
   const [jours, setJours] = useState<Jour[]>([jourVide()]);
   const [lieu, setLieu] = useState<{ emplacements: string[]; adresse: string; precisions: string }>({ emplacements: [], adresse: '', precisions: '' });
   const [plan, setPlan] = useState<Record<string, { lieu: string; heures: string; materiel: string }>>({});
-  const [pers, setPers] = useState({ equipe: '', comediens: '', figurants: '' });
+  const [pers, setPers] = useState({ equipe: '', comediens: '', figurants: '', autres: '', autresPrecision: '' });
   const [veh, setVeh] = useState({ description: '', nbPlaces: '', localisation: '' });
   const [etudiant, setEtudiant] = useState(false);
   const [ecole, setEcole] = useState({ nom: '', contact: '', telephone: '', email: '' });
@@ -98,7 +98,7 @@ export default function DemandeForm() {
     });
     if (!lieu.emplacements.length || !lieu.adresse.trim()) e.push('Indiquez le lieu envisagé (type d\'emplacement et adresse).');
     if (datesPlan.some((d) => { const p = plan[d]; return !p || !p.lieu.trim() || !p.heures.trim() || !p.materiel.trim(); })) e.push('Le plan de tournage doit préciser, pour chaque date, le lieu, les heures et le matériel employé.');
-    if (!(Number(pers.equipe) + Number(pers.comediens) + Number(pers.figurants) > 0)) e.push('Indiquez le nombre de personnes mobilisées.');
+    if (!(Number(pers.equipe) + Number(pers.comediens) + Number(pers.figurants) + Number(pers.autres) > 0)) e.push('Indiquez le nombre de personnes mobilisées.');
     if (!veh.description.trim() || veh.nbPlaces === '' || !veh.localisation.trim()) e.push('Décrivez les véhicules et le matériel, le nombre de places de stationnement occupées et leur localisation.');
     if (!fPlan) e.push('Le plan de localisation du matériel et des véhicules (1/100e ou 1/200e) est obligatoire.');
     if (!fAssurance) e.push('L\'attestation d\'assurance est obligatoire : sans elle, la demande ne peut pas être déposée.');
@@ -120,7 +120,7 @@ export default function DemandeForm() {
       const donnees = {
         demandeur: dem, ...projet, violence, armesFactices: armes, jours,
         lieu, plan: datesPlan.map((d) => ({ date: d, ...plan[d] })),
-        personnes: { equipe: Number(pers.equipe) || 0, comediens: Number(pers.comediens) || 0, figurants: Number(pers.figurants) || 0 },
+        personnes: { equipe: Number(pers.equipe) || 0, comediens: Number(pers.comediens) || 0, figurants: Number(pers.figurants) || 0, autres: Number(pers.autres) || 0, autresPrecision: pers.autresPrecision.trim() },
         vehicules: { description: veh.description, nbPlaces: Number(veh.nbPlaces), localisation: veh.localisation },
         etudiant, ecole: etudiant ? ecole : null, cas, accepte,
       };
@@ -285,10 +285,13 @@ export default function DemandeForm() {
 
         <div className="card">
           <h2>6. Personnes, véhicules et matériel</h2>
-          <div className="grid three" style={{ marginBottom: 14 }}>
-            <div><label className="f">Équipe technique <span className="req">*</span></label><input type="number" min={0} value={pers.equipe} onChange={(e) => setPers({ ...pers, equipe: e.target.value })} /></div>
-            <div><label className="f">Comédiens</label><input type="number" min={0} value={pers.comediens} onChange={(e) => setPers({ ...pers, comediens: e.target.value })} /></div>
-            <div><label className="f">Figurants</label><input type="number" min={0} value={pers.figurants} onChange={(e) => setPers({ ...pers, figurants: e.target.value })} /></div>
+          <p className="hint" style={{ marginTop: -4, marginBottom: 12 }}>Indiquez le <b>nombre</b> de personnes mobilisées par catégorie.</p>
+          <div className="grid" style={{ marginBottom: 14 }}>
+            <div><label className="f">Nombre de personnes — équipe technique <span className="req">*</span></label><input type="number" min={0} value={pers.equipe} onChange={(e) => setPers({ ...pers, equipe: e.target.value })} /></div>
+            <div><label className="f">Nombre de comédiens</label><input type="number" min={0} value={pers.comediens} onChange={(e) => setPers({ ...pers, comediens: e.target.value })} /></div>
+            <div><label className="f">Nombre de figurants</label><input type="number" min={0} value={pers.figurants} onChange={(e) => setPers({ ...pers, figurants: e.target.value })} /></div>
+            <div><label className="f">Nombre d&apos;autres personnes</label><input type="number" min={0} value={pers.autres} onChange={(e) => setPers({ ...pers, autres: e.target.value })} /></div>
+            <div className="span2"><label className="f">Autres : précisez</label><input type="text" placeholder="ex. sécurité, régisseurs, public…" value={pers.autresPrecision} onChange={(e) => setPers({ ...pers, autresPrecision: e.target.value })} /></div>
           </div>
           <div className="grid">
             <div className="span2"><label className="f">Véhicules et matériel à stationner <span className="req">*</span></label><textarea style={{ minHeight: 70 }} placeholder="Camions, camions-loge, camion-cantine, groupe électrogène…" value={veh.description} onChange={(e) => setVeh({ ...veh, description: e.target.value })} /></div>
