@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { hasPermissionServer } from '@/lib/permissions-server';
 import { STATUTS_DEMANDE } from '@/lib/tournage-regles';
+import { lireConfigTournage } from '@/lib/tournage-service';
+import { envoyerMailTournage } from '@/lib/tournage-mail';
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
@@ -27,5 +29,17 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   }
   if (body.notesInternes !== undefined) data.notesInternes = String(body.notesInternes);
   const row = await (prisma as any).demandeTournage.update({ where: { id: Number(id) }, data });
-  return NextResponse.json(row);
+  // Mail au demandeur (accord / complément / refus) si demandé par l'instructeur
+  let mail: { envoye: boolean; erreur?: string } | undefined;
+  const modele = { ACCORD: 'MSG_TOURNAGE_ACCORD', COMPLEMENT: 'MSG_TOURNAGE_COMPLEMENT', REFUSEE: 'MSG_TOURNAGE_REFUS' }[data.statut as string];
+  if (body.notifier && modele) {
+    try {
+      const cfg = await lireConfigTournage();
+      const r = await envoyerMailTournage(modele, row.email, row, cfg, { MESSAGE: String(body.message || '').replace(/\n/g, '<br>') });
+      mail = { envoye: !r.skipped, erreur: r.skipped ? 'Modèle désactivé' : undefined };
+    } catch (e: any) {
+      mail = { envoye: false, erreur: e.message };
+    }
+  }
+  return NextResponse.json({ ...row, mail });
 }

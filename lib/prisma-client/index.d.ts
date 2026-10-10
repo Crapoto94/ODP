@@ -34529,6 +34529,12 @@ export namespace Prisma {
     messageAccueil: string | null
     emailNotification: string | null
     apiKey: string | null
+    mailExpediteurNom: string | null
+    mailExpediteurEmail: string | null
+    mailFooter1: string | null
+    mailFooter2: string | null
+    mailFooter3: string | null
+    mailFooterColor: string | null
     updated_at: Date | null
   }
 
@@ -34542,6 +34548,12 @@ export namespace Prisma {
     messageAccueil: string | null
     emailNotification: string | null
     apiKey: string | null
+    mailExpediteurNom: string | null
+    mailExpediteurEmail: string | null
+    mailFooter1: string | null
+    mailFooter2: string | null
+    mailFooter3: string | null
+    mailFooterColor: string | null
     updated_at: Date | null
   }
 
@@ -34556,6 +34568,12 @@ export namespace Prisma {
     messageAccueil: number
     emailNotification: number
     apiKey: number
+    mailExpediteurNom: number
+    mailExpediteurEmail: number
+    mailFooter1: number
+    mailFooter2: number
+    mailFooter3: number
+    mailFooterColor: number
     frontendsAutorises: number
     updated_at: number
     _all: number
@@ -34584,6 +34602,12 @@ export namespace Prisma {
     messageAccueil?: true
     emailNotification?: true
     apiKey?: true
+    mailExpediteurNom?: true
+    mailExpediteurEmail?: true
+    mailFooter1?: true
+    mailFooter2?: true
+    mailFooter3?: true
+    mailFooterColor?: true
     updated_at?: true
   }
 
@@ -34597,6 +34621,12 @@ export namespace Prisma {
     messageAccueil?: true
     emailNotification?: true
     apiKey?: true
+    mailExpediteurNom?: true
+    mailExpediteurEmail?: true
+    mailFooter1?: true
+    mailFooter2?: true
+    mailFooter3?: true
+    mailFooterColor?: true
     updated_at?: true
   }
 
@@ -34611,6 +34641,12 @@ export namespace Prisma {
     messageAccueil?: true
     emailNotification?: true
     apiKey?: true
+    mailExpediteurNom?: true
+    mailExpediteurEmail?: true
+    mailFooter1?: true
+    mailFooter2?: true
+    mailFooter3?: true
+    mailFooterColor?: true
     frontendsAutorises?: true
     updated_at?: true
     _all?: true
@@ -34713,6 +34749,12 @@ export namespace Prisma {
     messageAccueil: string | null
     emailNotification: string | null
     apiKey: string | null
+    mailExpediteurNom: string | null
+    mailExpediteurEmail: string | null
+    mailFooter1: string | null
+    mailFooter2: string | null
+    mailFooter3: string | null
+    mailFooterColor: string | null
     frontendsAutorises: JsonValue
     updated_at: Date
     _count: TournageConfigCountAggregateOutputType | null
@@ -34747,6 +34789,12 @@ export namespace Prisma {
     messageAccueil?: boolean
     emailNotification?: boolean
     apiKey?: boolean
+    mailExpediteurNom?: boolean
+    mailExpediteurEmail?: boolean
+    mailFooter1?: boolean
+    mailFooter2?: boolean
+    mailFooter3?: boolean
+    mailFooterColor?: boolean
     frontendsAutorises?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["tournageConfig"]>
@@ -34762,6 +34810,12 @@ export namespace Prisma {
     messageAccueil?: boolean
     emailNotification?: boolean
     apiKey?: boolean
+    mailExpediteurNom?: boolean
+    mailExpediteurEmail?: boolean
+    mailFooter1?: boolean
+    mailFooter2?: boolean
+    mailFooter3?: boolean
+    mailFooterColor?: boolean
     frontendsAutorises?: boolean
     updated_at?: boolean
   }, ExtArgs["result"]["tournageConfig"]>
@@ -34777,6 +34831,12 @@ export namespace Prisma {
     messageAccueil?: boolean
     emailNotification?: boolean
     apiKey?: boolean
+    mailExpediteurNom?: boolean
+    mailExpediteurEmail?: boolean
+    mailFooter1?: boolean
+    mailFooter2?: boolean
+    mailFooter3?: boolean
+    mailFooterColor?: boolean
     frontendsAutorises?: boolean
     updated_at?: boolean
   }
@@ -34796,6 +34856,12 @@ export namespace Prisma {
       messageAccueil: string | null
       emailNotification: string | null
       apiKey: string | null
+      mailExpediteurNom: string | null
+      mailExpediteurEmail: string | null
+      mailFooter1: string | null
+      mailFooter2: string | null
+      mailFooter3: string | null
+      mailFooterColor: string | null
       frontendsAutorises: Prisma.JsonValue
       updated_at: Date
     }, ExtArgs["result"]["tournageConfig"]>
@@ -35201,6 +35267,12 @@ export namespace Prisma {
     readonly messageAccueil: FieldRef<"TournageConfig", 'String'>
     readonly emailNotification: FieldRef<"TournageConfig", 'String'>
     readonly apiKey: FieldRef<"TournageConfig", 'String'>
+    readonly mailExpediteurNom: FieldRef<"TournageConfig", 'String'>
+    readonly mailExpediteurEmail: FieldRef<"TournageConfig", 'String'>
+    readonly mailFooter1: FieldRef<"TournageConfig", 'String'>
+    readonly mailFooter2: FieldRef<"TournageConfig", 'String'>
+    readonly mailFooter3: FieldRef<"TournageConfig", 'String'>
+    readonly mailFooterColor: FieldRef<"TournageConfig", 'String'>
     readonly frontendsAutorises: FieldRef<"TournageConfig", 'Json'>
     readonly updated_at: FieldRef<"TournageConfig", 'DateTime'>
   }
@@ -36041,6 +36113,12 @@ export namespace Prisma {
     messageAccueil: 'messageAccueil',
     emailNotification: 'emailNotification',
     apiKey: 'apiKey',
+    mailExpediteurNom: 'mailExpediteurNom',
+    mailExpediteurEmail: 'mailExpediteurEmail',
+    mailFooter1: 'mailFooter1',
+    mailFooter2: 'mailFooter2',
+    mailFooter3: 'mailFooter3',
+    mailFooterColor: 'mailFooterColor',
     frontendsAutorises: 'frontendsAutorises',
     updated_at: 'updated_at'
   };
@@ -38895,6 +38973,12 @@ export namespace Prisma {
     messageAccueil?: StringNullableFilter<"TournageConfig"> | string | null
     emailNotification?: StringNullableFilter<"TournageConfig"> | string | null
     apiKey?: StringNullableFilter<"TournageConfig"> | string | null
+    mailExpediteurNom?: StringNullableFilter<"TournageConfig"> | string | null
+    mailExpediteurEmail?: StringNullableFilter<"TournageConfig"> | string | null
+    mailFooter1?: StringNullableFilter<"TournageConfig"> | string | null
+    mailFooter2?: StringNullableFilter<"TournageConfig"> | string | null
+    mailFooter3?: StringNullableFilter<"TournageConfig"> | string | null
+    mailFooterColor?: StringNullableFilter<"TournageConfig"> | string | null
     frontendsAutorises?: JsonFilter<"TournageConfig">
     updated_at?: DateTimeFilter<"TournageConfig"> | Date | string
   }
@@ -38910,6 +38994,12 @@ export namespace Prisma {
     messageAccueil?: SortOrderInput | SortOrder
     emailNotification?: SortOrderInput | SortOrder
     apiKey?: SortOrderInput | SortOrder
+    mailExpediteurNom?: SortOrderInput | SortOrder
+    mailExpediteurEmail?: SortOrderInput | SortOrder
+    mailFooter1?: SortOrderInput | SortOrder
+    mailFooter2?: SortOrderInput | SortOrder
+    mailFooter3?: SortOrderInput | SortOrder
+    mailFooterColor?: SortOrderInput | SortOrder
     frontendsAutorises?: SortOrder
     updated_at?: SortOrder
   }
@@ -38928,6 +39018,12 @@ export namespace Prisma {
     messageAccueil?: StringNullableFilter<"TournageConfig"> | string | null
     emailNotification?: StringNullableFilter<"TournageConfig"> | string | null
     apiKey?: StringNullableFilter<"TournageConfig"> | string | null
+    mailExpediteurNom?: StringNullableFilter<"TournageConfig"> | string | null
+    mailExpediteurEmail?: StringNullableFilter<"TournageConfig"> | string | null
+    mailFooter1?: StringNullableFilter<"TournageConfig"> | string | null
+    mailFooter2?: StringNullableFilter<"TournageConfig"> | string | null
+    mailFooter3?: StringNullableFilter<"TournageConfig"> | string | null
+    mailFooterColor?: StringNullableFilter<"TournageConfig"> | string | null
     frontendsAutorises?: JsonFilter<"TournageConfig">
     updated_at?: DateTimeFilter<"TournageConfig"> | Date | string
   }, "id">
@@ -38943,6 +39039,12 @@ export namespace Prisma {
     messageAccueil?: SortOrderInput | SortOrder
     emailNotification?: SortOrderInput | SortOrder
     apiKey?: SortOrderInput | SortOrder
+    mailExpediteurNom?: SortOrderInput | SortOrder
+    mailExpediteurEmail?: SortOrderInput | SortOrder
+    mailFooter1?: SortOrderInput | SortOrder
+    mailFooter2?: SortOrderInput | SortOrder
+    mailFooter3?: SortOrderInput | SortOrder
+    mailFooterColor?: SortOrderInput | SortOrder
     frontendsAutorises?: SortOrder
     updated_at?: SortOrder
     _count?: TournageConfigCountOrderByAggregateInput
@@ -38966,6 +39068,12 @@ export namespace Prisma {
     messageAccueil?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
     emailNotification?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
     apiKey?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    mailExpediteurNom?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    mailExpediteurEmail?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    mailFooter1?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    mailFooter2?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    mailFooter3?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
+    mailFooterColor?: StringNullableWithAggregatesFilter<"TournageConfig"> | string | null
     frontendsAutorises?: JsonWithAggregatesFilter<"TournageConfig">
     updated_at?: DateTimeWithAggregatesFilter<"TournageConfig"> | Date | string
   }
@@ -42026,6 +42134,12 @@ export namespace Prisma {
     messageAccueil?: string | null
     emailNotification?: string | null
     apiKey?: string | null
+    mailExpediteurNom?: string | null
+    mailExpediteurEmail?: string | null
+    mailFooter1?: string | null
+    mailFooter2?: string | null
+    mailFooter3?: string | null
+    mailFooterColor?: string | null
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: Date | string
   }
@@ -42041,6 +42155,12 @@ export namespace Prisma {
     messageAccueil?: string | null
     emailNotification?: string | null
     apiKey?: string | null
+    mailExpediteurNom?: string | null
+    mailExpediteurEmail?: string | null
+    mailFooter1?: string | null
+    mailFooter2?: string | null
+    mailFooter3?: string | null
+    mailFooterColor?: string | null
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: Date | string
   }
@@ -42056,6 +42176,12 @@ export namespace Prisma {
     messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
     emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
     apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    mailExpediteurNom?: NullableStringFieldUpdateOperationsInput | string | null
+    mailExpediteurEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter1?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter2?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter3?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooterColor?: NullableStringFieldUpdateOperationsInput | string | null
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -42071,6 +42197,12 @@ export namespace Prisma {
     messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
     emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
     apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    mailExpediteurNom?: NullableStringFieldUpdateOperationsInput | string | null
+    mailExpediteurEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter1?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter2?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter3?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooterColor?: NullableStringFieldUpdateOperationsInput | string | null
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -42086,6 +42218,12 @@ export namespace Prisma {
     messageAccueil?: string | null
     emailNotification?: string | null
     apiKey?: string | null
+    mailExpediteurNom?: string | null
+    mailExpediteurEmail?: string | null
+    mailFooter1?: string | null
+    mailFooter2?: string | null
+    mailFooter3?: string | null
+    mailFooterColor?: string | null
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: Date | string
   }
@@ -42101,6 +42239,12 @@ export namespace Prisma {
     messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
     emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
     apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    mailExpediteurNom?: NullableStringFieldUpdateOperationsInput | string | null
+    mailExpediteurEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter1?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter2?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter3?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooterColor?: NullableStringFieldUpdateOperationsInput | string | null
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -42116,6 +42260,12 @@ export namespace Prisma {
     messageAccueil?: NullableStringFieldUpdateOperationsInput | string | null
     emailNotification?: NullableStringFieldUpdateOperationsInput | string | null
     apiKey?: NullableStringFieldUpdateOperationsInput | string | null
+    mailExpediteurNom?: NullableStringFieldUpdateOperationsInput | string | null
+    mailExpediteurEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter1?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter2?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooter3?: NullableStringFieldUpdateOperationsInput | string | null
+    mailFooterColor?: NullableStringFieldUpdateOperationsInput | string | null
     frontendsAutorises?: JsonNullValueInput | InputJsonValue
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -44265,6 +44415,12 @@ export namespace Prisma {
     messageAccueil?: SortOrder
     emailNotification?: SortOrder
     apiKey?: SortOrder
+    mailExpediteurNom?: SortOrder
+    mailExpediteurEmail?: SortOrder
+    mailFooter1?: SortOrder
+    mailFooter2?: SortOrder
+    mailFooter3?: SortOrder
+    mailFooterColor?: SortOrder
     frontendsAutorises?: SortOrder
     updated_at?: SortOrder
   }
@@ -44285,6 +44441,12 @@ export namespace Prisma {
     messageAccueil?: SortOrder
     emailNotification?: SortOrder
     apiKey?: SortOrder
+    mailExpediteurNom?: SortOrder
+    mailExpediteurEmail?: SortOrder
+    mailFooter1?: SortOrder
+    mailFooter2?: SortOrder
+    mailFooter3?: SortOrder
+    mailFooterColor?: SortOrder
     updated_at?: SortOrder
   }
 
@@ -44298,6 +44460,12 @@ export namespace Prisma {
     messageAccueil?: SortOrder
     emailNotification?: SortOrder
     apiKey?: SortOrder
+    mailExpediteurNom?: SortOrder
+    mailExpediteurEmail?: SortOrder
+    mailFooter1?: SortOrder
+    mailFooter2?: SortOrder
+    mailFooter3?: SortOrder
+    mailFooterColor?: SortOrder
     updated_at?: SortOrder
   }
 

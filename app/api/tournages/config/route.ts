@@ -39,6 +39,9 @@ export async function PATCH(req: Request) {
         .filter((f: any) => f?.ip && String(f.ip).trim())
         .map((f: any) => ({ nom: String(f.nom || '').trim(), ip: String(f.ip).trim(), actif: f.actif !== false }));
     }
+    for (const k of ['mailExpediteurNom', 'mailExpediteurEmail', 'mailFooter1', 'mailFooter2', 'mailFooter3', 'mailFooterColor']) {
+      if (b[k] !== undefined) data[k] = String(b[k] || '').trim() || null;
+    }
     if (b.regenererCle) data.apiKey = randomBytes(24).toString('hex');
     return NextResponse.json(await (prisma as any).tournageConfig.update({ where: { id: 1 }, data }));
   } catch (e: any) {

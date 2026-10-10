@@ -34,6 +34,9 @@ export default function DemandesTournagesPage() {
   const [detail, setDetail] = useState<any | null>(null);
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
+  const [notifier, setNotifier] = useState(false);
+  const [message, setMessage] = useState('');
+  const [retourMail, setRetourMail] = useState<string | null>(null);
 
   const charger = () => {
     setLoading(true);
@@ -44,13 +47,15 @@ export default function DemandesTournagesPage() {
 
   const ouvrir = async (id: number) => {
     const r = await axios.get(`/api/tournages/demandes/${id}`);
-    setDetail(r.data); setNotes(r.data.notesInternes || '');
+    setDetail(r.data); setNotes(r.data.notesInternes || ''); setNotifier(false); setMessage(''); setRetourMail(null);
   };
   const maj = async (patch: any) => {
     if (!detail) return;
     setSaving(true);
+    setRetourMail(null);
     try {
       const r = await axios.patch(`/api/tournages/demandes/${detail.id}`, patch);
+      if (r.data.mail) setRetourMail(r.data.mail.envoye ? `E-mail envoyé à ${r.data.email}` : `E-mail non envoyé : ${r.data.mail.erreur || 'erreur'}`);
       setDetail(r.data);
       setRows((rs) => rs.map((x) => (x.id === r.data.id ? { ...x, statut: r.data.statut } : x)));
     } finally { setSaving(false); }
@@ -141,8 +146,15 @@ export default function DemandesTournagesPage() {
             <div className="p-6 space-y-4">
               <div className="flex flex-wrap gap-2">
                 {Object.entries(STATUTS_DEMANDE).map(([k, v]) => (
-                  <button key={k} disabled={saving || detail.statut === k} onClick={() => maj({ statut: k })} className={`px-3 py-1.5 rounded-lg border text-xs font-semibold ${detail.statut === k ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'} disabled:opacity-60`}>{v.label}</button>
+                  <button key={k} disabled={saving || detail.statut === k} onClick={() => maj({ statut: k, notifier: notifier && ['ACCORD', 'COMPLEMENT', 'REFUSEE'].includes(k), message })} className={`px-3 py-1.5 rounded-lg border text-xs font-semibold ${detail.statut === k ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'} disabled:opacity-60`}>{v.label}</button>
                 ))}
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-white p-3 space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer">
+                  <input type="checkbox" checked={notifier} onChange={(e) => setNotifier(e.target.checked)} /> Envoyer un e-mail au demandeur lors d&apos;un accord, d&apos;un complément ou d&apos;un refus
+                </label>
+                {notifier && <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} className="w-full rounded-lg border border-slate-200 p-2 text-sm" placeholder="Message au demandeur (conditions, réserves, éléments manquants, motif du refus…)" />}
+                {retourMail && <p className={`text-xs font-semibold ${retourMail.startsWith('E-mail envoyé') ? 'text-emerald-600' : 'text-rose-600'}`}>{retourMail}</p>}
               </div>
               {detail.traiteePar && <p className="text-xs text-slate-500">Dernier traitement par {detail.traiteePar}</p>}
 

@@ -13,10 +13,12 @@ interface DbMessage {
   disabled: boolean;
 }
 
-export default function MessagesContextuelsTab() {
+// `prefix` : n'affiche que les modèles dont la clé commence par ce préfixe ; sans préfixe, tous sauf ceux des tournages.
+export default function MessagesContextuelsTab({ prefix }: { prefix?: string } = {}) {
+  const KEYS = Object.keys(CONTEXTUAL_MESSAGE_DEFS).filter((k) => (prefix ? k.startsWith(prefix) : !k.startsWith('MSG_TOURNAGE_')));
   const [dbMessages, setDbMessages] = useState<Record<string, DbMessage>>({});
   const [loading, setLoading] = useState(true);
-  const [selectedKey, setSelectedKey] = useState<string>(Object.keys(CONTEXTUAL_MESSAGE_DEFS)[0]);
+  const [selectedKey, setSelectedKey] = useState<string>(KEYS[0]);
   const [localVal, setLocalVal] = useState('');
   const [localLabel, setLocalLabel] = useState('');
   const [localSubject, setLocalSubject] = useState('');
@@ -52,7 +54,7 @@ export default function MessagesContextuelsTab() {
     }
   }, [selectedKey, dbMessages]);
 
-  const filteredKeys = Object.keys(CONTEXTUAL_MESSAGE_DEFS).filter(k =>
+  const filteredKeys = KEYS.filter(k =>
     k.toLowerCase().includes(search.toLowerCase()) ||
     (dbMessages[k]?.label ?? CONTEXTUAL_MESSAGE_DEFS[k].label).toLowerCase().includes(search.toLowerCase())
   );

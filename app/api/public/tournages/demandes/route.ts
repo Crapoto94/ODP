@@ -3,7 +3,7 @@ import { join } from 'path';
 import { mkdir, writeFile } from 'fs/promises';
 import { randomUUID } from 'crypto';
 import { prisma } from '@/lib/prisma';
-import { sendApmMail } from '@/lib/apm';
+import { envoyerMailTournage } from '@/lib/tournage-mail';
 import { lireConfigTournage, reglesDe, validerDemande, verifierCleApi } from '@/lib/tournage-service';
 import { dateLimiteReponse, parseIso } from '@/lib/tournage-regles';
 
@@ -69,16 +69,12 @@ export async function POST(req: Request) {
       },
     });
 
-    // Accusé de réception au demandeur + notification interne (best effort)
-    const html = (t: string) => `<div style="font-family:Arial,sans-serif;font-size:14px;color:#1e293b">${t}</div>`;
-    sendApmMail(dem.email.trim(), `Demande de tournage ${reference} bien reçue`, html(
-      `<p>Bonjour ${dem.nom},</p><p>Nous avons bien reçu votre demande d'autorisation de tournage « <b>${donnees.titre}</b> » (référence <b>${reference}</b>).</p>` +
-      `<p>Le délai d'instruction est de ${regles.delaiInstruction} ${regles.typeJours === 'OUVRES' ? 'jours ouvrés' : 'jours calendaires'} à compter de la réception de la demande complète. Après examen, vous devrez vous rendre disponible pour un rendez-vous sur site.</p>`
-    )).catch((e) => console.error('[TOURNAGE] accusé de réception:', e.message));
+    // Accusé de réception au demandeur + notification interne (modèles éditables ; échecs journalisés sans bloquer le dépôt)
+    envoyerMailTournage('MSG_TOURNAGE_ACCUSE', dem.email.trim(), creee, row)
+      .catch((e) => console.error('[TOURNAGE] accusé de réception:', e.message));
     if (row.emailNotification) {
-      sendApmMail(row.emailNotification, `Nouvelle demande de tournage ${reference}`, html(
-        `<p>Nouvelle demande de tournage <b>${reference}</b> déposée par ${dem.societe} (${dem.nom}) : « ${donnees.titre} ».</p>`
-      )).catch((e) => console.error('[TOURNAGE] notification:', e.message));
+      envoyerMailTournage('MSG_TOURNAGE_NOTIFICATION', row.emailNotification, creee, row)
+        .catch((e) => console.error('[TOURNAGE] notification:', e.message));
     }
 
     return NextResponse.json({ success: true, reference, id: creee.id });

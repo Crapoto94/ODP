@@ -315,4 +315,189 @@ export const CONTEXTUAL_MESSAGE_DEFS: Record<string, {
   </div>
 </div></body></html>`,
   },
+  MSG_TOURNAGE_ACCUSE: {
+    label: 'Tournages — Accusé de réception',
+    description: 'Envoyé au demandeur dès le dépôt de sa demande depuis le site public.',
+    vars: ['{{REFERENCE}}', '{{DEMANDEUR}}', '{{SOCIETE}}', '{{TITRE}}', '{{TYPE_FILM}}', '{{DATES}}', '{{LIEU}}', '{{EMAIL}}', '{{TELEPHONE}}', '{{DELAI}}', '{{DATE_LIMITE}}'],
+    defaultSubject: 'Demande de tournage {{REFERENCE}} bien reçue',
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#333;line-height:1.6}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#1d4ed8 0%,#1e40af 100%);color:white;padding:26px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px}
+  .content{background:#f9f9f9;padding:28px;border-radius:0 0 8px 8px}
+  .field{margin:14px 0;padding:12px 15px;background:white;border-left:4px solid #1d4ed8}
+  .field-label{font-weight:bold;color:#1d4ed8;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .field-value{margin-top:4px;font-size:15px}
+  .box{background:#eff6ff;border:1px solid #bfdbfe;padding:14px 16px;border-radius:6px;margin:18px 0}
+  .box ul{margin:6px 0 0;padding-left:20px}
+  .cta-button{display:inline-block;background:#1d4ed8;color:white;padding:12px 30px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0}
+  .footer{color:#666;font-size:12px;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid #ddd}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>🎬 Demande de tournage bien reçue</h1></div>
+  <div class="content">
+    <p>Bonjour {{DEMANDEUR}},</p>
+    <p>Nous avons bien reçu votre demande d'autorisation de tournage.</p>
+    <div class="field"><div class="field-label">Référence</div><div class="field-value">{{REFERENCE}}</div></div>
+    <div class="field"><div class="field-label">Projet</div><div class="field-value">{{TITRE}} ({{TYPE_FILM}})</div></div>
+    <div class="field"><div class="field-label">Dates de tournage</div><div class="field-value">{{DATES}}</div></div>
+    <div class="field"><div class="field-label">Lieu</div><div class="field-value">{{LIEU}}</div></div>
+    <div class="box"><strong>Et maintenant ?</strong>
+      <ul>
+        <li>Le délai d'instruction est de <strong>{{DELAI}}</strong> à compter de la réception de la demande complète (réponse attendue avant le <strong>{{DATE_LIMITE}}</strong>).</li>
+        <li>Après examen de la demande, vous devrez vous rendre disponible pour un <strong>rendez-vous sur site</strong>.</li>
+        <li>L'<strong>accord de principe</strong> définira les conditions techniques et financières de l'occupation du domaine public. Il peut comporter des réserves.</li>
+        <li>La société de tournage devra <strong>distribuer un avis d'information aux riverains</strong>.</li>
+      </ul>
+    </div>
+    <div class="footer"><p>VibeODP - Gestion des tournages, Ville d'Ivry-sur-Seine</p></div>
+  </div>
+</div></body></html>`,
+  },
+  MSG_TOURNAGE_NOTIFICATION: {
+    label: 'Tournages — Notification interne',
+    description: "Envoyé à l'adresse de notification interne à chaque nouvelle demande.",
+    vars: ['{{REFERENCE}}', '{{DEMANDEUR}}', '{{SOCIETE}}', '{{TITRE}}', '{{TYPE_FILM}}', '{{DATES}}', '{{LIEU}}', '{{EMAIL}}', '{{TELEPHONE}}', '{{DATE_LIMITE}}', '{{LIEN_DEMANDE}}'],
+    defaultSubject: 'Nouvelle demande de tournage {{REFERENCE}}',
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#333;line-height:1.6}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#1d4ed8 0%,#1e40af 100%);color:white;padding:26px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px}
+  .content{background:#f9f9f9;padding:28px;border-radius:0 0 8px 8px}
+  .field{margin:14px 0;padding:12px 15px;background:white;border-left:4px solid #1d4ed8}
+  .field-label{font-weight:bold;color:#1d4ed8;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .field-value{margin-top:4px;font-size:15px}
+  .box{background:#eff6ff;border:1px solid #bfdbfe;padding:14px 16px;border-radius:6px;margin:18px 0}
+  .box ul{margin:6px 0 0;padding-left:20px}
+  .cta-button{display:inline-block;background:#1d4ed8;color:white;padding:12px 30px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0}
+  .footer{color:#666;font-size:12px;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid #ddd}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>🎬 Nouvelle demande de tournage</h1></div>
+  <div class="content">
+    <p>Une nouvelle demande de tournage vient d'être déposée.</p>
+    <div class="field"><div class="field-label">Référence</div><div class="field-value">{{REFERENCE}}</div></div>
+    <div class="field"><div class="field-label">Projet</div><div class="field-value">{{TITRE}} ({{TYPE_FILM}})</div></div>
+    <div class="field"><div class="field-label">Dates de tournage</div><div class="field-value">{{DATES}}</div></div>
+    <div class="field"><div class="field-label">Lieu</div><div class="field-value">{{LIEU}}</div></div>
+    <div class="field"><div class="field-label">Demandeur</div><div class="field-value">{{DEMANDEUR}} — {{SOCIETE}}<br>{{EMAIL}} · {{TELEPHONE}}</div></div>
+    <div class="field"><div class="field-label">Réponse avant le</div><div class="field-value">{{DATE_LIMITE}}</div></div>
+    <p><a class="cta-button" href="{{LIEN_DEMANDE}}">Ouvrir la demande</a></p>
+    <div class="footer"><p>VibeODP - Gestion des tournages, Ville d'Ivry-sur-Seine</p></div>
+  </div>
+</div></body></html>`,
+  },
+  MSG_TOURNAGE_COMPLEMENT: {
+    label: 'Tournages — Complément demandé',
+    description: "Envoyé au demandeur quand le statut passe à « Complément demandé » (si l'envoi est coché).",
+    vars: ['{{REFERENCE}}', '{{DEMANDEUR}}', '{{SOCIETE}}', '{{TITRE}}', '{{TYPE_FILM}}', '{{DATES}}', '{{LIEU}}', '{{EMAIL}}', '{{TELEPHONE}}', '{{MESSAGE}}'],
+    defaultSubject: 'Demande de tournage {{REFERENCE}} : complément demandé',
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#333;line-height:1.6}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#1d4ed8 0%,#1e40af 100%);color:white;padding:26px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px}
+  .content{background:#f9f9f9;padding:28px;border-radius:0 0 8px 8px}
+  .field{margin:14px 0;padding:12px 15px;background:white;border-left:4px solid #1d4ed8}
+  .field-label{font-weight:bold;color:#1d4ed8;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .field-value{margin-top:4px;font-size:15px}
+  .box{background:#eff6ff;border:1px solid #bfdbfe;padding:14px 16px;border-radius:6px;margin:18px 0}
+  .box ul{margin:6px 0 0;padding-left:20px}
+  .cta-button{display:inline-block;background:#1d4ed8;color:white;padding:12px 30px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0}
+  .footer{color:#666;font-size:12px;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid #ddd}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>📎 Complément d'information demandé</h1></div>
+  <div class="content">
+    <p>Bonjour {{DEMANDEUR}},</p>
+    <p>Pour poursuivre l'instruction de votre demande de tournage, nous avons besoin d'éléments complémentaires.</p>
+    <div class="field"><div class="field-label">Référence</div><div class="field-value">{{REFERENCE}}</div></div>
+    <div class="field"><div class="field-label">Projet</div><div class="field-value">{{TITRE}} ({{TYPE_FILM}})</div></div>
+    <div class="field"><div class="field-label">Dates de tournage</div><div class="field-value">{{DATES}}</div></div>
+    <div class="field"><div class="field-label">Lieu</div><div class="field-value">{{LIEU}}</div></div>
+    <div class="box"><strong>Message du service :</strong><p>{{MESSAGE}}</p></div>
+    <p>Merci de nous répondre en indiquant la référence <strong>{{REFERENCE}}</strong>.</p>
+    <div class="footer"><p>VibeODP - Gestion des tournages, Ville d'Ivry-sur-Seine</p></div>
+  </div>
+</div></body></html>`,
+  },
+  MSG_TOURNAGE_ACCORD: {
+    label: 'Tournages — Accord de principe',
+    description: "Envoyé au demandeur quand la demande reçoit un accord de principe (si l'envoi est coché).",
+    vars: ['{{REFERENCE}}', '{{DEMANDEUR}}', '{{SOCIETE}}', '{{TITRE}}', '{{TYPE_FILM}}', '{{DATES}}', '{{LIEU}}', '{{EMAIL}}', '{{TELEPHONE}}', '{{MESSAGE}}'],
+    defaultSubject: 'Demande de tournage {{REFERENCE}} : accord de principe',
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#333;line-height:1.6}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#1d4ed8 0%,#1e40af 100%);color:white;padding:26px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px}
+  .content{background:#f9f9f9;padding:28px;border-radius:0 0 8px 8px}
+  .field{margin:14px 0;padding:12px 15px;background:white;border-left:4px solid #1d4ed8}
+  .field-label{font-weight:bold;color:#1d4ed8;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .field-value{margin-top:4px;font-size:15px}
+  .box{background:#eff6ff;border:1px solid #bfdbfe;padding:14px 16px;border-radius:6px;margin:18px 0}
+  .box ul{margin:6px 0 0;padding-left:20px}
+  .cta-button{display:inline-block;background:#1d4ed8;color:white;padding:12px 30px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0}
+  .footer{color:#666;font-size:12px;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid #ddd}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>✅ Accord de principe</h1></div>
+  <div class="content">
+    <p>Bonjour {{DEMANDEUR}},</p>
+    <p>Après examen, nous vous informons d'un <strong>accord de principe</strong> sur votre demande de tournage.</p>
+    <div class="field"><div class="field-label">Référence</div><div class="field-value">{{REFERENCE}}</div></div>
+    <div class="field"><div class="field-label">Projet</div><div class="field-value">{{TITRE}} ({{TYPE_FILM}})</div></div>
+    <div class="field"><div class="field-label">Dates de tournage</div><div class="field-value">{{DATES}}</div></div>
+    <div class="field"><div class="field-label">Lieu</div><div class="field-value">{{LIEU}}</div></div>
+    <div class="box"><strong>Conditions et réserves :</strong><p>{{MESSAGE}}</p></div>
+    <p>L'accord de principe définit les conditions techniques et financières de l'occupation du domaine public. La société de tournage devra distribuer un avis d'information aux riverains.</p>
+    <div class="footer"><p>VibeODP - Gestion des tournages, Ville d'Ivry-sur-Seine</p></div>
+  </div>
+</div></body></html>`,
+  },
+  MSG_TOURNAGE_REFUS: {
+    label: 'Tournages — Refus',
+    description: "Envoyé au demandeur quand la demande est refusée (si l'envoi est coché).",
+    vars: ['{{REFERENCE}}', '{{DEMANDEUR}}', '{{SOCIETE}}', '{{TITRE}}', '{{TYPE_FILM}}', '{{DATES}}', '{{LIEU}}', '{{EMAIL}}', '{{TELEPHONE}}', '{{MESSAGE}}'],
+    defaultSubject: 'Demande de tournage {{REFERENCE}} : réponse',
+    default: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#333;line-height:1.6}
+  .container{max-width:600px;margin:0 auto;padding:20px}
+  .header{background:linear-gradient(135deg,#1d4ed8 0%,#1e40af 100%);color:white;padding:26px;border-radius:8px 8px 0 0;text-align:center}
+  .header h1{margin:0;font-size:22px}
+  .content{background:#f9f9f9;padding:28px;border-radius:0 0 8px 8px}
+  .field{margin:14px 0;padding:12px 15px;background:white;border-left:4px solid #1d4ed8}
+  .field-label{font-weight:bold;color:#1d4ed8;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .field-value{margin-top:4px;font-size:15px}
+  .box{background:#eff6ff;border:1px solid #bfdbfe;padding:14px 16px;border-radius:6px;margin:18px 0}
+  .box ul{margin:6px 0 0;padding-left:20px}
+  .cta-button{display:inline-block;background:#1d4ed8;color:white;padding:12px 30px;border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0}
+  .footer{color:#666;font-size:12px;text-align:center;margin-top:26px;padding-top:16px;border-top:1px solid #ddd}
+</style></head>
+<body><div class="container">
+  <div class="header"><h1>Réponse à votre demande de tournage</h1></div>
+  <div class="content">
+    <p>Bonjour {{DEMANDEUR}},</p>
+    <p>Nous ne sommes malheureusement pas en mesure de donner une suite favorable à votre demande de tournage.</p>
+    <div class="field"><div class="field-label">Référence</div><div class="field-value">{{REFERENCE}}</div></div>
+    <div class="field"><div class="field-label">Projet</div><div class="field-value">{{TITRE}} ({{TYPE_FILM}})</div></div>
+    <div class="field"><div class="field-label">Dates de tournage</div><div class="field-value">{{DATES}}</div></div>
+    <div class="field"><div class="field-label">Lieu</div><div class="field-value">{{LIEU}}</div></div>
+    <div class="box"><strong>Motif :</strong><p>{{MESSAGE}}</p></div>
+    <div class="footer"><p>VibeODP - Gestion des tournages, Ville d'Ivry-sur-Seine</p></div>
+  </div>
+</div></body></html>`,
+  },
 };

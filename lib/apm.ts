@@ -61,9 +61,17 @@ export async function sendApmMail(
   subject: string,
   content: string,
   fromName?: string,
-  attachments?: MailAttachment[]
+  attachments?: MailAttachment[],
+  overrides?: { fromEmail?: string | null; footer1?: string | null; footer2?: string | null; footer3?: string | null; footerColor?: string | null }
 ) {
-  const { url, token, senderName, senderEmail, footer1, footer2, footer3, footerColor } = await getApmSettings();
+  const base = await getApmSettings();
+  const { url, token, senderName } = base;
+  // Surcharges propres à un module (ex. tournages) ; à défaut, réglages généraux
+  const senderEmail = overrides?.fromEmail || base.senderEmail;
+  const footer1 = overrides?.footer1 || base.footer1;
+  const footer2 = overrides?.footer2 || base.footer2;
+  const footer3 = overrides?.footer3 || base.footer3;
+  const footerColor = overrides?.footerColor || base.footerColor;
 
   const recipients = parseRecipients(to);
   if (recipients.length === 0) {
