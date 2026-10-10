@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { updateOccupationTotal, calculateQ2, retariferEnseignes } from '@/lib/tlpe-utils';
+import { chargerRegles } from '@/lib/regles-metier-server';
+import { R } from '@/lib/regles-metier';
 
 export async function POST(
   request: NextRequest,
@@ -8,6 +10,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+    await chargerRegles();
     const body = await request.json();
     const { articleId, quantite1, quantite2, dateDebut, dateFin, dateDebutConstatee, dateFinConstatee, photos, montant: providedMontant } = body;
 
@@ -39,7 +42,7 @@ export async function POST(
 
     // Auto-calculate Q2 for CHANTIER and TOURNAGE (always use time-based calculation)
     // OR for auto units OR if missing
-    const shouldCalculateQ2 = (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE') || !q2 || isAutoUnit;
+    const shouldCalculateQ2 = (R.bool('duree.recalculAuto') && (occupation.type === 'CHANTIER' || occupation.type === 'TOURNAGE')) || !q2 || isAutoUnit;
     if (shouldCalculateQ2) {
        q2 = calculateQ2(u2Label,
           dateDebut ? new Date(dateDebut) : null,

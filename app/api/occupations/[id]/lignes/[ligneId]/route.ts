@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { updateOccupationTotal, calculateQ2, retariferEnseignes } from '@/lib/tlpe-utils';
+import { chargerRegles } from '@/lib/regles-metier-server';
+import { R } from '@/lib/regles-metier';
 
 export async function PATCH(
   request: NextRequest,
@@ -8,6 +10,7 @@ export async function PATCH(
 ) {
   try {
     const { id: rawId, ligneId: rawLigneId } = await params;
+    await chargerRegles();
     const occupationId = parseInt(rawId);
     const ligneId = parseInt(rawLigneId);
     const body = await request.json();
@@ -46,7 +49,7 @@ export async function PATCH(
     const datesChanged = (dateDebut !== undefined || dateFin !== undefined || dateDebutConstatee !== undefined || dateFinConstatee !== undefined);
 
     // Always calculate quantite2 for CHANTIER and TOURNAGE (use time-based calculation)
-    const shouldCalculateQ2 = (existingLigne.occupation.type === 'CHANTIER' || existingLigne.occupation.type === 'TOURNAGE') || isAutoUnit || (quantite2 === undefined && datesChanged);
+    const shouldCalculateQ2 = (R.bool('duree.recalculAuto') && (existingLigne.occupation.type === 'CHANTIER' || existingLigne.occupation.type === 'TOURNAGE')) || isAutoUnit || (quantite2 === undefined && datesChanged);
     if (shouldCalculateQ2) {
        const fd = dateDebut !== undefined ? (dateDebut ? new Date(dateDebut) : null) : existingLigne.dateDebut;
        const ff = dateFin !== undefined ? (dateFin ? new Date(dateFin) : null) : existingLigne.dateFin;

@@ -1,29 +1,8 @@
-import { getTlpeType, TLPE_TYPE_LABELS } from '@/lib/tlpe-tarifs';
+import { getTlpeType, TLPE_TYPE_LABELS, ligneExoneree, calculateTlpeProrata } from '@/lib/tlpe-tarifs';
 import { Plus, Package, Clock, Maximize2, Pencil, Trash2, Euro, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 
-function getDaysInMonth(date: Date): number {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-}
-
-function calculateMonthlyProrata(startDate: Date, endDate: Date): { months: number; ratio: number } {
-  let fullStartDate = new Date(startDate);
-  if (fullStartDate.getDate() !== 1) {
-    fullStartDate = new Date(fullStartDate.getFullYear(), fullStartDate.getMonth() + 1, 1);
-  }
-
-  let fullEndDate = new Date(endDate);
-  if (fullEndDate.getDate() !== getDaysInMonth(fullEndDate)) {
-    fullEndDate = new Date(fullEndDate.getFullYear(), fullEndDate.getMonth(), 0);
-  }
-
-  if (fullEndDate < fullStartDate) return { months: 0, ratio: 0 };
-
-  const months = (fullEndDate.getFullYear() - fullStartDate.getFullYear()) * 12
-                 + (fullEndDate.getMonth() - fullStartDate.getMonth()) + 1;
-
-  return { months, ratio: months / 12 };
-}
+const calculateMonthlyProrata = calculateTlpeProrata; // règle « tlpe.prorata.mode » (module partagé)
 
 interface TlpeLigne {
   id: number;
@@ -109,7 +88,7 @@ export default function TlpeArticles({
             const totalAnnuel = unitPrice * surface;
             const tlpeType = getTlpeType(ligne);
             
-            const isLineExempt = tlpeType === 'ENSEIGNE' && isEnseigneExempt;
+            const isLineExempt = ligneExoneree(tlpeType, isEnseigneExempt);
             const lineTotal = isLineExempt ? 0 : (totalAnnuel * prorata);
 
             return (

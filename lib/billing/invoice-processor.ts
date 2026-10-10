@@ -1,4 +1,6 @@
-import { getSurfaceExoneration, getTlpeType, calculateTlpeProrata } from '../tlpe-tarifs';
+import { getSurfaceExoneration, getTlpeType, calculateTlpeProrata, enseignesExonerees, ligneExoneree } from '../tlpe-tarifs';
+import { R } from '../regles-metier';
+import { chargerRegles } from '../regles-metier-server';
 import { prisma } from '@/lib/prisma';
 import { generateInvoicePdfBuffer } from '@/lib/invoice-pdf-utils';
 import { join } from 'path';
@@ -50,10 +52,9 @@ export async function processDossier(params: {
   await writeFile(fullPath, pdfBuffer);
 
   // 2. Calculate Totals
-  const threshold = tlpeConfig?.exoneration ?? 12;
-  // Surface cumulee complete des enseignes (non proratisee, articles de reference inclus) pour l'exoneration
-  const totalEnseigneSurface = getSurfaceExoneration(occ.lignes) || 0;
-  const isEnseigneExempt = totalEnseigneSurface <= threshold;
+  await chargerRegles();
+  // Exonération des enseignes (règles « tlpe.exoneration.* ») : surface cumulée complète, non proratisée
+  const isEnseigneExempt = enseignesExonerees(occ.lignes, tlpeConfig);
 
   const lineResults: any[] = [];
   let subtotal = (occ.lignes || []).reduce((sum: number, l: any) => {
@@ -62,7 +63,7 @@ export async function processDossier(params: {
     let lineVal = (l.montant || 0);
 
     if (occ.type === 'TLPE') {
-      const isExempt = getTlpeType(l) === 'ENSEIGNE' && isEnseigneExempt;
+      const isExempt = ligneExoneree(l, isEnseigneExempt);
       if (isExempt) {
         lineResults.push({ ...l, calculatedTotal: 0 });
         return sum;
@@ -81,18 +82,19 @@ export async function processDossier(params: {
 
   // Add majoration for non-authorized occupations
   let total = subtotal;
-  if ((occ as any).isNotAuthorized && subtotal > 0) {
+  const majoration = subtotal * (R.num('majoration.nonAutorise.taux') / 100);
+  if ((occ as any).isNotAuthorized && R.bool('majoration.nonAutorise.actif') && majoration > 0) {
     lineResults.push({
       id: -1, // Dummy ID for majoration line
       article: {
         designation: 'Majoration - pas d\'autorisation'
       },
-      montant: subtotal,
-      calculatedTotal: subtotal,
+      montant: majoration,
+      calculatedTotal: majoration,
       quantite1: 1,
       isMajoration: true
     });
-    total = subtotal + subtotal; // Double the amount
+    total = subtotal + majoration; // majoration (100 % par défaut = doublement)
   }
   // Note: court métrage minoration is handled as a separate line item in invoice-pdf-utils.ts
 

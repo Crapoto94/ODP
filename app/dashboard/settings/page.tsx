@@ -19,6 +19,7 @@ import ContactRolesTab from './components/ContactRolesTab';
 import RolesTab from './components/RolesTab';
 import FilienTab from './components/FilienTab';
 import TournagesTab from './components/TournagesTab';
+import ReglesMetierTab from './components/ReglesMetierTab';
 import { SETTINGS_TABS, SETTINGS_GROUPS, isSettingsTab, tabsPourDroits, type TabType } from './tabs';
 import { hasPermission } from '@/lib/permissions';
 import { useUiMode } from '@/components/UiModeProvider';
@@ -45,7 +46,7 @@ function SettingsPageInner() {
   const tabs = tabsPourDroits(!restreint);
   // Nouvelle interface : le sous-menu est dans le menu latéral principal, l'onglet actif vient de l'adresse (?tab=…)
   const tabParam = searchParams.get('tab');
-  const activeTab: TabType = restreint ? 'tournages' : uiMode === 'v2' ? (isSettingsTab(tabParam) ? tabParam : 'general') : tabState;
+  const activeTab: TabType = restreint ? ((uiMode === 'v2' ? tabParam : tabState) === 'regles' ? 'regles' : 'tournages') : uiMode === 'v2' ? (isSettingsTab(tabParam) ? tabParam : 'general') : tabState;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
@@ -127,6 +128,7 @@ function SettingsPageInner() {
       {activeTab === 'filien' && <FilienTab {...{settings, setSettings, handleSubmit, saving, message}} />}
       {activeTab === 'postgres' && <PostgresTab />}
       {activeTab === 'tournages' && <TournagesTab />}
+      {activeTab === 'regles' && <ReglesMetierTab />}
       {activeTab === 'users' && <UsersTab />}
       {activeTab === 'roles' && <RolesTab />}
       {activeTab === 'contact_roles' && <ContactRolesTab />}

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { updateOccupationTotal } from '@/lib/tlpe-utils';
+import { R } from '@/lib/regles-metier';
+import { chargerRegles } from '@/lib/regles-metier-server';
 
 export async function POST(
   request: NextRequest,
@@ -8,6 +10,8 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+    await chargerRegles();
+    if (!R.bool('commerce.degrevements.autorises')) return NextResponse.json({ error: 'Les dégrèvements sont désactivés (règle « commerce.degrevements.autorises »)' }, { status: 403 });
     const body = await request.json();
     const { description, montant } = body;
 

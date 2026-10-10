@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { R } from '@/lib/regles-metier';
+import { chargerRegles } from '@/lib/regles-metier-server';
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: rawId } = await params;
+    await chargerRegles();
     const tiersId = parseInt(rawId);
     const body = await req.json();
     const { fromYear, toYear, lineIds } = body;
@@ -69,7 +72,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         quantite2: sourceLine.quantite2,
         dateDebut: new Date(`${toYear}-01-01T12:00:00.000Z`),
         dateFin: new Date(`${toYear}-12-31T12:00:00.000Z`),
-        montant: match.montant * (sourceLine.quantite1 || 0) * (sourceLine.quantite2 || 1),
+        // Règle « commerce.reconduction.retarifer » : tarif de l'année cible, sinon montant de la ligne d'origine
+        montant: R.bool('commerce.reconduction.retarifer') ? match.montant * (sourceLine.quantite1 || 0) * (sourceLine.quantite2 || 1) : (sourceLine.montant || 0),
         note: sourceLine.note,
         photos: sourceLine.photos
       });

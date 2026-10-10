@@ -1,4 +1,6 @@
 import { prisma } from './prisma';
+import { R } from './regles-metier';
+import { chargerRegles } from './regles-metier-server';
 import {
   getTlpeSlotAttendu,
   getTlpeSlotCourant,
@@ -6,35 +8,12 @@ import {
   getSurfaceExoneration,
   getTlpeType,
   isTlpeRefArticle,
+  calculateTlpeProrata,
+  seuilExoneration,
+  enseignesExonerees,
+  ligneExoneree,
   type TlpeRefTarifs,
 } from './tlpe-tarifs';
-
-function getDaysInMonth(date: Date): number {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-}
-
-function calculateMonthlyProrata(startDate: Date, endDate: Date): number {
-  // Déterminer le premier jour complet (1er du mois suivant si on ne commence pas le 1er)
-  let fullStartDate = new Date(startDate);
-  if (fullStartDate.getDate() !== 1) {
-    fullStartDate = new Date(fullStartDate.getFullYear(), fullStartDate.getMonth() + 1, 1);
-  }
-
-  // Déterminer le dernier jour complet (dernier du mois si on finit le dernier jour)
-  let fullEndDate = new Date(endDate);
-  if (fullEndDate.getDate() !== getDaysInMonth(fullEndDate)) {
-    fullEndDate = new Date(fullEndDate.getFullYear(), fullEndDate.getMonth(), 0); // Dernier jour du mois précédent
-  }
-
-  // Si le dernier jour complet est avant le premier jour complet, pas de facturation
-  if (fullEndDate < fullStartDate) return 0;
-
-  // Compter les mois (inclusive du mois de fin)
-  const months = (fullEndDate.getFullYear() - fullStartDate.getFullYear()) * 12
-                 + (fullEndDate.getMonth() - fullStartDate.getMonth()) + 1;
-
-  return months / 12;
-}
 
 /**
  * Recalcule le montant total d'une occupation en tenant compte des règles spécifiques du TLPE
@@ -43,6 +22,7 @@ function calculateMonthlyProrata(startDate: Date, endDate: Date): number {
  */
 export async function updateOccupationTotal(occupationId: number) {
   try {
+    await chargerRegles();
     // 1. Récupérer l'occupation avec ses lignes et articles
     const occupation = await (prisma as any).occupation.findUnique({
       where: { id: occupationId },
@@ -63,9 +43,9 @@ export async function updateOccupationTotal(occupationId: number) {
         .filter((l: any) => !l.deletedAt)
         .reduce((sum: number, l: any) => sum + (l.montant || 0), 0);
       
-      // Abattement Court Métrage 50%
-      if (occupation.type === 'TOURNAGE' && occupation.isCourtMetrage) {
-        total = total * 0.5;
+      // Minoration court-métrage (règles « tournage.courtMetrage.* »)
+      if (occupation.type === 'TOURNAGE' && occupation.isCourtMetrage && R.bool('tournage.courtMetrage.actif')) {
+        total = total * (1 - R.num('tournage.courtMetrage.taux') / 100);
       }
 
       await (prisma as any).occupation.update({
@@ -79,15 +59,12 @@ export async function updateOccupationTotal(occupationId: number) {
     const anneeTaxation = occupation.anneeTaxation || (occupation.dateDebut ? new Date(occupation.dateDebut).getFullYear() : new Date().getFullYear());
     
     // Récupérer le seuil d'exonération pour l'année (via queryRaw car le modèle TlpeConfig peut être instable dans le client)
-    let threshold = 12; // Valeur par défaut légale
+    let config: any = null;
     try {
-      const config = await (prisma as any).tlpeConfig.findFirst({
+      config = await (prisma as any).tlpeConfig.findFirst({
         where: { annee: anneeTaxation },
         select: { exoneration: true }
       });
-      if (config) {
-        threshold = config.exoneration;
-      }
     } catch (e: any) {
       console.error('Erreur récupération TlpeConfig:', e?.message || e);
     }
@@ -95,9 +72,7 @@ export async function updateOccupationTotal(occupationId: number) {
     // Calculer la surface totale des ENSEIGNES pour l'exonération globale
     // Surface cumulee COMPLETE (hors lignes supprimees), non proratisee : une enseigne ajoutee en cours d'annee
     // s'ajoute a la surface existante. getTlpeType reconnait aussi les articles de reference (sans notes.tlpeType).
-    const totalEnseigneSurface = getSurfaceExoneration(occupation.lignes);
-
-    const isEnseigneExempt = totalEnseigneSurface <= threshold;
+    const isEnseigneExempt = enseignesExonerees(occupation.lignes, config);
 
     // Calcul du montant total Net
     const netTotal = occupation.lignes.reduce((sum: number, l: any) => {
@@ -105,10 +80,10 @@ export async function updateOccupationTotal(occupationId: number) {
 
       const d1 = new Date(l.dateDebut || `${anneeTaxation}-01-01`);
       const d2 = new Date(l.dateFin || `${anneeTaxation}-12-31`);
-      const prorata = calculateMonthlyProrata(d1, d2);
+      const prorata = calculateTlpeProrata(d1, d2).ratio;
 
       // Si c'est une enseigne et qu'on est sous le seuil -> 0€
-      if (tlpeType === 'ENSEIGNE' && isEnseigneExempt) return sum;
+      if (ligneExoneree(tlpeType, isEnseigneExempt)) return sum;
 
       // Sinon : Tarif * Surface * Prorata (basé sur les mois pleins)
       return sum + ((l.montant || 0) * (l.quantite1 || 0) * prorata);
@@ -174,6 +149,9 @@ export async function getTlpeGrille(annee: number): Promise<{
  */
 export async function retariferEnseignes(occupationId: number, options: { force?: boolean } = {}) {
   const { force = false } = options;
+  await chargerRegles();
+  // Règle « tlpe.retarification.auto » : désactivée, seule une demande explicite (reconduction, report d'année) re-tarifie
+  if (!R.bool('tlpe.retarification.auto') && !force) return { updated: [] as Array<{ ligneId: number; from: number; to: number }> };
 
   const occupation = await (prisma as any).occupation.findUnique({
     where: { id: occupationId },
@@ -236,20 +214,4 @@ export async function retariferEnseignes(occupationId: number, options: { force?
   return { updated };
 }
 
-export function calculateQ2(u2: string, start: Date | null, end: Date | null, startC: Date | null, endC: Date | null) {
-  const s = startC || start;
-  const e = endC || end;
-  if (!s || !e || isNaN(s.getTime()) || isNaN(e.getTime()) || e < s) return 1;
-
-  const diffMs = e.getTime() - s.getTime();
-  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + 1;
-
-  const unit = (u2 || '').toLowerCase();
-  
-  if (unit.includes('an')) return 1;
-  if (unit.includes('10 jour')) return Math.ceil(diffDays / 10);
-  if (unit.includes('mois')) return Math.ceil(diffDays / 30);
-  if (unit.includes('jour') || unit.includes('nuit')) return diffDays;
-  
-  return 1;
-}
+export { calculateQ2 } from './tlpe-tarifs';

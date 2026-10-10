@@ -1,4 +1,6 @@
 import { prisma } from './prisma';
+import { R } from './regles-metier';
+import { chargerRegles } from './regles-metier-server';
 import type { TitrePaiement } from './sedit-paiement';
 
 // Synchronise le statut des dossiers avec le titre SEDIT retrouvé pour leur facture :
@@ -13,11 +15,15 @@ export interface ChangementStatut { numero: string; dossiers: number; de: string
 
 export async function synchroniserStatuts(resultats: TitrePaiement[], auteur = 'Système (SEDIT)'): Promise<ChangementStatut[]> {
   const changements: ChangementStatut[] = [];
+  await chargerRegles();
 
   for (const r of resultats) {
     if (r.confiance !== 'exact' || r.annule || !r.etat) continue;
     const cible: 'TITRE' | 'CLOS' | null = r.etat === 'paye' ? 'CLOS' : (r.etat === 'a_payer' || r.etat === 'non_pris_en_charge') ? 'TITRE' : null;
     if (!cible) continue;
+    // Règles « statut.sedit.clos » et « statut.sedit.titre »
+    if (cible === 'CLOS' && !R.bool('statut.sedit.clos')) continue;
+    if (cible === 'TITRE' && !R.bool('statut.sedit.titre')) continue;
 
     const eligibles = cible === 'CLOS' ? [...FACTURE, ...TITRE] : FACTURE;
     const occs = await (prisma as any).occupation.findMany({

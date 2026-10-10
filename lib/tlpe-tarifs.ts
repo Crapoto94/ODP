@@ -10,7 +10,10 @@
  * surface de leur propre ligne.
  */
 
-export const TLPE_SURFACE_SEUIL_M2 = 50;
+import { R } from './regles-metier';
+
+export const TLPE_SURFACE_SEUIL_M2 = 50; // valeur par défaut ; le seuil actif est la règle « tlpe.palier.seuilM2 »
+const seuilPalier = () => R.num('tlpe.palier.seuilM2');
 
 /**
  * Categories de dispositifs TLPE (Article.notes.tlpeType) :
@@ -31,8 +34,29 @@ export const isEnseigneFamille = (t: string | undefined | null) => t === 'ENSEIG
 
 /** Surface retenue pour le SEUIL D'EXONERATION : enseignes ordinaires uniquement (hors scellees au sol), non proratisee. */
 export function getSurfaceExoneration(lignes: any[] | null | undefined): number {
-  return (lignes || []).reduce((sum, l) => (l.deletedAt || getTlpeType(l) !== 'ENSEIGNE' ? sum : sum + (Number(l.quantite1) || 0)), 0);
+  return (lignes || []).reduce((sum, l) => (l.deletedAt || !typeSoumisExoneration(getTlpeType(l)) ? sum : sum + (Number(l.quantite1) || 0)), 0);
 }
+
+/** Types de dispositifs concernés par l'exoneration (enseignes ; les scellees au sol seulement si la regle « exclureScelleesSol » est desactivee). */
+export function typeSoumisExoneration(type: string | undefined | null): boolean {
+  return type === 'ENSEIGNE' || (type === 'ENSEIGNE_SOL' && !R.bool('tlpe.exoneration.exclureScelleesSol'));
+}
+
+/** Seuil d'exoneration (m²) : configuration TLPE de l'annee, sinon regle « tlpe.exoneration.seuilDefaut ». */
+export function seuilExoneration(tlpeConfig: any): number {
+  const v = Number(tlpeConfig?.exoneration);
+  return Number.isFinite(v) && tlpeConfig?.exoneration != null ? v : R.num('tlpe.exoneration.seuilDefaut');
+}
+
+/** Les enseignes du dossier sont-elles exonerees (regle active et surface cumulee <= seuil) ? */
+export function enseignesExonerees(lignes: any[] | null | undefined, tlpeConfig: any): boolean {
+  if (!R.bool('tlpe.exoneration.actif')) return false;
+  return getSurfaceExoneration(lignes) <= seuilExoneration(tlpeConfig);
+}
+
+/** Une ligne (ou un type) est-elle exoneree ? */
+export const ligneExoneree = (typeOuLigne: any, enseignesExoneree: boolean): boolean =>
+  enseignesExoneree && typeSoumisExoneration(typeof typeOuLigne === 'string' ? typeOuLigne : getTlpeType(typeOuLigne));
 
 export type TlpeRefTarifs = {
   enseignes_12_50: number;
@@ -88,6 +112,25 @@ export function getTlpeType(articleOrLigne: any): string {
  */
 export function calculateTlpeProrata(startDate: Date, endDate: Date): { months: number; ratio: number } {
   const joursDuMois = (d: Date) => new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  const mode = R.str('tlpe.prorata.mode');
+  if (mode === 'ANNEE') return { months: 12, ratio: 1 };
+  if (mode === 'JOURS') {
+    const j0 = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()).getTime();
+    const j1 = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()).getTime();
+    if (j1 < j0) return { months: 0, ratio: 0 };
+    const jours = Math.round((j1 - j0) / 86400000) + 1;
+    const annee = startDate.getFullYear();
+    const dansAnnee = (annee % 4 === 0 && (annee % 100 !== 0 || annee % 400 === 0)) ? 366 : 365;
+    const ratio = Math.min(1, jours / dansAnnee);
+    return { months: Math.round(ratio * 12), ratio };
+  }
+  if (mode === 'MOIS_ENTAMES') {
+    const debutM = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+    const finM = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+    if (finM < debutM) return { months: 0, ratio: 0 };
+    const mois = (finM.getFullYear() - debutM.getFullYear()) * 12 + (finM.getMonth() - debutM.getMonth()) + 1;
+    return { months: mois, ratio: mois / 12 };
+  }
   let debut = new Date(startDate);
   if (debut.getDate() !== 1) debut = new Date(debut.getFullYear(), debut.getMonth() + 1, 1);
   let fin = new Date(endDate);
@@ -128,7 +171,7 @@ export function getEnseigneSurfaceCumulee(
   options: { excludeLigneId?: number | null; surfaceRemplacee?: number; pour?: { dateDebut?: any; dateFin?: any } | null } = {},
 ): number {
   const { excludeLigneId = null, surfaceRemplacee = 0, pour = null } = options;
-  const cible = pour ? periodeLigne(pour) : null;
+  const cible = pour && R.bool('tlpe.enseignes.cumulSimultane') ? periodeLigne(pour) : null;
 
   const cumul = (lignes || []).reduce((sum, ligne) => {
     if (ligne.deletedAt) return sum;
@@ -187,9 +230,11 @@ export function getTlpeSlotAttendu(
   surface: number,
   cumulEnseignes: number,
 ): TlpeSlot | null {
-  const plus = surface > TLPE_SURFACE_SEUIL_M2;
+  const seuil = seuilPalier();
+  const plus = surface > seuil;
   if (isEnseigneFamille(tlpeType)) {
-    return cumulEnseignes <= TLPE_SURFACE_SEUIL_M2 ? 'enseignes_12_50' : 'enseignes_50_plus';
+    const base = R.bool('tlpe.enseignes.cumul') ? cumulEnseignes : surface;
+    return base <= seuil ? 'enseignes_12_50' : 'enseignes_50_plus';
   }
   if (tlpeType === 'NON_NUM') {
     return plus ? 'pub_non_num_50_plus' : 'pub_non_num_50_moins';
@@ -265,4 +310,28 @@ export function getTlpeSlotCourant(
   }
 
   return null;
+}
+
+
+/**
+ * Quantite 2 (duree facturee) d'une ligne selon l'unite de temps du mode de taxation, soumise aux regles de duree :
+ * jour de debut et de fin inclus, taille du mois, tranche « 10 jours », dates constatees prioritaires.
+ */
+export function calculateQ2(u2: string, start: Date | null, end: Date | null, startC: Date | null, endC: Date | null) {
+  const priorite = R.bool('duree.constateesPrioritaires');
+  const s = priorite ? (startC || start) : (start || startC);
+  const e = priorite ? (endC || end) : (end || endC);
+  if (!s || !e || isNaN(s.getTime()) || isNaN(e.getTime()) || e < s) return 1;
+
+  const diffMs = e.getTime() - s.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + (R.bool('duree.jourInclusif') ? 1 : 0);
+
+  const unit = (u2 || '').toLowerCase();
+
+  if (unit.includes('an')) return 1;
+  if (unit.includes('10 jour')) return Math.max(1, Math.ceil(diffDays / R.num('duree.trancheJours')));
+  if (unit.includes('mois')) return Math.max(1, Math.ceil(diffDays / R.num('duree.moisJours')));
+  if (unit.includes('jour') || unit.includes('nuit')) return Math.max(1, diffDays);
+
+  return 1;
 }

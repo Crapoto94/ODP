@@ -173,6 +173,11 @@ export type ServiceInstructeur = $Result.DefaultSelection<Prisma.$ServiceInstruc
  * 
  */
 export type AvisTournage = $Result.DefaultSelection<Prisma.$AvisTournagePayload>
+/**
+ * Model RegleMetier
+ * 
+ */
+export type RegleMetier = $Result.DefaultSelection<Prisma.$RegleMetierPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -616,6 +621,16 @@ export class PrismaClient<
     * ```
     */
   get avisTournage(): Prisma.AvisTournageDelegate<ExtArgs>;
+
+  /**
+   * `prisma.regleMetier`: Exposes CRUD operations for the **RegleMetier** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RegleMetiers
+    * const regleMetiers = await prisma.regleMetier.findMany()
+    * ```
+    */
+  get regleMetier(): Prisma.RegleMetierDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -1088,7 +1103,8 @@ export namespace Prisma {
     DemandeTournage: 'DemandeTournage',
     TournageConfig: 'TournageConfig',
     ServiceInstructeur: 'ServiceInstructeur',
-    AvisTournage: 'AvisTournage'
+    AvisTournage: 'AvisTournage',
+    RegleMetier: 'RegleMetier'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1104,7 +1120,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "tiers" | "occupation" | "contact" | "note" | "autorisation" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings" | "demandeTournage" | "tournageConfig" | "serviceInstructeur" | "avisTournage"
+      modelProps: "tiers" | "occupation" | "contact" | "note" | "autorisation" | "o365Message" | "categorie" | "modeTaxation" | "article" | "user" | "favoriteCommerce" | "mobileLog" | "contextualMessage" | "ligneOccupation" | "dispositif" | "gabarit" | "tlpeConfig" | "typeDossierConfig" | "backlogItem" | "backlogComment" | "versionRelease" | "contactRoleConfig" | "odpConfig" | "billingRun" | "billingRunInvoice" | "signatory" | "signatureRequest" | "appSettings" | "demandeTournage" | "tournageConfig" | "serviceInstructeur" | "avisTournage" | "regleMetier"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3345,6 +3361,76 @@ export namespace Prisma {
           count: {
             args: Prisma.AvisTournageCountArgs<ExtArgs>
             result: $Utils.Optional<AvisTournageCountAggregateOutputType> | number
+          }
+        }
+      }
+      RegleMetier: {
+        payload: Prisma.$RegleMetierPayload<ExtArgs>
+        fields: Prisma.RegleMetierFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RegleMetierFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RegleMetierFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload>
+          }
+          findFirst: {
+            args: Prisma.RegleMetierFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RegleMetierFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload>
+          }
+          findMany: {
+            args: Prisma.RegleMetierFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload>[]
+          }
+          create: {
+            args: Prisma.RegleMetierCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload>
+          }
+          createMany: {
+            args: Prisma.RegleMetierCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RegleMetierCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload>[]
+          }
+          delete: {
+            args: Prisma.RegleMetierDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload>
+          }
+          update: {
+            args: Prisma.RegleMetierUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload>
+          }
+          deleteMany: {
+            args: Prisma.RegleMetierDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RegleMetierUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.RegleMetierUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RegleMetierPayload>
+          }
+          aggregate: {
+            args: Prisma.RegleMetierAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRegleMetier>
+          }
+          groupBy: {
+            args: Prisma.RegleMetierGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RegleMetierGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RegleMetierCountArgs<ExtArgs>
+            result: $Utils.Optional<RegleMetierCountAggregateOutputType> | number
           }
         }
       }
@@ -37792,6 +37878,868 @@ export namespace Prisma {
 
 
   /**
+   * Model RegleMetier
+   */
+
+  export type AggregateRegleMetier = {
+    _count: RegleMetierCountAggregateOutputType | null
+    _min: RegleMetierMinAggregateOutputType | null
+    _max: RegleMetierMaxAggregateOutputType | null
+  }
+
+  export type RegleMetierMinAggregateOutputType = {
+    cle: string | null
+    modifiePar: string | null
+    updated_at: Date | null
+  }
+
+  export type RegleMetierMaxAggregateOutputType = {
+    cle: string | null
+    modifiePar: string | null
+    updated_at: Date | null
+  }
+
+  export type RegleMetierCountAggregateOutputType = {
+    cle: number
+    valeur: number
+    modifiePar: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type RegleMetierMinAggregateInputType = {
+    cle?: true
+    modifiePar?: true
+    updated_at?: true
+  }
+
+  export type RegleMetierMaxAggregateInputType = {
+    cle?: true
+    modifiePar?: true
+    updated_at?: true
+  }
+
+  export type RegleMetierCountAggregateInputType = {
+    cle?: true
+    valeur?: true
+    modifiePar?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type RegleMetierAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RegleMetier to aggregate.
+     */
+    where?: RegleMetierWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegleMetiers to fetch.
+     */
+    orderBy?: RegleMetierOrderByWithRelationInput | RegleMetierOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RegleMetierWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegleMetiers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegleMetiers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RegleMetiers
+    **/
+    _count?: true | RegleMetierCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RegleMetierMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RegleMetierMaxAggregateInputType
+  }
+
+  export type GetRegleMetierAggregateType<T extends RegleMetierAggregateArgs> = {
+        [P in keyof T & keyof AggregateRegleMetier]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRegleMetier[P]>
+      : GetScalarType<T[P], AggregateRegleMetier[P]>
+  }
+
+
+
+
+  export type RegleMetierGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RegleMetierWhereInput
+    orderBy?: RegleMetierOrderByWithAggregationInput | RegleMetierOrderByWithAggregationInput[]
+    by: RegleMetierScalarFieldEnum[] | RegleMetierScalarFieldEnum
+    having?: RegleMetierScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RegleMetierCountAggregateInputType | true
+    _min?: RegleMetierMinAggregateInputType
+    _max?: RegleMetierMaxAggregateInputType
+  }
+
+  export type RegleMetierGroupByOutputType = {
+    cle: string
+    valeur: JsonValue
+    modifiePar: string | null
+    updated_at: Date
+    _count: RegleMetierCountAggregateOutputType | null
+    _min: RegleMetierMinAggregateOutputType | null
+    _max: RegleMetierMaxAggregateOutputType | null
+  }
+
+  type GetRegleMetierGroupByPayload<T extends RegleMetierGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RegleMetierGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RegleMetierGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RegleMetierGroupByOutputType[P]>
+            : GetScalarType<T[P], RegleMetierGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RegleMetierSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    cle?: boolean
+    valeur?: boolean
+    modifiePar?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["regleMetier"]>
+
+  export type RegleMetierSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    cle?: boolean
+    valeur?: boolean
+    modifiePar?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["regleMetier"]>
+
+  export type RegleMetierSelectScalar = {
+    cle?: boolean
+    valeur?: boolean
+    modifiePar?: boolean
+    updated_at?: boolean
+  }
+
+
+  export type $RegleMetierPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RegleMetier"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      cle: string
+      valeur: Prisma.JsonValue
+      modifiePar: string | null
+      updated_at: Date
+    }, ExtArgs["result"]["regleMetier"]>
+    composites: {}
+  }
+
+  type RegleMetierGetPayload<S extends boolean | null | undefined | RegleMetierDefaultArgs> = $Result.GetResult<Prisma.$RegleMetierPayload, S>
+
+  type RegleMetierCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<RegleMetierFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: RegleMetierCountAggregateInputType | true
+    }
+
+  export interface RegleMetierDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RegleMetier'], meta: { name: 'RegleMetier' } }
+    /**
+     * Find zero or one RegleMetier that matches the filter.
+     * @param {RegleMetierFindUniqueArgs} args - Arguments to find a RegleMetier
+     * @example
+     * // Get one RegleMetier
+     * const regleMetier = await prisma.regleMetier.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RegleMetierFindUniqueArgs>(args: SelectSubset<T, RegleMetierFindUniqueArgs<ExtArgs>>): Prisma__RegleMetierClient<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one RegleMetier that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {RegleMetierFindUniqueOrThrowArgs} args - Arguments to find a RegleMetier
+     * @example
+     * // Get one RegleMetier
+     * const regleMetier = await prisma.regleMetier.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RegleMetierFindUniqueOrThrowArgs>(args: SelectSubset<T, RegleMetierFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RegleMetierClient<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first RegleMetier that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegleMetierFindFirstArgs} args - Arguments to find a RegleMetier
+     * @example
+     * // Get one RegleMetier
+     * const regleMetier = await prisma.regleMetier.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RegleMetierFindFirstArgs>(args?: SelectSubset<T, RegleMetierFindFirstArgs<ExtArgs>>): Prisma__RegleMetierClient<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first RegleMetier that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegleMetierFindFirstOrThrowArgs} args - Arguments to find a RegleMetier
+     * @example
+     * // Get one RegleMetier
+     * const regleMetier = await prisma.regleMetier.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RegleMetierFindFirstOrThrowArgs>(args?: SelectSubset<T, RegleMetierFindFirstOrThrowArgs<ExtArgs>>): Prisma__RegleMetierClient<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more RegleMetiers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegleMetierFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RegleMetiers
+     * const regleMetiers = await prisma.regleMetier.findMany()
+     * 
+     * // Get first 10 RegleMetiers
+     * const regleMetiers = await prisma.regleMetier.findMany({ take: 10 })
+     * 
+     * // Only select the `cle`
+     * const regleMetierWithCleOnly = await prisma.regleMetier.findMany({ select: { cle: true } })
+     * 
+     */
+    findMany<T extends RegleMetierFindManyArgs>(args?: SelectSubset<T, RegleMetierFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a RegleMetier.
+     * @param {RegleMetierCreateArgs} args - Arguments to create a RegleMetier.
+     * @example
+     * // Create one RegleMetier
+     * const RegleMetier = await prisma.regleMetier.create({
+     *   data: {
+     *     // ... data to create a RegleMetier
+     *   }
+     * })
+     * 
+     */
+    create<T extends RegleMetierCreateArgs>(args: SelectSubset<T, RegleMetierCreateArgs<ExtArgs>>): Prisma__RegleMetierClient<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many RegleMetiers.
+     * @param {RegleMetierCreateManyArgs} args - Arguments to create many RegleMetiers.
+     * @example
+     * // Create many RegleMetiers
+     * const regleMetier = await prisma.regleMetier.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RegleMetierCreateManyArgs>(args?: SelectSubset<T, RegleMetierCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RegleMetiers and returns the data saved in the database.
+     * @param {RegleMetierCreateManyAndReturnArgs} args - Arguments to create many RegleMetiers.
+     * @example
+     * // Create many RegleMetiers
+     * const regleMetier = await prisma.regleMetier.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RegleMetiers and only return the `cle`
+     * const regleMetierWithCleOnly = await prisma.regleMetier.createManyAndReturn({ 
+     *   select: { cle: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RegleMetierCreateManyAndReturnArgs>(args?: SelectSubset<T, RegleMetierCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a RegleMetier.
+     * @param {RegleMetierDeleteArgs} args - Arguments to delete one RegleMetier.
+     * @example
+     * // Delete one RegleMetier
+     * const RegleMetier = await prisma.regleMetier.delete({
+     *   where: {
+     *     // ... filter to delete one RegleMetier
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RegleMetierDeleteArgs>(args: SelectSubset<T, RegleMetierDeleteArgs<ExtArgs>>): Prisma__RegleMetierClient<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one RegleMetier.
+     * @param {RegleMetierUpdateArgs} args - Arguments to update one RegleMetier.
+     * @example
+     * // Update one RegleMetier
+     * const regleMetier = await prisma.regleMetier.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RegleMetierUpdateArgs>(args: SelectSubset<T, RegleMetierUpdateArgs<ExtArgs>>): Prisma__RegleMetierClient<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more RegleMetiers.
+     * @param {RegleMetierDeleteManyArgs} args - Arguments to filter RegleMetiers to delete.
+     * @example
+     * // Delete a few RegleMetiers
+     * const { count } = await prisma.regleMetier.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RegleMetierDeleteManyArgs>(args?: SelectSubset<T, RegleMetierDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RegleMetiers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegleMetierUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RegleMetiers
+     * const regleMetier = await prisma.regleMetier.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RegleMetierUpdateManyArgs>(args: SelectSubset<T, RegleMetierUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one RegleMetier.
+     * @param {RegleMetierUpsertArgs} args - Arguments to update or create a RegleMetier.
+     * @example
+     * // Update or create a RegleMetier
+     * const regleMetier = await prisma.regleMetier.upsert({
+     *   create: {
+     *     // ... data to create a RegleMetier
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RegleMetier we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RegleMetierUpsertArgs>(args: SelectSubset<T, RegleMetierUpsertArgs<ExtArgs>>): Prisma__RegleMetierClient<$Result.GetResult<Prisma.$RegleMetierPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of RegleMetiers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegleMetierCountArgs} args - Arguments to filter RegleMetiers to count.
+     * @example
+     * // Count the number of RegleMetiers
+     * const count = await prisma.regleMetier.count({
+     *   where: {
+     *     // ... the filter for the RegleMetiers we want to count
+     *   }
+     * })
+    **/
+    count<T extends RegleMetierCountArgs>(
+      args?: Subset<T, RegleMetierCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RegleMetierCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RegleMetier.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegleMetierAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RegleMetierAggregateArgs>(args: Subset<T, RegleMetierAggregateArgs>): Prisma.PrismaPromise<GetRegleMetierAggregateType<T>>
+
+    /**
+     * Group by RegleMetier.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RegleMetierGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RegleMetierGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RegleMetierGroupByArgs['orderBy'] }
+        : { orderBy?: RegleMetierGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RegleMetierGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRegleMetierGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RegleMetier model
+   */
+  readonly fields: RegleMetierFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RegleMetier.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RegleMetierClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RegleMetier model
+   */ 
+  interface RegleMetierFieldRefs {
+    readonly cle: FieldRef<"RegleMetier", 'String'>
+    readonly valeur: FieldRef<"RegleMetier", 'Json'>
+    readonly modifiePar: FieldRef<"RegleMetier", 'String'>
+    readonly updated_at: FieldRef<"RegleMetier", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RegleMetier findUnique
+   */
+  export type RegleMetierFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+    /**
+     * Filter, which RegleMetier to fetch.
+     */
+    where: RegleMetierWhereUniqueInput
+  }
+
+  /**
+   * RegleMetier findUniqueOrThrow
+   */
+  export type RegleMetierFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+    /**
+     * Filter, which RegleMetier to fetch.
+     */
+    where: RegleMetierWhereUniqueInput
+  }
+
+  /**
+   * RegleMetier findFirst
+   */
+  export type RegleMetierFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+    /**
+     * Filter, which RegleMetier to fetch.
+     */
+    where?: RegleMetierWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegleMetiers to fetch.
+     */
+    orderBy?: RegleMetierOrderByWithRelationInput | RegleMetierOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RegleMetiers.
+     */
+    cursor?: RegleMetierWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegleMetiers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegleMetiers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RegleMetiers.
+     */
+    distinct?: RegleMetierScalarFieldEnum | RegleMetierScalarFieldEnum[]
+  }
+
+  /**
+   * RegleMetier findFirstOrThrow
+   */
+  export type RegleMetierFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+    /**
+     * Filter, which RegleMetier to fetch.
+     */
+    where?: RegleMetierWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegleMetiers to fetch.
+     */
+    orderBy?: RegleMetierOrderByWithRelationInput | RegleMetierOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RegleMetiers.
+     */
+    cursor?: RegleMetierWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegleMetiers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegleMetiers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RegleMetiers.
+     */
+    distinct?: RegleMetierScalarFieldEnum | RegleMetierScalarFieldEnum[]
+  }
+
+  /**
+   * RegleMetier findMany
+   */
+  export type RegleMetierFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+    /**
+     * Filter, which RegleMetiers to fetch.
+     */
+    where?: RegleMetierWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RegleMetiers to fetch.
+     */
+    orderBy?: RegleMetierOrderByWithRelationInput | RegleMetierOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RegleMetiers.
+     */
+    cursor?: RegleMetierWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RegleMetiers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RegleMetiers.
+     */
+    skip?: number
+    distinct?: RegleMetierScalarFieldEnum | RegleMetierScalarFieldEnum[]
+  }
+
+  /**
+   * RegleMetier create
+   */
+  export type RegleMetierCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+    /**
+     * The data needed to create a RegleMetier.
+     */
+    data: XOR<RegleMetierCreateInput, RegleMetierUncheckedCreateInput>
+  }
+
+  /**
+   * RegleMetier createMany
+   */
+  export type RegleMetierCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RegleMetiers.
+     */
+    data: RegleMetierCreateManyInput | RegleMetierCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RegleMetier createManyAndReturn
+   */
+  export type RegleMetierCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many RegleMetiers.
+     */
+    data: RegleMetierCreateManyInput | RegleMetierCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RegleMetier update
+   */
+  export type RegleMetierUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+    /**
+     * The data needed to update a RegleMetier.
+     */
+    data: XOR<RegleMetierUpdateInput, RegleMetierUncheckedUpdateInput>
+    /**
+     * Choose, which RegleMetier to update.
+     */
+    where: RegleMetierWhereUniqueInput
+  }
+
+  /**
+   * RegleMetier updateMany
+   */
+  export type RegleMetierUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RegleMetiers.
+     */
+    data: XOR<RegleMetierUpdateManyMutationInput, RegleMetierUncheckedUpdateManyInput>
+    /**
+     * Filter which RegleMetiers to update
+     */
+    where?: RegleMetierWhereInput
+  }
+
+  /**
+   * RegleMetier upsert
+   */
+  export type RegleMetierUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+    /**
+     * The filter to search for the RegleMetier to update in case it exists.
+     */
+    where: RegleMetierWhereUniqueInput
+    /**
+     * In case the RegleMetier found by the `where` argument doesn't exist, create a new RegleMetier with this data.
+     */
+    create: XOR<RegleMetierCreateInput, RegleMetierUncheckedCreateInput>
+    /**
+     * In case the RegleMetier was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RegleMetierUpdateInput, RegleMetierUncheckedUpdateInput>
+  }
+
+  /**
+   * RegleMetier delete
+   */
+  export type RegleMetierDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+    /**
+     * Filter which RegleMetier to delete.
+     */
+    where: RegleMetierWhereUniqueInput
+  }
+
+  /**
+   * RegleMetier deleteMany
+   */
+  export type RegleMetierDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RegleMetiers to delete
+     */
+    where?: RegleMetierWhereInput
+  }
+
+  /**
+   * RegleMetier without action
+   */
+  export type RegleMetierDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RegleMetier
+     */
+    select?: RegleMetierSelect<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -38394,6 +39342,16 @@ export namespace Prisma {
   };
 
   export type AvisTournageScalarFieldEnum = (typeof AvisTournageScalarFieldEnum)[keyof typeof AvisTournageScalarFieldEnum]
+
+
+  export const RegleMetierScalarFieldEnum: {
+    cle: 'cle',
+    valeur: 'valeur',
+    modifiePar: 'modifiePar',
+    updated_at: 'updated_at'
+  };
+
+  export type RegleMetierScalarFieldEnum = (typeof RegleMetierScalarFieldEnum)[keyof typeof RegleMetierScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -41562,6 +42520,53 @@ export namespace Prisma {
     derniereRelance?: DateTimeNullableWithAggregatesFilter<"AvisTournage"> | Date | string | null
     nbRelances?: IntWithAggregatesFilter<"AvisTournage"> | number
     updated_at?: DateTimeWithAggregatesFilter<"AvisTournage"> | Date | string
+  }
+
+  export type RegleMetierWhereInput = {
+    AND?: RegleMetierWhereInput | RegleMetierWhereInput[]
+    OR?: RegleMetierWhereInput[]
+    NOT?: RegleMetierWhereInput | RegleMetierWhereInput[]
+    cle?: StringFilter<"RegleMetier"> | string
+    valeur?: JsonFilter<"RegleMetier">
+    modifiePar?: StringNullableFilter<"RegleMetier"> | string | null
+    updated_at?: DateTimeFilter<"RegleMetier"> | Date | string
+  }
+
+  export type RegleMetierOrderByWithRelationInput = {
+    cle?: SortOrder
+    valeur?: SortOrder
+    modifiePar?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type RegleMetierWhereUniqueInput = Prisma.AtLeast<{
+    cle?: string
+    AND?: RegleMetierWhereInput | RegleMetierWhereInput[]
+    OR?: RegleMetierWhereInput[]
+    NOT?: RegleMetierWhereInput | RegleMetierWhereInput[]
+    valeur?: JsonFilter<"RegleMetier">
+    modifiePar?: StringNullableFilter<"RegleMetier"> | string | null
+    updated_at?: DateTimeFilter<"RegleMetier"> | Date | string
+  }, "cle">
+
+  export type RegleMetierOrderByWithAggregationInput = {
+    cle?: SortOrder
+    valeur?: SortOrder
+    modifiePar?: SortOrderInput | SortOrder
+    updated_at?: SortOrder
+    _count?: RegleMetierCountOrderByAggregateInput
+    _max?: RegleMetierMaxOrderByAggregateInput
+    _min?: RegleMetierMinOrderByAggregateInput
+  }
+
+  export type RegleMetierScalarWhereWithAggregatesInput = {
+    AND?: RegleMetierScalarWhereWithAggregatesInput | RegleMetierScalarWhereWithAggregatesInput[]
+    OR?: RegleMetierScalarWhereWithAggregatesInput[]
+    NOT?: RegleMetierScalarWhereWithAggregatesInput | RegleMetierScalarWhereWithAggregatesInput[]
+    cle?: StringWithAggregatesFilter<"RegleMetier"> | string
+    valeur?: JsonWithAggregatesFilter<"RegleMetier">
+    modifiePar?: StringNullableWithAggregatesFilter<"RegleMetier"> | string | null
+    updated_at?: DateTimeWithAggregatesFilter<"RegleMetier"> | Date | string
   }
 
   export type TiersCreateInput = {
@@ -45002,6 +46007,55 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type RegleMetierCreateInput = {
+    cle: string
+    valeur: JsonNullValueInput | InputJsonValue
+    modifiePar?: string | null
+    updated_at?: Date | string
+  }
+
+  export type RegleMetierUncheckedCreateInput = {
+    cle: string
+    valeur: JsonNullValueInput | InputJsonValue
+    modifiePar?: string | null
+    updated_at?: Date | string
+  }
+
+  export type RegleMetierUpdateInput = {
+    cle?: StringFieldUpdateOperationsInput | string
+    valeur?: JsonNullValueInput | InputJsonValue
+    modifiePar?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegleMetierUncheckedUpdateInput = {
+    cle?: StringFieldUpdateOperationsInput | string
+    valeur?: JsonNullValueInput | InputJsonValue
+    modifiePar?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegleMetierCreateManyInput = {
+    cle: string
+    valeur: JsonNullValueInput | InputJsonValue
+    modifiePar?: string | null
+    updated_at?: Date | string
+  }
+
+  export type RegleMetierUpdateManyMutationInput = {
+    cle?: StringFieldUpdateOperationsInput | string
+    valeur?: JsonNullValueInput | InputJsonValue
+    modifiePar?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegleMetierUncheckedUpdateManyInput = {
+    cle?: StringFieldUpdateOperationsInput | string
+    valeur?: JsonNullValueInput | InputJsonValue
+    modifiePar?: NullableStringFieldUpdateOperationsInput | string | null
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -47372,6 +48426,25 @@ export namespace Prisma {
     demandeId?: SortOrder
     serviceId?: SortOrder
     nbRelances?: SortOrder
+  }
+
+  export type RegleMetierCountOrderByAggregateInput = {
+    cle?: SortOrder
+    valeur?: SortOrder
+    modifiePar?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type RegleMetierMaxOrderByAggregateInput = {
+    cle?: SortOrder
+    modifiePar?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type RegleMetierMinOrderByAggregateInput = {
+    cle?: SortOrder
+    modifiePar?: SortOrder
+    updated_at?: SortOrder
   }
 
   export type ContactCreateNestedManyWithoutTiersInput = {
@@ -53810,6 +54883,10 @@ export namespace Prisma {
      * @deprecated Use AvisTournageDefaultArgs instead
      */
     export type AvisTournageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = AvisTournageDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use RegleMetierDefaultArgs instead
+     */
+    export type RegleMetierArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = RegleMetierDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

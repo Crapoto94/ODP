@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { resizeImage } from '@/lib/image-utils';
-import { getSurfaceExoneration, getTlpeType, calculateTlpeProrata } from '@/lib/tlpe-tarifs';
+import { getSurfaceExoneration, getTlpeType, calculateTlpeProrata, enseignesExonerees, ligneExoneree } from '@/lib/tlpe-tarifs';
 
 // Meme principe que useCommerceLogic.ts, adapte au TLPE : une page par
 // TIERS (paramId = tiersId), un selecteur d'annee, un dossier par annee.
@@ -115,14 +115,11 @@ export function useTlpeLogic(paramId: string) {
   // --- Montant (regle TLPE : prorata en mois pleins + exoneration enseignes) ---
   const getTotalAmount = () => {
     if (!currentOccupation) return 0;
-    const threshold = tlpeConfig?.exoneration ?? 12;
     const lignes = currentOccupation.lignes || [];
-
-    const totalEnseigneSurface = getSurfaceExoneration(lignes);
-    const isEnseigneExempt = totalEnseigneSurface <= threshold;
+    const isEnseigneExempt = enseignesExonerees(lignes, tlpeConfig);
 
     return lignes.reduce((sum: number, l: any) => {
-      if (getTlpeType(l) === 'ENSEIGNE' && isEnseigneExempt) return sum;
+      if (ligneExoneree(l, isEnseigneExempt)) return sum;
 
       const d1 = new Date(l.dateDebut);
       const d2 = new Date(l.dateFin);

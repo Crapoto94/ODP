@@ -595,3 +595,11 @@ model AvisTournage {
   @@index([demandeId])
   @@index([statut])
 }
+
+// Règles métier de facturation modifiées par rapport aux valeurs par défaut (voir lib/regles-metier.ts) : seules les surcharges sont stockées
+model RegleMetier {
+  cle        String   @id
+  valeur     Json
+  modifiePar String?
+  updated_at DateTime @updatedAt
+}

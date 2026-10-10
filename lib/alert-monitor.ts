@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { sendApmMail } from '@/lib/apm';
+import { R } from '@/lib/regles-metier';
+import { chargerRegles } from '@/lib/regles-metier-server';
 
 // Alerte « date d'alerte » des dossiers CHANTIER / TOURNAGE : le jour J, un mail est envoyé à tous les instructeurs
 // (utilisateurs de rôle INSTRUCTEUR) avec la liste des dossiers concernés.
@@ -55,6 +57,8 @@ function buildMail(dossiers: any[], baseUrl: string, dateFr: string) {
 }
 
 export async function runAlertCheck(now = new Date()) {
+  await chargerRegles();
+  if (!R.bool('alerte.mailInstructeurs')) return { sent: 0, reason: 'règle « alerte.mailInstructeurs » désactivée' };
   const today = parisNow(now);
   if (today.hour < SEND_FROM_HOUR) return { sent: 0, reason: 'avant 7 h' };
 

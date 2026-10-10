@@ -1,31 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { calculateTlpeProrata } from '@/lib/tlpe-tarifs';
 import { X, Check, Save, Loader2, Euro, Upload, Image as ImageIcon, Trash2, Plus, Info, Hash, Tag, Search, Calendar, Maximize2 } from 'lucide-react';
 import axios from 'axios';
 import { getEnseigneSurfaceCumulee, isEnseigneFamille, resolveTlpeTarif } from '@/lib/tlpe-tarifs';
 import { resizeImage } from '@/lib/image-utils';
 
-function getDaysInMonth(date: Date): number {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-}
-
-function calculateMonthlyProrata(startDate: Date, endDate: Date): number {
-  let fullStartDate = new Date(startDate);
-  if (fullStartDate.getDate() !== 1) {
-    fullStartDate = new Date(fullStartDate.getFullYear(), fullStartDate.getMonth() + 1, 1);
-  }
-
-  let fullEndDate = new Date(endDate);
-  if (fullEndDate.getDate() !== getDaysInMonth(fullEndDate)) {
-    fullEndDate = new Date(fullEndDate.getFullYear(), fullEndDate.getMonth(), 0);
-  }
-
-  if (fullEndDate < fullStartDate) return 0;
-
-  const months = (fullEndDate.getFullYear() - fullStartDate.getFullYear()) * 12
-                 + (fullEndDate.getMonth() - fullStartDate.getMonth()) + 1;
-
-  return months / 12;
-}
+const calculateMonthlyProrata = (d1: Date, d2: Date): number => calculateTlpeProrata(d1, d2).ratio; // règle « tlpe.prorata.mode » (module partagé)
 
 interface Article {
   id: number;

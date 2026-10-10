@@ -25,6 +25,15 @@ les éléments rattachés à chaque version viennent du backlog.
 - **Lignes de facturation générées** à la création du dossier ODP depuis la demande (option), avec abattement et exonération appliqués.
 - Formulaire public : type de lieu, équipement sportif, surface occupée, câbles, durée du film et aide financière.
 
+### Règles métier de facturation (Paramètres › Règles de facturation)
+- **Page des règles** pour la T.L.P.E., les commerces, les chantiers, les tournages et les règles transversales : chaque règle est affichée avec sa description métier, sa source, son effet, et est **débrayable** (interrupteur) ou **paramétrable** (valeur, choix), avec retour à la valeur par défaut.
+- **TLPE** : prorata (mois pleins, mois entamés, au jour, année pleine), exonération des enseignes et son seuil, enseignes scellées au sol, cumul des enseignes (et seulement celles présentes en même temps), seuil de palier, re-tarification automatique.
+- **Chantiers et tournages** : jour de début et de fin inclus, durée d'un mois, tranche de 10 jours, dates constatées prioritaires, recalcul automatique de la durée.
+- **Commerces** : reconduction au tarif de l'année cible, dégrèvements.
+- **Tous dossiers** : majoration des occupations non autorisées (et son taux), minoration court-métrage, statuts Clos / Titré depuis SEDIT, alerte quotidienne aux instructeurs.
+- Les calculs (totaux, factures, trains de facturation) et l'affichage utilisent les mêmes règles ; le prorata TLPE n'existe plus qu'en un seul endroit.
+- Correction : un dossier créé depuis une demande de tournage n'applique plus deux fois l'abattement court-métrage.
+
 ### Divers
 - Produit renommé **VibeODP**.
 - **Logo de la ville** téléversable dans Paramètres › Général, affiché en haut à gauche.

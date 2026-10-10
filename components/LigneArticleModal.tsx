@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
+import { calculateQ2 as calculateQ2Shared } from '@/lib/tlpe-tarifs';
 import { X, Check, Save, Loader2, Calendar, Hash, Info, Euro, Clock, Search, FileText } from 'lucide-react';
 import axios from 'axios';
 
@@ -151,21 +152,8 @@ export default function LigneArticleModal({ isOpen, onClose, onSave, occupationI
   };
 
   const calculateQ2 = (u2: string, start: string, end: string, startC: string, endC: string) => {
-    const s = new Date(startC || start);
-    const e = new Date(endC || end);
-    if (isNaN(s.getTime()) || isNaN(e.getTime()) || e < s) return 1;
-
-    const diffMs = e.getTime() - s.getTime();
-    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24)) + 1;
-
-    const unit = (u2 || '').toLowerCase();
-    
-    if (unit.includes('an')) return 1;
-    if (unit.includes('10 jour')) return Math.ceil(diffDays / 10);
-    if (unit.includes('mois')) return Math.ceil(diffDays / 30);
-    if (unit.includes('jour') || unit.includes('nuit')) return diffDays;
-    
-    return 1;
+    const d = (v: string) => (v ? new Date(v) : null);
+    return calculateQ2Shared(u2, d(start), d(end), d(startC), d(endC)); // règles « duree.* »
   };
 
   const selectedArticleFromList = articles.find(a => a.id.toString() === formData.articleId);

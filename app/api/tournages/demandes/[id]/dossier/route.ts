@@ -6,6 +6,8 @@ import { resumeReponses } from '@/lib/tournage-avis';
 import { lireConfigTournage } from '@/lib/tournage-service';
 import { simulerDemande } from '@/lib/tournage-simulation-db';
 import { updateOccupationTotal } from '@/lib/tlpe-utils';
+import { R } from '@/lib/regles-metier';
+import { chargerRegles } from '@/lib/regles-metier-server';
 
 async function autorise() {
   const s = await getSession();
@@ -41,6 +43,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const d = await db.demandeTournage.findUnique({ where: { id: Number(id) } });
     if (!d) return NextResponse.json({ error: 'Demande introuvable' }, { status: 404 });
     if (d.occupationId) return NextResponse.json({ error: 'Un dossier est déjà lié à cette demande' }, { status: 409 });
+    await chargerRegles();
     const body = await req.json();
     const dn = d.donnees || {};
     const auteur = `${s.prenom} ${s.nom}`.trim();
@@ -78,6 +81,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       dn.cas?.drone ? 'Drone : déclaration Cerfa 15476*02 à vérifier' : '', dn.cas?.passerelle ? 'Passerelle aux câbles : demande à la Ville de Paris' : '', dn.cas?.cormailles ? 'Parc des Cormailles : demande au Conseil départemental' : '',
     ].filter(Boolean).join('\n');
 
+    // Abattement « court-métrage à 50 % sur tout le barème » : porté par le mécanisme existant du dossier (isCourtMetrage → minoration en ligne sur la facture) ;
+    // les lignes gardent alors leur montant plein. Tout autre abattement ou exonération est appliqué ligne à ligne et le dossier n'est pas marqué court-métrage (pas de double minoration).
+    let simDossier: any = null;
+    if (body.creerLignes) simDossier = await simulerDemande(d, (await lireConfigTournage()).simulation);
+    const abt = simDossier?.simulation?.abattement;
+    const parMecanismeDossier = !!abt && !simDossier.simulation.gratuit && String(abt.libelle).startsWith('Court-métrage') && abt.taux === R.num('tournage.courtMetrage.taux') && simDossier.options.abattementSur === 'TOUT' && R.bool('tournage.courtMetrage.actif');
     const occ = await db.occupation.create({
       data: {
         nom: d.titre, tiersId, type: 'TOURNAGE', statut: 'EN_ATTENTE', dateDebut: debut, dateFin: fin,
@@ -85,7 +94,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         adresse: dn.lieu?.adresse || 'Adresse à préciser',
         latitude: typeof dn.lieu?.latitude === 'number' ? dn.lieu.latitude : null, longitude: typeof dn.lieu?.longitude === 'number' ? dn.lieu.longitude : null,
         description: [dn.synopsis, dn.scenes].filter(Boolean).join('\n\n'), observations: resume, montantCalcule: 0,
-        isCourtMetrage: d.typeFilm === 'Court-métrage',
+        isCourtMetrage: body.creerLignes ? parMecanismeDossier : d.typeFilm === 'Court-métrage',
       },
     });
 
@@ -99,13 +108,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     let lignesCreees = 0;
     const avertissements: string[] = [];
     if (body.creerLignes) {
-      const cfg = await lireConfigTournage();
-      const { simulation: sim, options } = await simulerDemande(d, cfg.simulation);
+      const { simulation: sim, options } = simDossier;
       for (const l of sim.lignes) {
         if (!l.articleId) { avertissements.push(`Article introuvable pour « ${l.designation} » : ligne non créée`); continue; }
         let montant = l.montant; let note = l.detail || '';
         if (sim.gratuit) { montant = 0; note = `${note ? note + ' — ' : ''}${sim.gratuit.motif}`; }
-        else if (sim.abattement && (options.abattementSur === 'TOUT' || l.droits)) {
+        else if (sim.abattement && !parMecanismeDossier && (options.abattementSur === 'TOUT' || l.droits)) {
           montant = Math.round(l.montant * (100 - sim.abattement.taux)) / 100;
           note = `${note ? note + ' — ' : ''}abattement ${sim.abattement.taux} % (${sim.abattement.libelle})`;
         }

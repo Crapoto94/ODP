@@ -1,4 +1,6 @@
-import { getSurfaceExoneration, getTlpeType } from './tlpe-tarifs';
+import { getSurfaceExoneration, getTlpeType, calculateTlpeProrata, enseignesExonerees, ligneExoneree } from './tlpe-tarifs';
+import { R } from './regles-metier';
+import { chargerRegles } from './regles-metier-server';
 import { prisma } from './prisma';
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
@@ -6,28 +8,7 @@ import { writeFile, readFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 
-function getDaysInMonth(date: Date): number {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-}
-
-function calculateMonthlyProrata(startDate: Date, endDate: Date): { months: number; ratio: number } {
-  let fullStartDate = new Date(startDate);
-  if (fullStartDate.getDate() !== 1) {
-    fullStartDate = new Date(fullStartDate.getFullYear(), fullStartDate.getMonth() + 1, 1);
-  }
-
-  let fullEndDate = new Date(endDate);
-  if (fullEndDate.getDate() !== getDaysInMonth(fullEndDate)) {
-    fullEndDate = new Date(fullEndDate.getFullYear(), fullEndDate.getMonth(), 0);
-  }
-
-  if (fullEndDate < fullStartDate) return { months: 0, ratio: 0 };
-
-  const months = (fullEndDate.getFullYear() - fullStartDate.getFullYear()) * 12
-                 + (fullEndDate.getMonth() - fullStartDate.getMonth()) + 1;
-
-  return { months, ratio: months / 12 };
-}
+const calculateMonthlyProrata = calculateTlpeProrata; // règle « tlpe.prorata.mode » (module partagé)
 
 export async function generateInvoicePdfBuffer(
   occupationId: number | null, 
@@ -94,15 +75,17 @@ export async function generateInvoicePdfBuffer(
     throw new Error('Paramètres manquants');
   }
 
+  await chargerRegles(); // règles métier de facturation (prorata, exonération, majoration, minoration…)
   const settings = await (prisma as any).appSettings.findFirst();
 
-  // Add surcharge line if occupation is not authorized (non autorisé)
-  if (occ.isNotAuthorized) {
+  // Add surcharge line if occupation is not authorized (non autorisé) — règles « majoration.nonAutorise.* »
+  if (occ.isNotAuthorized && R.bool('majoration.nonAutorise.actif')) {
     const totalBase = (occ.lignes || [])
       .filter((l: any) => !l.deletedAt)
       .reduce((sum: number, l: any) => sum + (l.montant || 0), 0);
 
-    if (totalBase > 0) {
+    const majoration = totalBase * (R.num('majoration.nonAutorise.taux') / 100);
+    if (majoration > 0) {
       const surcharge = {
         id: 999999, // Dummy ID for template rendering
         occupationId: occ.id,
@@ -110,12 +93,12 @@ export async function generateInvoicePdfBuffer(
         article: {
           id: 0,
           designation: 'Majoration dossier non autorisé',
-          montant: totalBase,
+          montant: majoration,
           modeTaxation: null
         },
         quantite1: 1,
         quantite2: 1,
-        montant: totalBase,
+        montant: majoration,
         dateDebut: occ.dateDebut,
         dateFin: occ.dateFin,
         dateDebutConstatee: occ.dateDebut,
@@ -129,7 +112,7 @@ export async function generateInvoicePdfBuffer(
   }
 
   // Add minoration line if occupation is court métrage TOURNAGE
-  if (occ.type === 'TOURNAGE' && (occ as any).isCourtMetrage) {
+  if (occ.type === 'TOURNAGE' && (occ as any).isCourtMetrage && R.bool('tournage.courtMetrage.actif')) {
     const totalBase = (occ.lignes || [])
       .filter((l: any) => !l.deletedAt)
       .reduce((sum: number, l: any) => sum + (l.montant || 0), 0);
@@ -142,18 +125,18 @@ export async function generateInvoicePdfBuffer(
         article: {
           id: 0,
           designation: 'Minoration court métrage',
-          montant: totalBase * 0.5,
+          montant: totalBase * (R.num('tournage.courtMetrage.taux') / 100),
           modeTaxation: null
         },
         quantite1: 1,
         quantite2: 1,
-        montant: -(totalBase * 0.5),
+        montant: -(totalBase * (R.num('tournage.courtMetrage.taux') / 100)),
         dateDebut: occ.dateDebut,
         dateFin: occ.dateFin,
         dateDebutConstatee: occ.dateDebut,
         dateFinConstatee: occ.dateFin,
         photos: '',
-        note: 'Minoration de 50% appliquée pour tournage court métrage',
+        note: `Minoration de ${R.num('tournage.courtMetrage.taux')}% appliquée pour tournage court métrage`,
         deletedAt: null
       };
       occ.lignes.push(minoration);
@@ -270,10 +253,8 @@ export async function generateInvoicePdfBuffer(
       if (!val) return val;
       let result = val;
 
-      const threshold = tlpeConfig?.exoneration ?? 12;
-      // Surface cumulee complete des enseignes (non proratisee, articles de reference inclus)
-      const totalEnseigneSurface = getSurfaceExoneration(occ.lignes) || 0;
-      const isEnseigneExempt = totalEnseigneSurface <= threshold;
+      // Exonération des enseignes (règles « tlpe.exoneration.* ») : surface cumulée complète, non proratisée
+      const isEnseigneExempt = enseignesExonerees(occ.lignes, tlpeConfig);
 
       let totalSum = (occ.lignes || [])
         .filter((l: any) => !l.deletedAt && l.id !== 999998 && l.id !== 999999)
@@ -281,7 +262,7 @@ export async function generateInvoicePdfBuffer(
           let mt: any = {};
           try { mt = l.article?.notes ? JSON.parse(l.article.notes) : {}; } catch(e){}
           if (occ.type === 'TLPE') {
-              if (getTlpeType(l) === 'ENSEIGNE' && isEnseigneExempt) return sum;
+              if (ligneExoneree(l, isEnseigneExempt)) return sum;
               const d1 = new Date(l.dateDebut);
               const d2 = new Date(l.dateFin);
               const { ratio: prorata } = calculateMonthlyProrata(d1, d2);
@@ -292,8 +273,8 @@ export async function generateInvoicePdfBuffer(
       }, 0) || 0;
 
       // Apply court métrage discount for TOURNAGE type (only if not already applied to individual articles)
-      if (occ.type === 'TOURNAGE' && (occ as any).isCourtMetrage) {
-        totalSum = totalSum * 0.5;
+      if (occ.type === 'TOURNAGE' && (occ as any).isCourtMetrage && R.bool('tournage.courtMetrage.actif')) {
+        totalSum = totalSum * (1 - R.num('tournage.courtMetrage.taux') / 100);
       }
 
       const replacements: Record<string, string> = {
@@ -380,7 +361,7 @@ export async function generateInvoicePdfBuffer(
           replacements['{article.full_description}'] = `${ligne.article.designation}\n${details}`;
         } else if (occ.type === 'TLPE') {
           const { months, ratio: prorata } = calculateMonthlyProrata(d1, d2);
-          const isExempt = getTlpeType(ligne) === 'ENSEIGNE' && isEnseigneExempt;
+          const isExempt = ligneExoneree(ligne, isEnseigneExempt);
           lineVal = isExempt ? 0 : (pu * (ligne.quantite1 || 0) * prorata);
           details = `${ligne.quantite1} m² à ${pu.toFixed(2)}€/m²${prorata < 1 ? ` (${months} mois)` : ''}${isExempt ? ' (Exonéré)' : ''}`;
           replacements['{article.pu}'] = `${pu.toFixed(2)} €`;
